@@ -717,7 +717,7 @@ function update(dt){
       lastEat=t;
       const gain=4*Math.min(combo,8);
       dist+=gain; bonus+=gain;
-      pop(f.x, f.y-16, "+"+gain+" m", combo>=3?"#D6342B":INK);
+      pop(f.x, f.y-16, "+"+gain+" m", YELL);
       SFX.gobe(combo-1);
       for(let k=0;k<5;k++) puffs.push({x:f.x,y:f.y,r:2+Math.random()*3,
         vx:(Math.random()-.5)*90,vy:-40-Math.random()*60,l:1});
@@ -919,13 +919,17 @@ function draw(){
   }
   for(const p of sweat) drawDrop(p);
 
-  /* Les gains montent au-dessus de la mouche gobee, cernes de la couleur du ciel
-     pour rester lisibles par-dessus n'importe quel decor. */
+  /* Les gains montent au-dessus de la mouche gobee. Trait fin et jaune, comme le
+     compteur de mouches : en gras et a l'encre ils ecrasaient le dessin. Le halo
+     reprend la couleur du ciel, seul moyen de rester lisible par-dessus une botte
+     de paille ou une colline. */
   for(const p of pops){
     ctx.save();
     ctx.globalAlpha=Math.max(0,Math.min(1,p.l*1.5));
-    ctx.font="900 26px "+FONT; ctx.textAlign="center"; ctx.textBaseline="middle";
-    ctx.lineWidth=5; ctx.lineJoin="round"; ctx.strokeStyle=jour.bas;
+    /* Graisse 500 et pas 600 : au-dela de 500, la selection CSS arrondit vers le
+       haut et retombe sur le gras des que la famille n'a que deux graisses. */
+    ctx.font="500 25px "+FONT; ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.lineWidth=4; ctx.lineJoin="round"; ctx.strokeStyle=jour.bas;
     ctx.strokeText(p.txt,p.x,p.y);
     ctx.fillStyle=p.tint; ctx.fillText(p.txt,p.x,p.y);
     ctx.restore();
@@ -1000,7 +1004,10 @@ function drawHUD(){
   }
   ctx.textBaseline="top";
 
-  /* Bandeau des paliers : il pousse, tient, puis s'efface sans bloquer la vue. */
+  /* Bandeau des paliers : il pousse, tient, puis s'efface sans bloquer la vue.
+     Meme parti que les gains : trait fin et jaune plutot qu'un pave noir en gras.
+     L'interlettrage le rapproche des intitules de l'accueil ; les navigateurs qui
+     ignorent la propriete se contentent de l'espacement normal. */
   const age=t-flashT;
   if(age>=0 && age<1.5){
     const grow=Math.min(1,age/0.20);
@@ -1009,8 +1016,9 @@ function drawHUD(){
     ctx.translate(L+VW/2, H*0.13);
     ctx.scale(0.82+grow*0.18, 0.82+grow*0.18);
     ctx.textAlign="center"; ctx.textBaseline="middle";
-    ctx.font="900 "+Math.round(Math.min(34,VW*0.068))+"px "+FONT;
-    ctx.fillStyle = flashTxt==="Record battu" ? "#D6342B" : INK;
+    ctx.font="500 "+Math.round(Math.min(32,VW*0.064))+"px "+FONT;
+    ctx.letterSpacing="0.13em";
+    ctx.fillStyle = flashTxt==="Record battu" ? "#D6342B" : YELL;
     ctx.fillText(flashTxt.toUpperCase(), 0, 0);
     ctx.restore();
   }
