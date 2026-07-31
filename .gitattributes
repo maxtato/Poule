@@ -1,0 +1,3 @@
+# Le jeu tient dans un seul fichier : les sprites y sont encodes en base64.
+# Git ne doit pas tenter de fusionner ces lignes-la.
+index.html -diff
