@@ -32,13 +32,17 @@ profondeur :
 | Deuxième | Arbres, sapin, cyprès, tracteur, moulin, panneaux | un tiers |
 | Fond | Massifs montagneux et collines | un dixième |
 
-Les silhouettes du deuxième plan sont des aplats opaques : les collines ne se
-voient pas au travers. Elles suivent quand même l'heure du jour — chaque dessin
-est reposé puis rempli en `source-in` dans un calque à part, ce qui n'en garde
-que la silhouette et lui donne la couleur du moment. La teinte est arrondie par
-paliers et sert de clé de cache : sur une journée entière elle ne prend que
-quatorze valeurs, soit une repeinte toutes les deux secondes environ au lieu de
-dix par image.
+Le fond et le deuxième plan partagent une seule et même tonalité : ce ne sont pas
+les valeurs qui les séparent, c'est leur vitesse. Ce qui se recouvre se fond donc
+en une seule masse, et les plans ne se lisent qu'en mouvement — c'est le parti
+pris.
+
+Ce sont des aplats opaques : rien ne se voit au travers. Ils suivent quand même
+l'heure du jour — chaque dessin est reposé puis rempli en `source-in` dans un
+calque à part, ce qui n'en garde que la silhouette et lui donne la couleur du
+moment. La teinte est arrondie par paliers et sert de clé de cache : sur une
+journée entière elle ne prend qu'une trentaine de valeurs, soit une repeinte
+par seconde environ au lieu de dix-huit par image.
 
 ## Perspective
 

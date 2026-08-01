@@ -258,13 +258,15 @@ const INK="#1A1614", CREAM="#FAF3EC", SAND="#EFE5D5", EARTH="#E0D3BC",
    etapes restent claires : les dessins sont a l'encre sombre et doivent se lire
    aussi bien a midi qu'au crepuscule. */
 const DAY_LEN=2400;                        // metres pour boucler la journee, soit ~35 s
-/* `dec` : l'aplat du second plan. Il doit rester nettement plus fonce que les
-   collines, qu'il masque, et nettement plus clair que l'encre du premier plan. */
+/* `dec` : l'aplat commun aux deux plans de decor, le fond comme les arbres. Une
+   seule tonalite pour tout ce qui n'est pas le premier plan : ce ne sont plus les
+   valeurs qui separent les plans, c'est leur vitesse. Elle doit rester nettement
+   plus claire que l'encre des dessins de devant. */
 const HEURES=[
-  {haut:"#F2E7D6", bas:"#FAF3EC", coll:"#E3D8C5", terre:"#E0D3BC", dec:"#BBB2A5"},  // matin
-  {haut:"#DCEAF2", bas:"#FBF7F0", coll:"#DBDDD3", terre:"#DED5C2", dec:"#B4B4AE"},  // plein midi
-  {haut:"#F8DFB2", bas:"#FDF1DE", coll:"#E6D1AB", terre:"#DFCBA6", dec:"#C3B29A"},  // fin d'apres-midi
-  {haut:"#DCC6DA", bas:"#FBE8DD", coll:"#D7C3BF", terre:"#CFBEB3", dec:"#B5A6A6"}   // crepuscule
+  {haut:"#F2E7D6", bas:"#FAF3EC", terre:"#E0D3BC", dec:"#BBB2A5"},  // matin
+  {haut:"#DCEAF2", bas:"#FBF7F0", terre:"#DED5C2", dec:"#B4B4AE"},  // plein midi
+  {haut:"#F8DFB2", bas:"#FDF1DE", terre:"#DFCBA6", dec:"#C3B29A"},  // fin d'apres-midi
+  {haut:"#DCC6DA", bas:"#FBE8DD", terre:"#CFBEB3", dec:"#B5A6A6"}   // crepuscule
 ];
 /* `pas` arrondit chaque canal : les teintes du fond et du second plan servent de
    cle de cache et ne doivent pas changer a chaque image, sinon on repeint tous les
@@ -283,8 +285,8 @@ function heure(){
   const i=u|0, f=u-i, e=f*f*(3-2*f);       // adoucit l'entree et la sortie de chaque etape
   const a=HEURES[i%HEURES.length], b=HEURES[(i+1)%HEURES.length];
   return {haut:mixHex(a.haut,b.haut,e), bas:mixHex(a.bas,b.bas,e),
-          coll:mixHex(a.coll,b.coll,e,3), terre:mixHex(a.terre,b.terre,e),
-          dec:mixHex(a.dec,b.dec,e,6)};
+          terre:mixHex(a.terre,b.terre,e),
+          dec:mixHex(a.dec,b.dec,e,3)};
 }
 
 const cv=document.getElementById("cv"), ctx=cv.getContext("2d");
@@ -1000,11 +1002,13 @@ function draw(){
   g.addColorStop(0,jour.haut); g.addColorStop(1,jour.bas);
   ctx.fillStyle=g; ctx.fillRect(-20,-worldH-20,VIEW_W+40,worldH+20);
 
-  /* Fond : massifs et collines, en aplat de la teinte la plus claire du decor. */
+  /* Fond : massifs et collines, dans la meme tonalite que les arbres du second
+     plan. Ils passent avant, et comme la couleur est commune, tout ce qui se
+     recouvre se fond en une seule masse — c'est voulu. */
   for(const h of hills){
     const im=SPR[h.k]; if(!im || !im.naturalHeight) continue;
     const hh=COLLINE[h.k], hw=hh*im.naturalWidth/im.naturalHeight;
-    ctx.drawImage(teinter(h.k, jour.coll), h.x, COLLINE_BASE-hh, hw, hh);
+    ctx.drawImage(teinter(h.k, jour.dec), h.x, COLLINE_BASE-hh, hw, hh);
   }
 
   ctx.strokeStyle=INK; ctx.globalAlpha=.25; ctx.lineWidth=3; ctx.lineCap="round"; ctx.lineJoin="round";
