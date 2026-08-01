@@ -293,6 +293,15 @@ const BUCKET_BOX = {x:71, w:135};
    corps dans ce canvas — les ailes debordent largement et ne comptent pas en collision. */
 const EAGLE = {"w": 232.7, "h": 162.3, "bodyX": 63.6, "bodyCY": 92.3};
 const EAGLE_SPEED = 175;
+/* L'aigle ne file pas droit : il ondule. La vague est inscrite dans l'espace et non
+   dans l'horloge — c'est en avancant qu'il monte et descend — et chaque aigle tire
+   son amplitude et sa longueur d'onde, sans quoi tous ondoyaient a l'unisson.
+   ONDE est le rayon de la sinusoide : une vague complete fait 2*PI fois cette
+   valeur, soit 320 a 530 unites, deux a trois vagues par largeur d'ecran. */
+const EAGLE_AMP = [26, 48], EAGLE_ONDE = [51, 84];
+/* Battement : quatre images par cycle. A 7,6 c'est un peu moins de deux cycles par
+   seconde. */
+const EAGLE_BAT = 7.6;
 const MOU_W = 36.4, MOU_H = 21.8;   // la mouche, deux poses d'ailes
 /* Bec ouvert en vol : pose isolee, calee sur la tete comme les poses de battement.
    Au sol, la pose equivalente vit dans le canvas commun (SPR.snap). */
@@ -889,8 +898,14 @@ function spawn(){
   const k = dist<170 ? (Math.random()<0.6?"bale":"bucket") : pool[(Math.random()*pool.length)|0];
 
   if(k==="eagle"){
-    const lo=-190, hi=flyCeil+60;                      // sur toute la hauteur du ciel
-    obs.push({k:"eagle", x:VIEW_W+140, y:lo+Math.random()*(hi-lo), w:118, h:56, ph:Math.random()*6});
+    const amp=EAGLE_AMP[0]+Math.random()*(EAGLE_AMP[1]-EAGLE_AMP[0]);
+    /* Les bornes se resserrent de l'amplitude : c'est le creux et la crete de la
+       vague qui doivent tenir dans le ciel, pas la hauteur moyenne. */
+    const lo=-190-amp, hi=flyCeil+60+amp;              // sur toute la hauteur du ciel
+    const o={k:"eagle", x:VIEW_W+140, y:0, y0:lo+Math.random()*(hi-lo),
+             w:118, h:56, ph:Math.random()*6, amp,
+             onde:EAGLE_ONDE[0]+Math.random()*(EAGLE_ONDE[1]-EAGLE_ONDE[0])};
+    ondule(o); obs.push(o);
   }else{
     const def=OBS_DEF[k];
     obs.push({k, x:VIEW_W+90, y:0, w:def.w, h:def.h, ph:Math.random()*2});
@@ -911,6 +926,10 @@ function mouthOpen(){
   return false;
 }
 function panic(){ return !hen.ground && !hen.dead && hen.feathers<=0.02 && hen.vy>50; }
+/* La vague se calcule sur la position de l'aigle, pas sur l'horloge : sa hauteur
+   suit le chemin parcouru. C'est o.y lui-meme qui bouge et non le dessin — la boite
+   de collision, qui se lit sur o.y, ondule donc avec lui. */
+function ondule(o){ o.y = o.y0 + Math.sin(o.x/o.onde + o.ph)*o.amp; }
 /* Sequence de mort : deux images, pas quatre. 0 le choc, 1 la poule KO — qui
    tombe, puis reste au sol. Les poses de chute tete la premiere, d'assise et de
    bascule ont ete retirees : elles decomposaient un mouvement que le choc et la
@@ -1160,7 +1179,10 @@ function update(dt){
     recBeaten=true; flash("Record battu"); SFX.record();
     pop(hen.x+80, hen.y-150, "RECORD", "#D6342B");
   }
-  for(const o of obs) o.x-=(o.k==="eagle" ? speed+EAGLE_SPEED : speed)*dt;
+  for(const o of obs){
+    o.x-=(o.k==="eagle" ? speed+EAGLE_SPEED : speed)*dt;
+    if(o.k==="eagle") ondule(o);
+  }
   obs=obs.filter(o=>o.x>-380);
 
   for(const c of clouds){ c.x-=c.v*speed*.10*dt; if(c.x<-180){c.x=VIEW_W+140; c.f=.15+Math.random()*.6;} }
@@ -1421,7 +1443,7 @@ function draw(){
 
   for(const o of obs){
     if(o.k==="eagle"){
-      const f=(t*5.2+o.ph)%4|0;                        // battement : haut, milieu, bas, milieu
+      const f=(t*EAGLE_BAT+o.ph)%4|0;                  // battement : haut, milieu, bas, milieu
       const im=f===0?SPR.eagle_up:(f===2?SPR.eagle_down:SPR.eagle_mid);
       ctx.drawImage(im, o.x-EAGLE.bodyX, o.y-EAGLE.bodyCY, EAGLE.w, EAGLE.h);
     }else ctx.drawImage(SPR[o.k], o.x, -o.h+OBS_DEF[o.k].sink+OBS_EXTRA, o.w, o.h);

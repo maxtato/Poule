@@ -30,8 +30,17 @@ bruitage monte. Le combo ne paie rien d'autre — c'est le compte de mouches qui
 fait le score, et une chaîne rapporte simplement plus de mouches en moins de
 temps.
 
-Un aigle traverse le ciel à contre-sens. Les autres obstacles sont au sol et
-arrivent d'autant plus vite que la course dure.
+Un aigle traverse le ciel à contre-sens. Il ne file pas droit : il ondule, et la
+vague est inscrite dans l'espace et non dans l'horloge — c'est en avançant qu'il
+monte et descend. Chaque aigle tire son amplitude et sa longueur d'onde, sans quoi
+tous ondoyaient à l'unisson. C'est sa hauteur elle-même qui bouge, pas son dessin :
+la boîte de collision, qui se lit dessus, ondule avec lui — vérifié sur 7 650 pas,
+jamais un pixel d'écart. Les bornes du ciel se resserrent de l'amplitude à la
+naissance, puisque ce sont le creux et la crête qui doivent y tenir, pas la hauteur
+moyenne.
+
+Les autres obstacles sont au sol et arrivent d'autant plus vite que la course
+dure.
 
 ## Le score
 
