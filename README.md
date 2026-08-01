@@ -180,22 +180,29 @@ Quatre poses s'enchaînent quand la poule est touchée :
 | 0 s | Le choc, encore portée par l'élan |
 | 0,15 s | La chute, tête la première |
 | 0,30 s | Assise sur les fesses, dès que le sol est touché |
-| 0,87 s | La bascule en arrière |
-| 1,47 s | L'écran de fin |
+| 0,65 s | La bascule en arrière |
+| 1,25 s | L'écran de fin |
 
 Le temps d'arrêt assise vaut la moitié de l'effet : sans lui on passerait du choc
 au dos sans voir la pose du milieu. Mais il ne faut pas non plus la laisser poser —
-une demi-seconde suffit largement à lire la pose assise, au-delà la séquence
-traîne.
+un tiers de seconde suffit à lire la pose assise, au-delà la séquence traîne.
 
 Le dessin de la dernière pose portait ses propres étoiles et son tourbillon ; ils
 ont été retirés au découpage pour laisser tourner ceux du jeu, qui sont animés.
 Ils ne tournent que sur cette pose-là.
 
 La bascule n'est pas décomposée : on passe d'assise à allongée d'une image à
-l'autre. Ce sont la secousse et la poussière qui marquent l'instant. Une rotation
-intermédiaire avait été essayée puis retirée — elle allongeait le mouvement sans
-le rendre plus lisible.
+l'autre, et ce sont la secousse et la poussière qui marquent l'instant. Mais la
+pose assise s'attarde un sixième de seconde derrière la pose allongée, en
+s'effaçant et en versant en arrière autour des fesses — le seul point qui ne
+bouge pas d'un dessin à l'autre. Ce fantôme ne dessine aucune pose intermédiaire :
+il en donne juste le mouvement, comme la traînée des pattes pendant la course. Il
+passe **avant**, la pose allongée par-dessus et opaque ; un fondu croisé aurait
+rendu la poule elle-même translucide au moment où elle touche terre.
+
+Une vraie rotation intermédiaire, elle, avait été essayée puis retirée — elle
+allongeait le mouvement sans le rendre plus lisible. Le fantôme fait le même
+travail sans coûter une seule image de plus.
 
 Deux règles tiennent la cohérence entre les poses. Toutes se posent à l'échelle
 commune `sc()`, la pose allongée à 94 % de celle-ci — juste assez pour qu'elle ne

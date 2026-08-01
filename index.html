@@ -844,7 +844,15 @@ function panic(){ return !hen.ground && !hen.dead && hen.feathers<=0.02 && hen.v
    lui elle passerait du choc au dos sans qu'on ait vu la pose du milieu, mais il
    ne faut pas non plus la laisser poser : une demi-seconde suffit largement a lire
    la pose assise, et au-dela la sequence traine. */
-const BASCULE = 0.55;
+const BASCULE = 0.34;
+/* La bascule n'est toujours pas decomposee : d'assise a allongee, une image a
+   l'autre. Mais la pose assise s'attarde un instant derriere, en s'effacant et en
+   partant a la renverse autour des fesses. Meme parti que la trainee de la course :
+   le fantome passe avant, la pose actuelle par-dessus et opaque — un fondu croise
+   aurait rendu la poule elle-meme translucide au moment ou elle touche terre. */
+const FONDU_DOS = 0.17;   // duree du fantome, en secondes
+const TRACE_DOS = 0.48;   // opacite de depart
+const VERSE_DOS = -0.75;  // inclinaison atteinte au bout, en radians
 function deadPhase(){
   if(t-deadAt<0.14) return 0;   // le coup : bref, juste le temps de le lire
   if(!hen.ground) return 1;
@@ -1356,8 +1364,23 @@ function draw(){
          en arriere pendant que l'appui reste ou il etait. */
       const fesses=hen.x+80-HURT_W*sc()/2 + HURT_FESSES*HURT_W*sc();
       const hx=fesses-DOS_FESSES*w;
-      /* Pas de mouvement decompose : on passe d'assise a allongee d'une image a
-         l'autre. La secousse et la poussiere, elles, marquent l'instant. */
+      /* Le fantome de la pose assise, qui verse en arriere en s'effacant. Il pivote
+         sur les fesses, le seul point qui ne bouge pas d'une pose a l'autre : la
+         tete part donc en arriere pendant que l'appui reste ou il etait. Il passe
+         avant la pose allongee, qui le recouvre. */
+      const dep=t-deadLand-BASCULE;
+      if(dep>=0 && dep<FONDU_DOS){
+        const av=dep/FONDU_DOS;
+        const sw=HURT_W*sc(), sh=HURT_H*sc();
+        ctx.save();
+        ctx.globalAlpha=TRACE_DOS*(1-av);
+        ctx.translate(fesses, HURT_DROP);
+        ctx.rotate(VERSE_DOS*av);
+        ctx.drawImage(SPR.hurt, -HURT_FESSES*sw, -sh, sw, sh);
+        ctx.restore();
+      }
+      /* Le mouvement lui-meme n'est pas decompose : on passe d'assise a allongee
+         d'une image a l'autre. La secousse et la poussiere marquent l'instant. */
       ctx.drawImage(im,hx,hy,w,h);
       drawStars(hx+DOS_HEAD[0]*e, hy+DOS_HEAD[1]*e-30);
     }
