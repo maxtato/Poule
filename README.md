@@ -76,6 +76,17 @@ Chaque arbre tire son propre coefficient de taille à la plantation, entre 1 et
 1,32 : la valeur inscrite dans la table est un minimum, pas une taille. Le bâti et
 les panneaux n'y sont pas soumis.
 
+Le tirage du deuxième plan est pondéré, pour que la campagne ressemble à une
+campagne : environ deux tiers d'arbres, un cinquième de panneaux, et un tracteur
+ou un moulin de loin en loin.
+
+| Silhouette | Fréquence |
+|---|---|
+| Arbres (5 dessins) | 66 % |
+| Panneaux (3 dessins) | 22 % |
+| Tracteur | 6 % |
+| Moulin | 6 % |
+
 ## Perspective
 
 Le sol n'est pas vu de face : la ligne d'horizon est le fond du champ, et ce qui

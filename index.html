@@ -209,6 +209,15 @@ const DECOR_KEYS = Object.keys(DECOR);
 const ARBRES = ["bg_chene","bg_cypres","bg_saule","bg_arbre","bg_sapin"];
 const POUSSE = 0.32;
 function tailleArbre(k){ return ARBRES.indexOf(k)>=0 ? 1+Math.random()*POUSSE : 1; }
+/* Le second plan doit se lire comme une campagne : des arbres partout, quelques
+   panneaux, un tracteur ou un moulin de loin en loin. A tirage egal sur les dix
+   silhouettes on croisait autant de moulins que de chenes, et la route avait l'air
+   d'un depot de materiel. */
+const POIDS = {bg_chene:9, bg_cypres:9, bg_saule:9, bg_arbre:9, bg_sapin:9,
+               bg_poteau:5, bg_girouette:5, bg_fleche:5,
+               bg_tracteur:4, bg_moulin:4};
+/* Ecart entre deux elements du second plan, mesure de bord a bord. */
+const ECART_DECOR = 45, ECART_JEU = 150;
 /* Les silhouettes descendent un peu sous la ligne d'horizon : le sol, dessine
    juste apres, recouvre leur base et les enracine au lieu de les poser dessus. */
 const DECOR_BASE = 4;
@@ -536,18 +545,25 @@ function reset(){
     tufts.push({x:Math.random()*VIEW_W*1.8, k:(Math.random()*4)|0, s:tuftSink()});
   /* Le second plan est seme d'avance sur une largeur et demie d'ecran, avec un
      espacement irregulier : aligne, il aurait fait cloture. */
-  decor=[]; let prec=null;
-  for(let x=-140; x<VIEW_W*1.8; x+=200+Math.random()*250){
-    prec=tireCle(DECOR_KEYS, prec);
-    decor.push({k:prec, x, s:tailleArbre(prec)});
-  }
+  decor=[]; { let p=null, x=-400;
+    while(x < VIEW_W*2.2){
+      p=tireCle(DECOR_KEYS, p, POIDS);
+      const s=tailleArbre(p);
+      decor.push({k:p, x, s});
+      x += largeurDe(p,DECOR)*s + ECART_DECOR + Math.random()*ECART_JEU;
+    } }
 }
 
 /* Deux memes silhouettes cote a cote se remarquent immediatement : on ne retire
-   jamais celle du voisin de gauche. */
-function tireCle(liste, evite){
+   jamais celle du voisin de gauche. `poids` rend certaines silhouettes plus
+   frequentes que d'autres ; sans lui le tirage reste uniforme. */
+function tireCle(liste, evite, poids){
   const l = evite ? liste.filter(k=>k!==evite) : liste;
-  return l[(Math.random()*l.length)|0];
+  if(!poids) return l[(Math.random()*l.length)|0];
+  let tot=0; for(const k of l) tot += poids[k]||1;
+  let r=Math.random()*tot;
+  for(const k of l){ r -= poids[k]||1; if(r<=0) return k; }
+  return l[l.length-1];
 }
 function largeurDe(k, tailles){
   const im=SPR[k];
@@ -562,29 +578,36 @@ function largeurDe(k, tailles){
    regle-la ouvrait un trou des que l'ecart tire depassait la largeur du voisin. On
    part alors de son bord DROIT et on recule d'un chevauchement, ce qui garantit le
    recouvrement quelle que soit la silhouette tiree. */
-function defile(bande, liste, dx, sortie, ecart, jeu, tailles, varie){
+function defile(bande, liste, dx, sortie, ecart, jeu, tailles, opt){
+  opt = opt || {};
   for(const d of bande){
     d.x -= dx;
     if(d.x < sortie){
       let mx=-1e9, dernier=null, bord=-1e9;
       for(const o of bande){
         if(o.x>mx){ mx=o.x; dernier=o.k; }
-        if(tailles) bord=Math.max(bord, o.x+largeurDe(o.k,tailles)*(o.s||1));
+        bord=Math.max(bord, o.x+largeurDe(o.k,tailles)*(o.s||1));
       }
-      d.k=tireCle(liste, dernier);
-      if(varie) d.s=varie(d.k);
-      if(tailles){
-        const w=largeurDe(d.k,tailles)*(d.s||1);
-        const rec=Math.min(ecart+Math.random()*jeu, w*CHEVAUCHE_MAX);
-        d.x=Math.max(VIEW_W+40, bord-rec);
-      }else d.x=Math.max(VIEW_W+60, mx+ecart+Math.random()*jeu);
+      d.k=tireCle(liste, dernier, opt.poids);
+      d.s=opt.varie ? opt.varie(d.k) : 1;
+      const w=largeurDe(d.k,tailles)*d.s;
+      const tire=ecart+Math.random()*jeu;
+      /* Les deux bandes se placent a partir du bord DROIT du plus avance, jamais de
+         son bord gauche : les silhouettes n'ont pas du tout la meme largeur, et un
+         ecart compte depuis le bord gauche collait un panneau contre un chene de
+         quatre cents unites de large. Le fond recule pour se recouvrir, le second
+         plan avance pour respirer. */
+      d.x = opt.continu ? Math.max(VIEW_W+40, bord-Math.min(tire, w*CHEVAUCHE_MAX))
+                        : Math.max(VIEW_W+60, bord+tire);
     }
   }
 }
 /* Les deux plans de fond, a leur vitesse propre. `v` est la vitesse du premier plan. */
 function avanceFond(dt, v){
-  defile(decor, DECOR_KEYS,  v*PARA_DECOR*dt, -400, 200, 250, null, tailleArbre);
-  defile(hills, COLLINE_KEYS, v*PARA_COLL*dt, -1100, CHEVAUCHE, CHEVAUCHE_JEU, COLLINE);
+  defile(decor, DECOR_KEYS,  v*PARA_DECOR*dt, -600, ECART_DECOR, ECART_JEU, DECOR,
+         {poids:POIDS, varie:tailleArbre});
+  defile(hills, COLLINE_KEYS, v*PARA_COLL*dt, -1100, CHEVAUCHE, CHEVAUCHE_JEU, COLLINE,
+         {continu:true});
 }
 
 /* ---------- entrees ----------
