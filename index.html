@@ -1153,11 +1153,20 @@ function ombres(){
   }
   /* L'ombre de la poule reste au sol pendant qu'elle monte, en retrecissant et en
      palissant. Elle ne disparait jamais tout a fait : c'est le seul repere qui dise
-     ou elle va retomber, et une ombre qui s'eteint a mi-hauteur ne sert a rien. */
+     ou elle va retomber, et une ombre qui s'eteint a mi-hauteur ne sert a rien.
+     La pose KO, elle, s'ecrase sous la ligne d'horizon et couvrait entierement
+     l'ombre de la pose debout, calee sur la ligne. Elle prend donc la largeur de
+     la pose et descend un peu plus bas : juste assez pour depasser d'un lisere,
+     ce qui la pose au sol au lieu de la laisser flotter. */
   const u=Math.min(1, Math.max(0, 1+hen.y/560));
-  ctx.globalAlpha=.05+.10*u;
   ctx.beginPath();
-  ctx.ellipse(hen.x+80, 1, 26+26*u, 3+4.5*u, 0, 0, 7);
+  if(hen.dead && deadPhase()===1){
+    ctx.globalAlpha=.04+.08*u;                     // plus legere : elle ne fait qu'un lisere
+    ctx.ellipse(hen.x+74, KO_DROP+3, KO_W*0.27*(1+u), 2.2+3.4*u, 0, 0, 7);
+  }else{
+    ctx.globalAlpha=.05+.10*u;
+    ctx.ellipse(hen.x+80, 1, 26+26*u, 3+4.5*u, 0, 0, 7);
+  }
   ctx.fill();
   ctx.restore();
 }

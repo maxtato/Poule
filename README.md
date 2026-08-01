@@ -135,7 +135,9 @@ faisaient une frise ; dispersées, elles donnent au sol de l'épaisseur. Les obj
 posés au sol, la poule comprise, portent une ombre — un aplat d'encre très dilué,
 sans contour. Celle de la poule reste au sol pendant qu'elle monte, en
 rétrécissant et en pâlissant, mais ne disparaît jamais tout à fait : c'est le seul
-repère qui dise où elle va retomber.
+repère qui dise où elle va retomber. La pose KO a la sienne, plus large et plus
+basse : calée sur la ligne d'horizon comme celle de la pose debout, elle passait
+entièrement sous le ventre de la poule à plat et ne se voyait plus.
 
 Le reste est un décalage de rendu et rien d'autre. Le premier plan est translaté d'un
 bloc au moment de le dessiner plutôt que dessin par dessin : ainsi rien ne peut
