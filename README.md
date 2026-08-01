@@ -32,10 +32,10 @@ profondeur :
 | Deuxième | Arbres, sapin, cyprès, tracteur, moulin, panneaux | un tiers |
 | Fond | Massifs montagneux et collines | un dixième |
 
-Le fond et le deuxième plan partagent une seule et même tonalité : ce ne sont pas
-les valeurs qui les séparent, c'est leur vitesse. Ce qui se recouvre se fond donc
-en une seule masse, et les plans ne se lisent qu'en mouvement — c'est le parti
-pris.
+Trois valeurs étagent la profondeur : la plus claire pour les massifs du fond,
+une plus foncée pour les arbres du deuxième plan, et l'encre des dessins de
+devant. La ligne d'horizon prend la teinte des arbres — elle marque le fond du
+champ, elle n'y appartient pas.
 
 Ce sont des aplats opaques : rien ne se voit au travers. Ils suivent quand même
 l'heure du jour — chaque dessin est reposé puis rempli en `source-in` dans un
@@ -43,6 +43,11 @@ calque à part, ce qui n'en garde que la silhouette et lui donne la couleur du
 moment. La teinte est arrondie par paliers et sert de clé de cache : sur une
 journée entière elle ne prend qu'une trentaine de valeurs, soit une repeinte
 par seconde environ au lieu de dix-huit par image.
+
+Les massifs du fond forment une chaîne continue : chacun est placé à partir du
+bord **droit** du précédent, moins un chevauchement, ce qui garantit le
+recouvrement quelle que soit la silhouette tirée. Les arbres, eux, sont placés à
+partir du bord gauche de leur voisin plus un écart : ils doivent respirer.
 
 ## Perspective
 
@@ -54,11 +59,19 @@ lointain au plus proche :
 |---|---|
 | Massifs et collines du fond | 2 |
 | Arbres, tracteur, panneaux, moulin | 4 |
-| Touffes d'herbe | 8 |
+| Touffes d'herbe | 3 à 26, tiré au hasard |
 | Poule, aigles, mouches, particules | 14 |
 | Obstacles à sauter | 19 |
 
-C'est un décalage de rendu et rien d'autre. Le premier plan est translaté d'un
+Les touffes ne sont pas toutes sur la même rangée : chacune tire son propre
+enfoncement, et une sur trois descend nettement plus bas. Alignées, elles
+faisaient une frise ; dispersées, elles donnent au sol de l'épaisseur. Les objets
+posés au sol, la poule comprise, portent une ombre — un aplat d'encre très dilué,
+sans contour. Celle de la poule reste au sol pendant qu'elle monte, en
+rétrécissant et en pâlissant, mais ne disparaît jamais tout à fait : c'est le seul
+repère qui dise où elle va retomber.
+
+Le reste est un décalage de rendu et rien d'autre. Le premier plan est translaté d'un
 bloc au moment de le dessiner plutôt que dessin par dessin : ainsi rien ne peut
 se désaligner, et aucune boîte de collision ne bouge — le jeu se joue exactement
 comme avant.
@@ -89,8 +102,8 @@ Les repères du code, dans l'ordre :
 | État | Machine à trois états, gel de la partie |
 | Entrées | Appuis, comptage des doigts, mémoire du saut |
 | Obstacles | Tirage, espacement, montée en difficulté |
-| Particules | Poussière, plumes, sueur, étiquettes de gain |
-| Rendu | Décor, sprites, puis HUD calé sur le terrain |
+| Particules | Poussière, plumes, traits de vitesse, pop du gobage |
+| Rendu | Trois plans, ombres portées, sprites, puis HUD calé sur le terrain |
 
 Les valeurs de calage vertical des poses (`FOOT_POSE`, `DIVE_DROP`, `HURT_DROP`,
 `ANCH_X`/`ANCH_Y`) sont réglées à l'œil sur les dessins : les modifier décale la

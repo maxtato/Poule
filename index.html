@@ -200,6 +200,10 @@ const COLLINE = {bg_mont0:230, bg_mont1:165, bg_mont2:215, bg_mont3:140,
                  bg_coll0:95,  bg_coll1:110, bg_coll2:72,  bg_coll3:88};
 const COLLINE_KEYS = Object.keys(COLLINE);
 const COLLINE_BASE = 2;
+/* De combien chaque massif mord sur son voisin. Plus le chevauchement est grand,
+   plus la chaine est courte a nombre de silhouettes egal — et une chaine trop
+   courte finit par s'ouvrir sur le bord de l'ecran. */
+const CHEVAUCHE = 70, CHEVAUCHE_JEU = 110;
 /* Chaque objet mord sous la ligne d'horizon a hauteur de 8% de sa taille : leur base
    est dessinee en perspective. Une constante commune enterrait les petits objets. */
 /* Le seau est dessine avec sa flaque, qui s'etale bien au-dela de lui. La collision
@@ -238,7 +242,10 @@ const HURT_DROP = 12;   // pose assise : elle s'enfonce sous la ligne d'horizon
    moment de le dessiner, et pas une seule boite de collision ne bouge. */
 const FRONT_SINK = 14;   // la poule et tout ce qui partage son plan
 const OBS_EXTRA  = 5;    // les obstacles au sol, un cran devant elle
-const TUFT_SINK  = 8;    // les touffes, entre la ligne et la poule
+/* Les touffes ne sont pas toutes sur la meme rangee : chacune tire son propre
+   enfoncement, et une sur trois descend nettement plus bas. Alignees, elles
+   faisaient une frise ; dispersees, elles donnent au sol de l'epaisseur. */
+function tuftSink(){ return Math.random()<0.34 ? 15+Math.random()*11 : 3+Math.random()*9; }
 
 /* Course : deux poses seulement, alternees. Le saut de l'une a l'autre etait sec.
    La pose qu'on vient de quitter s'attarde derriere l'actuelle et s'efface, ce qui
@@ -258,15 +265,14 @@ const INK="#1A1614", CREAM="#FAF3EC", SAND="#EFE5D5", EARTH="#E0D3BC",
    etapes restent claires : les dessins sont a l'encre sombre et doivent se lire
    aussi bien a midi qu'au crepuscule. */
 const DAY_LEN=2400;                        // metres pour boucler la journee, soit ~35 s
-/* `dec` : l'aplat commun aux deux plans de decor, le fond comme les arbres. Une
-   seule tonalite pour tout ce qui n'est pas le premier plan : ce ne sont plus les
-   valeurs qui separent les plans, c'est leur vitesse. Elle doit rester nettement
-   plus claire que l'encre des dessins de devant. */
+/* Trois valeurs etagent la profondeur : `coll` pour les massifs du fond, `dec`,
+   plus fonce, pour les arbres du second plan, et l'encre des dessins de devant.
+   `dec` sert aussi a la ligne d'horizon, qui appartient au meme lointain. */
 const HEURES=[
-  {haut:"#F2E7D6", bas:"#FAF3EC", terre:"#E0D3BC", dec:"#BBB2A5"},  // matin
-  {haut:"#DCEAF2", bas:"#FBF7F0", terre:"#DED5C2", dec:"#B4B4AE"},  // plein midi
-  {haut:"#F8DFB2", bas:"#FDF1DE", terre:"#DFCBA6", dec:"#C3B29A"},  // fin d'apres-midi
-  {haut:"#DCC6DA", bas:"#FBE8DD", terre:"#CFBEB3", dec:"#B5A6A6"}   // crepuscule
+  {haut:"#F2E7D6", bas:"#FAF3EC", coll:"#E3D8C5", terre:"#E0D3BC", dec:"#BBB2A5"},  // matin
+  {haut:"#DCEAF2", bas:"#FBF7F0", coll:"#DBDDD3", terre:"#DED5C2", dec:"#B4B4AE"},  // plein midi
+  {haut:"#F8DFB2", bas:"#FDF1DE", coll:"#E6D1AB", terre:"#DFCBA6", dec:"#C3B29A"},  // fin d'apres-midi
+  {haut:"#DCC6DA", bas:"#FBE8DD", coll:"#D7C3BF", terre:"#CFBEB3", dec:"#B5A6A6"}   // crepuscule
 ];
 /* `pas` arrondit chaque canal : les teintes du fond et du second plan servent de
    cle de cache et ne doivent pas changer a chaque image, sinon on repeint tous les
@@ -285,7 +291,7 @@ function heure(){
   const i=u|0, f=u-i, e=f*f*(3-2*f);       // adoucit l'entree et la sortie de chaque etape
   const a=HEURES[i%HEURES.length], b=HEURES[(i+1)%HEURES.length];
   return {haut:mixHex(a.haut,b.haut,e), bas:mixHex(a.bas,b.bas,e),
-          terre:mixHex(a.terre,b.terre,e),
+          coll:mixHex(a.coll,b.coll,e,3), terre:mixHex(a.terre,b.terre,e),
           dec:mixHex(a.dec,b.dec,e,3)};
 }
 
@@ -487,13 +493,17 @@ function reset(){
   clouds=[]; for(let i=0;i<5;i++) clouds.push({x:Math.random()*VIEW_W*1.5, f:.15+Math.random()*.6, s:.55+Math.random()*.6, v:.5+Math.random()*.7});
   /* Les massifs debordent largement du cadre : on seme au-dela des deux bords pour
      qu'aucun n'entre ni ne sorte a vue. */
-  hills=[]; { let p=null;
-    for(let x=-500; x<VIEW_W+700; x+=260+Math.random()*220){
+  /* La chaine doit rester plus longue que la course entre le bord droit et le point
+     de sortie a gauche, sinon elle s'etire et finit par s'ouvrir. On seme donc bien
+     au-dela du cadre : le surcout est de trois silhouettes. */
+  hills=[]; { let p=null, x=-500;
+    while(x < VIEW_W+1400){
       p=tireCle(COLLINE_KEYS,p); hills.push({k:p, x});
+      x += largeurDe(p,COLLINE) - CHEVAUCHE - Math.random()*CHEVAUCHE_JEU;
     } }
   tufts=[];
   for(let i=0;i<13;i++)
-    tufts.push({x:Math.random()*VIEW_W*1.8, k:(Math.random()*4)|0});
+    tufts.push({x:Math.random()*VIEW_W*1.8, k:(Math.random()*4)|0, s:tuftSink()});
   /* Le second plan est seme d'avance sur une largeur et demie d'ecran, avec un
      espacement irregulier : aligne, il aurait fait cloture. */
   decor=[]; let prec=null;
@@ -509,24 +519,38 @@ function tireCle(liste, evite){
   const l = evite ? liste.filter(k=>k!==evite) : liste;
   return l[(Math.random()*l.length)|0];
 }
+function largeurDe(k, tailles){
+  const im=SPR[k];
+  return im && im.naturalHeight ? tailles[k]*im.naturalWidth/im.naturalHeight : tailles[k];
+}
 /* Defilement d'une bande de decor. Un element sorti par la gauche repart derriere
    le plus a droite : recycler sur une position tiree au hasard finissait par les
-   empiler deux par deux. */
-function defile(bande, liste, dx, sortie, ecart, jeu){
+   empiler deux par deux.
+   `tailles` bascule sur un placement continu. Sans lui, on part du bord GAUCHE du
+   dernier et on ajoute un ecart : c'est ce qu'il faut aux arbres, qui doivent
+   respirer. Le fond, lui, doit former une ligne de crete ininterrompue, et cette
+   regle-la ouvrait un trou des que l'ecart tire depassait la largeur du voisin. On
+   part alors de son bord DROIT et on recule d'un chevauchement, ce qui garantit le
+   recouvrement quelle que soit la silhouette tiree. */
+function defile(bande, liste, dx, sortie, ecart, jeu, tailles){
   for(const d of bande){
     d.x -= dx;
     if(d.x < sortie){
-      let mx=-1e9, dernier=null;
-      for(const o of bande) if(o.x>mx){ mx=o.x; dernier=o.k; }
+      let mx=-1e9, dernier=null, bord=-1e9;
+      for(const o of bande){
+        if(o.x>mx){ mx=o.x; dernier=o.k; }
+        if(tailles) bord=Math.max(bord, o.x+largeurDe(o.k,tailles));
+      }
       d.k=tireCle(liste, dernier);
-      d.x=Math.max(VIEW_W+60, mx+ecart+Math.random()*jeu);
+      d.x = tailles ? Math.max(VIEW_W+40, bord-ecart-Math.random()*jeu)
+                    : Math.max(VIEW_W+60, mx+ecart+Math.random()*jeu);
     }
   }
 }
 /* Les deux plans de fond, a leur vitesse propre. `v` est la vitesse du premier plan. */
 function avanceFond(dt, v){
   defile(decor, DECOR_KEYS,  v*PARA_DECOR*dt, -300, 200, 250);
-  defile(hills, COLLINE_KEYS, v*PARA_COLL*dt, -700, 260, 220);
+  defile(hills, COLLINE_KEYS, v*PARA_COLL*dt, -700, CHEVAUCHE, CHEVAUCHE_JEU, COLLINE);
 }
 
 /* ---------- entrees ----------
@@ -726,7 +750,7 @@ function update(dt){
     traits=traits.filter(p=>p.l>0);
     if(state===S.MENU){
       hen.anim+=dt*7;
-      for(const g of tufts){ g.x-=60*dt; if(g.x<-60){g.x=VIEW_W+Math.random()*320; g.k=(Math.random()*4)|0;} }
+      for(const g of tufts){ g.x-=60*dt; if(g.x<-60){g.x=VIEW_W+Math.random()*320; g.k=(Math.random()*4)|0; g.s=tuftSink();} }
       avanceFond(dt, 60);                       // l'accueil respire au meme rythme
     }
     for(const p of plumes){ p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=520*dt; p.r+=p.vr*dt; p.l-=dt*.5; }
@@ -870,7 +894,7 @@ function update(dt){
   for(const c of clouds){ c.x-=c.v*speed*.10*dt; if(c.x<-180){c.x=VIEW_W+140; c.f=.15+Math.random()*.6;} }
   for(const g of tufts){
     g.x-=speed*dt;                                   // solidaire du sol : aucune derive
-    if(g.x<-60){ g.x=VIEW_W+Math.random()*320; g.k=(Math.random()*4)|0; }
+    if(g.x<-60){ g.x=VIEW_W+Math.random()*320; g.k=(Math.random()*4)|0; g.s=tuftSink(); }
   }
   avanceFond(dt, speed);                             // second plan puis fond
 
@@ -926,6 +950,37 @@ function teinter(k, coul){
   }
   return c.cv;
 }
+/* ---------- ombres portees ----------
+   Un aplat d'encre tres dilue, sans contour, pour poser les objets sur la terre au
+   lieu de les laisser flotter dessus. Le seau est dessine avec sa flaque, qui
+   s'etale bien au-dela de lui : son ombre se cale sur le seau seul. */
+function ombreObs(o){
+  if(o.k==="bucket"){ const f=o.w/236;
+    return {cx:o.x+(BUCKET_BOX.x+BUCKET_BOX.w/2)*f, rx:BUCKET_BOX.w*f*0.46}; }
+  return {cx:o.x+o.w/2, rx:o.w*0.40};
+}
+function ombres(){
+  ctx.save();
+  ctx.fillStyle=INK;
+  for(const o of obs){
+    if(o.k==="eagle") continue;                    // en plein ciel, rien a poser
+    const b=ombreObs(o);
+    ctx.globalAlpha=.12;
+    ctx.beginPath();
+    ctx.ellipse(b.cx, OBS_DEF[o.k].sink+OBS_EXTRA, b.rx, b.rx*0.17, 0, 0, 7);
+    ctx.fill();
+  }
+  /* L'ombre de la poule reste au sol pendant qu'elle monte, en retrecissant et en
+     palissant. Elle ne disparait jamais tout a fait : c'est le seul repere qui dise
+     ou elle va retomber, et une ombre qui s'eteint a mi-hauteur ne sert a rien. */
+  const u=Math.min(1, Math.max(0, 1+hen.y/560));
+  ctx.globalAlpha=.05+.10*u;
+  ctx.beginPath();
+  ctx.ellipse(hen.x+80, 1, 26+26*u, 3+4.5*u, 0, 0, 7);
+  ctx.fill();
+  ctx.restore();
+}
+
 function line(w){ ctx.strokeStyle=INK; ctx.lineWidth=w; ctx.lineJoin="round"; ctx.lineCap="round"; }
 function rr(x,y,w,h,r){
   ctx.beginPath();
@@ -1002,13 +1057,12 @@ function draw(){
   g.addColorStop(0,jour.haut); g.addColorStop(1,jour.bas);
   ctx.fillStyle=g; ctx.fillRect(-20,-worldH-20,VIEW_W+40,worldH+20);
 
-  /* Fond : massifs et collines, dans la meme tonalite que les arbres du second
-     plan. Ils passent avant, et comme la couleur est commune, tout ce qui se
-     recouvre se fond en une seule masse — c'est voulu. */
+  /* Fond : massifs et collines, dans leur teinte propre, plus claire que celle des
+     arbres — c'est ce qui les fait reculer derriere eux. */
   for(const h of hills){
     const im=SPR[h.k]; if(!im || !im.naturalHeight) continue;
     const hh=COLLINE[h.k], hw=hh*im.naturalWidth/im.naturalHeight;
-    ctx.drawImage(teinter(h.k, jour.dec), h.x, COLLINE_BASE-hh, hw, hh);
+    ctx.drawImage(teinter(h.k, jour.coll), h.x, COLLINE_BASE-hh, hw, hh);
   }
 
   ctx.strokeStyle=INK; ctx.globalAlpha=.25; ctx.lineWidth=3; ctx.lineCap="round"; ctx.lineJoin="round";
@@ -1040,11 +1094,14 @@ function draw(){
   ctx.beginPath(); profil();
   ctx.lineTo(VIEW_W+20, worldH+40); ctx.lineTo(-20, worldH+40); ctx.closePath();
   ctx.fillStyle=jour.terre; ctx.fill();
-  line(2); ctx.beginPath(); profil(); ctx.stroke();
+  /* La ligne d'horizon prend la teinte des arbres, pas l'encre du premier plan :
+     elle marque le fond du champ, elle n'y appartient pas. */
+  ctx.strokeStyle=jour.dec; ctx.lineWidth=2; ctx.lineJoin="round"; ctx.lineCap="round";
+  ctx.beginPath(); profil(); ctx.stroke();
 
   for(const g of tufts){                             // touffes posees sur le relief
     const gw=GRASS[g.k].w, gh=GRASS[g.k].h;
-    ctx.drawImage(SPR["grass"+g.k], g.x, relief(g.x+off)-gh+TUFT_SINK, gw, gh);
+    ctx.drawImage(SPR["grass"+g.k], g.x, relief(g.x+off)-gh+g.s, gw, gh);
   }
 
   /* A partir d'ici, le premier plan. Il descend d'un bloc sous la ligne d'horizon :
@@ -1053,6 +1110,8 @@ function draw(){
      exactement les rapports que les collisions supposent. */
   ctx.save();
   ctx.translate(0, FRONT_SINK);
+
+  ombres();                         // toutes avant les objets : aucune ne se pose dessus
 
   for(const o of obs){
     if(o.k==="eagle"){
