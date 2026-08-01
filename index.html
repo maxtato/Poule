@@ -184,7 +184,7 @@ const HURT_W = 248, HURT_H = 245, HURT_HEAD = [101.2, 46.0];   // assise au sol
    laisser tourner ceux du jeu, qui sont animes. DOS_HEAD repere la tete dans le
    dessin, c'est la qu'ils tournent. */
 const DOS_W = 380, DOS_H = 174, DOS_HEAD = [80, 80];
-const DOS_DROP = 6;     // elle s'ecrase un peu sous la ligne d'horizon
+const DOS_DROP = 18;    // a plat, elle s'ecrase franchement sous la ligne d'horizon
 /* Le dessin a ete reduit a la meme finesse que les autres poses : il se pose donc
    a l'echelle commune sc(), et la tete garde exactement la taille qu'elle a debout
    ou assise. Mesure sur la crete et le barbillon, les deux reperes rouges.
@@ -1304,28 +1304,10 @@ function draw(){
          en arriere pendant que l'appui reste ou il etait. */
       const fesses=hen.x+80-HURT_W*sc()/2 + HURT_FESSES*HURT_W*sc();
       const hx=fesses-DOS_FESSES*w;
-      /* Elle part en arriere : le dessin pivote sur ces memes fesses jusqu'a plat en
-         un cinquieme de seconde. Sans ce quart de tour, la pose apparaissait d'un
-         coup et on ne voyait pas la chute.
-         L'angle est POSITIF : la tete est a gauche du pivot, et sur un canevas dont
-         l'axe vertical descend, c'est un angle positif qui la leve. Au signe oppose
-         elle commencait la tete enfoncee dans le sol et la croupe en l'air, ce qui
-         donnait un plongeon et non une chute a la renverse. */
-      /* 1,3 radian, soit trois quarts d'angle droit : c'est l'inclinaison a laquelle
-         la silhouette allongee se superpose le mieux a la silhouette assise, tete en
-         haut et pattes vers l'avant. A 0,7 elle demarrait deja couchee et le
-         raccord sautait ; a 1,55 elle se tenait debout sur sa croupe. */
-      const u=Math.min(1,(t-deadLand-BASCULE)/0.26), adouci=1-(1-u)*(1-u);
-      const angle=1.3*(1-adouci);
-      ctx.save();
-      ctx.translate(fesses,DOS_DROP); ctx.rotate(angle); ctx.translate(-fesses,-DOS_DROP);
+      /* Pas de mouvement decompose : on passe d'assise a allongee d'une image a
+         l'autre. La secousse et la poussiere, elles, marquent l'instant. */
       ctx.drawImage(im,hx,hy,w,h);
-      ctx.restore();
-      /* Les etoiles suivent la tete pendant la bascule, sinon elles l'attendent
-         toutes seules a l'arrivee. */
-      const tx=hx+DOS_HEAD[0]*sc(), ty=hy+DOS_HEAD[1]*sc()-30;
-      const dx=tx-fesses, dy=ty-DOS_DROP, co=Math.cos(angle), si=Math.sin(angle);
-      drawStars(fesses+dx*co-dy*si, DOS_DROP+dx*si+dy*co);
+      drawStars(hx+DOS_HEAD[0]*sc(), hy+DOS_HEAD[1]*sc()-30);
     }
   }else if(im===SPR.gobe){                        // bec ouvert en vol : meme tete que les poses de vol
     const w=GOBE_W*sc(), h=GOBE_H*sc();

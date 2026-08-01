@@ -163,24 +163,17 @@ Le dessin de la dernière pose portait ses propres étoiles et son tourbillon ; 
 ont été retirés au découpage pour laisser tourner ceux du jeu, qui sont animés.
 Ils ne tournent que sur cette pose-là.
 
-La bascule elle-même est une rotation de 1,3 radian — trois quarts d'angle droit —
-autour des fesses, en un quart de seconde, avec un peu de poussière et une
-secousse. C'est l'inclinaison à laquelle la silhouette allongée se superpose le
-mieux à la silhouette assise : tête en haut, pattes vers l'avant. Plus à plat le
-raccord saute, plus redressée elle se tient debout sur sa croupe.
-
-L'angle est **positif** : la tête est à gauche du pivot, et sur un canevas dont
-l'axe vertical descend, c'est un angle positif qui la lève. Au signe opposé elle
-commençait la tête enfoncée dans le sol et la croupe en l'air — un plongeon, pas
-une chute à la renverse. Les étoiles suivent la tête pendant la rotation, sinon
-elles l'attendent toutes seules à l'arrivée.
+La bascule n'est pas décomposée : on passe d'assise à allongée d'une image à
+l'autre. Ce sont la secousse et la poussière qui marquent l'instant. Une rotation
+intermédiaire avait été essayée puis retirée — elle allongeait le mouvement sans
+le rendre plus lisible.
 
 Deux règles tiennent la cohérence entre les poses. Toutes se posent à la même
 échelle `sc()`, si bien que la tête garde la même taille debout, assise ou sur le
 dos — vérifié en mesurant la crête et le barbillon, les deux repères rouges : 7 %
 d'écart au plus, le reste tenant à l'angle de vue. Et `HURT_FESSES` / `DOS_FESSES`
-situent le point d'appui dans chaque dessin : c'est lui qui reste immobile pendant
-la bascule, la tête partant en arrière autour de lui.
+situent le point d'appui dans chaque dessin : c'est lui qui reste immobile quand
+elle bascule, la tête partant en arrière autour de lui.
 
 ## Collisions
 
