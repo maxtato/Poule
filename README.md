@@ -152,12 +152,13 @@ Quatre poses s'enchaînent quand la poule est touchée :
 | 0 s | Le choc, encore portée par l'élan |
 | 0,15 s | La chute, tête la première |
 | 0,30 s | Assise sur les fesses, dès que le sol est touché |
-| 1,17 s | La bascule en arrière |
-| 1,77 s | L'écran de fin |
+| 0,87 s | La bascule en arrière |
+| 1,47 s | L'écran de fin |
 
 Le temps d'arrêt assise vaut la moitié de l'effet : sans lui on passerait du choc
-au dos sans voir la pose du milieu, et à une demi-seconde la bascule suivait encore
-la chute de trop près pour qu'on les distingue.
+au dos sans voir la pose du milieu. Mais il ne faut pas non plus la laisser poser —
+une demi-seconde suffit largement à lire la pose assise, au-delà la séquence
+traîne.
 
 Le dessin de la dernière pose portait ses propres étoiles et son tourbillon ; ils
 ont été retirés au découpage pour laisser tourner ceux du jeu, qui sont animés.
@@ -168,10 +169,11 @@ l'autre. Ce sont la secousse et la poussière qui marquent l'instant. Une rotati
 intermédiaire avait été essayée puis retirée — elle allongeait le mouvement sans
 le rendre plus lisible.
 
-Deux règles tiennent la cohérence entre les poses. Toutes se posent à la même
-échelle `sc()`, si bien que la tête garde la même taille debout, assise ou sur le
-dos — vérifié en mesurant la crête et le barbillon, les deux repères rouges : 7 %
-d'écart au plus, le reste tenant à l'angle de vue. Et `HURT_FESSES` / `DOS_FESSES`
+Deux règles tiennent la cohérence entre les poses. Toutes se posent à l'échelle
+commune `sc()`, la pose allongée à 94 % de celle-ci — juste assez pour qu'elle ne
+prenne pas toute la place à plat. Mesurée sur la crête et le barbillon, les deux
+repères rouges, sa tête reste à 6 % des poses debout et assise, ce qui ne se lit
+pas comme un changement de taille. Et `HURT_FESSES` / `DOS_FESSES`
 situent le point d'appui dans chaque dessin : c'est lui qui reste immobile quand
 elle bascule, la tête partant en arrière autour de lui.
 

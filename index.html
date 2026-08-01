@@ -185,6 +185,11 @@ const HURT_W = 248, HURT_H = 245, HURT_HEAD = [101.2, 46.0];   // assise au sol
    dessin, c'est la qu'ils tournent. */
 const DOS_W = 380, DOS_H = 174, DOS_HEAD = [80, 80];
 const DOS_DROP = 18;    // a plat, elle s'ecrase franchement sous la ligne d'horizon
+/* Un cheveu plus petite que les autres poses. Mesuree sur les reperes rouges, la
+   tete y est de six pour cent en dessous des poses debout et assise — assez pour
+   qu'elle ne prenne pas toute la place a plat, trop peu pour qu'on lise un
+   changement de taille. */
+const DOS_ECH = 0.94;
 /* Le dessin a ete reduit a la meme finesse que les autres poses : il se pose donc
    a l'echelle commune sc(), et la tete garde exactement la taille qu'elle a debout
    ou assise. Mesure sur la crete et le barbillon, les deux reperes rouges.
@@ -785,10 +790,10 @@ function mouthOpen(){
 function panic(){ return !hen.ground && !hen.dead && hen.feathers<=0.02 && hen.vy>50; }
 /* Sequence de choc : 0 le coup, 1 la chute, 2 assise des que le sol est touche,
    3 a la renverse. Le temps d'arret assise vaut la moitie de tout l'effet : sans
-   lui elle passerait du choc au dos sans qu'on ait vu la pose du milieu. A une
-   demi-seconde la bascule suivait la chute de trop pres et les deux se
-   confondaient ; il faut la laisser assise assez longtemps pour qu'on l'y voie. */
-const BASCULE = 0.85;
+   lui elle passerait du choc au dos sans qu'on ait vu la pose du milieu, mais il
+   ne faut pas non plus la laisser poser : une demi-seconde suffit largement a lire
+   la pose assise, et au-dela la sequence traine. */
+const BASCULE = 0.55;
 function deadPhase(){
   if(t-deadAt<0.14) return 0;   // le coup : bref, juste le temps de le lire
   if(!hen.ground) return 1;
@@ -1298,7 +1303,7 @@ function draw(){
       const hw=HURT_W*sc(), hh=HURT_H*sc(), hx=hen.x+80-hw/2, hy=-hh+HURT_DROP;
       ctx.drawImage(im,hx,hy,hw,hh);
     }else{                                          // a la renverse, etoiles qui tournent
-      const w=DOS_W*sc(), h=DOS_H*sc(), hy=-h+DOS_DROP;
+      const e=sc()*DOS_ECH, w=DOS_W*e, h=DOS_H*e, hy=-h+DOS_DROP;
       /* Les fesses ne bougent pas d'une pose a l'autre : on place le dessin allonge
          a partir de ce point-la, et non a partir de son centre. La tete part donc
          en arriere pendant que l'appui reste ou il etait. */
@@ -1307,7 +1312,7 @@ function draw(){
       /* Pas de mouvement decompose : on passe d'assise a allongee d'une image a
          l'autre. La secousse et la poussiere, elles, marquent l'instant. */
       ctx.drawImage(im,hx,hy,w,h);
-      drawStars(hx+DOS_HEAD[0]*sc(), hy+DOS_HEAD[1]*sc()-30);
+      drawStars(hx+DOS_HEAD[0]*e, hy+DOS_HEAD[1]*e-30);
     }
   }else if(im===SPR.gobe){                        // bec ouvert en vol : meme tete que les poses de vol
     const w=GOBE_W*sc(), h=GOBE_H*sc();
