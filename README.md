@@ -23,14 +23,18 @@ arrivent d'autant plus vite que la course dure.
 
 ## La course
 
-Quatre poses en boucle : pattes écartées, serrées, croisées, serrées. Les serrées
-reviennent deux fois — c'est le passage obligé entre chaque extrême. Le corps
-remonte sur les serrées et descend sur les deux poses tendues, soit un rebond par
-foulée et non un par image.
+Deux poses en boucle : pattes écartées, pattes croisées. La pose pattes serrées
+servait de passage entre les deux, mais elle est aussi la pose d'arrêt, et la
+garder dans la boucle donnait une foulée qui marque le pas. Le corps rebondit deux
+fois par cycle, soit un rebond par appui et non un par image.
+
+Le cycle se déduit de la liste `COURSE` : y remettre `"idle"` entre les deux
+extrêmes suffit à revenir à quatre images, le rebond et la traînée suivent.
 
 La pose qu'on vient de quitter s'attarde derrière l'actuelle et s'efface sur un
 tiers de l'image : les pattes gardent une traînée, ce qui donne l'illusion d'une
-pose intermédiaire qui n'a jamais été dessinée. La traînée passe **avant**,
+pose intermédiaire qui n'a jamais été dessinée — c'est elle qui tient lieu de
+passage entre les deux extrêmes. La traînée passe **avant**,
 l'actuelle par-dessus et opaque — un fondu croisé classique aurait rendu la poule
 elle-même translucide pendant l'échange.
 

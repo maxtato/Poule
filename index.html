@@ -165,11 +165,15 @@ const ANCH_X = 224.4, ANCH_Y = 56.8;
    sur les poses ou les pattes sont plus hautes dans le dessin. */
 const FOOT_POSE = {"fly_up": 203, "fly_mid": 192, "fly_down": 226, "jump": 257, "idle": 272, "walk": 270, "snap": 241, "cross": 274};   // position de la tete dans le canvas sprite
 
-/* Cycle de course, quatre poses : pattes ecartees, serrees, croisees, serrees.
-   Les serrees reviennent deux fois, c'est le passage oblige entre chaque extreme.
+/* Cycle de course : ecartees, croisees, et rien entre les deux. La pose pattes
+   serrees servait de passage, mais elle est aussi la pose d'arret — la garder dans
+   la boucle donnait une foulee qui marque le pas. Les deux extremes s'enchainent
+   donc directement, et la trainee tient lieu d'intermediaire.
    La pose croisee a ete recalee sur le meme canevas que les autres en superposant
-   la boite du corps — seules les pattes bougent d'une image a l'autre. */
-const COURSE = ["walk", "idle", "cross", "idle"];
+   la boite du corps : seules les pattes bougent d'une image a l'autre.
+   Le reste du rendu se deduit de la longueur de cette liste — on peut y remettre
+   "idle" sans toucher a autre chose. */
+const COURSE = ["walk", "cross"];
 const HURT_W = 248, HURT_H = 245, HURT_HEAD = [101.2, 46.0];   // assise au sol, etoiles ajoutees en canvas
 const STUN_W = 358, STUN_H = 281, STUN_HEAD = [259.5, 115.0]; // choc : sonnee, encore en l'air
 const DIVE_W = 386, DIVE_H = 263;                         // chute : elle pique du nez
@@ -202,8 +206,10 @@ const DECOR_BASE = 4;
    ligne de crete. Ce sont maintenant des massifs et des collines dessines. Ils
    sont larges et se recouvrent volontiers — c'est ce chevauchement qui donne une
    chaine continue plutot qu'un chapelet de buttes. */
-const COLLINE = {bg_mont0:230, bg_mont1:165, bg_mont2:215, bg_mont3:140,
-                 bg_coll0:95,  bg_coll1:110, bg_coll2:72,  bg_coll3:88};
+/* Les massifs dominent, les collines douces restent basses : c'est l'ecart entre
+   les deux qui donne du relief a la ligne de crete. */
+const COLLINE = {bg_mont0:334, bg_mont1:240, bg_mont2:312, bg_mont3:203,
+                 bg_coll0:110, bg_coll1:126, bg_coll2:83,  bg_coll3:101};
 const COLLINE_KEYS = Object.keys(COLLINE);
 const COLLINE_BASE = 2;
 /* De combien chaque massif mord sur son voisin. Plus le chevauchement est grand,
@@ -1038,8 +1044,8 @@ function drawStars(cx,cy){
 function henFrame(){
   if(hen.dead){ const ph=deadPhase(); return ph===0 ? SPR.stun : (ph===1 ? SPR.dive : SPR.hurt); }
   if(mouthOpen()) return hen.ground ? SPR.snap : SPR.gobe;
-  if(hen.ground) return SPR[COURSE[(hen.anim%4)|0]];
-  if(panic()) return SPR[COURSE[(hen.anim%4)|0]];            // pattes qui gigotent dans le vide
+  if(hen.ground) return SPR[COURSE[(hen.anim%COURSE.length)|0]];
+  if(panic()) return SPR[COURSE[(hen.anim%COURSE.length)|0]];   // pattes qui gigotent dans le vide
   if(!flying() && t>flapUntil) return SPR.jump;
   const k=(hen.flap|0)%4;
   return k===0 ? SPR.fly_down : (k===2 ? SPR.fly_up : SPR.fly_mid);
@@ -1185,10 +1191,10 @@ function draw(){
     ctx.drawImage(im, headX-GOBE_HEAD[0]*sc(), headY-GOBE_HEAD[1]*sc(), w, h);
   }else{
     const w=SW*sc(), h=SH*sc();
-    /* Un rebond par foulee, pas un par image : le corps est bas sur les deux poses
-       tendues — ecartees et croisees — et remonte sur les serrees, qui sont le
-       moment ou elle se ramasse. */
-    const bob=hen.ground ? Math.abs(Math.sin(hen.anim*Math.PI/2))*3.5 : 0;
+    /* Un rebond par foulee, pas un par image. Il y a deux appuis par cycle quelle
+       que soit la longueur de la boucle : le corps rebondit donc deux fois sur
+       COURSE.length, que la pose de passage soit la ou non. */
+    const bob=hen.ground ? Math.abs(Math.sin(hen.anim*Math.PI*2/COURSE.length))*3.5 : 0;
     const jitter = panic() ? Math.sin(t*46)*2.5 : 0;
     /* Recalage au sol : nul pour les poses de reference, non nul si un dessin a les
        pattes plus hautes que les autres. La cle vient de la table inverse plutot que
@@ -1203,8 +1209,8 @@ function draw(){
        gobage se joue aussi au sol, et elle doit rester seule a l'ecran. */
     const cle=CLE.get(im);
     if(COURSE.indexOf(cle)>=0){
-      const i=(hen.anim%4)|0, d=hen.anim%1;         // avancee dans l'image courante
-      if(d<FONDU) poser(COURSE[(i+3)%4], TRACE*(1-d/FONDU));   // la trainee d'abord
+      const n=COURSE.length, i=(hen.anim%n)|0, d=hen.anim%1;   // avancee dans l'image courante
+      if(d<FONDU) poser(COURSE[(i+n-1)%n], TRACE*(1-d/FONDU)); // la trainee d'abord
       poser(COURSE[i], 1);
     }else poser(cle, 1);
     ctx.globalAlpha=1;
