@@ -13,6 +13,12 @@ rien à télécharger, aucun réseau.
 | `Espace`, `↑`, `W` | Idem au clavier |
 | `M` | Couper ou remettre le son |
 
+Un bouton rond en bas de l'écran donne la même chose : appui court pour sauter,
+maintenu pour voler. Il se pose dans la bande de terre sous le sol, là où le pouce
+tombe déjà et où il ne cache rien du terrain, et n'apparaît qu'en course. L'appui
+n'importe où sur l'écran continue de marcher — le bouton ne fait que le rendre
+visible.
+
 La jauge de plumes se vide en vol et se remplit au sol. Gober une mouche rend
 deux plumes. Gober plusieurs mouches sans laisser retomber la chaîne monte un
 combo : la première rapporte 4 m, la huitième 32 m, soit environ 144 m pour une

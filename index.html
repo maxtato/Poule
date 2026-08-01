@@ -90,6 +90,27 @@
   #mute.off{color:#B5AA9A;border-color:#B5AA9A}
   #mute.off .ondes{opacity:0}
   #mute.off::after{opacity:1}
+
+  /* Bouton de saut. Il se pose dans la bande de terre sous le sol, la ou le pouce
+     tombe deja et ou il ne cache rien du terrain. L'appui n'importe ou sur l'ecran
+     continue de marcher : le bouton ne fait que le rendre visible. */
+  #fly{position:absolute;left:50%;bottom:calc(30px + env(safe-area-inset-bottom,0px));
+    width:92px;height:92px;border-radius:50%;
+    border:2px solid #1A1614;background:#FAF3EC;color:#1A1614;
+    display:none;align-items:center;justify-content:center;z-index:8;cursor:pointer;
+    transform:translateX(-50%);box-shadow:0 3px 0 #1A1614;
+    transition:background .09s,color .09s}
+  #fly.on{display:flex}
+  #fly.presse{background:#D6342B;color:#fff;box-shadow:none;
+    transform:translateX(-50%) translateY(3px)}
+  #fly svg{display:block}
+  #volmot{position:absolute;left:50%;transform:translateX(-50%);
+    bottom:calc(10px + env(safe-area-inset-bottom,0px));
+    display:none;font-size:10px;font-weight:700;letter-spacing:.17em;
+    text-transform:uppercase;color:#B5AA9A;white-space:nowrap;z-index:8;
+    pointer-events:none}
+  #volmot.on{display:block}
+  @media (prefers-reduced-motion:reduce){ #fly{transition:none} }
   #load{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
     background:#FAF3EC;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:#9A8F80;z-index:9}
   @media (prefers-reduced-motion:reduce){.btn,.layer{transition:none}}
@@ -141,6 +162,14 @@
     <div class="tap">ou appuie n'importe où</div>
   </div>
 </div>
+
+<button id="fly" aria-label="Sauter, ou maintenir pour voler">
+  <svg viewBox="0 0 24 24" width="36" height="36" aria-hidden="true" focusable="false">
+    <path d="M12 20V5.6M12 5.6l-6.2 6.2M12 5.6l6.2 6.2" fill="none" stroke="currentColor"
+          stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</button>
+<div id="volmot">Maintenir pour voler</div>
 
 <button id="mute" aria-label="Couper le son" aria-pressed="false">
   <svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true" focusable="false">
@@ -510,12 +539,14 @@ addEventListener("orientationchange", ()=>setTimeout(checkOrient,150));
 function halt(){
   if(halted || state!==S.PLAY) return;
   halted=true; hold=false; flapNow=false; fingers.clear();
+  montreVol(false);
   $("pause").classList.add("on");
 }
 function unhalt(){
   if(!halted) return;
   halted=false; lastPress=t;                   // l'appui qui reprend ne fait pas sauter
   $("pause").classList.remove("on");
+  if(state===S.PLAY) montreVol(true);
 }
 document.addEventListener("visibilitychange",()=>{ if(document.hidden) halt(); });
 
@@ -663,7 +694,14 @@ function press(){
     SFX.aile();
   }
 }
-function release(){ hold=false; flapNow=false; }
+function release(){ hold=false; flapNow=false; $("fly").classList.remove("presse"); }
+/* Le bouton n'apparait qu'en course : sur l'accueil et l'ecran de fin, c'est la
+   carte qui commande, et en pause plus rien ne doit repondre. */
+function montreVol(v){
+  $("fly").classList.toggle("on",v);
+  $("volmot").classList.toggle("on",v);
+  if(!v) $("fly").classList.remove("presse");
+}
 
 addEventListener("keydown",e=>{
   if(e.code==="Space"||e.code==="ArrowUp"||e.code==="KeyW"){ e.preventDefault(); if(!e.repeat) press(); }
@@ -682,6 +720,14 @@ function pup(e){
   fingers.delete(e.pointerId);
   if(fingers.size===0) release();
 }
+/* Le bouton de saut passe par le meme comptage de doigts que le reste : lever le
+   doigt du bouton alors qu'un autre est pose sur l'ecran ne coupe donc pas le vol. */
+$("fly").addEventListener("pointerdown",e=>{
+  e.preventDefault();
+  fingers.add(e.pointerId);
+  $("fly").classList.add("presse");
+  press();
+});
 cv.addEventListener("pointerdown",pdown);
 $("over").addEventListener("pointerdown",pdown);
 $("menu").addEventListener("pointerdown",pdown);
@@ -693,9 +739,11 @@ addEventListener("blur",()=>{ fingers.clear(); release(); halt(); });
 function start(){
   overShown=false; unhalt(); reset(); state=S.PLAY;
   $("menu").classList.remove("on"); $("over").classList.remove("on");
+  montreVol(true);
 }
 function die(){
   state=S.DEAD; deadAt=t; deadLand=-9; basculee=false; hen.dead=true; shake=15; hold=false;
+  montreVol(false);
   SFX.choc();
   hen.vy=Math.min(hen.vy,-790); hen.ground=false;   // a peine souleve : elle retombe sec
   for(let i=0;i<15;i++) plumes.push({x:hen.x+70,y:hen.y-60,vx:-40-Math.random()*170,
