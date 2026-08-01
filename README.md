@@ -40,8 +40,23 @@ paliers et sert de clé de cache : sur une journée entière elle ne prend que
 quatorze valeurs, soit une repeinte toutes les deux secondes environ au lieu de
 dix par image.
 
-Leur base passe sous la ligne d'horizon, que le sol recouvre juste après, ce qui
-les enracine au lieu de les poser dessus.
+## Perspective
+
+Le sol n'est pas vu de face : la ligne d'horizon est le fond du champ, et ce qui
+est proche du spectateur se pose plus bas. Les appuis s'étagent donc, du plus
+lointain au plus proche :
+
+| Élément | Appui sous la ligne |
+|---|---|
+| Arbres, tracteur, panneaux, moulin | 4 |
+| Touffes d'herbe | 8 |
+| Poule, aigles, mouches, particules | 14 |
+| Obstacles à sauter | 19 |
+
+C'est un décalage de rendu et rien d'autre. Le premier plan est translaté d'un
+bloc au moment de le dessiner plutôt que dessin par dessin : ainsi rien ne peut
+se désaligner, et aucune boîte de collision ne bouge — le jeu se joue exactement
+comme avant.
 
 ## Cadrage
 

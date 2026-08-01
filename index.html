@@ -182,13 +182,15 @@ const GRASS = [{"w": 41, "h": 26}, {"w": 39, "h": 21}, {"w": 27, "h": 17}, {"w":
      3. les collines                              -> un dixieme
    Hauteurs en unites monde ; la largeur suit le dessin, pour ne rien deformer. */
 const PARA_DECOR = 0.34, PARA_COLL = 0.10;
-const DECOR = {bg_chene:212, bg_cypres:232, bg_saule:194, bg_tracteur:132,
+/* Les arbres dominent le second plan ; le tracteur, les panneaux et le moulin
+   gardent leur echelle, ce sont des reperes et non un horizon. */
+const DECOR = {bg_chene:278, bg_cypres:302, bg_saule:254, bg_tracteur:132,
                bg_poteau:122, bg_girouette:128, bg_fleche:102,
-               bg_moulin:234, bg_arbre:214, bg_sapin:220};
+               bg_moulin:234, bg_arbre:280, bg_sapin:288};
 const DECOR_KEYS = Object.keys(DECOR);
 /* Les silhouettes descendent un peu sous la ligne d'horizon : le sol, dessine
    juste apres, recouvre leur base et les enracine au lieu de les poser dessus. */
-const DECOR_BASE = 7;
+const DECOR_BASE = 4;
 /* Chaque objet mord sous la ligne d'horizon a hauteur de 8% de sa taille : leur base
    est dessinee en perspective. Une constante commune enterrait les petits objets. */
 /* Le seau est dessine avec sa flaque, qui s'etale bien au-dela de lui. La collision
@@ -215,13 +217,19 @@ const STROKE = 1.55;
 const DIVE_DROP = 6;    // pose de chute, tete la premiere
 const HURT_DROP = 12;   // pose assise : elle s'enfonce sous la ligne d'horizon
 
-/* Les pattes tombaient pile sur la ligne d'horizon, alors que tous les objets du
-   decor mordent dessous — leur base est dessinee en perspective. La poule avait
-   l'air posee un cran plus haut que les bottes de paille qu'elle cotoie. Elle
-   s'enfonce donc un peu elle aussi, mais a peine : a 5 unites elle s'enterrait,
-   2 suffisent a la raccrocher au sol. Purement visuel : les collisions restent
-   calees sur hen.y. */
-const HEN_SINK = 2;
+/* ---------- perspective ----------
+   Le sol n'est pas vu de face : la ligne d'horizon est le fond du champ, et ce qui
+   est proche du spectateur se pose plus bas. Tout se tenait jusqu'ici sur cette
+   seule ligne, ce qui ecrasait la scene. Les appuis s'etagent donc :
+     - les arbres du second plan, les plus loin, tiennent la ligne
+     - les touffes d'herbe descendent un peu
+     - la poule, les aigles et les mouches descendent franchement
+     - les objets qu'elle saute, les plus proches, un cran de plus
+   Tout cela est un decalage de rendu : le premier plan est translate d'un bloc au
+   moment de le dessiner, et pas une seule boite de collision ne bouge. */
+const FRONT_SINK = 14;   // la poule et tout ce qui partage son plan
+const OBS_EXTRA  = 5;    // les obstacles au sol, un cran devant elle
+const TUFT_SINK  = 8;    // les touffes, entre la ligne et la poule
 
 /* Course : deux poses seulement, alternees. Le saut de l'une a l'autre etait sec.
    La pose qu'on vient de quitter s'attarde derriere l'actuelle et s'efface, ce qui
@@ -471,7 +479,7 @@ function reset(){
   /* Le second plan est seme d'avance sur une largeur et demie d'ecran, avec un
      espacement irregulier : aligne, il aurait fait cloture. */
   decor=[]; let prec=null;
-  for(let x=-140; x<VIEW_W*1.8; x+=175+Math.random()*230){
+  for(let x=-140; x<VIEW_W*1.8; x+=200+Math.random()*250){
     prec=tireDecor(prec);
     decor.push({k:prec, x});
   }
@@ -492,7 +500,7 @@ function avanceDecor(dt, v){
       let mx=-1e9, dernier=null;
       for(const o of decor) if(o.x>mx){ mx=o.x; dernier=o.k; }
       d.k=tireDecor(dernier);
-      d.x=Math.max(VIEW_W+60, mx+175+Math.random()*230);
+      d.x=Math.max(VIEW_W+60, mx+200+Math.random()*250);
     }
   }
 }
@@ -1007,15 +1015,22 @@ function draw(){
 
   for(const g of tufts){                             // touffes posees sur le relief
     const gw=GRASS[g.k].w, gh=GRASS[g.k].h;
-    ctx.drawImage(SPR["grass"+g.k], g.x, relief(g.x+off)-gh+2, gw, gh);
+    ctx.drawImage(SPR["grass"+g.k], g.x, relief(g.x+off)-gh+TUFT_SINK, gw, gh);
   }
+
+  /* A partir d'ici, le premier plan. Il descend d'un bloc sous la ligne d'horizon :
+     en translatant une fois plutot qu'en decalant chaque dessin, rien ne peut se
+     desaligner — la poule, ses particules, les mouches et les aigles gardent tous
+     exactement les rapports que les collisions supposent. */
+  ctx.save();
+  ctx.translate(0, FRONT_SINK);
 
   for(const o of obs){
     if(o.k==="eagle"){
       const f=(t*5.2+o.ph)%4|0;                        // battement : haut, milieu, bas, milieu
       const im=f===0?SPR.eagle_up:(f===2?SPR.eagle_down:SPR.eagle_mid);
       ctx.drawImage(im, o.x-EAGLE.bodyX, o.y-EAGLE.bodyCY, EAGLE.w, EAGLE.h);
-    }else ctx.drawImage(SPR[o.k], o.x, -o.h+OBS_DEF[o.k].sink, o.w, o.h);
+    }else ctx.drawImage(SPR[o.k], o.x, -o.h+OBS_DEF[o.k].sink+OBS_EXTRA, o.w, o.h);
   }
 
   ctx.fillStyle="#C9BCA6";
@@ -1057,7 +1072,7 @@ function draw(){
     const ph=deadPhase();
     if(ph===0){                                     // le choc : sonnee, encore portee par l'elan
       const w=STUN_W*sc(), h=STUN_H*sc();
-      const headX=hen.x+ANCH_X*sc(), headY=hen.y-footOff()+ANCH_Y*sc()+HEN_SINK;  // meme tete que les poses de vol
+      const headX=hen.x+ANCH_X*sc(), headY=hen.y-footOff()+ANCH_Y*sc();  // meme tete que les poses de vol
       ctx.drawImage(im, headX-STUN_HEAD[0]*sc(), headY-STUN_HEAD[1]*sc(), w, h);
     }else if(ph===1){                               // la chute, tete la premiere, jusqu'au contact
       const w=DIVE_W*sc(), h=DIVE_H*sc();
@@ -1069,7 +1084,7 @@ function draw(){
     }
   }else if(im===SPR.gobe){                        // bec ouvert en vol : meme tete que les poses de vol
     const w=GOBE_W*sc(), h=GOBE_H*sc();
-    const headX=hen.x+ANCH_X*sc(), headY=hen.y-footOff()+ANCH_Y*sc()+HEN_SINK;
+    const headX=hen.x+ANCH_X*sc(), headY=hen.y-footOff()+ANCH_Y*sc();
     ctx.drawImage(im, headX-GOBE_HEAD[0]*sc(), headY-GOBE_HEAD[1]*sc(), w, h);
   }else{
     const w=SW*sc(), h=SH*sc();
@@ -1082,7 +1097,7 @@ function draw(){
     const poser=(img,key,alpha)=>{
       const cale = hen.ground ? (FOOT_Y-FOOT_POSE[key])*sc() : 0;
       ctx.globalAlpha=alpha;
-      ctx.drawImage(img, hen.x+jitter, hen.y-footOff()+cale-bob+HEN_SINK, w, h);
+      ctx.drawImage(img, hen.x+jitter, hen.y-footOff()+cale-bob, w, h);
     };
     /* La trainee passe d'abord, l'actuelle par-dessus. */
     if((im===SPR.walk || im===SPR.idle) && (hen.ground || panic())){
@@ -1113,6 +1128,7 @@ function draw(){
     ctx.restore();
   }
 
+  ctx.restore();                    // fin du premier plan translate
   ctx.restore();
   drawHUD();
 }
