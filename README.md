@@ -143,6 +143,24 @@ Les repères du code, dans l'ordre :
 | Particules | Poussière, plumes, traits de vitesse, pop du gobage |
 | Rendu | Trois plans, ombres portées, sprites, puis HUD calé sur le terrain |
 
+## Collisions
+
+Les boîtes des obstacles ne sont pas écrites à la main : elles sont mesurées sur
+les dessins au démarrage. Plusieurs illustrations posent l'objet sur une touffe
+d'herbe ou un talus bien plus large que lui — la fourche n'occupe que le tiers
+central de son dessin — et une boîte calée sur le cadre du dessin faisait mourir
+la poule à bonne distance des dents. La mesure ignore donc la frange basse, où vit
+ce socle, pour ne retenir que la largeur de l'objet.
+
+Le seau garde une boîte écrite à la main : sa flaque n'est pas un socle mince,
+elle s'étale de part et d'autre sur toute la hauteur du bas du dessin, et la
+mesure automatique la prendrait pour l'objet.
+
+Les boîtes tiennent compte du décalage de perspective du premier plan, sinon
+elles flottaient cinq unités au-dessus des objets. Au premier contact, le bec de
+la poule mord de 22 unités sur le dessin de l'obstacle : la collision arrive après
+le contact visible, jamais avant.
+
 Les valeurs de calage vertical des poses (`FOOT_POSE`, `DIVE_DROP`, `HURT_DROP`,
 `ANCH_X`/`ANCH_Y`) sont réglées à l'œil sur les dessins : les modifier décale la
 poule par rapport au sol. `FOOT_POSE` donne, pour chaque pose, la rangée du bas

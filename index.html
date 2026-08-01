@@ -778,12 +778,54 @@ function henBox(){
   if(hen.ground || hen.dead || !flying()) return {x:hen.x+50, y:hen.y-98, w:62, h:88};
   return {x:hen.x+30, y:hen.y-100, w:88, h:58};
 }
+/* Boites des obstacles, mesurees sur les dessins au demarrage plutot qu'ecrites a
+   la main. Plusieurs illustrations posent l'objet sur une touffe d'herbe ou un
+   talus bien plus large que lui : la fourche n'occupe que le tiers central de son
+   dessin, et une boite calee sur le cadre faisait mourir la poule a bonne distance
+   des dents. On ignore donc la frange basse, ou vit ce socle, pour mesurer la
+   largeur de l'objet lui-meme. */
+const OBS_BORD={};
+const SOCLE=0.12;                 // part basse du dessin consideree comme decor
+function mesurerObstacles(){
+  for(const k in OBS_DEF){
+    const im=SPR[k]; if(!im || !im.naturalWidth) continue;
+    const W=im.naturalWidth, H=im.naturalHeight;
+    const t=document.createElement("canvas"); t.width=W; t.height=H;
+    const c2=t.getContext("2d"); c2.drawImage(im,0,0);
+    const d=c2.getImageData(0,0,W,H).data;
+    const op=(X,Y)=>d[(Y*W+X)*4+3]>40;
+    let y0=H, y1=-1;
+    for(let Y=0;Y<H;Y++) for(let X=0;X<W;X++) if(op(X,Y)){ if(Y<y0)y0=Y; if(Y>y1)y1=Y; break; }
+    if(y1<0) continue;
+    const coupe=Math.round(y1-(y1-y0)*SOCLE);
+    let x0=W, x1=-1;
+    for(let Y=y0;Y<=coupe;Y++){
+      for(let X=0;X<W;X++) if(op(X,Y)){ if(X<x0)x0=X; break; }
+      for(let X=W-1;X>=0;X--) if(op(X,Y)){ if(X>x1)x1=X; break; }
+    }
+    if(x1<0) continue;
+    OBS_BORD[k]={x0:x0/W, x1:(x1+1)/W, y0:y0/H};
+  }
+}
+/* Pardon accorde a la poule : la boite rentre de PARDON_X sur chaque cote et de
+   PARDON_H sous le sommet du dessin. */
+const PARDON_X=8, PARDON_H=4;
 function obsBox(o){
   if(o.k==="eagle") return {x:o.x+8, y:o.y-24, w:102, h:48};   // le corps seul, pas l'envergure
-  const sk=OBS_DEF[o.k].sink;
-  if(o.k==="bucket"){ const f=o.w/236;
-    return {x:o.x+BUCKET_BOX.x*f+8, y:-o.h+4+sk, w:BUCKET_BOX.w*f-16, h:o.h-4-sk}; }
-  return {x:o.x+8, y:-o.h+4+sk, w:o.w-16, h:o.h-4-sk};
+  const sk=OBS_DEF[o.k].sink, b=OBS_BORD[o.k];
+  let x0, x1;
+  /* Le seau garde sa boite ecrite a la main : sa flaque n'est pas un socle mince,
+     elle s'etale de part et d'autre sur toute la hauteur du bas du dessin, et la
+     mesure automatique la prendrait pour l'objet. */
+  if(o.k==="bucket"){ const f=o.w/236; x0=BUCKET_BOX.x*f; x1=(BUCKET_BOX.x+BUCKET_BOX.w)*f; }
+  else if(b){ x0=b.x0*o.w; x1=b.x1*o.w; }
+  else { x0=0; x1=o.w; }
+  /* Calee sur le dessin tel qu'il est pose, decalage de perspective compris : sans
+     OBS_EXTRA la boite flottait cinq unites au-dessus de l'objet. */
+  const haut=-o.h+sk+OBS_EXTRA+(b?b.y0*o.h:0)+PARDON_H;
+  const bas =sk+OBS_EXTRA;
+  return {x:o.x+x0+PARDON_X, y:haut,
+          w:Math.max(4,(x1-x0)-2*PARDON_X), h:Math.max(4,bas-haut)};
 }
 
 function update(dt){
@@ -1376,6 +1418,7 @@ function boot(){
   FONT=getComputedStyle(document.body).fontFamily;
   $("flyicon").src="data:image/png;base64,"+B64.fly_a;   // meme dessin que dans le jeu
   for(const k in SPR) CLE.set(SPR[k], k);
+  mesurerObstacles();
   setMute(muted,true); carnet(); checkOrient();
   resize(); reset();
   requestAnimationFrame(ts=>{ last=ts; requestAnimationFrame(frame); });
