@@ -173,44 +173,39 @@ Les repères du code, dans l'ordre :
 
 ## La chute
 
-Quatre poses s'enchaînent quand la poule est touchée :
+Deux dessins, pas quatre :
 
 | Instant | Pose |
 |---|---|
-| 0 s | Le choc, encore portée par l'élan |
-| 0,15 s | La chute, tête la première |
-| 0,30 s | Assise sur les fesses, dès que le sol est touché |
-| 0,65 s | La bascule en arrière |
-| 1,25 s | L'écran de fin |
+| 0 s | Le choc |
+| 0,16 s | La poule KO, qui tombe |
+| ~0,45 s | Le sol : poussière, secousse |
+| ~1,2 s | L'écran de fin |
 
-Le temps d'arrêt assise vaut la moitié de l'effet : sans lui on passerait du choc
-au dos sans voir la pose du milieu. Mais il ne faut pas non plus la laisser poser —
-un tiers de seconde suffit à lire la pose assise, au-delà la séquence traîne.
+Le choc a deux versions, choisies selon d'où elle vient : en course, elle est
+encore sur ses pattes ; en vol, elle file à l'horizontale. C'est la seule chose
+qui change entre les deux morts. La version est figée au moment du coup — la lire
+à chaque image l'aurait fait basculer au premier dixième de seconde, quand le
+contrecoup décolle la poule du sol.
 
-Le dessin de la dernière pose portait ses propres étoiles et son tourbillon ; ils
-ont été retirés au découpage pour laisser tourner ceux du jeu, qui sont animés.
-Ils ne tournent que sur cette pose-là.
+Ensuite, une seule image jusqu'au bout : la poule KO, à plat, pattes en l'air.
+Elle tombe avec des traits de vitesse — les mêmes que pendant la panique, la mort
+n'a pas son propre vocabulaire — puis reste au sol. Les poses de chute tête la
+première, d'assise et de bascule ont été retirées : elles décomposaient un
+mouvement que le choc et la chute racontent déjà.
 
-La bascule n'est pas décomposée : on passe d'assise à allongée d'une image à
-l'autre, et ce sont la secousse et la poussière qui marquent l'instant. Mais la
-pose assise s'attarde un sixième de seconde derrière la pose allongée, en
-s'effaçant et en versant en arrière autour des fesses — le seul point qui ne
-bouge pas d'un dessin à l'autre. Ce fantôme ne dessine aucune pose intermédiaire :
-il en donne juste le mouvement, comme la traînée des pattes pendant la course. Il
-passe **avant**, la pose allongée par-dessus et opaque ; un fondu croisé aurait
-rendu la poule elle-même translucide au moment où elle touche terre.
+Le dessin KO portait ses propres étoiles et son tourbillon ; ils ont été retirés
+au découpage pour laisser tourner ceux du jeu, qui sont animés. Le découpage ne
+supprime pas seulement leurs traits : il efface aussi le halo pâle qui les
+entourait, en dilatant la marque de quelques pixels dans le fond — sans quoi il
+serait resté leur fantôme. La ronde d'étoiles se dimensionne maintenant sur la
+pose qu'elle couronne ; écrite en dur, elle débordait sur l'obstacle.
 
-Une vraie rotation intermédiaire, elle, avait été essayée puis retirée — elle
-allongeait le mouvement sans le rendre plus lisible. Le fantôme fait le même
-travail sans coûter une seule image de plus.
-
-Deux règles tiennent la cohérence entre les poses. Toutes se posent à l'échelle
-commune `sc()`, la pose allongée à 94 % de celle-ci — juste assez pour qu'elle ne
-prenne pas toute la place à plat. Mesurée sur la crête et le barbillon, les deux
-repères rouges, sa tête reste à 6 % des poses debout et assise, ce qui ne se lit
-pas comme un changement de taille. Et `HURT_FESSES` / `DOS_FESSES`
-situent le point d'appui dans chaque dessin : c'est lui qui reste immobile quand
-elle bascule, la tête partant en arrière autour de lui.
+Les tailles ne sont pas choisies, elles sont mesurées. La crête est le seul aplat
+rouge visible en entier dans les trois dessins — l'éclat jaune du choc recouvre
+une partie du barbillon — et chaque pose est mise à l'échelle pour que l'aire de
+sa crête, ramenée aux unités du jeu, égale celle de la pose de course. La tête
+garde donc la même taille d'une pose à l'autre, à un pour cent près.
 
 ## Collisions
 
@@ -230,7 +225,7 @@ elles flottaient cinq unités au-dessus des objets. Au premier contact, le bec d
 la poule mord de 22 unités sur le dessin de l'obstacle : la collision arrive après
 le contact visible, jamais avant.
 
-Les valeurs de calage vertical des poses (`FOOT_POSE`, `DIVE_DROP`, `HURT_DROP`,
+Les valeurs de calage vertical des poses (`FOOT_POSE`, `CHOCS_DROP`, `KO_DROP`,
 `ANCH_X`/`ANCH_Y`) sont réglées à l'œil sur les dessins : les modifier décale la
 poule par rapport au sol. `FOOT_POSE` donne, pour chaque pose, la rangée du bas
 du dessin ; le rendu s'en sert pour poser les pattes sur le sol quelle que soit la
