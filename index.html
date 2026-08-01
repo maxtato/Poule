@@ -561,7 +561,7 @@ let deadLand=-9;      // instant du contact au sol
 let chocVol=false;
 /* Choc par le dessus : elle rebondit au lieu de tomber sur place. deadVx est l'elan
    qui l'emmene au-dela de l'objet, applique tant qu'elle n'a pas touche terre. */
-let chocSur=false, deadVx=0;
+let chocSur=false, deadVx=0, deadFrein=0;
 
 /* Deux facons de geler la partie : le portrait, ou le jeu n'est pas affiche, et
    l'onglet qui passe en arriere-plan. Dans les deux cas on ne veut pas mourir
@@ -625,7 +625,7 @@ function reset(){
   speed=500; dist=0; tSpawn=1.1; shake=0; hold=false; eaten=0;
   obs=[]; flies=[]; puffs=[]; plumes=[]; traits=[]; pops=[]; miettes=[];
   combo=0; lastEat=-9; palier=0; recBeaten=false; flashT=-9; flashTxt="";
-  deadLand=-9; chocVol=false; chocSur=false; deadVx=0;
+  deadLand=-9; chocVol=false; chocSur=false; deadVx=0; deadFrein=0;
   tFly=3;
   clouds=[]; for(let i=0;i<5;i++) clouds.push({x:Math.random()*VIEW_W*1.5, f:.15+Math.random()*.6, s:.55+Math.random()*.6, v:.5+Math.random()*.7});
   /* Les massifs debordent largement du cadre : on seme au-dela des deux bords pour
@@ -799,7 +799,7 @@ function start(){
 }
 function die(dessus){
   state=S.DEAD; deadAt=t; deadLand=-9; chocVol=!hen.ground; hen.dead=true; hold=false;
-  chocSur=!!dessus; deadVx=0;
+  chocSur=!!dessus; deadVx=0; deadFrein=0;
   montreVol(false);
   SFX.choc();
   if(dessus){
@@ -809,10 +809,13 @@ function die(dessus){
     const b=obsBox(dessus);
     hen.y=Math.min(hen.y, b.y-4);
     hen.vy=-REBOND_VY;
+    /* Pas de frein sur le rebond : tout l'elan sert a passer l'objet. */
     deadVx=Math.min(REBOND_VX_MAX, Math.max(190, (b.x+b.w+30-hen.x)/REBOND_PORTEE));
+    deadFrein=0;
     shake=13; dust(hen.x+80, hen.y+4); dust(hen.x+50, hen.y+4);
   }else{
     hen.vy=Math.min(hen.vy,-880);   // a peine soulevee, mais assez pour voir tomber la poule KO
+    deadVx=-RECUL_VX; deadFrein=RECUL_FREIN;
     shake=15;
   }
   hen.ground=false;
@@ -923,6 +926,11 @@ const REBOND_T = 0.28;
    seau etroit. REBOND_PORTEE est le temps sur lequel on veut l'avoir depasse ; le
    vol dure un peu plus, ce qui laisse la marge. */
 const REBOND_VY = 1150, REBOND_PORTEE = 0.55, REBOND_VX_MAX = 760;
+/* Choc de face : elle est renvoyee en arriere. L'elan s'eteint vite — c'est un
+   contrecoup, pas un vol — et la pose au sol finit une cinquantaine d'unites
+   derriere le point d'impact. Assez pour qu'on lise le renvoi, trop peu pour
+   qu'elle ait l'air de reculer d'elle-meme. */
+const RECUL_VX = 200, RECUL_FREIN = 2.4;
 function deadPhase(){ return t-deadAt < (chocSur ? REBOND_T : CHOC_T) ? 0 : 1; }
 function henBox(){
   if(hen.ground || hen.dead || !flying()) return {x:hen.x+50, y:hen.y-98, w:62, h:88};
@@ -986,14 +994,15 @@ function update(dt){
       if(!hen.ground){                          // culbute jusqu'au sol
         hen.vy=Math.min(hen.vy+4400*dt, 2600);   // plus lourde que le saut normal, mais assez lente pour se lire
         hen.y+=hen.vy*dt;
-        hen.x+=deadVx*dt;                        // nul sauf apres un rebond
+        hen.x+=deadVx*dt;                        // rebond vers l'avant, ou recul de face
+        if(deadFrein) deadVx*=1-Math.min(1, deadFrein*dt);
         /* Des traits pendant la chute : ils tombent moins vite qu'elle et derivent a
            peine, c'est elle qui file devant eux. Meme registre que la panique, ou
            elle perd ses plumes — la mort n'a pas son propre vocabulaire. */
         if(deadPhase()===1 && hen.vy>120 && Math.random()<dt*34)
           trait(hen.x+20+Math.random()*130, hen.y-20-Math.random()*90, -Math.PI/2,
                 20+Math.random()*32, -40, hen.vy*0.55, 6);
-        if(hen.y>=0){ hen.y=0; hen.vy=0; hen.ground=true; deadLand=t; deadVx=0;
+        if(hen.y>=0){ hen.y=0; hen.vy=0; hen.ground=true; deadLand=t; deadVx=0; deadFrein=0;
           shake=Math.max(shake,16); dust(hen.x+80,4); dust(hen.x+40,4);
           /* Elle touche terre : poussiere des deux cotes et une secousse, sinon
              l'arret se lit comme un simple changement d'image. */

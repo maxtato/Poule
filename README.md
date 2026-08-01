@@ -220,7 +220,12 @@ elle a tapé. La pose ne couvre que la montée et s'arrête au sommet — la lai
 courir jusqu'à la retombée aurait promené l'éclat loin de l'impact. La pose KO
 prend le relais pour la descente.
 
-L'élan vers l'avant n'est pas une constante : il se calcule sur l'objet lui-même,
+Le coup de face, lui, la renvoie en arrière : l'élan s'éteint vite — c'est un
+contrecoup, pas un vol — et elle finit une cinquantaine d'unités derrière le point
+d'impact, dégagée de l'objet au lieu d'y rester encastrée. Les deux tiers du recul
+se font dans le premier dixième de seconde.
+
+L'élan vers l'avant du rebond n'est pas une constante : il se calcule sur l'objet lui-même,
 pour qu'un ballot large soit franchi comme un seau étroit. Le vol dure un peu plus
 longtemps que le temps demandé au calcul, ce qui laisse la marge — vérifié sur les
 quatre obstacles au sol, elle se pose chaque fois entièrement au-delà. Un coup de
