@@ -76,7 +76,7 @@ profondeur :
 
 | Plan | Contenu | Vitesse |
 |---|---|---|
-| Premier | Sol, obstacles à sauter, touffes d'herbe | pleine |
+| Premier | Sol, obstacles à sauter, herbe et cailloux | pleine |
 | Deuxième | Arbres, sapin, cyprès, tracteur, moulin, panneaux | un tiers |
 | Fond | Massifs montagneux et collines | un dixième |
 
@@ -125,24 +125,36 @@ lointain au plus proche :
 |---|---|
 | Massifs et collines du fond | 2 |
 | Arbres, tracteur, panneaux, moulin | 4 |
-| Touffes d'herbe | 3 à 36, tiré au hasard |
+| Herbe et cailloux | 3 à 36, tiré au hasard |
 | Poule, aigles, mouches, particules | 14 |
 | Obstacles à sauter | 19 |
 
-Les touffes ne sont pas toutes sur la même rangée : chacune tire son propre
+Le sol porte deux sortes de détail, touffes d'herbe et cailloux, qui **se suivent
+en alternance** : chaque nouveau venu prend la nature contraire de celui derrière
+lequel il se pose. Tirée au hasard, la nature formait des plages de trois ou
+quatre touffes d'affilée et l'alternance ne se lisait plus ; imposée, elle tient
+sur 40 000 pas de simulation sans jamais deux voisins de même nature.
+
+Ni les unes ni les autres ne sont sur la même rangée : chacune tire son propre
 enfoncement, une sur trois descend nettement plus bas, et une sur huit se pose
 tout devant, plus près du spectateur que les obstacles à sauter. Alignées, elles
 faisaient une frise ; dispersées, elles donnent au sol de l'épaisseur.
 
-L'écart entre deux touffes est tiré lui aussi, et pas uniformément : le plus
-souvent moyen, une fois sur cinq très serré parce que l'herbe pousse en bouquets,
-de loin en loin un vide franc. Une touffe sortie à gauche repart **derrière la
-dernière de la chaîne**, pas à une distance quelconque du bord droit — sinon
-l'écart tiré ne voudrait rien dire et deux touffes pourraient se retrouver l'une
-sur l'autre. Seize touffes à 112 unités d'écart moyen couvrent deux largeurs et
-demie d'écran : sur 40 000 pas de simulation, la fin de la chaîne n'apparaît
-jamais au bord droit, et il en reste sept à l'écran comme avec l'ancien semis
-régulier. Les objets
+L'écart entre deux détails est tiré lui aussi, et pas uniformément : le plus
+souvent moyen, une fois sur cinq très serré parce que l'herbe pousse en bouquets
+et que les cailloux traînent par deux, de loin en loin un vide franc. Un détail
+sorti à gauche repart **derrière le dernier de la chaîne**, pas à une distance
+quelconque du bord droit — sinon l'écart tiré ne voudrait rien dire et deux
+dessins pourraient se retrouver l'un sur l'autre. Seize détails à 112 unités
+d'écart moyen couvrent deux largeurs et demie d'écran : la fin de la chaîne
+n'apparaît jamais au bord droit, et il en reste sept à l'écran comme avec
+l'ancien semis régulier.
+
+Les cinq cailloux sont découpés d'un même dessin et mis à l'échelle d'un seul
+coup, ce qui garde leurs tailles relatives : du bloc de 42 unités au gravier de
+13. Chacun est découpé avec les gravillons qui le posent au sol — ce sont autant
+de petites composantes séparées, rattachées au bloc le plus proche — et sans ceux
+du caillou voisin, qui traversent parfois la même boîte. Les objets
 posés au sol, la poule comprise, portent une ombre — un aplat d'encre très dilué,
 sans contour. Celle de la poule reste au sol pendant qu'elle monte, en
 rétrécissant et en pâlissant, mais ne disparaît jamais tout à fait : c'est le seul
