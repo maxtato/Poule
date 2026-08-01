@@ -21,6 +21,19 @@ nuée entière. C'est ce qui rend le vol rentable et pas seulement risqué.
 Un aigle traverse le ciel à contre-sens. Les autres obstacles sont au sol et
 arrivent d'autant plus vite que la course dure.
 
+## La course
+
+Quatre poses en boucle : pattes écartées, serrées, croisées, serrées. Les serrées
+reviennent deux fois — c'est le passage obligé entre chaque extrême. Le corps
+remonte sur les serrées et descend sur les deux poses tendues, soit un rebond par
+foulée et non un par image.
+
+La pose qu'on vient de quitter s'attarde derrière l'actuelle et s'efface sur un
+tiers de l'image : les pattes gardent une traînée, ce qui donne l'illusion d'une
+pose intermédiaire qui n'a jamais été dessinée. La traînée passe **avant**,
+l'actuelle par-dessus et opaque — un fondu croisé classique aurait rendu la poule
+elle-même translucide pendant l'échange.
+
 ## Les trois plans
 
 Le décor défile sur trois épaisseurs, à trois vitesses, ce qui donne la
@@ -107,7 +120,10 @@ Les repères du code, dans l'ordre :
 
 Les valeurs de calage vertical des poses (`FOOT_POSE`, `DIVE_DROP`, `HURT_DROP`,
 `ANCH_X`/`ANCH_Y`) sont réglées à l'œil sur les dessins : les modifier décale la
-poule par rapport au sol.
+poule par rapport au sol. `FOOT_POSE` donne, pour chaque pose, la rangée du bas
+du dessin ; le rendu s'en sert pour poser les pattes sur le sol quelle que soit la
+pose, ce qui autorise des dessins dont les pattes ne tombent pas toutes à la même
+hauteur.
 
 ## Sauvegarde
 
