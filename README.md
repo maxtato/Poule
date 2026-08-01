@@ -207,11 +207,29 @@ Deux dessins, pas quatre :
 | ~0,45 s | Le sol : poussière, secousse |
 | ~1,2 s | L'écran de fin |
 
-Le choc a deux versions, choisies selon d'où elle vient : en course, elle est
-encore sur ses pattes ; en vol, elle file à l'horizontale. C'est la seule chose
-qui change entre les deux morts. La version est figée au moment du coup — la lire
-à chaque image l'aurait fait basculer au premier dixième de seconde, quand le
-contrecoup décolle la poule du sol.
+Le choc a trois versions, choisies selon d'où elle vient. De face, en course, elle
+est encore sur ses pattes ; de face en vol, elle file à l'horizontale. La version
+est figée au moment du coup — la lire à chaque image l'aurait fait basculer au
+premier dixième de seconde, quand le contrecoup décolle la poule du sol.
+
+La troisième est **le rebond**, quand elle retombe sur le dessus d'un objet au lieu
+de le percuter de face : ses pattes mordent la face supérieure, elle repart en
+l'air et vers l'avant, et va s'écraser au-delà. Le dessin porte son propre éclat de
+choc, et c'est par lui que la pose est calée : l'éclat tombe pile sur le point où
+elle a tapé. La pose ne couvre que la montée et s'arrête au sommet — la laisser
+courir jusqu'à la retombée aurait promené l'éclat loin de l'impact. La pose KO
+prend le relais pour la descente.
+
+L'élan vers l'avant n'est pas une constante : il se calcule sur l'objet lui-même,
+pour qu'un ballot large soit franchi comme un seau étroit. Le vol dure un peu plus
+longtemps que le temps demandé au calcul, ce qui laisse la marge — vérifié sur les
+quatre obstacles au sol, elle se pose chaque fois entièrement au-delà. Un coup de
+face ne rebondit pas, et l'aigle non plus : en plein ciel il n'y a pas de dessus à
+toucher.
+
+C'est ce rebond qui a rendu nécessaire de remettre la poule à sa place d'origine à
+chaque partie. Elle n'y bougeait pas — c'est le monde qui défile — mais elle
+avance pendant le rebond, et la partie suivante la retrouvait décalée.
 
 Ensuite, une seule image jusqu'au bout : la poule KO, à plat, pattes en l'air.
 Elle tombe avec des traits de vitesse — les mêmes que pendant la panique, la mort
