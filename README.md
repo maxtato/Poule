@@ -32,11 +32,16 @@ profondeur :
 | Deuxième | Arbres, sapin, cyprès, tracteur, moulin, panneaux | un tiers |
 | Fond | Collines | un dixième |
 
-Les silhouettes du deuxième plan sont dessinées en transparence plutôt qu'en
-aplat : elles prennent ainsi la couleur du ciel du moment et reculent d'elles-mêmes
-au crépuscule, sans palette à tenir à part. Leur base passe sous la ligne
-d'horizon, que le sol recouvre juste après, ce qui les enracine au lieu de les
-poser dessus.
+Les silhouettes du deuxième plan sont des aplats opaques : les collines ne se
+voient pas au travers. Elles suivent quand même l'heure du jour — chaque dessin
+est reposé puis rempli en `source-in` dans un calque à part, ce qui n'en garde
+que la silhouette et lui donne la couleur du moment. La teinte est arrondie par
+paliers et sert de clé de cache : sur une journée entière elle ne prend que
+quatorze valeurs, soit une repeinte toutes les deux secondes environ au lieu de
+dix par image.
+
+Leur base passe sous la ligne d'horizon, que le sol recouvre juste après, ce qui
+les enracine au lieu de les poser dessus.
 
 ## Cadrage
 
