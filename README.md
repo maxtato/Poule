@@ -145,11 +145,19 @@ Les repères du code, dans l'ordre :
 
 ## La chute
 
-Quatre poses s'enchaînent quand la poule est touchée : le choc, encore portée par
-l'élan ; la chute, tête la première ; assise sur les fesses dès que le sol est
-touché ; puis, après un demi-temps d'arrêt, la bascule en arrière. Ce temps d'arrêt
-vaut la moitié de l'effet — sans lui on passerait du choc au dos sans voir la pose
-du milieu.
+Quatre poses s'enchaînent quand la poule est touchée :
+
+| Instant | Pose |
+|---|---|
+| 0 s | Le choc, encore portée par l'élan |
+| 0,15 s | La chute, tête la première |
+| 0,30 s | Assise sur les fesses, dès que le sol est touché |
+| 1,17 s | La bascule en arrière |
+| 1,77 s | L'écran de fin |
+
+Le temps d'arrêt assise vaut la moitié de l'effet : sans lui on passerait du choc
+au dos sans voir la pose du milieu, et à une demi-seconde la bascule suivait encore
+la chute de trop près pour qu'on les distingue.
 
 Le dessin de la dernière pose portait ses propres étoiles et son tourbillon ; ils
 ont été retirés au découpage pour laisser tourner ceux du jeu, qui sont animés.
