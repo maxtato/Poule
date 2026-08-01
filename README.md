@@ -125,13 +125,24 @@ lointain au plus proche :
 |---|---|
 | Massifs et collines du fond | 2 |
 | Arbres, tracteur, panneaux, moulin | 4 |
-| Touffes d'herbe | 3 à 26, tiré au hasard |
+| Touffes d'herbe | 3 à 36, tiré au hasard |
 | Poule, aigles, mouches, particules | 14 |
 | Obstacles à sauter | 19 |
 
 Les touffes ne sont pas toutes sur la même rangée : chacune tire son propre
-enfoncement, et une sur trois descend nettement plus bas. Alignées, elles
-faisaient une frise ; dispersées, elles donnent au sol de l'épaisseur. Les objets
+enfoncement, une sur trois descend nettement plus bas, et une sur huit se pose
+tout devant, plus près du spectateur que les obstacles à sauter. Alignées, elles
+faisaient une frise ; dispersées, elles donnent au sol de l'épaisseur.
+
+L'écart entre deux touffes est tiré lui aussi, et pas uniformément : le plus
+souvent moyen, une fois sur cinq très serré parce que l'herbe pousse en bouquets,
+de loin en loin un vide franc. Une touffe sortie à gauche repart **derrière la
+dernière de la chaîne**, pas à une distance quelconque du bord droit — sinon
+l'écart tiré ne voudrait rien dire et deux touffes pourraient se retrouver l'une
+sur l'autre. Seize touffes à 112 unités d'écart moyen couvrent deux largeurs et
+demie d'écran : sur 40 000 pas de simulation, la fin de la chaîne n'apparaît
+jamais au bord droit, et il en reste sept à l'écran comme avec l'ancien semis
+régulier. Les objets
 posés au sol, la poule comprise, portent une ombre — un aplat d'encre très dilué,
 sans contour. Celle de la poule reste au sol pendant qu'elle monte, en
 rétrécissant et en pâlissant, mais ne disparaît jamais tout à fait : c'est le seul

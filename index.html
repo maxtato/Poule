@@ -316,7 +316,29 @@ const OBS_EXTRA  = 5;    // les obstacles au sol, un cran devant elle
 /* Les touffes ne sont pas toutes sur la meme rangee : chacune tire son propre
    enfoncement, et une sur trois descend nettement plus bas. Alignees, elles
    faisaient une frise ; dispersees, elles donnent au sol de l'epaisseur. */
-function tuftSink(){ return Math.random()<0.34 ? 15+Math.random()*11 : 3+Math.random()*9; }
+function tuftSink(){
+  const r=Math.random();
+  if(r<0.14) return 27+Math.random()*9;    // tout devant, plus pres que les obstacles
+  if(r<0.44) return 15+Math.random()*11;
+  return 3+Math.random()*9;
+}
+/* L'ecart entre deux touffes est tire lui aussi. Le plus souvent moyen ; une fois
+   sur cinq tres serre, parce que l'herbe pousse en bouquets ; de loin en loin un
+   vide franc. Tire uniformement, l'ecart faisait une haie regulierement peignee. */
+function tuftGap(){
+  const r=Math.random();
+  if(r<0.22) return 14+Math.random()*30;
+  if(r<0.88) return 55+Math.random()*120;
+  return 220+Math.random()*230;
+}
+/* Une touffe sortie a gauche repart derriere la derniere de la chaine, pas a une
+   distance quelconque du bord droit : sans cela l'ecart tire plus haut ne voulait
+   rien dire, deux touffes pouvant se retrouver l'une sur l'autre. */
+function replanteTouffe(g){
+  let droite=VIEW_W;
+  for(const h of tufts) if(h!==g && h.x>droite) droite=h.x;
+  g.x=droite+tuftGap(); g.k=(Math.random()*4)|0; g.s=tuftSink();
+}
 
 /* Course : deux poses seulement, alternees. Le saut de l'une a l'autre etait sec.
    La pose qu'on vient de quitter s'attarde derriere l'actuelle et s'efface, ce qui
@@ -589,9 +611,16 @@ function reset(){
       const w=largeurDe(p,COLLINE);
       x += w - Math.min(CHEVAUCHE+Math.random()*CHEVAUCHE_JEU, w*CHEVAUCHE_MAX);
     } }
-  tufts=[];
-  for(let i=0;i<13;i++)
-    tufts.push({x:Math.random()*VIEW_W*1.8, k:(Math.random()*4)|0, s:tuftSink()});
+  /* Semees de proche en proche et non tirees chacune dans son coin : c'est l'ecart
+     entre voisines qui doit etre irregulier, pas leur position absolue. Seize
+     touffes a 120 unites d'ecart moyen couvrent deux largeurs et demie d'ecran :
+     la fin de la chaine ne peut pas apparaitre au bord droit, et il en reste
+     autant a l'ecran qu'avec l'ancien semis regulier. */
+  tufts=[]; { let x=-40;
+    for(let i=0;i<16;i++){
+      tufts.push({x, k:(Math.random()*4)|0, s:tuftSink()});
+      x+=tuftGap();
+    } }
   /* Le second plan est seme d'avance sur une largeur et demie d'ecran, avec un
      espacement irregulier : aligne, il aurait fait cloture. */
   decor=[]; { let p=null, x=-400;
@@ -935,7 +964,7 @@ function update(dt){
     traits=traits.filter(p=>p.l>0);
     if(state===S.MENU){
       hen.anim+=dt*7;
-      for(const g of tufts){ g.x-=60*dt; if(g.x<-60){g.x=VIEW_W+Math.random()*320; g.k=(Math.random()*4)|0; g.s=tuftSink();} }
+      for(const g of tufts){ g.x-=60*dt; if(g.x<-60) replanteTouffe(g); }
       avanceFond(dt, 60);                       // l'accueil respire au meme rythme
     }
     for(const p of plumes){ p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=520*dt; p.r+=p.vr*dt; p.l-=dt*.5; }
@@ -1075,7 +1104,7 @@ function update(dt){
   for(const c of clouds){ c.x-=c.v*speed*.10*dt; if(c.x<-180){c.x=VIEW_W+140; c.f=.15+Math.random()*.6;} }
   for(const g of tufts){
     g.x-=speed*dt;                                   // solidaire du sol : aucune derive
-    if(g.x<-60){ g.x=VIEW_W+Math.random()*320; g.k=(Math.random()*4)|0; g.s=tuftSink(); }
+    if(g.x<-60) replanteTouffe(g);
   }
   avanceFond(dt, speed);                             // second plan puis fond
 
