@@ -201,9 +201,18 @@ const HURT_DROP = 12;   // pose assise : elle s'enfonce sous la ligne d'horizon
 /* Les pattes tombaient pile sur la ligne d'horizon, alors que tous les objets du
    decor mordent dessous — leur base est dessinee en perspective. La poule avait
    l'air posee un cran plus haut que les bottes de paille qu'elle cotoie. Elle
-   s'enfonce donc un peu elle aussi. Purement visuel : les collisions restent
+   s'enfonce donc un peu elle aussi, mais a peine : a 5 unites elle s'enterrait,
+   2 suffisent a la raccrocher au sol. Purement visuel : les collisions restent
    calees sur hen.y. */
-const HEN_SINK = 5;
+const HEN_SINK = 2;
+
+/* Course : deux poses seulement, alternees. Le saut de l'une a l'autre etait sec.
+   La pose qu'on vient de quitter s'attarde derriere l'actuelle et s'efface, ce qui
+   donne aux pattes une trainee — l'illusion d'une pose intermediaire qui n'existe
+   pas. Celle du dessus reste opaque : ce n'est pas la poule qui devient
+   transparente, seulement son pas d'avant qui s'en va. */
+const FONDU = 0.34;   // part du demi-cycle ou la trainee reste visible
+const TRACE = 0.42;   // opacite de depart de la trainee
 
 const INK="#1A1614", CREAM="#FAF3EC", SAND="#EFE5D5", EARTH="#E0D3BC",
       GRASS_D="rgba(110,135,64,.6)", YELL="#F5A623", MUTE="#9A8F80",
@@ -964,9 +973,22 @@ function draw(){
        pattes plus hautes que les autres. Trois poses seulement touchent le sol, et
        il faut nommer la bonne : tout ramener a "idle" faisait flotter la pose de
        gobage, dont les pattes sont 31 pixels plus haut dans le dessin. */
+    const poser=(img,key,alpha)=>{
+      const cale = hen.ground ? (FOOT_Y-FOOT_POSE[key])*sc() : 0;
+      ctx.globalAlpha=alpha;
+      ctx.drawImage(img, hen.x+jitter, hen.y-footOff()+cale-bob+HEN_SINK, w, h);
+    };
+    /* La trainee passe d'abord, l'actuelle par-dessus. */
+    if((im===SPR.walk || im===SPR.idle) && (hen.ground || panic())){
+      const d=(hen.anim%2)%1;                       // avancee dans le demi-cycle
+      if(d<FONDU){
+        const avant = hen.anim%2<1 ? "idle" : "walk";
+        poser(SPR[avant], avant, TRACE*(1-d/FONDU));
+      }
+    }
     const pose = im===SPR.walk ? "walk" : (im===SPR.snap ? "snap" : "idle");
-    const cale = hen.ground ? (FOOT_Y-FOOT_POSE[pose])*sc() : 0;
-    ctx.drawImage(im, hen.x+jitter, hen.y-footOff()+cale-bob+HEN_SINK, w, h);
+    poser(im, pose, 1);
+    ctx.globalAlpha=1;
   }
   for(const p of sweat) drawDrop(p);
 
