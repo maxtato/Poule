@@ -143,6 +143,22 @@ Les repères du code, dans l'ordre :
 | Particules | Poussière, plumes, traits de vitesse, pop du gobage |
 | Rendu | Trois plans, ombres portées, sprites, puis HUD calé sur le terrain |
 
+## La chute
+
+Quatre poses s'enchaînent quand la poule est touchée : le choc, encore portée par
+l'élan ; la chute, tête la première ; assise sur les fesses dès que le sol est
+touché ; puis, après un demi-temps d'arrêt, la bascule en arrière. Ce temps d'arrêt
+vaut la moitié de l'effet — sans lui on passerait du choc au dos sans voir la pose
+du milieu.
+
+Le dessin de la dernière pose portait ses propres étoiles et son tourbillon ; ils
+ont été retirés au découpage pour laisser tourner ceux du jeu, qui sont animés.
+Ils ne tournent que sur cette pose-là.
+
+La bascule elle-même est un quart de tour : le dessin pivote sur la croupe jusqu'à
+plat en un cinquième de seconde, avec un peu de poussière et une secousse. Sans ce
+pivot, la pose apparaissait d'un coup et on ne voyait pas la chute.
+
 ## Collisions
 
 Les boîtes des obstacles ne sont pas écrites à la main : elles sont mesurées sur
