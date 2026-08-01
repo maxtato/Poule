@@ -184,8 +184,13 @@ const HURT_W = 248, HURT_H = 245, HURT_HEAD = [101.2, 46.0];   // assise au sol
    laisser tourner ceux du jeu, qui sont animes. DOS_HEAD repere la tete dans le
    dessin, c'est la qu'ils tournent. */
 const DOS_W = 380, DOS_H = 174, DOS_HEAD = [80, 80];
-const DOS_HAUT = 92;    // hauteur a l'ecran, en unites monde
 const DOS_DROP = 6;     // elle s'ecrase un peu sous la ligne d'horizon
+/* Le dessin a ete reduit a la meme finesse que les autres poses : il se pose donc
+   a l'echelle commune sc(), et la tete garde exactement la taille qu'elle a debout
+   ou assise. Mesure sur la crete et le barbillon, les deux reperes rouges.
+   FESSES situe le point d'appui dans chaque dessin, en fraction de sa largeur :
+   c'est lui qui ne bouge pas quand elle bascule en arriere. */
+const HURT_FESSES = 0.36, DOS_FESSES = 0.78;
 const STUN_W = 358, STUN_H = 281, STUN_HEAD = [259.5, 115.0]; // choc : sonnee, encore en l'air
 const DIVE_W = 386, DIVE_H = 263;                         // chute : elle pique du nez
 const FEA_W = 74, FEA_H = 72;                           // plume de la jauge de vol
@@ -1291,18 +1296,21 @@ function draw(){
       const hw=HURT_W*sc(), hh=HURT_H*sc(), hx=hen.x+80-hw/2, hy=-hh+HURT_DROP;
       ctx.drawImage(im,hx,hy,hw,hh);
     }else{                                          // a la renverse, etoiles qui tournent
-      const e=DOS_HAUT/DOS_H, w=DOS_W*e, h=DOS_HAUT;
-      const hx=hen.x+80-w*0.52, hy=-h+DOS_DROP;
-      /* Elle part en arriere : le dessin pivote sur sa croupe jusqu'a plat en un
-         cinquieme de seconde. Sans ce quart de tour, la pose apparaissait d'un coup
-         et on ne voyait pas la chute. */
+      const w=DOS_W*sc(), h=DOS_H*sc(), hy=-h+DOS_DROP;
+      /* Les fesses ne bougent pas d'une pose a l'autre : on place le dessin allonge
+         a partir de ce point-la, et non a partir de son centre. La tete part donc
+         en arriere pendant que l'appui reste ou il etait. */
+      const fesses=hen.x+80-HURT_W*sc()/2 + HURT_FESSES*HURT_W*sc();
+      const hx=fesses-DOS_FESSES*w;
+      /* Elle part en arriere : le dessin pivote sur ces memes fesses jusqu'a plat en
+         un cinquieme de seconde. Sans ce quart de tour, la pose apparaissait d'un
+         coup et on ne voyait pas la chute. */
       const u=Math.min(1,(t-deadLand-BASCULE)/0.20), adouci=1-(1-u)*(1-u);
-      const px=hx+w*0.74, py=hy+h;                  // pivot sous la croupe
       ctx.save();
-      ctx.translate(px,py); ctx.rotate(-0.55*(1-adouci)); ctx.translate(-px,-py);
+      ctx.translate(fesses,DOS_DROP); ctx.rotate(-0.7*(1-adouci)); ctx.translate(-fesses,-DOS_DROP);
       ctx.drawImage(im,hx,hy,w,h);
       ctx.restore();
-      drawStars(hx+DOS_HEAD[0]*e, hy+DOS_HEAD[1]*e-32);
+      drawStars(hx+DOS_HEAD[0]*sc(), hy+DOS_HEAD[1]*sc()-30);
     }
   }else if(im===SPR.gobe){                        // bec ouvert en vol : meme tete que les poses de vol
     const w=GOBE_W*sc(), h=GOBE_H*sc();
