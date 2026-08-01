@@ -23,7 +23,10 @@ arrivent d'autant plus vite que la course dure.
 
 ## La course
 
-Deux poses en boucle : pattes écartées, pattes croisées. La pose pattes serrées
+Deux poses en boucle : pattes écartées, pattes croisées. La pose croisée n'est pas
+le dessin d'origine : seules ses jambes en ont été reprises, greffées sur le corps
+de la pose pattes serrées. Les deux corps sont donc identiques au pixel près, et
+seules les jambes bougent d'une image à l'autre. La pose pattes serrées
 servait de passage entre les deux, mais elle est aussi la pose d'arrêt, et la
 garder dans la boucle donnait une foulée qui marque le pas. Le corps rebondit deux
 fois par cycle, soit un rebond par appui et non un par image.
