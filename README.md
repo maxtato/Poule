@@ -23,11 +23,29 @@ visible.
 
 La jauge de plumes se vide en vol et se remplit au sol. Gober une mouche rend
 deux plumes. Gober plusieurs mouches sans laisser retomber la chaîne monte un
-combo : la première rapporte 4 m, la huitième 32 m, soit environ 144 m pour une
-nuée entière. C'est ce qui rend le vol rentable et pas seulement risqué.
+combo : plus elle est longue, plus l'éclat au gobage est fourni et plus le
+bruitage monte. Le combo ne paie rien d'autre — c'est le compte de mouches qui
+fait le score, et une chaîne rapporte simplement plus de mouches en moins de
+temps.
 
 Un aigle traverse le ciel à contre-sens. Les autres obstacles sont au sol et
 arrivent d'autant plus vite que la course dure.
+
+## Le score
+
+Le score est le nombre de mouches gobées. Les mètres ne comptent plus : ils
+restent la mesure du temps passé — ce sont eux qui accélèrent la course, tirent
+les obstacles et font tourner l'heure du jour — mais on ne joue plus à courir
+loin, on joue à manger.
+
+Le grand chiffre en haut à droite n'a pas d'unité écrite : le dessin de la
+mouche, posé juste avant, en tient lieu. Le record sert de cible : une jauge
+montre ce qu'il reste à gober et bascule au rouge dès qu'il tombe. Un palier
+toutes les dix mouches déclenche le bandeau.
+
+Le petit compteur de mouches qui vivait sous la jauge de plumes a disparu : il
+répétait le grand chiffre. Il ne reste à gauche que le combo, qui n'apparaît qu'à
+partir de deux mouches enchaînées.
 
 ## La course
 
@@ -213,6 +231,9 @@ hauteur.
 ## Sauvegarde
 
 Le record, le nombre total de mouches, le nombre de parties et la préférence de
-son sont conservés sous la clé `poule.v1`. Si `localStorage` est indisponible
+son sont conservés sous la clé `poule.v2`. Le passage de `poule.v1` est
+automatique, mais le record ancien n'est pas repris : il était compté en mètres,
+et un record de 228 serait resté hors d'atteinte en mouches. Les totaux et la
+préférence de son, eux, suivent. Si `localStorage` est indisponible
 (navigation privée, cadre cloisonné), le jeu tourne sans mémoire plutôt que de
 s'arrêter.

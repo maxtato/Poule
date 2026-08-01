@@ -55,7 +55,8 @@
   .btn:active{background:#D6342B;color:#fff}
   .score-big{font-size:clamp(52px,17vw,102px);font-weight:900;letter-spacing:-.05em;
     font-variant-numeric:tabular-nums;line-height:.9}
-  .score-unit{font-size:.34em;font-weight:700;letter-spacing:.12em;color:#9A8F80;margin-left:.25em}
+  .score-unit{font-size:.22em;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+    color:#9A8F80;margin-left:.45em}
   .rec{font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#9A8F80}
   .rec.new{color:#D6342B}
   .tap{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#B5AA9A}
@@ -67,9 +68,6 @@
     padding:34px 32px 30px;
     max-width:min(84vw,380px);animation:pop .26s cubic-bezier(.2,1.3,.5,1)}
   @keyframes pop{from{transform:scale(.88) translateY(10px);opacity:0}to{transform:none;opacity:1}}
-  #over .tally{display:flex;align-items:center;gap:9px}
-  #over .tally img{height:26px;width:auto;display:block}
-  #over .tally b{font-size:24px;font-weight:900;color:#1A1614;font-variant-numeric:tabular-nums}
   #over .totaux{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#B5AA9A}
   @media (prefers-reduced-motion:reduce){ #over .card{animation:none} }
 
@@ -140,7 +138,7 @@
     <div class="keys">
       <div><b>Appui court</b> — sauter</div>
       <div><b>Appui maintenu</b> — battre des ailes</div>
-      <div>Gobe les mouches à la chaîne : plumes et mètres bonus</div>
+      <div>Gobe les mouches : c'est le score, et ça rend des plumes</div>
     </div>
     <div class="tap" id="carnet"></div>
   </div>
@@ -149,9 +147,8 @@
 <div class="layer" id="over">
   <div class="card">
     <div class="kicker">Poule cuite</div>
-    <div class="score-big"><span id="fscore">0</span><span class="score-unit">m</span></div>
-    <div class="rec" id="frec">Record 0 m</div>
-    <div class="tally"><img id="flyicon" alt=""><b id="fflies">0</b></div>
+    <div class="score-big"><span id="fscore">0</span><span class="score-unit">mouches</span></div>
+    <div class="rec" id="frec">Record 0</div>
     <button class="btn" id="again">Recommencer</button>
     <div class="tap">ou appuie n'importe où</div>
     <div class="totaux" id="ftot"></div>
@@ -384,10 +381,16 @@ let FONT='"Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif';
    un objectif quand le record est hors de portee.
    localStorage peut lever (navigation privee, iframe cloisonnee) : on retombe alors
    sur une partie sans memoire plutot que de casser le jeu. */
-const SAVE_KEY="poule.v1";
+/* Le record se comptait en metres, il se compte en mouches. Un carnet de la
+   version precedente contiendrait donc un record de plusieurs centaines, jamais
+   rattrapable : on change de cle, et on ne reprend de l'ancien que ce qui garde un
+   sens — les totaux et le reglage du son. */
+const SAVE_KEY="poule.v2";
 const save={best:0, flies:0, runs:0, sound:true};
 try{
-  const o=JSON.parse(localStorage.getItem(SAVE_KEY)||"null");
+  let o=JSON.parse(localStorage.getItem(SAVE_KEY)||"null");
+  const ancien = o ? null : JSON.parse(localStorage.getItem("poule.v1")||"null");
+  if(ancien && typeof ancien==="object") o={flies:ancien.flies, runs:ancien.runs, sound:ancien.sound};
   if(o && typeof o==="object"){
     save.best=Math.max(0,o.best|0); save.flies=Math.max(0,o.flies|0);
     save.runs=Math.max(0,o.runs|0); save.sound=o.sound!==false;
@@ -552,14 +555,14 @@ const hen={x:150,y:0,vy:0,ground:true,feathers:1,anim:0,flap:0,dead:false};
 let speed=0, dist=0, tSpawn=0, t=0, shake=0, hold=false, holdT=0, eaten=0;
 let obs=[], flies=[], puffs=[], plumes=[], traits=[], clouds=[], tufts=[], hills=[], pops=[], miettes=[], decor=[];
 let tFly=0;
-/* Combo : gober sans laisser retomber la chaine paie des metres. Le compteur
-   retombe a zero passe COMBO_T sans mouche. */
+/* Combo : gober sans laisser retomber la chaine nourrit la chaine elle-meme —
+   plus elle est longue, plus l'eclat est fourni. Le compteur retombe a zero
+   passe COMBO_T sans mouche. */
 const COMBO_T=2.6;
-/* La distance monte de 54 a 98 m par seconde : un palier tous les 100 m aurait
-   fait clignoter le bandeau en permanence. Tous les 500 m, il tombe toutes les
-   5 a 9 secondes — assez rare pour rester une recompense. */
-const PALIER=500;
-let combo=0, lastEat=-9, bonus=0;
+/* Le score est le nombre de mouches, pas les metres : un palier tous les dix
+   gobages tombe assez rarement pour rester une recompense. */
+const PALIER=10;
+let combo=0, lastEat=-9;
 let palier=0, recBeaten=false;
 /* Un seul bandeau de felicitations a la fois : le dernier evenement gagne. */
 let flashT=-9, flashTxt="";
@@ -573,7 +576,7 @@ function reset(){
   flapNow=false; jumpBuf=-9; flapUntil=-9; fingers.clear();
   speed=500; dist=0; tSpawn=1.1; shake=0; hold=false; eaten=0;
   obs=[]; flies=[]; puffs=[]; plumes=[]; traits=[]; pops=[]; miettes=[];
-  combo=0; lastEat=-9; bonus=0; palier=0; recBeaten=false; flashT=-9; flashTxt="";
+  combo=0; lastEat=-9; palier=0; recBeaten=false; flashT=-9; flashTxt="";
   deadLand=-9; basculee=false;
   tFly=3;
   clouds=[]; for(let i=0;i<5;i++) clouds.push({x:Math.random()*VIEW_W*1.5, f:.15+Math.random()*.6, s:.55+Math.random()*.6, v:.5+Math.random()*.7});
@@ -746,27 +749,29 @@ function die(){
   hen.vy=Math.min(hen.vy,-790); hen.ground=false;   // a peine souleve : elle retombe sec
   for(let i=0;i<15;i++) plumes.push({x:hen.x+70,y:hen.y-60,vx:-40-Math.random()*170,
     vy:-130-Math.random()*230,r:Math.random()*6,vr:(Math.random()-.5)*8,l:1});
-  const m=Math.floor(dist), rec=m>best;
-  if(rec) best=m;
+  /* Le score, c'est le nombre de mouches gobees. La distance parcourue continue de
+     regler la difficulte et l'heure du jour, mais elle ne se compte plus. */
+  const rec=eaten>best;
+  if(rec) best=eaten;
   save.best=best; save.flies+=eaten; save.runs++; storeSave();
-  $("fscore").textContent=m;
-  $("fflies").textContent=eaten;
+  $("fscore").textContent=eaten;
   const fr=$("frec");
-  fr.textContent = rec ? "Nouveau record" : "Record "+best+" m";
+  fr.textContent = rec ? "Nouveau record" : "Record "+best;
   fr.classList.toggle("new",rec);
-  /* Les metres gagnes au vol ne se voient pas dans le total : on les rappelle,
-     sinon le combo n'a l'air de rien rapporter. */
-  $("ftot").textContent = bonus>0 ? "dont "+bonus+" m gobés" : "";
+  $("ftot").textContent = save.runs>1
+    ? save.flies+" en tout · "+save.runs+" parties" : "";
   carnet();
   overShown=false;
 }
 /* Rappel des totaux sur l'accueil : de quoi viser autre chose que le record. */
 function carnet(){
   const el=$("carnet"); if(!el) return;
-  el.textContent = save.runs
-    ? "Record "+save.best+" m · "+save.flies+" mouche"+(save.flies>1?"s":"")+" · "+
-      save.runs+" partie"+(save.runs>1?"s":"")
-    : "";
+  if(!save.runs){ el.textContent=""; return; }
+  /* Pas de "Record 0" : au premier essai, comme apres la reprise d'un carnet
+     compte en metres, il n'y a pas encore de record en mouches a annoncer. */
+  el.textContent = (save.best ? "Record "+save.best+" · " : "")+
+    save.flies+" gobée"+(save.flies>1?"s":"")+" · "+
+    save.runs+" partie"+(save.runs>1?"s":"");
 }
 $("play").onclick=start; $("again").onclick=start;
 $("resume").onclick=unhalt;
@@ -1045,13 +1050,8 @@ function update(dt){
       flies.splice(i,1);
       eaten++;
       hen.feathers=Math.min(1,hen.feathers+2/6);   // une mouche = deux plumes
-      /* Enchainer paie : 4 m la premiere mouche, jusqu'a 32 m au bout de la chaine,
-         soit ~144 m pour une nuee entiere. C'est ce qui rend le vol rentable au lieu
-         d'etre seulement risque. */
       combo = (t-lastEat<COMBO_T) ? combo+1 : 1;
       lastEat=t;
-      const gain=4*Math.min(combo,8);
-      dist+=gain; bonus+=gain;
       SFX.gobe(combo-1);
       /* Plus la chaine est longue, plus l'eclat est fourni : le gain se lit dans
          la gerbe plutot que dans un chiffre. */
@@ -1059,11 +1059,12 @@ function update(dt){
     }
   }
 
-  /* Un repere tous les 500 m, et une fanfare a l'instant precis ou le record tombe.
-     Le record passe devant : un palier franchi dans la foulee n'efface pas la fanfare. */
-  const borne=Math.floor(dist/PALIER);
-  if(borne>palier){ palier=borne; SFX.palier(); if(t-flashT>1.4) flash(borne*PALIER+" m"); }
-  if(!recBeaten && best>0 && dist>=best){
+  /* Un repere toutes les dix mouches, et une fanfare a l'instant precis ou le record
+     tombe. Le record passe devant : un palier franchi dans la foulee n'efface pas la
+     fanfare. */
+  const borne=Math.floor(eaten/PALIER);
+  if(borne>palier){ palier=borne; SFX.palier(); if(t-flashT>1.4) flash(borne*PALIER+" mouches"); }
+  if(!recBeaten && best>0 && eaten>=best){
     recBeaten=true; flash("Record battu"); SFX.record();
     pop(hen.x+80, hen.y-150, "RECORD", "#D6342B");
   }
@@ -1419,15 +1420,19 @@ function drawHUD(){
      loin de l'action. */
   const L=bandX, VW=bandW, R=bandX+bandW;
   const pad=Math.max(16,VW*0.045), top=pad+6, fs=Math.round(Math.min(38,VW*0.082));
+  /* Le score est le nombre de mouches. Pas de mot pour l'unite : le dessin de la
+     mouche tient ce role, pose juste avant le chiffre. */
   ctx.textAlign="right"; ctx.textBaseline="top"; ctx.fillStyle=INK;
   ctx.font="900 "+fs+"px "+FONT;
-  ctx.fillText(Math.floor(dist)+" m", R-pad, top);
+  ctx.fillText(String(eaten), R-pad, top);
+  const ih=fs*0.62, iw=ih*MOU_W/MOU_H;
+  ctx.drawImage(SPR.fly_a, R-pad-ctx.measureText(String(eaten)).width-9-iw, top+fs*0.24, iw, ih);
 
-  /* Le record sert de cible : une jauge montre ce qu'il reste a parcourir, et bascule
+  /* Le record sert de cible : une jauge montre ce qu'il reste a gober, et bascule
      au rouge des qu'il est depasse. */
   if(best>0){
     const bw=Math.min(126,VW*0.28), bh=Math.max(3,fs*0.11), by=top+fs+9, bx=R-pad-bw;
-    const prog=Math.min(1,dist/best), battu=dist>=best;
+    const prog=Math.min(1,eaten/best), battu=eaten>=best;
     ctx.fillStyle="#E4DACA"; rr(bx,by,bw,bh,bh/2); ctx.fill();
     if(prog>0.01){
       ctx.fillStyle = battu ? "#D6342B" : "#F5A623";
@@ -1435,7 +1440,7 @@ function drawHUD(){
     }
     ctx.font="700 11px "+FONT;
     ctx.fillStyle = battu ? "#D6342B" : MUTE;
-    ctx.fillText(battu ? "RECORD BATTU" : "RECORD "+best+" m", R-pad, by+bh+7);
+    ctx.fillText(battu ? "RECORD BATTU" : "RECORD "+best, R-pad, by+bh+7);
   }else{
     ctx.font="700 11px "+FONT; ctx.fillStyle=MUTE;
     ctx.fillText("PREMIER ESSAI", R-pad, top+fs+6);
@@ -1456,26 +1461,22 @@ function drawHUD(){
     rr(bx,by,bw,bh,r); ctx.stroke();
   }
 
-  /* mouches gobees */
-  const mh=Math.min(22,VW*0.046), mw=mh*MOU_W/MOU_H, my=fy+fh+8;
-  ctx.drawImage(SPR.fly_a, L+pad, my, mw, mh);
-  ctx.textAlign="left"; ctx.textBaseline="middle"; ctx.fillStyle=INK;
-  ctx.font="900 "+Math.round(mh*0.92)+"px "+FONT;
-  ctx.fillText(String(eaten), L+pad+mw+7, my+mh*0.52);
-
   /* Le combo ne s'affiche qu'a partir de deux mouches, avec le temps qu'il reste
-     pour l'entretenir : sans cette barre, la chaine casse sans prevenir. */
+     pour l'entretenir : sans cette barre, la chaine casse sans prevenir. Le petit
+     compteur de mouches qui vivait ici a disparu — le grand chiffre en haut a droite
+     dit deja la meme chose. */
   if(state===S.PLAY && combo>=2){
-    const chaud=combo>=5;
-    const cx=L+pad+mw+7+ctx.measureText(String(eaten)).width+13;
+    const mh=Math.min(22,VW*0.046), my=fy+fh+8, chaud=combo>=5;
+    ctx.textAlign="left"; ctx.textBaseline="middle";
+    ctx.font="900 "+Math.round(mh*0.92)+"px "+FONT;
     ctx.fillStyle = chaud ? "#D6342B" : YELL;
-    ctx.fillText("×"+combo, cx, my+mh*0.52);
+    ctx.fillText("×"+combo, L+pad, my+mh*0.52);
     const cw=Math.min(70,VW*0.15), ch=Math.max(2.5,mh*0.14), cy=my+mh+7;
     const rest=Math.max(0,1-(t-lastEat)/COMBO_T);
     ctx.fillStyle="#E4DACA"; rr(L+pad,cy,cw,ch,ch/2); ctx.fill();
     ctx.fillStyle = chaud ? "#D6342B" : YELL; rr(L+pad,cy,Math.max(ch,cw*rest),ch,ch/2); ctx.fill();
   }
-  ctx.textBaseline="top";
+  ctx.textAlign="right"; ctx.textBaseline="top";
 
   /* Bandeau des paliers : il pousse, tient, puis s'efface sans bloquer la vue.
      Meme parti que les gains : trait fin et jaune plutot qu'un pave noir en gras.
@@ -1507,7 +1508,6 @@ function frame(ts){
 function boot(){
   const el=$("load"); if(el) el.remove();
   FONT=getComputedStyle(document.body).fontFamily;
-  $("flyicon").src="data:image/png;base64,"+B64.fly_a;   // meme dessin que dans le jeu
   $("fly").style.backgroundImage="url(data:image/png;base64,"+B64.bouton+")";
   for(const k in SPR) CLE.set(SPR[k], k);
   mesurerObstacles();
