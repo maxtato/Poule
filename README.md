@@ -30,7 +30,7 @@ profondeur :
 |---|---|---|
 | Premier | Sol, obstacles à sauter, touffes d'herbe | pleine |
 | Deuxième | Arbres, sapin, cyprès, tracteur, moulin, panneaux | un tiers |
-| Fond | Collines | un dixième |
+| Fond | Massifs montagneux et collines | un dixième |
 
 Les silhouettes du deuxième plan sont des aplats opaques : les collines ne se
 voient pas au travers. Elles suivent quand même l'heure du jour — chaque dessin
@@ -48,6 +48,7 @@ lointain au plus proche :
 
 | Élément | Appui sous la ligne |
 |---|---|
+| Massifs et collines du fond | 2 |
 | Arbres, tracteur, panneaux, moulin | 4 |
 | Touffes d'herbe | 8 |
 | Poule, aigles, mouches, particules | 14 |
