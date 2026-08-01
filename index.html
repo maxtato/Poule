@@ -1306,13 +1306,26 @@ function draw(){
       const hx=fesses-DOS_FESSES*w;
       /* Elle part en arriere : le dessin pivote sur ces memes fesses jusqu'a plat en
          un cinquieme de seconde. Sans ce quart de tour, la pose apparaissait d'un
-         coup et on ne voyait pas la chute. */
-      const u=Math.min(1,(t-deadLand-BASCULE)/0.20), adouci=1-(1-u)*(1-u);
+         coup et on ne voyait pas la chute.
+         L'angle est POSITIF : la tete est a gauche du pivot, et sur un canevas dont
+         l'axe vertical descend, c'est un angle positif qui la leve. Au signe oppose
+         elle commencait la tete enfoncee dans le sol et la croupe en l'air, ce qui
+         donnait un plongeon et non une chute a la renverse. */
+      /* 1,3 radian, soit trois quarts d'angle droit : c'est l'inclinaison a laquelle
+         la silhouette allongee se superpose le mieux a la silhouette assise, tete en
+         haut et pattes vers l'avant. A 0,7 elle demarrait deja couchee et le
+         raccord sautait ; a 1,55 elle se tenait debout sur sa croupe. */
+      const u=Math.min(1,(t-deadLand-BASCULE)/0.26), adouci=1-(1-u)*(1-u);
+      const angle=1.3*(1-adouci);
       ctx.save();
-      ctx.translate(fesses,DOS_DROP); ctx.rotate(-0.7*(1-adouci)); ctx.translate(-fesses,-DOS_DROP);
+      ctx.translate(fesses,DOS_DROP); ctx.rotate(angle); ctx.translate(-fesses,-DOS_DROP);
       ctx.drawImage(im,hx,hy,w,h);
       ctx.restore();
-      drawStars(hx+DOS_HEAD[0]*sc(), hy+DOS_HEAD[1]*sc()-30);
+      /* Les etoiles suivent la tete pendant la bascule, sinon elles l'attendent
+         toutes seules a l'arrivee. */
+      const tx=hx+DOS_HEAD[0]*sc(), ty=hy+DOS_HEAD[1]*sc()-30;
+      const dx=tx-fesses, dy=ty-DOS_DROP, co=Math.cos(angle), si=Math.sin(angle);
+      drawStars(fesses+dx*co-dy*si, DOS_DROP+dx*si+dy*co);
     }
   }else if(im===SPR.gobe){                        // bec ouvert en vol : meme tete que les poses de vol
     const w=GOBE_W*sc(), h=GOBE_H*sc();

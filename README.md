@@ -163,9 +163,17 @@ Le dessin de la dernière pose portait ses propres étoiles et son tourbillon ; 
 ont été retirés au découpage pour laisser tourner ceux du jeu, qui sont animés.
 Ils ne tournent que sur cette pose-là.
 
-La bascule elle-même est un quart de tour : le dessin pivote sur les fesses jusqu'à
-plat en un cinquième de seconde, avec un peu de poussière et une secousse. Sans ce
-pivot, la pose apparaissait d'un coup et on ne voyait pas la chute.
+La bascule elle-même est une rotation de 1,3 radian — trois quarts d'angle droit —
+autour des fesses, en un quart de seconde, avec un peu de poussière et une
+secousse. C'est l'inclinaison à laquelle la silhouette allongée se superpose le
+mieux à la silhouette assise : tête en haut, pattes vers l'avant. Plus à plat le
+raccord saute, plus redressée elle se tient debout sur sa croupe.
+
+L'angle est **positif** : la tête est à gauche du pivot, et sur un canevas dont
+l'axe vertical descend, c'est un angle positif qui la lève. Au signe opposé elle
+commençait la tête enfoncée dans le sol et la croupe en l'air — un plongeon, pas
+une chute à la renverse. Les étoiles suivent la tête pendant la rotation, sinon
+elles l'attendent toutes seules à l'arrivée.
 
 Deux règles tiennent la cohérence entre les poses. Toutes se posent à la même
 échelle `sc()`, si bien que la tête garde la même taille debout, assise ou sur le
