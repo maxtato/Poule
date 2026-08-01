@@ -1162,7 +1162,7 @@ function ombres(){
   ctx.beginPath();
   if(hen.dead && deadPhase()===1){
     ctx.globalAlpha=.04+.08*u;                     // plus legere : elle ne fait qu'un lisere
-    ctx.ellipse(hen.x+74, KO_DROP+3, KO_W*0.27*(1+u), 2.2+3.4*u, 0, 0, 7);
+    ctx.ellipse(hen.x+74, KO_DROP, KO_W*0.27*(1+u), 2.2+3.4*u, 0, 0, 7);
   }else{
     ctx.globalAlpha=.05+.10*u;
     ctx.ellipse(hen.x+80, 1, 26+26*u, 3+4.5*u, 0, 0, 7);
@@ -1193,7 +1193,7 @@ function drawTraits(){
   }
   ctx.globalAlpha=1;
 }
-function star(x,y,r,rot){
+function star(x,y,r,rot,trait){
   ctx.save(); ctx.translate(x,y); ctx.rotate(rot);
   ctx.beginPath();
   for(let i=0;i<10;i++){
@@ -1202,11 +1202,21 @@ function star(x,y,r,rot){
   }
   ctx.closePath();
   ctx.fillStyle="#F5B93E"; ctx.fill();
-  ctx.strokeStyle=INK; ctx.lineWidth=STROKE; ctx.lineJoin="round"; ctx.stroke();
+  ctx.strokeStyle=INK; ctx.lineWidth=trait||STROKE; ctx.lineJoin="round"; ctx.stroke();
   ctx.restore();
 }
 /* La ronde d'etoiles se dimensionne sur la pose qu'elle couronne : ecrite en dur,
-   elle debordait largement de la poule KO, plus compacte que l'ancienne pose. */
+   elle debordait largement de la poule KO, plus compacte que l'ancienne pose.
+   Les cinq etoiles ne sont pas interchangeables : deux d'entre elles filent plus
+   haut que la ronde et sont un peu plus grosses. Toutes sur la meme ellipse et a
+   la meme taille, la ronde se lisait comme un engrenage ; depareillees, elle
+   tournoie. Le profil est fixe par rang, pas tire au hasard : il tourne avec la
+   ronde, donc la variete se voit sans que rien ne clignote.
+   Leur contour est plus fin que le trait des dessins — a cette taille, l'encre
+   pleine mangeait le jaune. */
+const ETOILE_LEVE   = [0, 13, 3, 8, 0];        // ce que chaque etoile gagne en hauteur
+const ETOILE_TAILLE = [1, 1.3, 1, 1.18, 1];
+const ETOILE_TRAIT  = 0.55;                    // en part du trait des dessins
 function drawStars(cx,cy,e){
   e=e||1;
   const rot=(t-deadAt)*2.4, rx=54*e, ry=17*e;
@@ -1215,8 +1225,9 @@ function drawStars(cx,cy,e){
   ctx.beginPath(); ctx.ellipse(cx-4*e,cy-9*e,rx*.7,ry*.8,0,3.5,6.1); ctx.stroke();
   ctx.globalAlpha=1;
   for(let i=0;i<5;i++){
-    const a=rot+i*Math.PI*0.4, x=cx+Math.cos(a)*rx, y=cy-9*e+Math.sin(a)*ry;
-    star(x,y, (5.5+((Math.sin(a)+1)/2)*4)*e, a*0.5);
+    const a=rot+i*Math.PI*0.4;
+    const x=cx+Math.cos(a)*rx, y=cy-(9+ETOILE_LEVE[i])*e+Math.sin(a)*ry;
+    star(x, y, (5.5+((Math.sin(a)+1)/2)*4)*e*ETOILE_TAILLE[i], a*0.5, STROKE*ETOILE_TRAIT);
   }
 }
 function henFrame(){

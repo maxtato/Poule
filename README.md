@@ -200,8 +200,16 @@ Le dessin KO portait ses propres étoiles et son tourbillon ; ils ont été reti
 au découpage pour laisser tourner ceux du jeu, qui sont animés. Le découpage ne
 supprime pas seulement leurs traits : il efface aussi le halo pâle qui les
 entourait, en dilatant la marque de quelques pixels dans le fond — sans quoi il
-serait resté leur fantôme. La ronde d'étoiles se dimensionne maintenant sur la
-pose qu'elle couronne ; écrite en dur, elle débordait sur l'obstacle.
+serait resté leur fantôme.
+
+La ronde d'étoiles se dimensionne sur la pose qu'elle couronne ; écrite en dur,
+elle débordait sur l'obstacle. Ses cinq étoiles ne sont pas interchangeables :
+deux d'entre elles filent plus haut que la ronde et sont un peu plus grosses.
+Toutes sur la même ellipse et à la même taille, la ronde se lisait comme un
+engrenage ; dépareillées, elle tournoie. Le profil est fixé par rang et non tiré
+au hasard : il tourne avec la ronde, si bien que la variété se voit sans que rien
+ne clignote. Leur contour est plus fin que le trait des dessins — à cette taille,
+l'encre pleine mangeait le jaune.
 
 Les tailles ne sont pas choisies, elles sont mesurées. La crête est le seul aplat
 rouge visible en entier dans les trois dessins — l'éclat jaune du choc recouvre
