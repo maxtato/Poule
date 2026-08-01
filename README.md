@@ -66,8 +66,15 @@ par seconde environ au lieu de dix-huit par image.
 
 Les massifs du fond forment une chaîne continue : chacun est placé à partir du
 bord **droit** du précédent, moins un chevauchement, ce qui garantit le
-recouvrement quelle que soit la silhouette tirée. Les arbres, eux, sont placés à
-partir du bord gauche de leur voisin plus un écart : ils doivent respirer.
+recouvrement quelle que soit la silhouette tirée. Ce chevauchement est plafonné à
+45 % de la largeur du nouveau venu — au-delà, un massif étroit placé derrière un
+large n'avancerait plus du tout et la chaîne se figerait. Les arbres, eux, sont
+placés à partir du bord gauche de leur voisin plus un écart : ils doivent
+respirer.
+
+Chaque arbre tire son propre coefficient de taille à la plantation, entre 1 et
+1,32 : la valeur inscrite dans la table est un minimum, pas une taille. Le bâti et
+les panneaux n'y sont pas soumis.
 
 ## Perspective
 

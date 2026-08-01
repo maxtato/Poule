@@ -196,12 +196,19 @@ const GRASS = [{"w": 41, "h": 26}, {"w": 39, "h": 21}, {"w": 27, "h": 17}, {"w":
      3. les collines                              -> un dixieme
    Hauteurs en unites monde ; la largeur suit le dessin, pour ne rien deformer. */
 const PARA_DECOR = 0.34, PARA_COLL = 0.10;
-/* Les arbres dominent le second plan ; le tracteur, les panneaux et le moulin
-   gardent leur echelle, ce sont des reperes et non un horizon. */
+/* Hauteurs du second plan. Pour les arbres c'est un minimum, pas une taille : voir
+   ARBRES plus bas. Le moulin domine, les panneaux sont a hauteur d'homme. */
 const DECOR = {bg_chene:278, bg_cypres:302, bg_saule:254, bg_tracteur:132,
-               bg_poteau:122, bg_girouette:128, bg_fleche:102,
-               bg_moulin:234, bg_arbre:280, bg_sapin:288};
+               bg_poteau:92, bg_girouette:96, bg_fleche:78,
+               bg_moulin:328, bg_arbre:280, bg_sapin:288};
 const DECOR_KEYS = Object.keys(DECOR);
+/* Une futaie ou tous les arbres font la meme taille ne ressemble a rien. Chacun
+   tire son propre coefficient a la plantation : jamais plus petit que la valeur
+   ci-dessus, jusqu'a un tiers de plus. Le batî et les panneaux gardent leur
+   echelle, eux n'ont pas de raison de varier. */
+const ARBRES = ["bg_chene","bg_cypres","bg_saule","bg_arbre","bg_sapin"];
+const POUSSE = 0.32;
+function tailleArbre(k){ return ARBRES.indexOf(k)>=0 ? 1+Math.random()*POUSSE : 1; }
 /* Les silhouettes descendent un peu sous la ligne d'horizon : le sol, dessine
    juste apres, recouvre leur base et les enracine au lieu de les poser dessus. */
 const DECOR_BASE = 4;
@@ -212,14 +219,17 @@ const DECOR_BASE = 4;
    chaine continue plutot qu'un chapelet de buttes. */
 /* Les massifs dominent, les collines douces restent basses : c'est l'ecart entre
    les deux qui donne du relief a la ligne de crete. */
-const COLLINE = {bg_mont0:334, bg_mont1:240, bg_mont2:312, bg_mont3:203,
-                 bg_coll0:110, bg_coll1:126, bg_coll2:83,  bg_coll3:101};
+const COLLINE = {bg_mont0:484, bg_mont1:348, bg_mont2:452, bg_mont3:294,
+                 bg_coll0:138, bg_coll1:158, bg_coll2:104, bg_coll3:126};
 const COLLINE_KEYS = Object.keys(COLLINE);
 const COLLINE_BASE = 2;
 /* De combien chaque massif mord sur son voisin. Plus le chevauchement est grand,
-   plus la chaine est courte a nombre de silhouettes egal — et une chaine trop
-   courte finit par s'ouvrir sur le bord de l'ecran. */
-const CHEVAUCHE = 70, CHEVAUCHE_JEU = 110;
+   plus les cretes se succedent vite — c'est ce qui compte une fois les massifs
+   agrandis, car leur largeur suit leur hauteur et un sommet finissait par ne
+   passer qu'une fois par ecran. Il est plafonne a 45% de la largeur du nouveau
+   venu : au-dela, un massif etroit derriere un large n'avancerait plus du tout et
+   la chaine se figerait. */
+const CHEVAUCHE = 250, CHEVAUCHE_JEU = 210, CHEVAUCHE_MAX = 0.45;
 /* Chaque objet mord sous la ligne d'horizon a hauteur de 8% de sa taille : leur base
    est dessinee en perspective. Une constante commune enterrait les petits objets. */
 /* Le seau est dessine avec sa flaque, qui s'etale bien au-dela de lui. La collision
@@ -515,10 +525,11 @@ function reset(){
   /* La chaine doit rester plus longue que la course entre le bord droit et le point
      de sortie a gauche, sinon elle s'etire et finit par s'ouvrir. On seme donc bien
      au-dela du cadre : le surcout est de trois silhouettes. */
-  hills=[]; { let p=null, x=-500;
-    while(x < VIEW_W+1400){
+  hills=[]; { let p=null, x=-900;
+    while(x < VIEW_W+1600){
       p=tireCle(COLLINE_KEYS,p); hills.push({k:p, x});
-      x += largeurDe(p,COLLINE) - CHEVAUCHE - Math.random()*CHEVAUCHE_JEU;
+      const w=largeurDe(p,COLLINE);
+      x += w - Math.min(CHEVAUCHE+Math.random()*CHEVAUCHE_JEU, w*CHEVAUCHE_MAX);
     } }
   tufts=[];
   for(let i=0;i<13;i++)
@@ -528,7 +539,7 @@ function reset(){
   decor=[]; let prec=null;
   for(let x=-140; x<VIEW_W*1.8; x+=200+Math.random()*250){
     prec=tireCle(DECOR_KEYS, prec);
-    decor.push({k:prec, x});
+    decor.push({k:prec, x, s:tailleArbre(prec)});
   }
 }
 
@@ -551,25 +562,29 @@ function largeurDe(k, tailles){
    regle-la ouvrait un trou des que l'ecart tire depassait la largeur du voisin. On
    part alors de son bord DROIT et on recule d'un chevauchement, ce qui garantit le
    recouvrement quelle que soit la silhouette tiree. */
-function defile(bande, liste, dx, sortie, ecart, jeu, tailles){
+function defile(bande, liste, dx, sortie, ecart, jeu, tailles, varie){
   for(const d of bande){
     d.x -= dx;
     if(d.x < sortie){
       let mx=-1e9, dernier=null, bord=-1e9;
       for(const o of bande){
         if(o.x>mx){ mx=o.x; dernier=o.k; }
-        if(tailles) bord=Math.max(bord, o.x+largeurDe(o.k,tailles));
+        if(tailles) bord=Math.max(bord, o.x+largeurDe(o.k,tailles)*(o.s||1));
       }
       d.k=tireCle(liste, dernier);
-      d.x = tailles ? Math.max(VIEW_W+40, bord-ecart-Math.random()*jeu)
-                    : Math.max(VIEW_W+60, mx+ecart+Math.random()*jeu);
+      if(varie) d.s=varie(d.k);
+      if(tailles){
+        const w=largeurDe(d.k,tailles)*(d.s||1);
+        const rec=Math.min(ecart+Math.random()*jeu, w*CHEVAUCHE_MAX);
+        d.x=Math.max(VIEW_W+40, bord-rec);
+      }else d.x=Math.max(VIEW_W+60, mx+ecart+Math.random()*jeu);
     }
   }
 }
 /* Les deux plans de fond, a leur vitesse propre. `v` est la vitesse du premier plan. */
 function avanceFond(dt, v){
-  defile(decor, DECOR_KEYS,  v*PARA_DECOR*dt, -300, 200, 250);
-  defile(hills, COLLINE_KEYS, v*PARA_COLL*dt, -700, CHEVAUCHE, CHEVAUCHE_JEU, COLLINE);
+  defile(decor, DECOR_KEYS,  v*PARA_DECOR*dt, -400, 200, 250, null, tailleArbre);
+  defile(hills, COLLINE_KEYS, v*PARA_COLL*dt, -1100, CHEVAUCHE, CHEVAUCHE_JEU, COLLINE);
 }
 
 /* ---------- entrees ----------
@@ -1098,7 +1113,7 @@ function draw(){
   /* Second plan, en aplat opaque : les collines ne doivent pas se voir au travers. */
   for(const d of decor){
     const im=SPR[d.k]; if(!im || !im.naturalHeight) continue;
-    const dh=DECOR[d.k], dw=dh*im.naturalWidth/im.naturalHeight;
+    const dh=DECOR[d.k]*(d.s||1), dw=dh*im.naturalWidth/im.naturalHeight;
     ctx.drawImage(teinter(d.k, jour.dec), d.x, DECOR_BASE-dh, dw, dh);
   }
 
