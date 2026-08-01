@@ -21,6 +21,23 @@ nuée entière. C'est ce qui rend le vol rentable et pas seulement risqué.
 Un aigle traverse le ciel à contre-sens. Les autres obstacles sont au sol et
 arrivent d'autant plus vite que la course dure.
 
+## Les trois plans
+
+Le décor défile sur trois épaisseurs, à trois vitesses, ce qui donne la
+profondeur :
+
+| Plan | Contenu | Vitesse |
+|---|---|---|
+| Premier | Sol, obstacles à sauter, touffes d'herbe | pleine |
+| Deuxième | Arbres, sapin, cyprès, tracteur, moulin, panneaux | un tiers |
+| Fond | Collines | un dixième |
+
+Les silhouettes du deuxième plan sont dessinées en transparence plutôt qu'en
+aplat : elles prennent ainsi la couleur du ciel du moment et reculent d'elles-mêmes
+au crépuscule, sans palette à tenir à part. Leur base passe sous la ligne
+d'horizon, que le sol recouvre juste après, ce qui les enracine au lieu de les
+poser dessus.
+
 ## Cadrage
 
 Le terrain est dessiné en hauteur : 800 unités de large pour 1250 au minimum de
@@ -39,6 +56,7 @@ Les repères du code, dans l'ordre :
 | Section | Contenu |
 |---|---|
 | Constantes | Dimensions des sprites, boîtes de collision, points d'ancrage |
+| Profondeur | Vitesses des trois plans et tailles du décor de fond |
 | Lumière du jour | Palettes horaires et interpolation du ciel |
 | Carnet | Record, totaux et préférences en `localStorage` |
 | Son | Bruitages synthétisés en WebAudio, aucun fichier audio |
