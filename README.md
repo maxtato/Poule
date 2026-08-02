@@ -159,6 +159,22 @@ d'écart moyen couvrent près de trois largeurs d'écran : la fin de la chaîne
 n'apparaît jamais au bord droit, et il en reste sept à l'écran comme avec
 l'ancien semis régulier.
 
+Les aigles et les mouches sont repris de la même façon, avec un autre repère : le
+bec jaune pour l'aigle, l'œil rouge pour la mouche — présents et entiers dans
+toutes les poses. Leurs traits de vitesse peints sont retirés : le jeu a les siens,
+et un trait dans le sprite suivrait la bête au lieu de rester derrière elle. C'est
+eux qui débordaient du cadre de deux cents unités.
+
+Les dessins fournis regardent à droite ; l'aigle et la mouche traversent l'écran à
+contre-sens et regardent à gauche dans le jeu. Ils sont donc **retournés** avant
+tout le reste. Sans cela le calage par le bec posait le corps du mauvais côté de sa
+boîte de collision — l'oiseau volait à côté de sa boîte au lieu d'être dedans.
+
+Le cadre de l'aigle s'élargit vers la droite et un peu en haut et en bas ; son point
+d'ancrage ne suit que la marge haute, si bien qu'il reste exactement où sa boîte
+l'attend. Celui de la mouche s'élargit **symétriquement** : elle est dessinée
+centrée sur sa position, une marge inégale la décalerait à l'écran.
+
 Les cinq cailloux sont découpés d'un même dessin et mis à l'échelle d'un seul
 coup, ce qui garde leurs tailles relatives : du bloc de 42 unités au gravier de
 13. Chacun est découpé avec les gravillons qui le posent au sol — ce sont autant
