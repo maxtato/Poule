@@ -187,7 +187,34 @@ demande de redresser l'appareil, où l'image serait réduite à une bande étroi
 
 ## La finesse des dessins
 
-Vingt-quatre des dessins du jeu n'avaient que **deux valeurs d'alpha**, zéro ou
+Deux pertes distinctes, à ne pas confondre.
+
+**La première est la résolution du dessin d'origine.** Les sprites livrés avec le
+jeu ne gardaient que 262 pixels de hauteur de poule là où le dessin d'origine en
+compte 544 : plus de la moitié avait été jetée avant d'en faire un sprite, et
+aucun agrandissement ne la rend. La pose pattes écartées et la pose pattes croisées
+sont donc reprises depuis les dessins eux-mêmes. Le trait y retrouve sa finesse :
+1,33 % de la hauteur de la poule contre 1,52 % auparavant, pour 1,29 % dans
+l'original.
+
+Elles sont reposées dans le **cadre exact** du sprite qu'elles remplacent — tout le
+calage du jeu (`FOOT_POSE`, `ANCH_X`, `ANCH_Y`, `SW`, `SH`) est écrit en fractions
+de ce cadre. L'alignement se fait sur la hauteur du corps et sur la rangée des
+pattes, pas sur la boîte entière : les ailes et la crête ne tombent pas au même
+endroit d'une génération de dessin à l'autre.
+
+Les deux dessins partagent le même corps — au-dessus de la rangée 436 leur alpha ne
+diffère que de deux unités sur 255, et l'écart explose juste en dessous, là où les
+pattes se séparent. La greffe des pattes croisées sur le corps des pattes écartées
+est donc refaite à cette couture : les deux images du cycle ont un corps identique
+au pixel près, écart mesuré nul.
+
+Les autres poses de poule — arrêt, bec ouvert, saut, les trois de vol — n'ont pas
+d'original disponible et gardent leur trait plus lourd : de 1,40 % pour l'arrêt à
+2,48 % pour le bec ouvert. La différence se voit quand elle quitte le sol.
+
+**La seconde perte était le bord.** Vingt-quatre des dessins du jeu n'avaient que
+**deux valeurs d'alpha**, zéro ou
 plein : leur silhouette était un escalier, sans un seul pixel de transition. C'est
 de là que venait le manque de finesse, bien plus que de la taille — la mesure
 montrait qu'aucun dessin n'était agrandi à l'écran sur téléphone ni sur tablette.
