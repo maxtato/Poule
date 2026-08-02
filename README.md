@@ -78,6 +78,17 @@ passage entre les deux extrêmes. La traînée passe **avant**,
 l'actuelle par-dessus et opaque — un fondu croisé classique aurait rendu la poule
 elle-même translucide pendant l'échange.
 
+Le même principe vaut désormais pour les trois battements d'ailes : celui de la
+poule en vol (`VOL`), celui de l'aigle (`AIGLE`) et celui des mouches
+(`MOUCHE`). La fonction `cycle()` les traite toutes les trois : elle reçoit une
+liste de poses et une avance décimale, pose la précédente en traînée tant qu'on
+est dans les premiers `FONDU_BAT` de l'image, puis la courante par-dessus et
+opaque. Les ailes n'ont que deux ou trois positions dessinées ; la traînée
+comble l'écart entre elles et le battement cesse de sauter d'une position à
+l'autre. Les mouches battent quatorze fois par seconde : le recouvrement y dure
+moins de trente millisecondes, assez pour lisser le battement sans jamais
+laisser voir deux mouches.
+
 ## Les trois plans
 
 Le décor défile sur trois épaisseurs, à trois vitesses, ce qui donne la

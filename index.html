@@ -391,6 +391,25 @@ function detailSol(g){
 const FONDU = 0.34;   // part du demi-cycle ou la trainee reste visible
 const TRACE = 0.42;   // opacite de depart de la trainee
 
+/* Le meme parti est tenu partout ou une image en remplace une autre : le battement
+   d'ailes de la poule, celui de l'aigle, celui de la mouche. L'image qu'on quitte
+   s'attarde derriere et s'efface ; l'actuelle passe par-dessus et opaque.
+   Un fondu croise, lui, rendrait le sujet lui-meme translucide a chaque battement
+   et on verrait le decor au travers de l'aile.
+   Le battement est plus rapide que la foulee : la trainee y tient sur pres de la
+   moitie de l'image, sans quoi elle passerait inapercue. */
+const VOL    = ["fly_down","fly_mid","fly_up","fly_mid"];
+const AIGLE  = ["eagle_up","eagle_mid","eagle_down","eagle_mid"];
+const MOUCHE = ["fly_b","fly_a"];
+const FONDU_BAT = 0.45, TRACE_BAT = 0.5;
+/* `poser(cle, alpha)` fait le rendu proprement dit : la meme mecanique sert aux
+   trois, seul le dessin change. */
+function cycle(liste, avance, poser){
+  const n=liste.length, i=(avance|0)%n, d=avance%1;
+  if(d<FONDU_BAT) poser(liste[(i+n-1)%n], TRACE_BAT*(1-d/FONDU_BAT));
+  poser(liste[i], 1);
+}
+
 const INK="#1A1614", CREAM="#FAF3EC", SAND="#EFE5D5", EARTH="#E0D3BC",
       GRASS_D="rgba(110,135,64,.6)", YELL="#F5A623", MUTE="#9A8F80",
       WOOD="#C9995C", HAY="#E8BE62", GREEN="#8AA455";
@@ -1385,8 +1404,7 @@ function henFrame(){
   if(hen.ground) return SPR[COURSE[(hen.anim%COURSE.length)|0]];
   if(panic()) return SPR[COURSE[(hen.anim%COURSE.length)|0]];   // pattes qui gigotent dans le vide
   if(!flying() && t>flapUntil) return SPR.jump;
-  const k=(hen.flap|0)%4;
-  return k===0 ? SPR.fly_down : (k===2 ? SPR.fly_up : SPR.fly_mid);
+  return SPR[VOL[(hen.flap|0)%VOL.length]];
 }
 
 function draw(){
@@ -1467,10 +1485,12 @@ function draw(){
   ombres();                         // toutes avant les objets : aucune ne se pose dessus
 
   for(const o of obs){
-    if(o.k==="eagle"){
-      const f=(t*EAGLE_BAT+o.ph)%4|0;                  // battement : haut, milieu, bas, milieu
-      const im=f===0?SPR.eagle_up:(f===2?SPR.eagle_down:SPR.eagle_mid);
-      ctx.drawImage(im, o.x-EAGLE.bodyX, o.y-EAGLE.bodyCY, EAGLE.w, EAGLE.h);
+    if(o.k==="eagle"){                               // battement : haut, milieu, bas, milieu
+      cycle(AIGLE, t*EAGLE_BAT+o.ph, (k,a)=>{
+        ctx.globalAlpha=a;
+        ctx.drawImage(SPR[k], o.x-EAGLE.bodyX, o.y-EAGLE.bodyCY, EAGLE.w, EAGLE.h);
+      });
+      ctx.globalAlpha=1;
     }else ctx.drawImage(SPR[o.k], o.x, -o.h+OBS_DEF[o.k].sink+OBS_EXTRA, o.w, o.h);
   }
 
@@ -1486,9 +1506,12 @@ function draw(){
   ctx.globalAlpha=1;
 
   for(const f of flies){                          // battement rapide : deux poses alternees
-    const im=((t*14+f.ph)|0)%2 ? SPR.fly_a : SPR.fly_b;
-    ctx.drawImage(im, f.x-MOU_W/2+(f.jx||0), f.y-MOU_H/2+(f.jy||0), MOU_W, MOU_H);
+    cycle(MOUCHE, t*14+f.ph, (k,a)=>{
+      ctx.globalAlpha=a;
+      ctx.drawImage(SPR[k], f.x-MOU_W/2+(f.jx||0), f.y-MOU_H/2+(f.jy||0), MOU_W, MOU_H);
+    });
   }
+  ctx.globalAlpha=1;
 
   /* Le pop du gobage : de fins traits en etoile, deux fois plus minces que le
      trait des dessins pour ne pas passer pour un element du decor. Ils raccourcissent
@@ -1554,7 +1577,8 @@ function draw(){
       const n=COURSE.length, i=(hen.anim%n)|0, d=hen.anim%1;   // avancee dans l'image courante
       if(d<FONDU) poser(COURSE[(i+n-1)%n], TRACE*(1-d/FONDU)); // la trainee d'abord
       poser(COURSE[i], 1);
-    }else poser(cle, 1);
+    }else if(VOL.indexOf(cle)>=0) cycle(VOL, hen.flap, poser);
+    else poser(cle, 1);
     ctx.globalAlpha=1;
   }
 
