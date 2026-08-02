@@ -175,8 +175,8 @@ d'ancrage ne suit que la marge haute, si bien qu'il reste exactement où sa boî
 l'attend. Celui de la mouche s'élargit **symétriquement** : elle est dessinée
 centrée sur sa position, une marge inégale la décalerait à l'écran.
 
-Cinq obstacles et l'herbe sont repris de la même façon : la barrière, la fourche,
-la botte, la botte double et le pneu. Ces dessins-là portent déjà leur couche alpha
+Six obstacles et l'herbe sont repris de la même façon : la barrière, la fourche, la
+botte, la botte double, le pneu et la brouette. Ces dessins-là portent déjà leur couche alpha
 sur 256 niveaux — il n'y a rien à détourer, seulement à séparer les objets posés
 côte à côte sur une même planche, ce que font les colonnes vides entre eux.
 
@@ -193,7 +193,8 @@ elles changent avec eux : une seule a bougé de plus d'une unité, celle de la b
 de deux unités en largeur. Elles ont été redessinées par-dessus les sept obstacles
 pour vérifier qu'aucune ne mord sur le socle d'herbe.
 
-Le seau et la brouette n'ont pas de dessin fourni et gardent ceux du jeu d'origine.
+Le seau est le dernier dessin du jeu d'origine ; il garde sa boîte écrite à la
+main, pour la raison expliquée plus bas.
 
 Les cinq cailloux sont découpés d'un même dessin et mis à l'échelle d'un seul
 coup, ce qui garde leurs tailles relatives : du bloc de 42 unités au gravier de
