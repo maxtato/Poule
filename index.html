@@ -668,7 +668,7 @@ const footOff=()=>FOOT_Y*sc();
 
 function reset(){
   hen.x=HEN_X; hen.y=0; hen.vy=0; hen.ground=true; hen.feathers=1; hen.flap=0; hen.dead=false;
-  flapNow=false; jumpBuf=-9; flapUntil=-9; fingers.clear();
+  flapNow=false; jumpBuf=-9; flapUntil=-9; enSaut=false; fingers.clear();
   speed=500; dist=0; tSpawn=1.1; shake=0; hold=false; eaten=0;
   obs=[]; flies=[]; puffs=[]; plumes=[]; traits=[]; pops=[]; miettes=[];
   combo=0; lastEat=-9; palier=0; recBeaten=false; flashT=-9; flashTxt="";
@@ -771,6 +771,15 @@ function avanceFond(dt, v){
    - les doigts sont comptes : lever un doigt alors qu'un autre est pose ne coupe pas le vol      */
 let flapNow=false, jumpBuf=-9, lastPress=-9, flapUntil=-9;
 const fingers=new Set();
+/* Le saut part toujours a pleine impulsion et se coupe net au relachement : la
+   hauteur suit donc la duree de l'appui, sans qu'il faille attendre de savoir
+   combien de temps le doigt va rester. Passe le moment ou la pesanteur a ramene la
+   vitesse sous le plancher, relacher ne change plus rien et le saut est entier. */
+const SAUT_VY = 1500, SAUT_COUPE = 1020;
+/* Tant que la poule monte sur son saut, le vol ne prend pas la main : sinon il
+   plafonnait la montee a 310 des le premier dixieme de seconde et on ne voyait
+   jamais le saut. Le maintien donne donc le saut d'abord, le vol ensuite. */
+let enSaut=false;
 
 function press(){
   if(frozen()) return;                  // partie gelee : aucun appui ne compte
@@ -781,8 +790,8 @@ function press(){
   if(state===S.DEAD){ if(t-deadAt>.62) start(); return; }
   hold=true; holdT=0;
 
-  if(hen.ground){                       // decollage
-    hen.vy=-1500; hen.ground=false; flapNow=false; dust(hen.x+80,4);
+  if(hen.ground){                       // decollage : le saut, pas encore le vol
+    hen.vy=-SAUT_VY; hen.ground=false; flapNow=false; enSaut=true; dust(hen.x+80,4);
     SFX.saut();
     return;
   }
@@ -790,6 +799,7 @@ function press(){
   if(hen.feathers>0.02){                // coup d'aile immediat
     hen.vy=Math.max(Math.min(hen.vy,0)-370, -530);
     hen.feathers=Math.max(0,hen.feathers-0.036);
+    enSaut=false;                       // un coup d'aile voulu met fin au saut
     hen.flap=1;                         // repart sur la pose ailes hautes
     flapUntil=t+0.22;                   // la pose de vol tient meme si on relache aussitot
     feather(hen.x+30, hen.y-62);
@@ -797,7 +807,12 @@ function press(){
     SFX.aile();
   }
 }
-function release(){ hold=false; flapNow=false; $("fly").classList.remove("presse"); }
+function release(){
+  /* Lachee en pleine montee, elle ne monte plus que jusqu'au plancher : appui bref,
+     petit saut ; appui tenu, saut entier. */
+  if(enSaut && hen.vy < -SAUT_COUPE) hen.vy = -SAUT_COUPE;
+  hold=false; flapNow=false; $("fly").classList.remove("presse");
+}
 /* Le bouton n'apparait qu'en course : sur l'accueil et l'ecran de fin, c'est la
    carte qui commande, et en pause plus rien ne doit repondre. */
 function montreVol(v){
@@ -947,7 +962,7 @@ function spawn(){
   tSpawn=Math.max((1.0-hard*0.36)+Math.random()*(0.66-hard*0.28), clear/speed);
 }
 
-function flying(){ return hold && !hen.ground && hen.feathers>0 && (flapNow || holdT>0.10); }
+function flying(){ return hold && !hen.ground && !enSaut && hen.feathers>0 && (flapNow || holdT>0.10); }
 /* plus une seule plume et elle chute : elle pedale dans le vide, en sueur */
 /* Une proie a portee : la poule ouvre le bec. Fenetre large pour que la pose ait
    le temps de se lire avant que la proie soit avalee. */
@@ -1112,14 +1127,15 @@ function update(dt){
 
   hen.vy=Math.min(hen.vy+3500*dt, 1800);
   hen.y+=hen.vy*dt;
+  if(enSaut && hen.vy>=0) enSaut=false;      // sommet du saut atteint : le vol peut prendre
 
   if(hen.y<flyCeil){ hen.y=flyCeil; hen.vy=Math.max(hen.vy,0); }
   if(hen.y>=0){
     if(!hen.ground){ dust(hen.x+80,4); SFX.pose(); }
-    hen.y=0; hen.vy=0; hen.ground=true; flapNow=false;
+    hen.y=0; hen.vy=0; hen.ground=true; flapNow=false; enSaut=false;
     hen.feathers=Math.min(1,hen.feathers+dt*0.38);
     if(t-jumpBuf<0.14){                 // appui juste avant le contact : le saut part quand meme
-      jumpBuf=-9; hen.vy=-1500; hen.ground=false; dust(hen.x+80,4);
+      jumpBuf=-9; hen.vy=-SAUT_VY; hen.ground=false; enSaut=true; dust(hen.x+80,4);
     }
   }else hen.ground=false;
   if(hen.ground){

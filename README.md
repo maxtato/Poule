@@ -8,10 +8,34 @@ rien à télécharger, aucun réseau.
 
 | Geste | Effet |
 |---|---|
-| Appui court | Sauter |
-| Appui maintenu | Battre des ailes tant qu'il reste des plumes |
+| Appui bref | Petit saut |
+| Appui plus long | Saut plus haut, jusqu'au saut entier |
+| Appui maintenu | Le saut entier, **puis** le vol tant qu'il reste des plumes |
 | `Espace`, `↑`, `W` | Idem au clavier |
 | `M` | Couper ou remettre le son |
+
+Le saut part toujours à pleine impulsion et se **coupe net au relâchement** : la
+hauteur suit donc la durée de l'appui, sans qu'il faille attendre de savoir combien
+de temps le doigt va rester. Passé le moment où la pesanteur a ramené la vitesse
+sous le plancher — un peu plus d'un dixième de seconde — relâcher ne change plus
+rien et le saut est entier.
+
+| Appui | Hauteur |
+|---|---|
+| relâché aussitôt | 140 |
+| 0,04 s | 209 |
+| 0,08 s | 251 |
+| 0,12 s et au-delà | 309, le saut entier |
+
+Le vol ne prend la main qu'**au sommet du saut**, pas avant. Il plafonne la montée
+à 310 par seconde ; s'il démarrait au premier dixième de seconde, comme c'était le
+cas, il écrasait l'élan du saut et on ne voyait jamais sauter la poule, seulement
+monter. Maintenir donne donc le saut d'abord — pose de saut, montée pleine — puis
+les ailes prennent le relais et la montée continue.
+
+Tous les obstacles restent franchissables d'un appui tenu ; d'un appui bref, seuls
+la balle de paille et le seau. Vérifié type par type, en cherchant pour chacun
+l'instant de saut qui passe.
 
 Un bouton rond en bas de l'écran donne la même chose : appui court pour sauter,
 maintenu pour voler. Sa face est un dessin, pas un cercle CSS — l'ombre passe donc
