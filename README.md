@@ -134,7 +134,7 @@ lointain au plus proche :
 |---|---|
 | Massifs et collines du fond | 2 |
 | Arbres, tracteur, panneaux, moulin | 4 |
-| Herbe et cailloux | 3 à 36, tiré au hasard |
+| Herbe et cailloux | 7 à 47, tiré au hasard |
 | Poule, aigles, mouches, particules | 14 |
 | Obstacles à sauter | 19 |
 
@@ -146,7 +146,7 @@ sur 40 000 pas de simulation sans jamais deux voisins de même nature.
 
 Ni les unes ni les autres ne sont sur la même rangée : chacune tire son propre
 enfoncement, une sur trois descend nettement plus bas, et une sur huit se pose
-tout devant, plus près du spectateur que les obstacles à sauter. Alignées, elles
+tout devant, bien plus près du spectateur que les obstacles à sauter. Alignées, elles
 faisaient une frise ; dispersées, elles donnent au sol de l'épaisseur.
 
 L'écart entre deux détails est tiré lui aussi, et pas uniformément : le plus
@@ -175,8 +175,7 @@ d'ancrage ne suit que la marge haute, si bien qu'il reste exactement où sa boî
 l'attend. Celui de la mouche s'élargit **symétriquement** : elle est dessinée
 centrée sur sa position, une marge inégale la décalerait à l'écran.
 
-Six obstacles et l'herbe sont repris de la même façon : la barrière, la fourche, la
-botte, la botte double, le pneu et la brouette. Ces dessins-là portent déjà leur couche alpha
+Les sept obstacles et l'herbe sont repris de la même façon. Ces dessins-là portent déjà leur couche alpha
 sur 256 niveaux — il n'y a rien à détourer, seulement à séparer les objets posés
 côte à côte sur une même planche, ce que font les colonnes vides entre eux.
 
@@ -193,8 +192,15 @@ elles changent avec eux : une seule a bougé de plus d'une unité, celle de la b
 de deux unités en largeur. Elles ont été redessinées par-dessus les sept obstacles
 pour vérifier qu'aucune ne mord sur le socle d'herbe.
 
-Le seau est le dernier dessin du jeu d'origine ; il garde sa boîte écrite à la
-main, pour la raison expliquée plus bas.
+Le seau est arrivé en JPEG sur du blanc : ni couche alpha, ni fond dégradé. Son
+corps est gris clair et sa flaque presque blanche — un seuil de clarté les
+mangerait. On se fie donc au trait : remplissage arrêté par l'encre seule, fermée
+au préalable. Sa boîte reste écrite à la main, mais elle n'est plus devinée : les
+colonnes hautes du dessin donnent le corps du seau, la flaque et les gouttes étant
+basses et plates. La mesure retombe à 30,1 % – 85,4 % de la largeur, contre
+30,1 % – 87,3 % pour la valeur réglée à l'œil qu'elle remplace.
+
+Il ne reste du jeu d'origine que la plume du compteur de vol.
 
 Les cinq cailloux sont découpés d'un même dessin et mis à l'échelle d'un seul
 coup, ce qui garde leurs tailles relatives : du bloc de 42 unités au gravier de
