@@ -209,8 +209,8 @@ pattes se séparent. La greffe des pattes croisées sur le corps des pattes éca
 est donc refaite à cette couture : les deux images du cycle ont un corps identique
 au pixel près, écart mesuré nul.
 
-Sept poses sont reprises ainsi : pattes écartées, pattes croisées, bec ouvert au
-sol, les trois de vol et le bec ouvert en vol. Les poses de vol ne se calent que
+Huit poses sont reprises ainsi : pattes écartées, pattes croisées, bec ouvert au
+sol, le saut, les trois de vol et le bec ouvert en vol. Les poses de vol ne se calent que
 sur la crête — leurs pattes ne touchent rien ; les poses au sol reprennent en plus
 la rangée du bas, pour que les pattes tombent exactement où `FOOT_POSE` les attend.
 Le calage est vérifié pose par pose : la crête retombe à moins d'un pixel de sa
@@ -221,8 +221,14 @@ dessine sa propre mouche, et une miette peinte dans le sprite l'aurait suivie
 partout. Elle est reconnue à sa couleur, pas à sa taille — les traits de vitesse
 sont de la même finesse et doivent rester.
 
-Deux poses n'ont pas d'original et gardent leur trait plus lourd : **l'arrêt** et
-**le saut**. La différence se voit quand elle quitte le sol.
+La pose du saut se cale sur la crête, comme celles de vol : le recalage par le bas
+du dessin ne joue que quand la poule touche terre, et elle est en l'air. Ses traits
+d'élan et son sol pointillé sont coupés — le jeu a sa propre poussière, et une
+ligne de sol peinte dans le sprite serait montée avec elle.
+
+Reste **la pose d'arrêt**, pattes serrées, sans original — mais elle n'est plus
+dessinée nulle part depuis que le cycle de course ne compte que deux images. Elle
+n'est gardée que pour l'option décrite plus haut : la remettre dans `COURSE`.
 
 **La seconde perte était le bord.** Vingt-quatre des dessins du jeu n'avaient que
 **deux valeurs d'alpha**, zéro ou
