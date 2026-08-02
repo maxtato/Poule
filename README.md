@@ -185,6 +185,45 @@ haut. Sur un écran plus court que ce rapport, le jeu se centre entre deux bande
 plutôt que de laisser le sol sortir de l'écran ; sur un téléphone couché, il
 demande de redresser l'appareil, où l'image serait réduite à une bande étroite.
 
+## La finesse des dessins
+
+Vingt-quatre des dessins du jeu n'avaient que **deux valeurs d'alpha**, zéro ou
+plein : leur silhouette était un escalier, sans un seul pixel de transition. C'est
+de là que venait le manque de finesse, bien plus que de la taille — la mesure
+montrait qu'aucun dessin n'était agrandi à l'écran sur téléphone ni sur tablette.
+
+Le bord leur est rendu par la géométrie et non par un flou : distance signée au
+contour, calculée exactement, lissée juste ce qu'il faut pour arrondir les marches,
+puis alpha continu sur environ un pixel de sortie. La couleur est étalée vers
+l'extérieur avant, sans quoi le dégradé tirerait vers le vide et cernerait le
+dessin d'un liseré clair. Pour une forme pleine ce n'est pas de l'interpolation :
+la distance décrit le contour au sous-pixel, et le redessiner plus grand est exact.
+
+Le facteur d'agrandissement n'est pas choisi, il est mesuré : on prend l'écran le
+plus exigeant visé — grand format en 2× — on demande trente pour cent de marge, et
+le rapport à la taille native donne le facteur.
+
+| Famille | Facteur mesuré | Appliqué |
+|---|---|---|
+| Poules, obstacles, aigles, mouches, herbe | 1,42 à 1,53 | 1,5 |
+| Arbres, sapin, cyprès, moulin | 3,1 à 3,7 | 3 |
+| Tracteur, panneaux | 1,5 à 1,9 | 2 |
+| Massifs et collines du fond | 7,5 à 10,4 | 4 |
+
+Les massifs étaient de loin les plus grossiers : ils couvrent le ciel avec 340
+pixels de large. Leur reprise ne coûte pourtant presque rien, parce que `source-in`
+remplace entièrement leur couleur : on peut donc les mettre à plat et ne garder
+que la silhouette, qui se compresse à presque rien.
+
+Deux économies gardent le fichier tenable. La couleur est agrandie **au plus proche
+voisin**, et seuls les pixels tombant sur une frontière reprennent la valeur lissée
+— sinon tout le dessin devient un dégradé et ne se compresse plus. Et les teintes
+sont arrondies au multiple de quatre, un pas d'un et demi pour cent : invisible, et
+le fichier y perd un cinquième.
+
+Le fichier passe de 1,5 à 4,2 Mo. Il s'ouvre depuis le disque en un demi-seconde et
+tient ses 60 images par seconde.
+
 ## Le fichier
 
 Tout est dans `index.html`, sprites compris — ils sont encodés en base64 dans la
