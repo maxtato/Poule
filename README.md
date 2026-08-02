@@ -309,6 +309,21 @@ l'extérieur avant, sans quoi le dégradé tirerait vers le vide et cernerait le
 dessin d'un liseré clair. Pour une forme pleine ce n'est pas de l'interpolation :
 la distance décrit le contour au sous-pixel, et le redessiner plus grand est exact.
 
+Le seau est le seul dessin arrivé en JPEG, sans couche alpha : son détourage se
+fait au remplissage depuis les bords, et il barrait ce remplissage avec l'encre du
+trait. Or le trait de la flaque s'interrompt là où l'eau touche le seau : le
+remplissage s'y engouffrait et la flaque perdait sa couleur, réduite à son contour.
+On ne se fie donc plus au trait mais au fond — est fond ce qui est à la fois très
+clair **et** gris. L'eau est bleue (saturation 20 à 40) et le seau, gris, est trop
+sombre (luminance 222) : ni l'un ni l'autre ne passe le test, et une interruption du
+trait ne laisse plus rien fuir. Deux conséquences à corriger ensuite : la bande
+sombre que le scan laisse sur ses bords devient de la matière, écartée en jetant
+toute composante qui touche le bord de la feuille — le dessin, lui, flotte au
+milieu ; et la frontière tombe au pied du dégradé d'anticrénelage, là où le blanc
+commence à peine à foncer, ce qui cernait la silhouette d'une auréole blanche. On
+rentre l'iso-niveau de l'alpha de cinq unités pour la ramener au milieu du trait,
+valeur calée sur le découpage précédent, qu'elle retrouve à un pixel près.
+
 Le facteur d'agrandissement n'est pas choisi, il est mesuré : on prend l'écran le
 plus exigeant visé — grand format en 2× — on demande trente pour cent de marge, et
 le rapport à la taille native donne le facteur.
