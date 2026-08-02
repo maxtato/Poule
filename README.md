@@ -58,12 +58,16 @@ partir de deux mouches enchaînées.
 ## La course
 
 Deux poses en boucle : pattes écartées, pattes croisées. La pose croisée n'est pas
-le dessin d'origine : seules ses jambes en ont été reprises, greffées sur le corps
-de la pose pattes serrées. Les deux corps sont donc identiques au pixel près, et
-seules les jambes bougent d'une image à l'autre. La pose pattes serrées
-servait de passage entre les deux, mais elle est aussi la pose d'arrêt, et la
-garder dans la boucle donnait une foulée qui marque le pas. Le corps rebondit deux
-fois par cycle, soit un rebond par appui et non un par image.
+le dessin d'origine : elle est le corps de la pose pattes écartées, cousu à ses
+propres jambes à la rangée 550, juste au-dessus du ventre. Les deux corps sont
+donc **identiques au pixel près** — écart mesuré nul sur tout ce qui est au-dessus
+de la couture — et seules les jambes bougent d'une image à l'autre. La rangée est
+mesurée et non choisie : le désaccord entre les deux dessins tient sous quatre
+cents pixels par tranche de dix rangées jusque-là, et double dès qu'on descend
+plus bas, là où les cuisses se séparent. La pose pattes serrées servait de passage
+entre les deux, mais elle est aussi la pose d'arrêt, et la garder dans la boucle
+donnait une foulée qui marque le pas. Le corps rebondit deux fois par cycle, soit
+un rebond par appui et non un par image.
 
 Le cycle se déduit de la liste `COURSE` : y remettre `"idle"` entre les deux
 extrêmes suffit à revenir à quatre images, le rebond et la traînée suivent.
@@ -82,9 +86,42 @@ liste de poses et une avance décimale, pose la précédente en traînée tant q
 est dans les premiers `FONDU_BAT` de l'image, puis la courante par-dessus et
 opaque. Les ailes n'ont que deux ou trois positions dessinées ; la traînée
 comble l'écart entre elles et le battement cesse de sauter d'une position à
-l'autre. Les mouches battent quatorze fois par seconde : le recouvrement y dure
+l'autre. C'est elle, depuis, qui tient lieu de position intermédiaire au vol de la
+poule. Les mouches battent quatorze fois par seconde : le recouvrement y dure
 moins de trente millisecondes, assez pour lisser le battement sans jamais
 laisser voir deux mouches.
+
+## Le vol
+
+Même principe qu'à la course, mais il a fallu construire le corps avant de pouvoir
+le partager. Les trois dessins de vol sont trois poules entières, l'aile fondue
+dans le corps : un remplissage parti de l'aile et arrêté par l'encre déborde dans
+tout l'oiseau, l'aile n'est donc pas découpable.
+
+Elle se contourne. **`fly_up` a l'aile levée, donc un ventre net ; `fly_down` a
+l'aile baissée, donc un dos et une queue nets.** Le corps sans aile s'assemble des
+deux : le haut de `fly_down`, le bas de `fly_up`, cousus à la rangée 346 — celle
+où les deux dessins s'accordent le mieux, soixante-sept pixels de désaccord contre
+plus de deux cents cent rangées plus bas. La racine de l'aile baissée, un trait qui
+traîne au-dessus de la couture, est reprise à `fly_up` dans une fenêtre mesurée sur
+elle : 227 pixels d'encre présents chez l'un et absents chez l'autre.
+
+Chaque aile est alors ce qui, dans son dessin, dépasse de ce corps. On n'en garde
+que la composante principale — le reste est le trait qui déborde d'un ou deux
+pixels autour de la tête, là où les deux mains n'ont pas tremblé pareil : 749
+pixels jetés pour l'aile haute, 3 882 pour la basse. L'aile se pose **derrière** le
+corps, débordant de trois pixels sous lui, de sorte que le trait épais du corps
+couvre la jointure.
+
+Résultat mesuré : les deux images de vol diffèrent de 54 514 pixels, et ces 54 514
+sont **exactement** les deux ailes — pas un pixel de différence hors d'elles.
+
+Le battement n'a plus que deux positions au lieu de trois. Le dessin à mi-course ne
+peut plus y figurer : à mi-battement l'aile est ramenée en arrière, exactement là
+où est la queue, et un corps commun lui donne une queue, qui la masquerait. La
+traînée fait le passage entre le bas et le haut. La liste ayant deux entrées au
+lieu de quatre, l'avance a été divisée par deux : le battement garde ses 2,75
+cycles par seconde.
 
 ## Les trois plans
 
@@ -266,7 +303,9 @@ pattes se séparent. La greffe des pattes croisées sur le corps des pattes éca
 est donc refaite à cette couture : les deux images du cycle ont un corps identique
 au pixel près, écart mesuré nul.
 
-Les **neuf** poses de poule sont reprises ainsi, arrêt compris.
+Les **neuf** poses de poule sont reprises ainsi, arrêt compris. Le vol à
+mi-battement ne sert plus depuis que le corps du vol est commun ; son dessin est
+sorti du fichier.
 
 Le cadre des sprites a dû être élargi : il coupait les pattes tendues des poses de
 vol à gauche, les pattes repliées du saut en bas, le bec du gobage à droite. La
