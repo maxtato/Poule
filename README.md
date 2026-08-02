@@ -209,8 +209,19 @@ pattes se séparent. La greffe des pattes croisées sur le corps des pattes éca
 est donc refaite à cette couture : les deux images du cycle ont un corps identique
 au pixel près, écart mesuré nul.
 
-Huit poses sont reprises ainsi : pattes écartées, pattes croisées, bec ouvert au
-sol, le saut, les trois de vol et le bec ouvert en vol. Les poses de vol ne se calent que
+Les **neuf** poses de poule sont reprises ainsi, arrêt compris.
+
+Le cadre des sprites a dû être élargi : il coupait les pattes tendues des poses de
+vol à gauche, les pattes repliées du saut en bas, le bec du gobage à droite. La
+marge est mesurée sur les dessins eux-mêmes, pas choisie. Rien ne bouge à l'écran
+pour autant — ce qui compte au rendu, ce sont les rapports `SW`/`SH`, `FOOT_Y`/`SH`
+et `HEN_H`/`SH`. On élargit donc le cadre **et** on remonte `HEN_H` dans le même
+rapport, ce qui laisse `sc()` inchangé ; les repères de calage se décalent de la
+marge haute et gauche. Vérifié : plus un pixel ne touche le bord du cadre.
+
+Et l'échelle ne réduit plus : chaque dessin est posé entre 1,01 et 1,42 fois sa
+taille native, jamais en dessous. C'est le gobage qui commande — c'est lui dont le
+dessin est le plus grand par rapport à son cadre. Les poses de vol ne se calent que
 sur la crête — leurs pattes ne touchent rien ; les poses au sol reprennent en plus
 la rangée du bas, pour que les pattes tombent exactement où `FOOT_POSE` les attend.
 Le calage est vérifié pose par pose : la crête retombe à moins d'un pixel de sa
@@ -226,9 +237,10 @@ du dessin ne joue que quand la poule touche terre, et elle est en l'air. Ses tra
 d'élan et son sol pointillé sont coupés — le jeu a sa propre poussière, et une
 ligne de sol peinte dans le sprite serait montée avec elle.
 
-Reste **la pose d'arrêt**, pattes serrées, sans original — mais elle n'est plus
-dessinée nulle part depuis que le cycle de course ne compte que deux images. Elle
-n'est gardée que pour l'option décrite plus haut : la remettre dans `COURSE`.
+La miette brune du dessin du gobage est retirée : le jeu dessine sa propre mouche,
+et une miette peinte dans le sprite l'aurait suivie partout, bec fermé compris.
+Elle est reconnue à sa couleur et non à sa taille — les traits de vitesse sont de
+la même finesse et doivent rester.
 
 **La seconde perte était le bord.** Vingt-quatre des dessins du jeu n'avaient que
 **deux valeurs d'alpha**, zéro ou
