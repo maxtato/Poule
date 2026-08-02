@@ -154,8 +154,8 @@ souvent moyen, une fois sur cinq très serré parce que l'herbe pousse en bouque
 et que les cailloux traînent par deux, de loin en loin un vide franc. Un détail
 sorti à gauche repart **derrière le dernier de la chaîne**, pas à une distance
 quelconque du bord droit — sinon l'écart tiré ne voudrait rien dire et deux
-dessins pourraient se retrouver l'un sur l'autre. Seize détails à 112 unités
-d'écart moyen couvrent deux largeurs et demie d'écran : la fin de la chaîne
+dessins pourraient se retrouver l'un sur l'autre. Dix-sept détails à 112 unités
+d'écart moyen couvrent près de trois largeurs d'écran : la fin de la chaîne
 n'apparaît jamais au bord droit, et il en reste sept à l'écran comme avec
 l'ancien semis régulier.
 
@@ -167,7 +167,9 @@ du caillou voisin, qui traversent parfois la même boîte. Les objets
 posés au sol, la poule comprise, portent une ombre — un aplat d'encre très dilué,
 sans contour. Celle de la poule reste au sol pendant qu'elle monte, en
 rétrécissant et en pâlissant, mais ne disparaît jamais tout à fait : c'est le seul
-repère qui dise où elle va retomber. La pose KO a la sienne, plus large et plus
+repère qui dise où elle va retomber. Toutes remontent de trois unités au-dessus de
+l'appui du dessin : posées pile dessus, elles débordaient trop bas et l'objet
+semblait flotter au-dessus de la sienne. La pose KO a la sienne, plus large et plus
 basse : calée sur la ligne d'horizon comme celle de la pose debout, elle passait
 entièrement sous le ventre de la poule à plat et ne se voyait plus.
 
@@ -250,6 +252,20 @@ Elle tombe avec des traits de vitesse — les mêmes que pendant la panique, la 
 n'a pas son propre vocabulaire — puis reste au sol. Les poses de chute tête la
 première, d'assise et de bascule ont été retirées : elles décomposaient un
 mouvement que le choc et la chute racontent déjà.
+
+Les quatre dessins sont découpés à 440 px de large, avec un alpha continu sur huit
+bits : les bords ne sont plus en escalier, ce qui se voyait. Le grain du papier est
+toujours ramené aux teintes dominantes, mais à huit unités d'écart au lieu de
+vingt, ce qui laisse vivre l'ombrage intérieur au lieu de l'aplatir.
+
+Certains de ces contours ne sont pas fermés — des traits s'interrompent — et le
+corps est d'un blanc à zéro unité du fond : un remplissage venu des bords s'y
+engouffrait et vidait la poule, il ne restait que le trait. L'encre est donc
+**fermée** avant le remplissage, dilatée puis érodée du même rayon, ce qui jette un
+pont sur toute brèche plus étroite que deux rayons sans épaissir le trait ailleurs.
+Le rayon est le plus petit qui remplisse le corps, trouvé par balayage : au-delà,
+les ponts soudent aussi les arcs de mouvement au corps et laissent des pâtés blancs
+dans les angles rentrés.
 
 Le dessin KO portait ses propres étoiles et son tourbillon ; ils ont été retirés
 au découpage pour laisser tourner ceux du jeu, qui sont animés. Le découpage ne
