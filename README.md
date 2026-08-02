@@ -175,6 +175,26 @@ d'ancrage ne suit que la marge haute, si bien qu'il reste exactement où sa boî
 l'attend. Celui de la mouche s'élargit **symétriquement** : elle est dessinée
 centrée sur sa position, une marge inégale la décalerait à l'écran.
 
+Cinq obstacles et l'herbe sont repris de la même façon : la barrière, la fourche,
+la botte, la botte double et le pneu. Ces dessins-là portent déjà leur couche alpha
+sur 256 niveaux — il n'y a rien à détourer, seulement à séparer les objets posés
+côte à côte sur une même planche, ce que font les colonnes vides entre eux.
+
+La planche d'herbe, elle, est arrivée aplatie sur un damier de transparence : deux
+blancs très proches qu'un remplissage depuis les bords traverse mal. Le fond y est
+reconnu à ce qu'il est clair et sans couleur — l'herbe est verte et son trait sombre
+— puis la couverture est reconstruite depuis la forme, comme partout ailleurs.
+Déduite de la clarté, elle laissait un liseré blanc sur chaque brin.
+
+Pour tous, **la hauteur de jeu ne bouge pas** — c'est elle qui pilote la difficulté
+— et la largeur suit le rapport du nouveau dessin. Les écarts sont de l'ordre du
+pour cent. Les boîtes de collision étant mesurées sur les dessins au démarrage,
+elles changent avec eux : une seule a bougé de plus d'une unité, celle de la botte,
+de deux unités en largeur. Elles ont été redessinées par-dessus les sept obstacles
+pour vérifier qu'aucune ne mord sur le socle d'herbe.
+
+Le seau et la brouette n'ont pas de dessin fourni et gardent ceux du jeu d'origine.
+
 Les cinq cailloux sont découpés d'un même dessin et mis à l'échelle d'un seul
 coup, ce qui garde leurs tailles relatives : du bloc de 42 unités au gravier de
 13. Chacun est découpé avec les gravillons qui le posent au sol — ce sont autant
