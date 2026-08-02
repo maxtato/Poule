@@ -30,14 +30,11 @@ bruitage monte. Le combo ne paie rien d'autre — c'est le compte de mouches qui
 fait le score, et une chaîne rapporte simplement plus de mouches en moins de
 temps.
 
-Un aigle traverse le ciel à contre-sens. Il ne file pas droit : il ondule, et la
-vague est inscrite dans l'espace et non dans l'horloge — c'est en avançant qu'il
-monte et descend. Chaque aigle tire son amplitude et sa longueur d'onde, sans quoi
-tous ondoyaient à l'unisson. C'est sa hauteur elle-même qui bouge, pas son dessin :
-la boîte de collision, qui se lit dessus, ondule avec lui — vérifié sur 7 650 pas,
-jamais un pixel d'écart. Les bornes du ciel se resserrent de l'amplitude à la
-naissance, puisque ce sont le creux et la crête qui doivent y tenir, pas la hauteur
-moyenne.
+Un aigle traverse le ciel à contre-sens, à hauteur constante : il tire sa hauteur
+à la naissance, n'importe où entre le ras du sol et le plafond de vol, et la tient
+jusqu'au bord de l'écran. Il a un temps ondulé sur une sinusoïde ; la vague est
+retirée. Vérifié sur 73 aigles suivis chacun sur 900 pas : pas une unité d'écart
+de hauteur, boîte de collision comprise.
 
 Les autres obstacles sont au sol et arrivent d'autant plus vite que la course
 dure.
@@ -211,7 +208,13 @@ colonnes hautes du dessin donnent le corps du seau, la flaque et les gouttes ét
 basses et plates. La mesure retombe à 30,1 % – 85,4 % de la largeur, contre
 30,1 % – 87,3 % pour la valeur réglée à l'œil qu'elle remplace.
 
-Il ne reste du jeu d'origine que la plume du compteur de vol.
+Il ne reste du jeu d'origine que la plume du compteur de vol — et elle sert
+maintenant deux fois : c'est elle aussi qui tombe de la poule à chaque coup d'aile
+et par gerbes de quinze quand elle meurt. Ces plumes-là étaient une ellipse blanche
+cernée d'encre. Le dessin porte la plume en diagonale dans son cadre, si bien qu'un
+cadre de 18 unités lui donne une longueur de 16 — celle exacte de la tache qu'elle
+remplace. La mesure est faite en posant les deux côte à côte, agrandies quatre
+fois.
 
 Les cinq cailloux sont découpés d'un même dessin et mis à l'échelle d'un seul
 coup, ce qui garde leurs tailles relatives : du bloc de 42 unités au gravier de
