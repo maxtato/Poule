@@ -153,8 +153,12 @@ la couleur du voisinage de la couche elle-même.
 
 Bouton lâché, en chute libre ou en plein saut, la poule n'agite pas les ailes mais
 elle ouvre quand même le bec en approchant d'une mouche : c'est une **seconde tête**,
-tirée d'un autre dessin, plus calme que celui du battement, et posée de la même
-façon sur la pose de vol plané. Au sol, la pose de becquée reste entière.
+tirée d'un autre dessin et posée de la même façon sur la pose de vol plané. Ce
+dessin-là est un **gros plan** : son échelle ne pouvait pas être celle des poses de
+vol, elle est donc déduite du rapport des deux crêtes — 0,532. Et la zone laissée
+libre au bec y est bornée en hauteur, entre les rangées 150 et 430 : sur un gros
+plan, ce qui est au-dessus ou au-dessous de la tête est du corps à lui, qui
+débordait de la silhouette et faisait une plaque claire. Au sol, la pose de becquée reste entière.
 
 La poule bat **quatre fois par seconde** : l'avance dans la liste `VOL` est passée
 de 11 à 16, soit quatre cycles complets par seconde pour quatre entrées. Le vol
