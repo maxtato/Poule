@@ -1002,6 +1002,16 @@ Le blindage tient en deux parties :
 - **En JavaScript**, `selectstart`, `dragstart` et les trois `gesture*` de Safari
   sont annulés. Le CSS ne suffit pas pour eux, et Safari ignore `user-scalable=no`
   depuis iOS 10 — le pincement ne se coupe que par `gesturestart`.
+- **Le geste tactile lui-même** est annulé sur `touchstart` et `touchmove`. C'est le
+  seul moyen d'arrêter le **double appui suivi d'un glissement**, qui promène une
+  loupe sur l'écran : Safari le décide sur les événements tactiles, et annuler le
+  `pointerdown` ne l'en empêche pas. Les boutons sont épargnés — annuler leur
+  `touchstart` supprimerait le clic qui les actionne. Le reste du jeu ne passe pas
+  par le clic mais par les événements pointeur, qui continuent d'être émis.
+
+`touch-action:none` porte aussi sur `*`. En théorie la valeur posée sur `body`
+suffit, l'effet se calculant sur toute la chaîne des ancêtres ; en pratique les
+versions de Safari ne s'accordent pas là-dessus, et la règle ne coûte rien.
 
 Le menu contextuel n'est bloqué que dans le jeu, pas sur la page entière : ailleurs,
 le clic droit reste celui du navigateur.
@@ -1010,6 +1020,16 @@ Vérifié en mesurant ce dont la loupe dépend, faute de pouvoir la faire appara
 dans Chromium : aucun élément de la page ne se déclare sélectionnable, le triple-clic
 sur le titre, sur une consigne, sur un nombre du carnet et sur le mot du bouton de
 saut ne sélectionne rien, et les six événements partent bien annulés.
+
+Couper des gestes du système sur un jeu qui se joue au doigt demandait de vérifier
+qu'on ne coupe pas le jeu avec : une partie entière est rejouée au tactile —
+lancement, appui maintenu jusqu'au vol, pastille de saut, bouton de son, bouton
+*Recommencer* — et le double appui glissé ne laisse derrière lui ni sélection, ni
+zoom, ni décalage de la page.
+
+Un dernier cas échappe à la page : si la loupe persiste, c'est le **zoom
+d'accessibilité** d'iOS (*Réglages › Accessibilité › Zoom*), qui vit au-dessus du
+navigateur. Aucun site ne peut le désactiver.
 
 ## Sauvegarde
 

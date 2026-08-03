@@ -26,7 +26,7 @@
      selection sur certains d'entre eux, boutons compris. */
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;
     -webkit-user-select:none;-moz-user-select:none;user-select:none;
-    -webkit-touch-callout:none;-webkit-user-drag:none}
+    -webkit-touch-callout:none;-webkit-user-drag:none;touch-action:none}
   html,body{height:100%;overflow:hidden;background:#FAF3EC;
     font-family:Fredoka,"Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif;
     color:#1A1614;touch-action:none;overscroll-behavior:none;
@@ -1085,6 +1085,17 @@ for(const ev of ["selectstart","dragstart","gesturestart","gesturechange","gestu
   addEventListener(ev, barre, {passive:false});
 addEventListener("contextmenu", e=>{ if(e.target.closest && e.target.closest("#stage")) e.preventDefault(); },
   {passive:false});
+
+/* Il reste un geste que ni le CSS ni pointerdown n'attrapent : le double appui suivi
+   d'un glissement, qui promene une loupe sur l'ecran. Safari le traite comme un geste
+   du systeme, decide sur les evenements tactiles eux-memes ; annuler le pointerdown ne
+   l'en empeche pas, annuler le touchstart si.
+   Les boutons sont epargnes : annuler leur touchstart supprimerait le clic qui les
+   actionne. Le reste du jeu ne passe pas par le clic mais par les evenements pointeur,
+   qui continuent d'etre emis. */
+const surBouton=e=>!!(e.target && e.target.closest && e.target.closest("button"));
+for(const ev of ["touchstart","touchmove"])
+  addEventListener(ev, e=>{ if(!surBouton(e)) e.preventDefault(); }, {passive:false});
 
 /* ---------- le panneau de fin ----------
    Son fond est un contour festonne, pas un rectangle : deux chemins concentriques
