@@ -215,7 +215,13 @@ partie de la même composante — on voyait deux queues et quatre pattes. Elles 
 pas la couleur d'une aile : l'aile est brune de bout en bout, la queue est blanche
 et les serres oranges. On les reconnaît donc à la couleur, on élargit de seize
 pixels pour emporter leur propre trait, et on les retire, le corps commun les
-fournissant déjà. Les ailes pèsent 113 028, 75 348 et 54 513 pixels.
+fournissant déjà.
+
+Le bout des ailes porte lui aussi des plumes claires : la couleur seule emportait
+des taches en plein milieu de l'aile. Le retrait ne s'applique donc **que là où le
+corps commun a déjà les siennes** — sa queue et ses serres, élargies de soixante-dix
+pixels. C'est bien le double qu'on vise, pas les rectrices d'une aile. Les ailes
+pèsent 81 270, 77 237 et 78 387 pixels.
 
 Les poses sont relues depuis les dessins d'origine sur disque et non depuis le jeu :
 sinon la composition repartait d'une composition, et l'échelle du corps dérivait
