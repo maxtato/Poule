@@ -60,8 +60,18 @@ Le dessin est arrivé sans couche alpha, sur du blanc, son ombre douce peinte au
 même détourage que les obstacles, mais **sans la règle des trous** — la poule du bouton
 est une silhouette blanche enfermée dans le disque, exactement ce que cette règle
 percerait. L'ombre peinte, elle, part avec le fond, puisque le bouton a la sienne. Le
-dessin est ramené de 689 à 320 pixels : c'est encore trois fois et demie la taille
+dessin est ramené à 320 pixels : c'est encore trois fois et demie la taille
 d'affichage sur un écran ordinaire.
+
+La pastille est **rouge**. Ce changement de couleur change aussi le seuil du
+détourage : la pastille crème d'avant obligeait à ne prendre pour fond que ce qui
+était très clair — au-delà de 238 de luminance — et la queue de l'ombre peinte
+restait accrochée sous le disque. Un disque saturé se défend tout seul : c'est la
+**saturation** qui le protège, pas la clarté, et le seuil de luminance peut donc
+descendre à 130 pour emporter l'ombre entière. La silhouette blanche à l'intérieur
+ne risque rien — elle est enfermée, l'inondation partie du bord ne l'atteint pas.
+Mesuré sur la plaque : 0,56 % de matière hors du disque inscrit, contre 1,2 % pour
+l'ancienne.
 
 La jauge de plumes se vide en vol et se remplit au sol. Gober une mouche rend
 deux plumes. Gober plusieurs mouches sans laisser retomber la chaîne monte un
@@ -974,6 +984,32 @@ poule par rapport au sol. `FOOT_POSE` donne, pour chaque pose, la rangée du bas
 du dessin ; le rendu s'en sert pour poser les pattes sur le sol quelle que soit la
 pose, ce qui autorise des dessins dont les pattes ne tombent pas toutes à la même
 hauteur.
+
+## Les outils du téléphone
+
+Sur iPhone, deux ou trois appuis rapides au même endroit réveillent la loupe du
+système : le mot sous le doigt se surligne et la barre *Copier / Rechercher* se pose
+par-dessus la partie. Un appui long ouvre le menu contextuel, un pincement zoome la
+page. Rien de tout cela n'a de sens ici — aucun texte du jeu n'est fait pour être lu
+par un outil du système.
+
+Le blindage tient en deux parties :
+
+- **En CSS**, `user-select`, `-webkit-touch-callout` et `-webkit-user-drag` sont
+  coupés sur `*` et non sur le seul `body`. La règle porte bien sur tous les
+  éléments : la feuille de style du navigateur remet la sélection sur certains
+  d'entre eux, boutons compris, et une règle posée sur `body` seul les laisse passer.
+- **En JavaScript**, `selectstart`, `dragstart` et les trois `gesture*` de Safari
+  sont annulés. Le CSS ne suffit pas pour eux, et Safari ignore `user-scalable=no`
+  depuis iOS 10 — le pincement ne se coupe que par `gesturestart`.
+
+Le menu contextuel n'est bloqué que dans le jeu, pas sur la page entière : ailleurs,
+le clic droit reste celui du navigateur.
+
+Vérifié en mesurant ce dont la loupe dépend, faute de pouvoir la faire apparaître
+dans Chromium : aucun élément de la page ne se déclare sélectionnable, le triple-clic
+sur le titre, sur une consigne, sur un nombre du carnet et sur le mot du bouton de
+saut ne sélectionne rien, et les six événements partent bien annulés.
 
 ## Sauvegarde
 
