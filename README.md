@@ -117,81 +117,22 @@ laisser voir deux mouches.
 
 ## Le vol
 
-Même principe qu'à la course, mais il a fallu construire le corps avant de pouvoir
-le partager. Les trois dessins de vol sont trois poules entières, l'aile fondue
-dans le corps : un remplissage parti de l'aile et arrêté par l'encre déborde dans
-tout l'oiseau, l'aile n'est donc pas découpable.
+Trois positions d'aile, prises sur trois dessins **faits pour aller ensemble** :
+même corps, même queue, même tête, seule l'aile change. Il n'y a donc plus rien à
+assembler — pas de corps recousu, pas de fenêtre pour découper l'aile, pas de
+greffe. Les dessins sont posés tels quels.
 
-Elle se contourne. **`fly_up` a l'aile levée, donc un ventre net ; `fly_down` a
-l'aile baissée, donc un dos et une queue nets.** Le corps sans aile s'assemble des
-deux : le haut de `fly_down`, le bas de `fly_up`, cousus à la rangée 346 — celle
-où les deux dessins s'accordent le mieux, soixante-sept pixels de désaccord contre
-plus de deux cents cent rangées plus bas. La racine de l'aile baissée, un trait qui
-traîne au-dessus de la couture, est reprise à `fly_up` dans une fenêtre mesurée sur
-elle : 227 pixels d'encre présents chez l'un et absents chez l'autre.
+Ils arrivaient sur un blanc chaud avec des traits de vitesse dont le jeu n'a pas
+besoin : le fond est reconnu clair et peu coloré, le remplissage part des bords, et
+seule la plus grosse composante est gardée — les traits de vitesse restent dehors.
+Ils sont ensuite calés sur la **crête**, le plus gros amas de rouge vif du dessin,
+seul repère qui ne bouge pas d'une position à l'autre : mise à l'échelle 1,198,
+1,188 et 1,214, soit moins de deux pour cent d'écart entre les trois.
 
-La couture laissait une marche dans le contour — les deux dessins n'ont pas
-exactement la même largeur de corps à cette hauteur. Le bas est donc **étiré** vers
-le haut, rangée par rangée, la correction s'effaçant sur quarante rangées ; entre
-les traits c'est du blanc plat, où un étirement de quelques pour cent ne se voit
-pas.
-
-Le recalage ne se fait pas sur les deux bords extérieurs mais sur **tous les traits
-que la couture traverse**. On relève les plages d'encre de la rangée du dessus et
-de celle du dessous, chacune de celle du dessous cherche sa plus proche voisine au
-dessus, et les paires deviennent les points fixes d'une carte de x affine par
-morceaux. Les traits que l'une a et pas l'autre — ceux de l'aile baissée — restent
-sans partenaire et sont ignorés.
-
-| Trait | Décalage à corriger |
-|---|---|
-| croupe | 14,0 |
-| gorge | 0,5 |
-| barbillon, bord gauche | 6,5 |
-| barbillon, bord droit | 8,0 |
-
-C'est ce que deux points fixes seuls ne pouvaient pas rendre : interpolée entre le
-milieu du corps et le bord extérieur, la gorge se voyait déplacée de cinq pixels
-alors qu'elle n'en demandait qu'un demi, et le cran se déplaçait des fesses au cou.
-Écart restant, trait par trait : 0 / 0,5 / 0,5 / 0 pixel.
-
-Deux petits traits d'ombre couraient sur le corps sous le cou. Ils sont effacés,
-puis le blanc du voisinage est étalé pour combler. On les reconnaît à ce qu'ils
-sont nettement plus sombres que le blanc du corps, isolés et petits — 66 et 55
-pixels, quand le contour est d'un seul tenant et en pèse des dizaines de milliers.
-La recherche est bornée au cou, pour ne pas aller effacer un œil.
-
-La fenêtre de l'aile haute s'arrête à x 330. Elle a été élargie un temps jusqu'à
-285 pour rattraper la **base de l'aile** — le crochet qui, dans le dessin, part du
-coin de la croupe et retombe sous le dos — mais cet élargissement fait entrer la
-**queue** propre à `fly_up`, qui vient alors se superposer à celle du corps : deux
-queues au lieu d'une, bien plus visible en animation que la base manquante. Les
-deux ne se séparent pas par un rectangle : la queue descend jusqu'à la rangée 300
-et le crochet occupe les rangées 250 à 315, ils se chevauchent. La fenêtre est donc
-laissée étroite, et la base de l'aile reste à récupérer par une découpe qui suive
-la forme plutôt que par une fenêtre.
-
-Chaque aile est alors ce qui, dans son dessin, dépasse de ce corps — plus le trait
-de l'aile là où il court **sur** le corps, reconnu à ce que le dessin et le corps
-assemblé n'y disent pas la même chose. Cette seconde partie ne se distingue pas,
-par la seule couleur, du contour propre au dessin : les deux diffèrent du corps et
-ils se touchent. On la borne donc par la position, sur des bornes prises du cœur de
-l'aile — ce qui d'elle déborde du corps, mesuré à x 309-541 pour l'aile haute et
-x 329-648 pour la basse. Sans cette borne, l'aile basse emportait les pattes du
-dessin dont elle vient, et l'aile haute le contour de sa propre croupe.
-
-L'aile se pose **devant** le corps, non derrière : posée derrière, le corps lui
-mangeait tout ce qui rentre dedans et elle paraissait coupée net au niveau du dos
-ou du ventre, alors que le dessin la montre passant par-dessus.
-
-Résultat mesuré : les deux images de vol diffèrent de 67 980 pixels, et ces 67 980
-sont **exactement** les deux ailes — pas un pixel de différence hors d'elles.
-
-Le battement retrouve ses **trois** positions. Le dessin à mi-course avait dû être
-écarté tant que l'aile passait derrière le corps : ramenée en arrière, elle tombe
-exactement là où est la queue, et un corps commun lui donne une queue, sous
-laquelle elle disparaissait. Depuis que l'aile passe devant, elle couvre la queue
-comme le fait son dessin, et la position intermédiaire redevient lisible.
+Tout ce qui suit — corps assemblé de deux dessins, couture recalée trait par trait,
+fenêtres d'aile, traits d'ombre effacés — a été rendu inutile par ces trois
+dessins-là. C'est gardé ici parce que la même situation peut se représenter : un
+personnage dont les poses ne se correspondent pas.
 
 ## Pourquoi pas d'images intermédiaires calculées
 
