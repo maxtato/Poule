@@ -506,15 +506,23 @@ le jeu bouge volontairement : il faut désormais monter à 92 unités pour les f
 lieu de 84.
 
 Aucun n'est agrandi : les dessins sont réduits de 3,5 à 8,9 fois à l'écran. Le fichier
-passe de 10,6 à 13,1 Mo.
+passe de 10,6 à 13,2 Mo.
 
-Il ne reste du jeu d'origine que la plume du compteur de vol — et elle sert
-maintenant deux fois : c'est elle aussi qui tombe de la poule à chaque coup d'aile
-et par gerbes de quinze quand elle meurt. Ces plumes-là étaient une ellipse blanche
-cernée d'encre. Le dessin porte la plume en diagonale dans son cadre, si bien qu'un
-cadre de 18 unités lui donne une longueur de 16 — celle exacte de la tache qu'elle
-remplace. La mesure est faite en posant les deux côte à côte, agrandies quatre
-fois.
+Il ne reste du jeu d'origine que la plume du compteur de vol. Elle a longtemps servi
+deux fois : c'est elle qui tombait aussi de la poule à chaque coup d'aile et par gerbes
+de quinze quand elle meurt — ces plumes-là n'étaient au départ qu'une ellipse blanche
+cernée d'encre.
+
+Les plumes qui tombent ont maintenant leur propre dessin, plus net, et un cinquième plus
+grand. La taille ne se règle pas sur le cadre : la plume est posée **en diagonale** et
+n'occupe pas la même part de son cadre d'un dessin à l'autre. On mesure donc sa
+**longueur** — la plus grande distance entre deux points de matière, prise sur un
+échantillon du contour. Elle valait 23,6 unités à l'écran, elle en vaut 28,3.
+
+Le dessin fourni est énorme au regard de son usage : 646 pixels de côté pour une plume
+affichée à 22 unités, soit trente fois trop. Il est ramené à 256, ce qui laisse encore
+onze fois la taille d'affichage et le fait tomber de 488 à 80 Ko. Le compteur de vol, lui,
+garde son dessin d'origine.
 
 Les cinq cailloux sont découpés d'un même dessin et mis à l'échelle d'un seul
 coup, ce qui garde leurs tailles relatives : du bloc de 42 unités au gravier de
