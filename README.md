@@ -794,7 +794,13 @@ toucher la bosse du coin, il n'en occupe donc que 88 %.
 
 La poule KO est le sprite du jeu, posé en `img` à cheval sur le bord haut ; les étoiles
 qui l'entourent sont des polygones SVG, dans le même jaune et le même trait d'encre que
-celles qui lui tournent au-dessus de la tête pendant la chute. La couronne du record et
+celles qui lui tournent au-dessus de la tête pendant la chute.
+
+Le panneau se **centre dans l'écran**, mais c'est le bloc entier — poule comprise —
+qu'on veut centré : il descend donc de la moitié de ce que la poule dépasse en haut.
+Elle déborde de 46 % de sa hauteur, et sa hauteur vaut 0,72 fois sa largeur ; la moitié
+du débord fait donc 0,166 fois la largeur de la poule, une seule variable CSS pour les
+deux règles. La couronne du record et
 la flèche du bouton sont deux petits tracés SVG écrits à la main.
 
 Les pastilles ne portent **que des nombres** : c'est la ligne au-dessus qui dit de quoi

@@ -78,13 +78,17 @@
   /* Fin de partie : ni fenetre au premier plan ni flou, mais un panneau pose dans la
      moitie haute de l'ecran. Le bas du terrain — ou la poule morte finit sa chute —
      reste entierement decouvert, et elle y reste en plan. */
-  #over{justify-content:flex-start;padding:0;gap:0}
+  #over{justify-content:center;padding:0;gap:0}
   /* Le panneau n'est pas un rectangle : son fond est un contour festonne, deux
      chemins concentriques poses en SVG par dessineCarte(). Il est donc regenere a
      la taille exacte du panneau, ce qui garde des bosses rondes au lieu de les
      etirer. Le contenu vit au-dessus, avec assez de marge pour ne pas mordre dessus. */
+  /* Le panneau se centre dans l'ecran, mais c'est le bloc entier — poule comprise —
+     qu'on veut centre : il descend donc de la moitie de ce que la poule depasse en
+     haut. Elle deborde de 46 % de sa hauteur, et sa hauteur vaut 0,72 fois sa
+     largeur ; la moitie du debord fait donc 0,166 fois --ko. */
   #over .carte{position:relative;width:min(calc(var(--band,100%) - 24px),400px);
-    margin-top:clamp(92px,17vh,150px);box-sizing:border-box;
+    --ko:clamp(102px,29vw,142px);margin-top:calc(var(--ko)*0.166);box-sizing:border-box;
     padding:clamp(62px,16vw,80px) clamp(34px,9vw,52px) clamp(34px,8.5vw,46px);
     animation:parait .26s cubic-bezier(.2,1.15,.5,1)}
   #over .blob{position:absolute;inset:0;z-index:0;
@@ -93,7 +97,7 @@
     align-items:center;gap:clamp(5px,1.4vw,8px)}
   /* La poule KO est assise sur le bord haut du panneau, entouree de ses etoiles. */
   #over .ko{position:absolute;z-index:2;left:50%;top:clamp(-6px,-1vw,0px);
-    transform:translate(-50%,-46%);width:clamp(120px,34vw,168px);height:auto}
+    transform:translate(-50%,-46%);width:var(--ko);height:auto}
   #over .etoiles{position:absolute;z-index:1;inset:0;pointer-events:none}
   #over .etoiles svg{position:absolute;overflow:visible}
   /* L'annonce, en rouge : c'est elle qui dit que la manche est finie. */
