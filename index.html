@@ -1359,13 +1359,14 @@ function teinter(k, coul){
    Un aplat d'encre tres dilue, sans contour, pour poser les objets sur la terre au
    lieu de les laisser flotter dessus. Le seau est dessine avec sa flaque, qui
    s'etale bien au-dela de lui : son ombre se cale sur le seau seul. */
-/* Les ballots de paille posent a plat une empreinte large ; l'ombre commune, reglee
-   pour des objets etroits, ne rejoignait pas leurs cotes. */
-const OMBRE_LARGE = {bale:0.50, bale2:0.50};
+/* Un seul rayon pour tous : 46 % de la largeur. Le seau l'avait deja, mais rapporte a
+   son corps seul et non au cadre — son dessin porte la flaque, qui s'etale bien
+   au-dela de lui et n'a pas a compter dans son empreinte. */
+const OMBRE_LARGE = 0.46;
 function ombreObs(o){
   if(o.k==="bucket"){ const f=o.w/SEAU_LARGE;
-    return {cx:o.x+(BUCKET_BOX.x+BUCKET_BOX.w/2)*f, rx:BUCKET_BOX.w*f*0.46}; }
-  return {cx:o.x+o.w/2, rx:o.w*(OMBRE_LARGE[o.k]||0.40)};
+    return {cx:o.x+(BUCKET_BOX.x+BUCKET_BOX.w/2)*f, rx:BUCKET_BOX.w*f*OMBRE_LARGE}; }
+  return {cx:o.x+o.w/2, rx:o.w*OMBRE_LARGE};
 }
 /* Les ombres remontent d'autant : posees pile a l'appui du dessin, elles depassaient
    trop bas et donnaient l'impression que l'objet flottait au-dessus de la sienne.

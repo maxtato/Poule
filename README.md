@@ -548,9 +548,9 @@ détacherait derrière elle.
 | fourche | 6 | 8 | 3 |
 | barrière | 2 | 3 | 4 |
 
-Les deux ballots de paille ont en plus une ombre **plus large** : ils posent à plat une
-empreinte que le rayon commun, réglé pour des objets étroits, ne rejoignait pas. Un demi
-de leur largeur au lieu de quatre dixièmes.
+Le rayon, lui, est le même pour tous : **46 % de la largeur**. Le seau l'avait déjà,
+mais rapporté à son corps seul et non à son cadre — son dessin porte la flaque, qui
+s'étale bien au-delà de lui et n'a pas à compter dans son empreinte.
 
 Le reste est un décalage de rendu et rien d'autre. Le premier plan est translaté d'un
 bloc au moment de le dessiner plutôt que dessin par dessin : ainsi rien ne peut
