@@ -126,8 +126,16 @@ Ils arrivaient sur un blanc chaud avec des traits de vitesse dont le jeu n'a pas
 besoin : le fond est reconnu clair et peu coloré, le remplissage part des bords, et
 seule la plus grosse composante est gardée — les traits de vitesse restent dehors.
 Ils sont ensuite calés sur la **crête**, le plus gros amas de rouge vif du dessin,
-seul repère qui ne bouge pas d'une position à l'autre : mise à l'échelle 1,198,
-1,188 et 1,214, soit moins de deux pour cent d'écart entre les trois.
+seul repère qui ne bouge pas d'une position à l'autre. Chacun calé à son propre
+rapport, les échelles tombaient à 1,198, 1,188 et 1,214 : deux pour cent d'écart,
+assez pour qu'on voie le corps s'allonger d'une image à l'autre. Les trois partagent
+donc **une seule échelle**, la moyenne — 1,1999 — et ne diffèrent plus que par la
+position du centre de leur crête.
+
+Il reste que les contours ne retombent pas exactement : à l'intérieur les trois
+corps se superposent, mais le trait varie d'un à trois pixels tout autour. Le
+partage d'un corps unique, comme il a été fait pour les anciens dessins, reste à
+reprendre pour ceux-ci.
 
 Tout ce qui suit — corps assemblé de deux dessins, couture recalée trait par trait,
 fenêtres d'aile, traits d'ombre effacés — a été rendu inutile par ces trois
