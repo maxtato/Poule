@@ -151,7 +151,10 @@ la couche de tête ne le couvre pas partout. On relève donc le jaune du bec des
 poses de vol qui dépasse d'elle — 9 767 pixels une fois élargis — et on comble avec
 la couleur du voisinage de la couche elle-même.
 
-Au sol, la pose de becquée reste entière.
+Bouton lâché, en chute libre ou en plein saut, la poule n'agite pas les ailes mais
+elle ouvre quand même le bec en approchant d'une mouche : c'est une **seconde tête**,
+tirée d'un autre dessin, plus calme que celui du battement, et posée de la même
+façon sur la pose de vol plané. Au sol, la pose de becquée reste entière.
 
 La poule bat **quatre fois par seconde** : l'avance dans la liste `VOL` est passée
 de 11 à 16, soit quatre cycles complets par seconde pour quatre entrées. Le vol
