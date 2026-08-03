@@ -79,38 +79,37 @@
      moitie haute de l'ecran. Le bas du terrain — ou la poule morte finit sa chute —
      reste entierement decouvert, et elle y reste en plan. */
   #over{justify-content:flex-start;padding:0;gap:0}
-  /* Aucune ombre nulle part, des traits fins : le panneau ne pese que par ses
-     proportions et par le contraste de son annonce. */
+  /* Un gris franchement neutre, pour que le panneau ne se confonde pas avec le beige
+     du terrain. Les gris chauds du jeu — #B5AA9A et compagnie — n'ont plus cours ici,
+     ils tireraient le panneau vers le marron : les textes prennent des gris neutres.
+     Un seul contour dans tout le panneau, celui du bouton, plus celui du panneau. */
   #over .carte{width:min(calc(var(--band,100%) - 36px),430px);margin-top:13vh;
     box-sizing:border-box;display:flex;flex-direction:column;align-items:center;
-    gap:clamp(9px,2.4vw,14px);
+    gap:clamp(6px,1.6vw,9px);
     padding:clamp(16px,4.4vw,24px) clamp(16px,4vw,26px) clamp(18px,4.8vw,26px);
-    background:#FAF3EC;border:1px solid #1A1614;border-radius:18px;
+    background:#E7E7EB;border:1px solid #1A1614;border-radius:18px;
     animation:parait .26s cubic-bezier(.2,1.15,.5,1)}
-  /* L'annonce, en gros et en rouge : c'est elle qui dit que la manche est finie. */
-  #over .fin{margin:0;font-size:clamp(34px,10.5vw,52px);font-weight:900;
-    letter-spacing:-.01em;line-height:.88;text-transform:uppercase;color:#D6342B}
+  /* L'annonce, en rouge : c'est elle qui dit que la manche est finie. */
+  #over .fin{margin:0 0 clamp(4px,1.4vw,8px);font-size:clamp(28px,8.4vw,42px);
+    font-weight:900;letter-spacing:-.01em;line-height:.88;text-transform:uppercase;
+    color:#D6342B}
+  /* Le decompte est le heros du panneau : gros, et la mouche du jeu lui tient lieu
+     d'unite, comme au compteur en haut de l'ecran. */
   #over .chiffres{display:flex;align-items:center;justify-content:center;
-    flex-wrap:wrap;gap:clamp(8px,2.6vw,14px)}
-  /* Le decompte ne s'ecrit pas, il se montre : la mouche du jeu tient lieu d'unite,
-     comme au compteur en haut de l'ecran. */
-  #over .plaque{display:inline-flex;align-items:center;gap:clamp(4px,1.6vw,8px);
-    border:1px solid #1A1614;border-radius:11px;
-    padding:3px clamp(9px,2.6vw,13px) 3px clamp(6px,1.8vw,9px)}
-  #over .ico{height:clamp(17px,4.4vw,25px);width:auto;display:block}
-  #over #fscore{font-size:clamp(21px,5.8vw,31px);font-weight:900;line-height:1;
-    font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+    gap:clamp(7px,2.2vw,12px)}
+  #over .ico{height:clamp(28px,7.6vw,42px);width:auto;display:block}
+  #over #fscore{font-size:clamp(48px,14vw,74px);font-weight:900;line-height:.9;
+    font-variant-numeric:tabular-nums;letter-spacing:-.02em;color:#1A1614}
   #over .kicker{white-space:nowrap;font-size:clamp(10px,2.7vw,12px);font-weight:900;
-    letter-spacing:.22em;color:#9A8F80}
-  #over .rec{white-space:nowrap;font-size:clamp(10px,2.7vw,12px);font-weight:900;
-    letter-spacing:.1em;color:#6C6258;border:1px solid #CFC2AE;border-radius:999px;
-    padding:5px 13px 4px}
-  #over .rec.new{color:#D6342B;border-color:#D6342B}
+    letter-spacing:.22em;color:#8A8A93}
+  #over .rec{white-space:nowrap;font-size:clamp(11px,2.9vw,13px);font-weight:900;
+    letter-spacing:.12em;color:#5E5E66;border:0;padding:0}
+  #over .rec.new{color:#D6342B}
   #over .totaux{white-space:nowrap;font-size:clamp(9px,2.4vw,11px);letter-spacing:.05em;
-    font-weight:700;text-transform:uppercase;color:#B5AA9A}
+    font-weight:700;text-transform:uppercase;color:#9C9CA4}
   #over .btn{width:100%;padding:14px 18px;font-size:clamp(13px,3.6vw,16px);
-    letter-spacing:.09em;white-space:nowrap;margin-top:clamp(2px,1.4vw,7px);
-    border-width:1px}
+    letter-spacing:.09em;white-space:nowrap;margin-top:clamp(8px,2.6vw,14px);
+    border-width:1px;background:transparent}
   @keyframes parait{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
   @media (prefers-reduced-motion:reduce){ #over .carte{animation:none} }
 
@@ -195,10 +194,8 @@
   <div class="carte">
     <span class="kicker">Poule cuite</span>
     <h2 class="fin">Game Over</h2>
-    <div class="chiffres">
-      <span class="plaque"><img class="ico" id="fico" alt="mouches"><span id="fscore">0</span></span>
-      <span class="rec" id="frec">Record 0</span>
-    </div>
+    <div class="chiffres"><img class="ico" id="fico" alt="mouches"><span id="fscore">0</span></div>
+    <span class="rec" id="frec">Record 0</span>
     <span class="totaux" id="ftot"></span>
     <button class="btn" id="again">Recommencer</button>
   </div>

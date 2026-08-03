@@ -773,13 +773,18 @@ seconde plus tôt. On ne voyait jamais la chute finir. La barre d'espace non plu
 relance plus.
 
 Le décompte ne s'écrit pas, il se **montre** : la mouche du jeu tient lieu d'unité, comme
-au compteur en haut de l'écran, et le nombre est posé avec elle sur une plaque cernée
-d'un trait. Le record est une pastille sobre qui passe au rouge quand il tombe.
+au compteur en haut de l'écran. C'est le héros du panneau — le plus gros caractère de
+tout le jeu — et le record passe en petit juste dessous, sans ornement.
 
-**Aucune ombre nulle part**, et des traits d'un pixel — panneau, plaque, pastille,
-bouton. Le panneau ne pèse plus que par ses proportions et par le contraste de son
-annonce, ce qui suffit : le rouge du *Game Over* fait tout le travail, et l'entourer
-d'aplats d'encre ne l'aidait pas, ça l'encombrait.
+**Deux contours en tout**, celui du panneau et celui du bouton. La plaque qui entourait
+le score et la pastille qui entourait le record ont sauté : une boîte dans une boîte dans
+une boîte, ça ne se lit plus, ça se compte. Le poids vient de la taille et de la couleur,
+pas du cerné. **Aucune ombre nulle part** non plus, et des traits d'un pixel.
+
+Le panneau est **gris neutre** et non crème : posé sur le beige du terrain, un panneau
+crème s'y fondait. Les gris chauds du jeu — le `#B5AA9A` des mentions discrètes et sa
+famille — n'ont donc plus cours à l'intérieur, ils l'auraient retiré vers le marron ; les
+textes du panneau prennent des gris franchement neutres.
 
 Le panneau descend de treize pour cent de la hauteur au lieu de neuf : plus haut, son
 coin mordait sur la ligne du record que le HUD écrit en haut à droite. Vérifié sur sept
