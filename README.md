@@ -753,7 +753,7 @@ L'écran se lit du haut vers le bas en trois temps :
 | Bande | Contenu |
 |---|---|
 | Barre du haut | Le carnet : record, mouches gobées, parties jouées |
-| Ciel | Le sur-titre, le titre et sa phrase |
+| Ciel | Le titre et sa phrase |
 | Terre | Le bouton *Jouer* et les trois consignes |
 
 Le **carnet** tient la barre du haut, comme le tableau de bord d'une borne d'arcade :
