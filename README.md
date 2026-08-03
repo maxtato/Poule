@@ -749,11 +749,13 @@ seconde plus tôt. On ne voyait jamais la chute finir. La barre d'espace non plu
 relance plus.
 
 Le décompte ne s'écrit pas, il se **montre** : la mouche du jeu tient lieu d'unité, comme
-au compteur en haut de l'écran, et le nombre est posé avec elle sur une plaque blanche
-cernée d'encre. Le record est une pastille sobre qui passe au rouge quand il tombe, et
-le panneau comme son bouton portent la même **ombre franche** que les plaques — pas un
-flou, un aplat d'encre. Le bouton s'enfonce à l'appui : il descend de trois pixels et son
-ombre disparaît, sans transition.
+au compteur en haut de l'écran, et le nombre est posé avec elle sur une plaque cernée
+d'un trait. Le record est une pastille sobre qui passe au rouge quand il tombe.
+
+**Aucune ombre nulle part**, et des traits d'un pixel — panneau, plaque, pastille,
+bouton. Le panneau ne pèse plus que par ses proportions et par le contraste de son
+annonce, ce qui suffit : le rouge du *Game Over* fait tout le travail, et l'entourer
+d'aplats d'encre ne l'aidait pas, ça l'encombrait.
 
 Le panneau descend de treize pour cent de la hauteur au lieu de neuf : plus haut, son
 coin mordait sur la ligne du record que le HUD écrit en haut à droite. Vérifié sur sept
