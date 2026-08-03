@@ -227,6 +227,10 @@ Ils sont retournés comme le reste et calés sur la **tache blanche de la tête*
 repère commun sûr : mise à l'échelle 0,985, 1,000 et 0,994, moins de deux pour cent
 d'écart entre les trois.
 
+Une quatrième position s'est ajoutée entre les ailes levées et l'horizontale, pour
+que la descente ne se fasse plus en un seul pas. `EAGLE_BAT` suit la longueur de la
+liste — de 5,7 à 7,6 — pour que la cadence ne bouge pas.
+
 L'ordre n'est pas donné, il est mesuré : le dessin dont le sommet est le plus haut
 est celui aux ailes levées — rangée 21, contre 262 et 263 pour les deux autres — et
 parmi ceux-là, celui qui descend le plus bas est celui aux ailes basses, 606 contre
