@@ -130,12 +130,30 @@ plus de deux cents cent rangées plus bas. La racine de l'aile baissée, un trai
 traîne au-dessus de la couture, est reprise à `fly_up` dans une fenêtre mesurée sur
 elle : 227 pixels d'encre présents chez l'un et absents chez l'autre.
 
-La couture laissait une marche dans le contour : quatorze pixels aux fesses, neuf
-sous les barbillons — les deux dessins n'ont pas exactement la même largeur de
-corps à cette hauteur. Le bas est donc **étiré** vers le haut, rangée par rangée :
-le bord gauche est ramené sur celui du haut, le bord droit aussi, la correction
-s'effaçant sur quarante rangées. Entre les deux bords c'est du blanc plat, où un
-étirement de cinq pour cent ne se voit pas. Marche restante : zéro de chaque côté.
+La couture laissait une marche dans le contour — les deux dessins n'ont pas
+exactement la même largeur de corps à cette hauteur. Le bas est donc **étiré** vers
+le haut, rangée par rangée, la correction s'effaçant sur quarante rangées ; entre
+les traits c'est du blanc plat, où un étirement de quelques pour cent ne se voit
+pas.
+
+Le recalage ne se fait pas sur les deux bords extérieurs mais sur **tous les traits
+que la couture traverse**. On relève les plages d'encre de la rangée du dessus et
+de celle du dessous, chacune de celle du dessous cherche sa plus proche voisine au
+dessus, et les paires deviennent les points fixes d'une carte de x affine par
+morceaux. Les traits que l'une a et pas l'autre — ceux de l'aile baissée — restent
+sans partenaire et sont ignorés.
+
+| Trait | Décalage à corriger |
+|---|---|
+| croupe | 14,0 |
+| gorge | 0,5 |
+| barbillon, bord gauche | 6,5 |
+| barbillon, bord droit | 8,0 |
+
+C'est ce que deux points fixes seuls ne pouvaient pas rendre : interpolée entre le
+milieu du corps et le bord extérieur, la gorge se voyait déplacée de cinq pixels
+alors qu'elle n'en demandait qu'un demi, et le cran se déplaçait des fesses au cou.
+Écart restant, trait par trait : 0 / 0,5 / 0,5 / 0 pixel.
 
 Chaque aile est alors ce qui, dans son dessin, dépasse de ce corps — plus le trait
 de l'aile là où il court **sur** le corps, reconnu à ce que le dessin et le corps
