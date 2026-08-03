@@ -22,10 +22,16 @@ rien et le saut est entier.
 
 | Appui | Hauteur |
 |---|---|
-| relâché aussitôt | 140 |
-| 0,04 s | 209 |
-| 0,08 s | 251 |
-| 0,12 s et au-delà | 309, le saut entier |
+| relâché aussitôt | 89 |
+| 0,04 s | 158 |
+| 0,08 s | 200 |
+| 0,12 s | 254 |
+| 0,20 s et au-delà | 309, le saut entier |
+
+Le plancher est descendu de 1 020 à 820 : l'appui le plus bref donne un saut de 89
+au lieu de 140, et il faut tenir deux dixièmes de seconde au lieu d'un peu plus d'un
+pour le saut entier. La plage utile est donc bien plus large, et le doigt commande
+vraiment la hauteur.
 
 Le vol ne prend la main qu'**au sommet du saut**, pas avant. Il plafonne la montée
 à 310 par seconde ; s'il démarrait au premier dixième de seconde, comme c'était le
