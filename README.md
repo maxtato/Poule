@@ -66,30 +66,34 @@ jusqu'au bord de l'écran. Il a un temps ondulé sur une sinusoïde ; la vague e
 retirée. Vérifié sur 73 aigles suivis chacun sur 900 pas : pas une unité d'écart
 de hauteur, boîte de collision comprise.
 
-Un **cerf-volant** traverse lui aussi le ciel, et c'est le seul objet qui remonte le
-décor : le vent le pousse **à contre-sens de la course**. Il entre par le bas à
-gauche, monte en diagonale et sort par le haut à droite, sept secondes plus tard.
-Le vent l'ondule au passage. La montée comme l'ondulation se lisent sur sa position
-et non sur l'horloge, donc sa boîte de collision les suit exactement.
+Un **cerf-volant** traverse lui aussi le ciel. Il file dans le **même sens que la
+poule**, du bas à gauche vers le haut à droite : il avance et il monte. Mais il vole
+moins vite qu'elle — 300 contre 500 à 900 — donc **elle le rattrape**. À l'écran il
+dérive donc vers l'arrière comme les autres obstacles, mais deux à trois fois plus
+lentement, et l'écart se comble sous les yeux du joueur : suivi image par image, il
+passe de 893 unités devant la poule à 365 derrière en moins de sept secondes.
+
+Le vent l'ondule au passage. La montée comme l'ondulation se lisent sur sa position et
+non sur l'horloge, donc sa boîte de collision les suit exactement.
 
 Le dessin est **retourné** à l'affichage, sans quoi sa queue précéderait son corps.
 La boîte de collision est retournée avec lui.
-
-Comme il arrive de derrière, il n'a que quatre-vingts unités pour croiser la poule au
-lieu de toute la largeur de l'écran. Sa bande de départ est donc calée au-dessus de la
-poule qui court, dans la moitié basse du ciel : au moment où il la croise il est déjà
-hors de sa portée au sol, et ne menace qu'une poule en vol. Vérifié sur trois cents
-cerfs-volants tirés au hasard dans la bande et suivis pas à pas : aucun ne touche la
-boîte d'une poule au sol.
 
 Seul son **corps** tue — la moitié du dessin qui porte la voilure. Une queue de
 ficelle n'assomme personne, et elle est de toute façon trop mince pour qu'on lui prête
 une hitbox.
 
-Sa queue claque au vent : elle est dessinée en vingt-six tranches verticales, chacune
-décalée par une onde qui court le long d'elle, d'amplitude croissante vers le bout.
-Elle ondule donc au lieu de suivre le corps comme un bloc. L'amplitude de cette onde
-suit la taille du dessin.
+Sa queue claque au vent : elle est dessinée en quarante-quatre tranches verticales,
+chacune décalée par une onde qui court le long d'elle, d'amplitude croissante vers le
+bout. Elle ondule donc au lieu de suivre le corps comme un bloc.
+
+Une tranche simplement décalée laisse une **marche** à la jonction avec la suivante, et
+le fil montre autant de petites cassures qu'il y a de tranches — jusqu'à 2,8 unités
+d'écart d'une tranche à l'autre. Chaque tranche est donc aussi **cisaillée à la pente
+de l'onde** : son bord droit descend exactement sur le décalage de la suivante. La
+marche tombe à zéro, exactement, et le fil est continu d'un bout à l'autre. Cisailler
+coûte moins cher que multiplier les tranches, et surtout ça marche à n'importe quelle
+amplitude — plus de tranches ne fait que réduire la marche, jamais l'annuler.
 
 Il mesure 285 unités de large. Le dessin d'origine en fait 1306 : même agrandi d'une
 moitié il reste réduit de 4,6 fois à l'écran, jamais étiré.
