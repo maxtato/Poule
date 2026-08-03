@@ -46,12 +46,22 @@ l'instant de saut qui passe.
 Un bouton rond en bas de l'écran donne la même chose : appui court pour sauter,
 maintenu pour voler. Sa face est un dessin, pas un cercle CSS — l'ombre passe donc
 par un filtre et non par `box-shadow`, pour qu'elle épouse le disque au lieu d'en
-cerner le carré. Le disque est un aplat sans contour à lui : c'est cette ombre
-d'encre qui lui donne son bord et le décolle du sol. Elle disparaît à l'appui, le
-bouton descend de trois pixels — il s'enfonce. Il se pose dans la bande de terre sous le sol, là où le pouce
+cerner le carré. Elle est **douce**, et c'est un changement : le disque porte
+maintenant son propre rebord relevé, et l'aplat d'encre qu'il avait dessous lui faisait
+un croissant noir qui se lisait comme un défaut. L'ancienne pastille, elle, était un
+aplat rouge sans contour à elle, et cette ombre d'encre lui tenait lieu de bord.
+L'ombre se rétracte à l'appui, le bouton descend de trois pixels et s'assombrit — il
+s'enfonce. Il se pose dans la bande de terre sous le sol, là où le pouce
 tombe déjà et où il ne cache rien du terrain, et n'apparaît qu'en course. L'appui
 n'importe où sur l'écran continue de marcher — le bouton ne fait que le rendre
 visible.
+
+Le dessin est arrivé sans couche alpha, sur du blanc, son ombre douce peinte autour :
+même détourage que les obstacles, mais **sans la règle des trous** — la poule du bouton
+est une silhouette blanche enfermée dans le disque, exactement ce que cette règle
+percerait. L'ombre peinte, elle, part avec le fond, puisque le bouton a la sienne. Le
+dessin est ramené de 689 à 320 pixels : c'est encore trois fois et demie la taille
+d'affichage sur un écran ordinaire.
 
 La jauge de plumes se vide en vol et se remplit au sol. Gober une mouche rend
 deux plumes. Gober plusieurs mouches sans laisser retomber la chaîne monte un
