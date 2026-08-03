@@ -738,11 +738,18 @@ où le faisait avant, et c'était le premier réflexe du joueur — celui qui te
 seconde plus tôt. On ne voyait jamais la chute finir. La barre d'espace non plus ne
 relance plus.
 
+Le décompte ne s'écrit pas, il se **montre** : la mouche du jeu tient lieu d'unité, comme
+au compteur en haut de l'écran, et le nombre est posé avec elle sur une plaque blanche
+cernée d'encre. Le titre est une pastille rouge, le record une pastille sobre qui passe
+au rouge quand il tombe, et tout ce qui est cliquable ou compté porte la même **ombre
+franche décalée de deux pixels** que le bouton de vol — pas un flou, un aplat d'encre. Le
+bouton s'enfonce à l'appui : il descend de deux pixels et son ombre disparaît, sans
+transition. Le bandeau se lit donc comme un tableau de bord et non comme un paragraphe.
+
 Une ligne unique ne tient pas partout. Les deux mentions les moins utiles s'effacent donc
-à mesure que le cadre rétrécit : **les totaux d'abord** sous 780, **le titre ensuite** sous
+à mesure que le cadre rétrécit : **les totaux d'abord** sous 820, **le titre ensuite** sous
 580. Le score et le record ne s'en vont jamais. Les seuils ne sont pas choisis à l'œil,
-ils sortent de la largeur que le contenu occupe réellement — 750 unités au complet, 570
-sans les totaux, 320 avec le score et le record seuls.
+ils sortent de la largeur que le contenu occupe réellement.
 
 Le piège était de mesurer le débordement au mauvais endroit : la rangée qui porte les
 chiffres a beau être comprimée par le bouton, le texte, lui, continue de se peindre
