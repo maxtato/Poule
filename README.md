@@ -192,11 +192,23 @@ reste et calés sur la **tache blanche de la tête**, seul repère commun sûr �
 corps sans ailes s'y met à l'échelle 0,977.
 
 Chaque pose n'apporte ensuite que ses ailes : ce qui, chez elle, déborde du corps
-commun. On garde **toute composante d'au moins un dixième de la plus grosse**, et
-non la seule plus grosse, parce que l'aigle a deux ailes, celle de devant et celle
-de derrière. S'y ajoute le trait d'aile là où il court sur le corps, à condition
-qu'il soit de l'encre et qu'il tienne au reste de l'aile. Les ailes pèsent 103 660,
-94 446, 76 444 et 98 038 pixels.
+commun. On garde les **deux plus grosses composantes**, parce que l'aigle a deux
+ailes, celle de devant et celle de derrière — et pas davantage. S'y ajoute le trait
+d'aile là où il court sur le corps, à condition qu'il soit de l'encre et qu'il
+tienne au reste de l'aile.
+
+Cela ne suffisait pas : la **queue** et les **serres** de chaque dessin touchent son
+aile, elles font donc partie de la même composante et aucun filtre par taille ne
+les en sépare. On voyait deux queues et quatre pattes. Elles n'ont pourtant pas la
+couleur d'une aile — l'aile est brune de bout en bout, la queue est blanche et les
+serres oranges. On les reconnaît donc à la couleur, on élargit de seize pixels pour
+emporter leur propre trait, et on les retire : le corps commun les fournit déjà.
+Les ailes tombent de 103 660, 94 446, 76 444 et 98 038 pixels à 66 981, 50 969,
+74 041 et 88 145.
+
+Les poses sont relues depuis les dessins d'origine sur disque et non depuis le jeu :
+sinon la composition repartait d'une composition, et l'échelle du corps dérivait de
+0,977 à 0,949 d'une passe à l'autre.
 
 Le cycle parcourt les quatre positions **dans les deux sens** : la descente passe
 par toutes, la remontée repasse par celles du milieu. Six entrées pour quatre
