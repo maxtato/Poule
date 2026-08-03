@@ -447,6 +447,28 @@ blanche. Une planche portait deux objets côte à côte — la botte et le pneu 
 composantes les plus grosses servent de noyaux et chaque touffe d'herbe, chaque
 caillou rejoint le noyau dont il est le plus proche.
 
+### Les trous à jour
+
+Un remplissage qui part du bord n'atteint pas le fond que le trait **enferme** : le
+triangle du cadre de la brouette, l'espace entre les dents de la fourche, celui entre
+les deux lisses de la barrière restaient pleins, et le décor ne se voyait pas au
+travers. Mais toute zone claire enfermée n'est pas un trou — le corps du seau est peint
+en blanc et doit rester.
+
+Deux mesures les séparent, et aucune ne suffit seule.
+
+La **couleur** d'abord : un trou, c'est la page elle-même. On mesure l'écart quadratique
+moyen de la zone à la couleur de la page, prise dans un coin. Les vrais trous tombent
+entre 1,85 et 3,83 ; le blanc peint, qui porte toujours un peu d'ombre, entre 5,16 et
+8,32. Le seuil est posé dans l'écart, à 4,5.
+
+La **taille** ensuite : les reflets qui courent le long des tubes de la brouette sont eux
+aussi du blanc presque pur, et la couleur seule les perçait — le cadre se mettait à
+grésiller. Ils font 25 pixels quand le triangle du cadre en fait 6 283 : un
+demi-millième de la planche les sépare sans ambiguïté. Avec les deux règles, il se perce
+exactement un trou dans la brouette, trois dans la fourche, un dans la barrière, et rien
+ailleurs.
+
 Deux nombres pilotent la place d'un obstacle : sa hauteur de jeu et son **enfoncement**,
 c'est-à-dire de combien il est planté sous la ligne de sol. Ni l'un ni l'autre ne se lit
 directement dans un nouveau dessin, qui ne cadre pas l'objet comme l'ancien. Ils sont
@@ -472,8 +494,17 @@ l'affichage disparaît. La coupure entre queue et losange n'est plus supposée �
 de la largeur, elle est relevée sur le dessin — 49,0 % — et la boîte de collision est le
 losange mesuré, non plus une fraction devinée.
 
+La barrière a fini par avoir son dessin elle aussi, et les sept obstacles sont
+maintenant de la même main. Le report la place à 282 × 115 : sa hauteur de
+franchissement ne bouge pas d'une unité non plus, alors que le dessin n'a rien à voir
+avec le précédent.
+
+Les deux bottes ont été grossies de huit pour cent sur demande. C'est le seul endroit où
+le jeu bouge volontairement : il faut désormais monter à 92 unités pour les franchir au
+lieu de 84.
+
 Aucun n'est agrandi : les dessins sont réduits de 3,5 à 8,9 fois à l'écran. Le fichier
-passe de 10,6 à 12,7 Mo.
+passe de 10,6 à 12,8 Mo.
 
 Il ne reste du jeu d'origine que la plume du compteur de vol — et elle sert
 maintenant deux fois : c'est elle aussi qui tombe de la poule à chaque coup d'aile
