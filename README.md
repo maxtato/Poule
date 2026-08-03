@@ -524,11 +524,23 @@ du caillou voisin, qui traversent parfois la même boîte. Les objets
 posés au sol, la poule comprise, portent une ombre — un aplat d'encre très dilué,
 sans contour. Celle de la poule reste au sol pendant qu'elle monte, en
 rétrécissant et en pâlissant, mais ne disparaît jamais tout à fait : c'est le seul
-repère qui dise où elle va retomber. Toutes remontent de trois unités au-dessus de
-l'appui du dessin : posées pile dessus, elles débordaient trop bas et l'objet
-semblait flotter au-dessus de la sienne. La pose KO a la sienne, plus large et plus
-basse : calée sur la ligne d'horizon comme celle de la pose debout, elle passait
-entièrement sous le ventre de la poule à plat et ne se voyait plus.
+repère qui dise où elle va retomber. Toutes remontent au-dessus de l'appui du dessin :
+posées pile dessus, elles débordaient trop bas et l'objet semblait flotter au-dessus de
+la sienne. La pose KO a la sienne, plus large et plus basse : calée sur la ligne
+d'horizon comme celle de la pose debout, elle passait entièrement sous le ventre de la
+poule à plat et ne se voyait plus.
+
+Celles des obstacles remontent **plus** que celle de la poule — huit unités contre
+trois. C'est qu'elles partent du bas du dessin, alors que l'objet est planté sous la
+ligne de sol : le bas du dessin est donc bien plus bas que l'endroit où l'objet touche
+terre, et l'écart vaut l'enfoncement, treize à vingt-deux unités. Le réglage a une
+limite haute nette : au-delà d'une dizaine d'unités, l'ombre repasse **au-dessus** de la
+ligne pour les obstacles à peine enfoncés — la barrière et la fourche — et se détache
+derrière eux au lieu de les poser. Huit tient tout le monde.
+
+Les deux ballots de paille ont en plus une ombre **plus large** : ils posent à plat une
+empreinte que le rayon commun, réglé pour des objets étroits, ne rejoignait pas. Un demi
+de leur largeur au lieu de quatre dixièmes.
 
 Le reste est un décalage de rendu et rien d'autre. Le premier plan est translaté d'un
 bloc au moment de le dessiner plutôt que dessin par dessin : ainsi rien ne peut

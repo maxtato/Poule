@@ -1359,15 +1359,22 @@ function teinter(k, coul){
    Un aplat d'encre tres dilue, sans contour, pour poser les objets sur la terre au
    lieu de les laisser flotter dessus. Le seau est dessine avec sa flaque, qui
    s'etale bien au-dela de lui : son ombre se cale sur le seau seul. */
+/* Les ballots de paille posent a plat une empreinte large ; l'ombre commune, reglee
+   pour des objets etroits, ne rejoignait pas leurs cotes. */
+const OMBRE_LARGE = {bale:0.50, bale2:0.50};
 function ombreObs(o){
   if(o.k==="bucket"){ const f=o.w/SEAU_LARGE;
     return {cx:o.x+(BUCKET_BOX.x+BUCKET_BOX.w/2)*f, rx:BUCKET_BOX.w*f*0.46}; }
-  return {cx:o.x+o.w/2, rx:o.w*0.40};
+  return {cx:o.x+o.w/2, rx:o.w*(OMBRE_LARGE[o.k]||0.40)};
 }
-/* Toutes les ombres remontent d'autant : posees pile a l'appui du dessin, elles
-   depassaient trop bas et donnaient l'impression que l'objet flottait au-dessus de
-   la sienne. */
-const OMBRE_HAUT = 3;
+/* Les ombres remontent d'autant : posees pile a l'appui du dessin, elles depassaient
+   trop bas et donnaient l'impression que l'objet flottait au-dessus de la sienne.
+   Celles des obstacles remontent plus que celle de la poule, parce qu'elles partent
+   du bas du dessin et que l'objet, lui, est plante sous la ligne de sol : le bas du
+   dessin est donc bien plus bas que l'endroit ou l'objet touche terre. Au-dela d'une
+   dizaine d'unites l'ombre repasse au-dessus de la ligne pour les obstacles a peine
+   enfonces — la barriere, la fourche — et se detache derriere eux. */
+const OMBRE_HAUT = 3, OMBRE_OBS_HAUT = 8;
 function ombres(){
   ctx.save();
   ctx.fillStyle=INK;
@@ -1376,7 +1383,7 @@ function ombres(){
     const b=ombreObs(o);
     ctx.globalAlpha=.12;
     ctx.beginPath();
-    ctx.ellipse(b.cx, OBS_DEF[o.k].sink+OBS_EXTRA-OMBRE_HAUT, b.rx, b.rx*0.17, 0, 0, 7);
+    ctx.ellipse(b.cx, OBS_DEF[o.k].sink+OBS_EXTRA-OMBRE_OBS_HAUT, b.rx, b.rx*0.17, 0, 0, 7);
     ctx.fill();
   }
   /* L'ombre de la poule reste au sol pendant qu'elle monte, en retrecissant et en
