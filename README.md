@@ -702,6 +702,30 @@ Tout est dans `index.html`, sprites compris — ils sont encodés en base64 dans
 constante `B64`, ce qui explique la taille du fichier et la ligne interminable
 en tête de script. Aucune dépendance, aucun outil de construction.
 
+### La police
+
+**Fredoka**, ronde et grasse, dans l'esprit des dessins. Elle est **embarquée** dans le
+fichier comme le reste : le jeu ne demande toujours rien au réseau.
+
+C'est la coupe latine variable servie par Google Fonts, **réduite aux 136 caractères que
+le jeu peut afficher** — la liste est relevée sur le fichier lui-même, plus les lettres
+accentuées et la flèche du clavier. 29,7 Ko deviennent 21,4.
+
+Deux détails valent d'être notés :
+
+- Son axe de graisse s'arrête à **700**, alors que le jeu demande jusqu'à 900. La face est
+donc *déclarée* jusqu'à 900, ce qui fait que le navigateur s'y arrête au lieu d'ajouter un
+faux gras par-dessus. Vérifié : 700, 800 et 900 rendent exactement le même dessin.
+- Le canvas ne connaît que le **nom** de la police. Si elle n'est pas chargée quand il
+écrit, il écrit dans la police de secours et n'y revient jamais tout seul. Le démarrage
+attend donc `document.fonts.ready`, avec un garde-fou d'une seconde et demie.
+
+Les chasses négatives ont sauté : Fredoka a des lettres larges et une espace étroite, et
+le moindre resserrement collait « QUI » à « VOLE » dans le titre.
+
+Elle est sous **SIL Open Font License 1.1** — Copyright 2016 The Fredoka Project Authors.
+La mention de droit d'auteur est conservée dans la table de noms du fichier embarqué.
+
 Les repères du code, dans l'ordre :
 
 | Section | Contenu |
