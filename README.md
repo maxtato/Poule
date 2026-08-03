@@ -133,10 +133,16 @@ Le dessin dont elle vient est de la même famille que les trois du vol : même c
 même aile repliée, seul le bec s'ouvre en grand. Il est posé dans le cadre de vol
 crête sur crête, à l'échelle commune 1,1999, puis coupé verticalement à la colonne
 où il s'accorde le mieux avec le corps de vol — **0,886 d'accord**, contre 0,43 avec
-l'ancien dessin de gobage qui n'était pas de la même série. La couche est enfin
-retenue à l'intérieur de la silhouette de vol élargie de trente-quatre pixels, sans
-quoi le corps débordait du dos ; l'élargissement laisse passer le bec ouvert, qui va
-plus loin que le bec fermé. Au sol, la pose de becquée reste entière.
+l'ancien dessin de gobage qui n'était pas de la même série. La coupe n'est pas nette : elle s'ouvre sur
+quarante-quatre colonnes. Nette, elle laissait un petit décrochement en haut et en
+bas du cou, là où les traits des deux dessins ne retombent pas exactement l'un sur
+l'autre.
+
+La couche est enfin retenue à l'intérieur de la silhouette de vol élargie de
+trente-quatre pixels, sans quoi le corps débordait du dos — mais **seulement du côté
+du corps**, à gauche de la colonne 620. Appliqué jusqu'à la tête, ce masque coupait
+le bas du bec grand ouvert, qui sort largement de la silhouette au bec fermé, et on
+apercevait l'ancien bec derrière. Au sol, la pose de becquée reste entière.
 
 La poule bat **quatre fois par seconde** : l'avance dans la liste `VOL` est passée
 de 11 à 16, soit quatre cycles complets par seconde pour quatre entrées. Le vol
