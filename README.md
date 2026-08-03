@@ -192,45 +192,34 @@ image à la suivante. C'est la voie qui a été prise.
 
 ## L'aigle
 
-Quatre positions d'aile et **un corps commun**, comme pour la poule. Le dessin aux
-ailes basses d'origine a été retiré et remplacé par deux nouveaux, qui décomposent
-la descente.
-
-Le corps a été fourni à part : un aigle sans aucune aile, tête, torse, queue et
-serres. C'est ce qui manquait — le corps de l'aigle ne se découpe pas seul, un
+**Trois positions d'aile et un corps commun**, comme la poule. Les trois dessins
+partagent corps, tête et queue ; le corps a de plus été fourni à part, sans aucune
+aile. C'est ce qui manquait — le corps de l'aigle ne se découpe pas seul, un
 remplissage parti du torse passe dans l'aile de devant, qu'aucun trait n'en sépare,
-et cela vaut aussi bien sur le dessin aux ailes hautes, pourtant celui où le torse
-est le plus dégagé.
+et cela vaut aussi sur le dessin aux ailes hautes, pourtant celui où le torse est
+le plus dégagé.
 
-Tous les dessins arrivaient sur un blanc chaud avec des traits de vitesse dont le
-jeu n'a pas besoin : le fond est reconnu clair et peu coloré, le remplissage part
-des bords, seule la plus grosse composante est gardée. Ils sont retournés comme le
-reste et calés sur la **tache blanche de la tête**, seul repère commun sûr — le
-corps sans ailes s'y met à l'échelle 0,977.
+Détourage habituel — fond clair et peu coloré, remplissage depuis les bords, plus
+grosse composante, ce qui laisse dehors les traits de vitesse — puis calage sur la
+**tache blanche de la tête**, seul repère commun sûr. Les quatre dessins s'y mettent
+à l'échelle 0,974 à 0,999, moins de trois pour cent d'écart.
 
-Chaque pose n'apporte ensuite que ses ailes : ce qui, chez elle, déborde du corps
-commun. On garde les **deux plus grosses composantes**, parce que l'aigle a deux
-ailes, celle de devant et celle de derrière — et pas davantage. S'y ajoute le trait
-d'aile là où il court sur le corps, à condition qu'il soit de l'encre et qu'il
-tienne au reste de l'aile.
+L'ordre des positions n'est pas donné, il est mesuré : le dessin dont le sommet est
+le plus haut est celui aux ailes levées, et parmi les deux autres, celui qui
+descend le plus bas est celui aux ailes basses.
 
-Cela ne suffisait pas : la **queue** et les **serres** de chaque dessin touchent son
-aile, elles font donc partie de la même composante et aucun filtre par taille ne
-les en sépare. On voyait deux queues et quatre pattes. Elles n'ont pourtant pas la
-couleur d'une aile — l'aile est brune de bout en bout, la queue est blanche et les
-serres oranges. On les reconnaît donc à la couleur, on élargit de seize pixels pour
-emporter leur propre trait, et on les retire : le corps commun les fournit déjà.
-Les ailes tombent de 103 660, 94 446, 76 444 et 98 038 pixels à 66 981, 50 969,
-74 041 et 88 145.
+Chaque pose n'apporte que ses ailes : ce qui, chez elle, déborde du corps commun.
+On garde les **deux plus grosses composantes**, parce que l'aigle a deux ailes et
+pas davantage. La **queue** et les **serres** touchent pourtant l'aile et font
+partie de la même composante — on voyait deux queues et quatre pattes. Elles n'ont
+pas la couleur d'une aile : l'aile est brune de bout en bout, la queue est blanche
+et les serres oranges. On les reconnaît donc à la couleur, on élargit de seize
+pixels pour emporter leur propre trait, et on les retire, le corps commun les
+fournissant déjà. Les ailes pèsent 113 028, 75 348 et 54 513 pixels.
 
 Les poses sont relues depuis les dessins d'origine sur disque et non depuis le jeu :
-sinon la composition repartait d'une composition, et l'échelle du corps dérivait de
-0,977 à 0,949 d'une passe à l'autre.
-
-Le cycle parcourt les quatre positions **dans les deux sens** : la descente passe
-par toutes, la remontée repasse par celles du milieu. Six entrées pour quatre
-dessins, et `EAGLE_BAT` suit la longueur de la liste pour que la cadence ne bouge
-pas — 1,9 battement par seconde.
+sinon la composition repartait d'une composition, et l'échelle du corps dérivait
+d'une passe à l'autre.
 
 ## Les trois plans
 
