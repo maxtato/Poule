@@ -113,7 +113,9 @@ les obstacles et font tourner l'heure du jour — mais on ne joue plus à courir
 loin, on joue à manger.
 
 Le grand chiffre en haut à droite n'a pas d'unité écrite : le dessin de la
-mouche, posé juste avant, en tient lieu. Le record sert de cible : une jauge
+mouche, posé juste avant, en tient lieu — la pose **ailes écartées**, qui se lit bien
+mieux à cette taille que l'autre, dont les ailes se confondent avec le corps. Le
+record sert de cible : une jauge
 montre ce qu'il reste à gober et bascule au rouge dès qu'il tombe. Un palier
 toutes les dix mouches déclenche le bandeau.
 
@@ -721,27 +723,33 @@ Deux dessins, pas quatre :
 
 La fin de partie était une fenêtre au premier plan, posée au milieu de l'écran par-dessus
 un flou : la poule morte disparaissait derrière au moment même où elle finissait de
-tomber. C'est maintenant un **bandeau** qui monte dans la bande de terre, sous la ligne
-d'horizon — là où vit le bouton de vol pendant la course, et où il n'y a rien à cacher.
-Ni flou, ni voile : le terrain reste entièrement découvert, et la poule reste en plan,
-étoiles comprises, aussi longtemps qu'on veut.
+tomber. C'est maintenant un **bandeau fin** en travers de la moitié haute de l'écran —
+une cinquantaine de pixels de haut, tout sur une seule ligne. Ni flou, ni voile : le bas
+du terrain, là où la poule s'écrase, reste entièrement découvert, et elle y reste en
+plan, étoiles comprises, aussi longtemps qu'on veut.
 
-Le bandeau porte le score, le record, les totaux et le bouton. Il se cale sur la largeur
-du **cadre de jeu** et non sur celle de la fenêtre, qui est plus large sur un bureau —
-`resize()` publie cette largeur en variable CSS, comme il publiait déjà la hauteur de la
-bande de terre.
+Le bandeau porte le titre, le score, le record, les totaux et le bouton. Il se cale sur
+la largeur du **cadre de jeu** et non sur celle de la fenêtre, qui est plus large sur un
+bureau — `resize()` publie cette largeur en variable CSS, comme il publiait déjà la
+hauteur de la bande de terre.
 
 Aussi longtemps qu'on veut, littéralement : **seul le bouton relance**. Un appui n'importe
 où le faisait avant, et c'était le premier réflexe du joueur — celui qui tenait le vol une
 seconde plus tôt. On ne voyait jamais la chute finir. La barre d'espace non plus ne
 relance plus.
 
-Trois détails de place, tous mesurés sur quatre formats d'écran plutôt que réglés à
-l'œil : la colonne de chiffres et le bouton sont tenus par une rangée bornée à 520
-unités, si bien qu'ils restent collés aux deux marges sans jamais déborder ; la ligne des
-totaux est la plus longue de la colonne, c'est donc elle qui rétrécit quand l'écran est
-étroit ; et la colonne remonte un peu dans la bande pour laisser le coin bas-gauche au
-bouton du son, qui vit là.
+Une ligne unique ne tient pas partout. Les deux mentions les moins utiles s'effacent donc
+à mesure que le cadre rétrécit : **les totaux d'abord** sous 780, **le titre ensuite** sous
+580. Le score et le record ne s'en vont jamais. Les seuils ne sont pas choisis à l'œil,
+ils sortent de la largeur que le contenu occupe réellement — 750 unités au complet, 570
+sans les totaux, 320 avec le score et le record seuls.
+
+Le piège était de mesurer le débordement au mauvais endroit : la rangée qui porte les
+chiffres a beau être comprimée par le bouton, le texte, lui, continue de se peindre
+par-dessus. Ce n'est donc pas le débordement de la rangée qu'il faut regarder mais celui
+de la colonne de chiffres à l'intérieur, et le chevauchement des deux boîtes. Vérifié sur
+sept formats, du 360 × 640 au 1800 × 1700 : rien ne déborde, rien ne chevauche, et le
+bandeau reste entre 27 et 32 % de la hauteur de l'écran.
 
 Le choc a trois versions, choisies selon d'où elle vient. De face, en course, elle
 est encore sur ses pattes ; de face en vol, elle file à l'horizontale. La version

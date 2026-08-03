@@ -60,33 +60,36 @@
   .rec{font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#9A8F80}
   .rec.new{color:#D6342B}
   .tap{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#B5AA9A}
-  /* Fin de partie : ni fenetre au premier plan ni flou. Un bandeau monte dans la bande
-     de terre, sous la ligne d'horizon — la ou vit le bouton de vol pendant la course,
-     et ou il n'y a rien a cacher. Le terrain reste entierement decouvert : on voit la
-     poule finir sa chute et rester en plan tant qu'on n'a pas repris. */
-  #over{justify-content:flex-end;padding:0;gap:0}
-  #over .bandeau{width:var(--band,100%);max-width:100%;height:var(--ground,190px);
+  /* Fin de partie : ni fenetre au premier plan ni flou, mais un bandeau fin en travers
+     de la moitie haute de l'ecran. Tout est sur une seule ligne, et le bas du terrain —
+     ou la poule morte finit sa chute — reste entierement decouvert. */
+  #over{justify-content:flex-start;padding:0;gap:0}
+  #over .bandeau{width:var(--band,100%);max-width:100%;margin-top:24vh;
     box-sizing:border-box;display:flex;align-items:center;justify-content:center;
-    padding:0 clamp(14px,4vw,26px);
-    background:rgba(250,243,236,.94);border-top:1.5px solid #1A1614;
-    animation:monte .28s cubic-bezier(.2,1.15,.5,1)}
-  /* Une rangee interieure bornee en largeur : les chiffres restent a gauche et le
-     bouton a droite quelle que soit la place, sans jamais deborder de la marge. */
-  #over .dedans{width:100%;max-width:520px;display:flex;align-items:center;
-    justify-content:space-between;gap:clamp(10px,4vw,40px)}
-  /* Le bouton du son vit dans ce meme coin bas-gauche : la colonne de chiffres se cale
-     en haut du bandeau plutot qu'au milieu, ce qui lui laisse le bas libre. */
-  #over .chiffres{display:flex;flex-direction:column;align-items:flex-start;gap:4px;
-    text-align:left;align-self:center;margin-bottom:clamp(0px,14vw,64px)}
-  #over .kicker,#over .rec{white-space:nowrap;letter-spacing:.12em}
-  /* la ligne des totaux est la plus longue du bandeau : c'est elle qui decide de la
-     largeur de la colonne, et donc elle qui doit ceder sur un ecran etroit */
-  #over .totaux{white-space:nowrap;font-size:clamp(9px,2.6vw,11px);letter-spacing:.05em;
+    padding:9px clamp(12px,3.5vw,22px);
+    background:rgba(250,243,236,.94);overflow:hidden;
+    border-top:1.5px solid #1A1614;border-bottom:1.5px solid #1A1614;
+    animation:parait .26s cubic-bezier(.2,1.15,.5,1)}
+  /* Une rangee bornee en largeur : les chiffres restent a gauche et le bouton a droite
+     quelle que soit la place, sans jamais deborder de la marge. */
+  #over .dedans{width:100%;max-width:720px;display:flex;align-items:center;
+    justify-content:space-between;gap:clamp(8px,3vw,32px)}
+  #over .chiffres{display:flex;align-items:baseline;gap:clamp(7px,2.6vw,16px)}
+  #over .kicker,#over .rec{white-space:nowrap;letter-spacing:.1em;font-size:clamp(10px,2.8vw,12px)}
+  #over .totaux{white-space:nowrap;font-size:clamp(9px,2.4vw,11px);letter-spacing:.05em;
     font-weight:700;text-transform:uppercase;color:#B5AA9A}
-  #over .score-big{font-size:clamp(34px,10vw,64px)}
-  #over .btn{padding:12px clamp(15px,5vw,32px);font-size:clamp(12px,3.4vw,15px);
-    letter-spacing:.07em;white-space:nowrap}
-  @keyframes monte{from{transform:translateY(100%)}to{transform:none}}
+  #over .score-big{font-size:clamp(24px,6.5vw,34px);white-space:nowrap}
+  #over .score-unit{font-size:.32em}
+  #over .btn{padding:9px clamp(13px,4vw,26px);font-size:clamp(11px,3.1vw,14px);
+    letter-spacing:.07em;white-space:nowrap;flex:none}
+  /* Tout ne tient sur une ligne que sur un tres grand cadre. Les deux mentions les
+     moins utiles s'effacent donc a mesure qu'il retrecit, la ligne des totaux d'abord,
+     le titre ensuite ; le score et le record ne s'en vont jamais. Les seuils sont poses
+     par resize() sur la largeur du cadre de jeu et non celle de la fenetre — sur un
+     bureau, la fenetre est large et le cadre ne l'est pas. */
+  #over.sans-totaux .totaux{display:none}
+  #over.sans-titre .kicker{display:none}
+  @keyframes parait{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
   @media (prefers-reduced-motion:reduce){ #over .bandeau{animation:none} }
 
   /* Pause : meme fenetre que la fin de partie, le jeu reste lisible derriere. */
@@ -166,10 +169,10 @@
   <div class="bandeau">
     <div class="dedans">
       <div class="chiffres">
-        <div class="kicker">Poule cuite</div>
-        <div class="score-big"><span id="fscore">0</span><span class="score-unit">mouches</span></div>
-        <div class="rec" id="frec">Record 0</div>
-        <div class="totaux" id="ftot"></div>
+        <span class="kicker">Poule cuite</span>
+        <span class="score-big"><span id="fscore">0</span><span class="score-unit">mouches</span></span>
+        <span class="rec" id="frec">Record 0</span>
+        <span class="totaux" id="ftot"></span>
       </div>
       <button class="btn" id="again">Recommencer</button>
     </div>
@@ -642,8 +645,11 @@ function resize(){
   cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
   document.documentElement.style.setProperty("--ground", (GROUND_GAP*scale)+"px");
   /* Largeur du cadre de jeu : le bandeau de fin s'y aligne au lieu de barrer tout
-     l'ecran, qui est plus large que le jeu sur un bureau. */
+     l'ecran, qui est plus large que le jeu sur un bureau. Tout n'y tient sur une ligne
+     qu'a partir de 780 ; en dessous les totaux s'effacent, puis le titre a 580. */
   document.documentElement.style.setProperty("--band", bandW+"px");
+  $("over").classList.toggle("sans-totaux", bandW<780);
+  $("over").classList.toggle("sans-titre",  bandW<580);
   groundY=worldH-GROUND_GAP;                 // le sol reste a distance fixe du bas de l'ecran
   skyH=groundY;                              // tout l'espace au-dessus du sol est jouable
   flyCeil=-(skyH-70);
@@ -1746,8 +1752,10 @@ function drawHUD(){
   ctx.textAlign="right"; ctx.textBaseline="top"; ctx.fillStyle=INK;
   ctx.font="900 "+fs+"px "+FONT;
   ctx.fillText(String(eaten), R-pad, top);
+  /* la pose ailes ecartees : elle se lit bien mieux en tout petit que l'autre, dont
+     les ailes se confondent avec le corps */
   const ih=fs*0.62, iw=ih*MOU_W/MOU_H;
-  ctx.drawImage(SPR.fly_a, R-pad-ctx.measureText(String(eaten)).width-9-iw, top+fs*0.24, iw, ih);
+  ctx.drawImage(SPR.fly_b, R-pad-ctx.measureText(String(eaten)).width-9-iw, top+fs*0.24, iw, ih);
 
   /* Le record sert de cible : une jauge montre ce qu'il reste a gober, et bascule
      au rouge des qu'il est depasse. */
