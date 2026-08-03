@@ -761,7 +761,9 @@ trois colonnes séparées d'un filet, chacune une icône, son intitulé en petit
 capitales et son nombre en gros. La mouche y prend **sa propre largeur** : le trophée
 et l'étoile sont carrés, elle est deux fois plus large que haute, et à largeur
 commune elle paraissait deux fois plus petite qu'eux. Réglée à `9vw` contre `5.6vw`,
-elle retrouve leur poids. Les zéros de la première partie s'affichent tels
+elle retrouve leur poids. Le trait du trophée et de l'étoile descend en regard à
+`1.2` unité dans une boîte de 26, soit un pixel à l'écran : à `2` il pesait deux
+fois plus lourd que celui du dessin de la mouche posé entre eux. Les zéros de la première partie s'affichent tels
 quels — dans un tableau ils se lisent comme un score de départ, là où un « Record 0 »
 isolé aurait eu l'air d'une panne.
 
