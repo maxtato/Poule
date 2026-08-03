@@ -126,6 +126,10 @@ qui donne vraiment de la fluidité est d'avoir plus de positions dessinées.
 
 ## Le vol
 
+La poule bat **quatre fois par seconde** : l'avance dans la liste `VOL` est passée
+de 11 à 16, soit quatre cycles complets par seconde pour quatre entrées. Le vol
+plané suit dans le même rapport, de 4 à 6.
+
 Trois positions d'aile, prises sur trois dessins **faits pour aller ensemble** :
 même corps, même queue, même tête, seule l'aile change. Il n'y a donc plus rien à
 assembler — pas de corps recousu, pas de fenêtre pour découper l'aile, pas de
