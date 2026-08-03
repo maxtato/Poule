@@ -157,14 +157,6 @@ la couche de tête ne le couvre pas partout. On relève donc le jaune du bec des
 poses de vol qui dépasse d'elle — 9 767 pixels une fois élargis — et on comble avec
 la couleur du voisinage de la couche elle-même.
 
-Le bec ne s'ouvre pas d'un coup : une valeur va de 0 à 1 en **vingt-six centièmes de
-seconde**, soit seize images à 60 i/s. À neuf centièmes — six images — le fondu ne se
-lisait pas, il passait pour un changement instantané.La valeur sert d'opacité au dessin bouche ouverte, posé sur le dessin
-bouche fermée. Le fondu ne se voit que sur le bec, puisque les deux dessins ont le même
-corps, la même aile et les mêmes pattes — c'est précisément le cas où un fondu ne
-dédouble rien, contrairement aux battements d'ailes où les positions n'ont aucune
-forme commune. Elle redescend de la même façon quand la mouche s'éloigne.
-
 Bouton lâché, en chute libre ou en plein saut, la poule n'agite pas les ailes mais
 elle ouvre quand même le bec en approchant d'une mouche. Là, **pas de couche du
 tout** : le dessin bec ouvert a le même corps, la même aile et les mêmes pattes que

@@ -674,7 +674,7 @@ const footOff=()=>FOOT_Y*sc();
 
 function reset(){
   hen.x=HEN_X; hen.y=0; hen.vy=0; hen.ground=true; hen.feathers=1; hen.flap=0; hen.dead=false;
-  flapNow=false; jumpBuf=-9; flapUntil=-9; enSaut=false; bec=0; fingers.clear();
+  flapNow=false; jumpBuf=-9; flapUntil=-9; enSaut=false; fingers.clear();
   speed=500; dist=0; tSpawn=1.1; shake=0; hold=false; eaten=0;
   obs=[]; flies=[]; puffs=[]; plumes=[]; traits=[]; pops=[]; miettes=[];
   combo=0; lastEat=-9; palier=0; recBeaten=false; flashT=-9; flashTxt="";
@@ -776,11 +776,6 @@ function avanceFond(dt, v){
    - un appui juste avant l'atterrissage est memorise et declenche le saut des le contact
    - les doigts sont comptes : lever un doigt alors qu'un autre est pose ne coupe pas le vol      */
 let flapNow=false, jumpBuf=-9, lastPress=-9, flapUntil=-9;
-/* Le bec ne s'ouvre plus d'un coup : `bec` va de 0 a 1 en BEC_T secondes et sert
-   d'opacite au dessin bouche ouverte, pose sur le dessin bouche fermee. Le fondu ne
-   se voit que sur le bec, puisque les deux dessins ont le meme corps, la meme aile
-   et les memes pattes — c'est precisement le cas ou un fondu ne dedouble rien. */
-let bec=0; const BEC_T=0.26;
 const fingers=new Set();
 /* Le saut part toujours a pleine impulsion et se coupe net au relachement : la
    hauteur suit donc la duree de l'appui, sans qu'il faille attendre de savoir
@@ -1132,7 +1127,6 @@ function update(dt){
   dist+=speed*dt/9.2;
 
   if(hold) holdT+=dt;
-  bec=Math.max(0,Math.min(1, bec + (mouthOpen()?1:-1)*dt/BEC_T));
   const fly=flying();
   if(fly){
     hen.vy=Math.max(hen.vy-4400*dt, -310);
@@ -1610,11 +1604,11 @@ function draw(){
       poser(COURSE[i], 1);
     }else if(VOL.indexOf(cle)>=0){
       cycle(VOL, hen.flap, poser);
-      if(bec>0) poser("gobe_tete", bec);         // le bec s'ouvre, l'aile continue
+      if(mouthOpen()) poser("gobe_tete", 1);     // le bec s'ouvre, l'aile continue
     }
     else {
       poser(cle, 1);
-      if(cle==="jump" && !hen.ground && bec>0) poser("jump_gobe", bec);
+      if(cle==="jump" && !hen.ground && mouthOpen()) poser("jump_gobe", 1);
     }
     ctx.globalAlpha=1;
   }
