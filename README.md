@@ -175,20 +175,28 @@ image à la suivante. C'est la voie qui a été prise.
 
 ## L'aigle
 
-Quatre positions d'aile, du haut vers le bas. Le dessin aux ailes basses d'origine
-a été retiré et remplacé par deux nouveaux, qui décomposent la descente.
+Quatre positions d'aile et **un corps commun**, comme pour la poule. Le dessin aux
+ailes basses d'origine a été retiré et remplacé par deux nouveaux, qui décomposent
+la descente.
 
-Ils arrivaient sur un blanc chaud avec des traits de vitesse dont le jeu n'a pas
-besoin : le fond est reconnu clair et peu coloré, le remplissage part des bords, et
-seule la plus grosse composante est gardée — les traits de vitesse et le grain du
-papier restent dehors. Ils sont retournés comme les autres aigles, puis calés sur
-la **tache blanche de la tête**, seul repère sûr et commun aux quatre : mise à
-l'échelle 0,921 et 0,926.
+Le corps a été fourni à part : un aigle sans aucune aile, tête, torse, queue et
+serres. C'est ce qui manquait — le corps de l'aigle ne se découpe pas seul, un
+remplissage parti du torse passe dans l'aile de devant, qu'aucun trait n'en sépare,
+et cela vaut aussi bien sur le dessin aux ailes hautes, pourtant celui où le torse
+est le plus dégagé.
 
-Les quatre dessins sont **posés tels quels**, sans corps ni tête communs. Une greffe
-de tête avait été essayée, et une de corps : la première marchait, mais les quatre
-dessins se ressemblent assez pour s'en passer, et une greffe qui ne sert à rien
-n'est qu'un endroit de plus où quelque chose peut se voir.
+Tous les dessins arrivaient sur un blanc chaud avec des traits de vitesse dont le
+jeu n'a pas besoin : le fond est reconnu clair et peu coloré, le remplissage part
+des bords, seule la plus grosse composante est gardée. Ils sont retournés comme le
+reste et calés sur la **tache blanche de la tête**, seul repère commun sûr — le
+corps sans ailes s'y met à l'échelle 0,977.
+
+Chaque pose n'apporte ensuite que ses ailes : ce qui, chez elle, déborde du corps
+commun. On garde **toute composante d'au moins un dixième de la plus grosse**, et
+non la seule plus grosse, parce que l'aigle a deux ailes, celle de devant et celle
+de derrière. S'y ajoute le trait d'aile là où il court sur le corps, à condition
+qu'il soit de l'encre et qu'il tienne au reste de l'aile. Les ailes pèsent 103 660,
+94 446, 76 444 et 98 038 pixels.
 
 Le cycle parcourt les quatre positions **dans les deux sens** : la descente passe
 par toutes, la remontée repasse par celles du milieu. Six entrées pour quatre
