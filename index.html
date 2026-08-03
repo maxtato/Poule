@@ -512,7 +512,7 @@ const KITE_VOL = 300;                  // sa vitesse propre, toujours sous celle
 const QUEUE_TRANCHES = 44, QUEUE_AMP = 13, QUEUE_ONDE = 3.2, QUEUE_VIT = 5.5;
 /* La mouche est dessinee centree sur sa position : sa marge est symetrique, sinon
    elle se decalerait a l'ecran. Le cadre grandit, la mouche garde sa taille. */
-const MOU_W = 49.14, MOU_H = 24.53;   // la mouche, deux poses d'ailes
+const MOU_W = 66.34, MOU_H = 33.12;   // la mouche, deux poses d'ailes
 /* Bec ouvert en vol : pose isolee, calee sur la tete comme les poses de battement.
    Au sol, la pose equivalente vit dans le canvas commun (SPR.snap). */
 const GOBE_W = 396, GOBE_H = 189, GOBE_HEAD = [281.5, 58.5];
@@ -1501,7 +1501,8 @@ function update(dt){
     if(f.y>FLY_MIN) f.y=FLY_MIN;                  // le sol reste infranchissable
     for(const o of obs){                          // et elle ne se pose pas sur les obstacles
       if(o.k==="eagle"||o.k==="kite") continue;
-      if(f.x>o.x-24 && f.x<o.x+o.w+24 && f.y>-o.h-34) f.y=-o.h-34;
+      const marge=-o.h-MOU_H/2-22;                // le meme jour au-dessus quelle que soit sa taille
+      if(f.x>o.x-MOU_W/2 && f.x<o.x+o.w+MOU_W/2 && f.y>marge) f.y=marge;
     }
     f.vib=(f.vib||0)+dt;
     if(f.vib>0.055){                              // sursauts : la mouche ne tient pas en place

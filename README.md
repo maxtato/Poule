@@ -133,6 +133,18 @@ Le petit compteur de mouches qui vivait sous la jauge de plumes a disparu : il
 répétait le grand chiffre. Il ne reste à gauche que le combo, qui n'apparaît qu'à
 partir de deux mouches enchaînées.
 
+La mouche elle-même est dessinée **un tiers plus grande** qu'à l'origine
+(`MOU_W`/`MOU_H`) : c'est la cible du jeu, et à l'ancienne taille elle se lisait mal
+en plein ciel, surtout sur un téléphone. Sa boîte de gobage n'a pas bougé — elle
+était déjà bien plus large que le dessin, qui y tient encore avec 19 unités de
+marge de chaque côté.
+
+Les deux dégagements qui l'entourent sont désormais **tirés du dessin** au lieu
+d'être écrits en dur : la mouche ne descend jamais à moins de 52 unités du sol ni
+à moins de 22 du sommet d'un obstacle, quelle que soit sa taille. Les chiffres
+d'avant valaient pour l'ancien dessin ; agrandir la mouche sans les reprendre
+l'aurait fait mordre sur les ballots.
+
 ## La course
 
 Deux poses en boucle : pattes écartées, pattes croisées. La pose croisée n'est pas
