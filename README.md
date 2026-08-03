@@ -419,8 +419,41 @@ corps est gris clair et sa flaque presque blanche — un seuil de clarté les
 mangerait. On se fie donc au trait : remplissage arrêté par l'encre seule, fermée
 au préalable. Sa boîte reste écrite à la main, mais elle n'est plus devinée : les
 colonnes hautes du dessin donnent le corps du seau, la flaque et les gouttes étant
-basses et plates. La mesure retombe à 30,1 % – 85,4 % de la largeur, contre
-30,1 % – 87,3 % pour la valeur réglée à l'œil qu'elle remplace.
+basses et plates. Sur le dessin qui a servi jusqu'ici, la mesure retombait à
+30,1 % – 85,4 % de la largeur, contre 30,1 % – 87,3 % pour la valeur réglée à l'œil
+qu'elle remplaçait. Le seau ayant été redessiné depuis, la même mesure refaite sur le
+nouveau donne 27,6 % – 87,2 %.
+
+### Les six obstacles redessinés
+
+Six des sept obstacles au sol — la botte, les deux bottes, le seau, le pneu, la
+fourche et la brouette — ont été refaits sur des dessins plus nets. Seule la
+barrière garde le sien, faute de nouveau dessin.
+
+Le détourage est celui du seau, devenu la méthode commune : est fond ce qui est à la
+fois **très clair et gris**, inondé depuis le bord ; ce qui touche le bord du scan est
+écarté ; la couleur est étalée vers l'extérieur puis la couverture reconstruite sur
+une carte de distance, l'iso-niveau rentré de cinq unités pour supprimer l'auréole
+blanche. Une planche portait deux objets côte à côte — la botte et le pneu : les
+composantes les plus grosses servent de noyaux et chaque touffe d'herbe, chaque
+caillou rejoint le noyau dont il est le plus proche.
+
+Deux nombres pilotent la place d'un obstacle : sa hauteur de jeu et son **enfoncement**,
+c'est-à-dire de combien il est planté sous la ligne de sol. Ni l'un ni l'autre ne se lit
+directement dans un nouveau dessin, qui ne cadre pas l'objet comme l'ancien. Ils sont
+donc **reportés** : on repère dans chaque dessin la dernière rangée encore bien fournie
+— en dessous il ne reste que l'herbe, les cailloux et l'ombre — ce qui donne d'un côté
+la hauteur propre de l'objet, de l'autre l'épaisseur du socle. La hauteur de jeu est
+choisie pour que l'objet garde exactement la taille qu'il avait à l'écran, et
+l'enfoncement est celui d'avant, remesuré sur les anciens dessins : 13 à 16 unités pour
+les objets massifs, 22 pour la brouette, 10 pour la fourche.
+
+La vérification est la bonne : la hauteur minimale pour franchir chaque obstacle est
+**inchangée** pour cinq d'entre eux et bouge d'une unité pour la botte. Les dessins ont
+changé, le jeu non.
+
+Aucun n'est agrandi : les dessins sont réduits de 3,5 à 8,6 fois à l'écran. Le fichier
+passe de 10,6 à 12,3 Mo.
 
 Il ne reste du jeu d'origine que la plume du compteur de vol — et elle sert
 maintenant deux fois : c'est elle aussi qui tombe de la poule à chaque coup d'aile
