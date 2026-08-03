@@ -133,18 +133,6 @@ Le petit compteur de mouches qui vivait sous la jauge de plumes a disparu : il
 répétait le grand chiffre. Il ne reste à gauche que le combo, qui n'apparaît qu'à
 partir de deux mouches enchaînées.
 
-La mouche elle-même est dessinée **un tiers plus grande** qu'à l'origine
-(`MOU_W`/`MOU_H`) : c'est la cible du jeu, et à l'ancienne taille elle se lisait mal
-en plein ciel, surtout sur un téléphone. Sa boîte de gobage n'a pas bougé — elle
-était déjà bien plus large que le dessin, qui y tient encore avec 19 unités de
-marge de chaque côté.
-
-Les deux dégagements qui l'entourent sont désormais **tirés du dessin** au lieu
-d'être écrits en dur : la mouche ne descend jamais à moins de 52 unités du sol ni
-à moins de 22 du sommet d'un obstacle, quelle que soit sa taille. Les chiffres
-d'avant valaient pour l'ancien dessin ; agrandir la mouche sans les reprendre
-l'aurait fait mordre sur les ballots.
-
 ## La course
 
 Deux poses en boucle : pattes écartées, pattes croisées. La pose croisée n'est pas
@@ -770,7 +758,10 @@ L'écran se lit du haut vers le bas en trois temps :
 
 Le **carnet** tient la barre du haut, comme le tableau de bord d'une borne d'arcade :
 trois colonnes séparées d'un filet, chacune une icône, son intitulé en petites
-capitales et son nombre en gros. Les zéros de la première partie s'affichent tels
+capitales et son nombre en gros. La mouche y prend **sa propre largeur** : le trophée
+et l'étoile sont carrés, elle est deux fois plus large que haute, et à largeur
+commune elle paraissait deux fois plus petite qu'eux. Réglée à `9vw` contre `5.6vw`,
+elle retrouve leur poids. Les zéros de la première partie s'affichent tels
 quels — dans un tableau ils se lisent comme un score de départ, là où un « Record 0 »
 isolé aurait eu l'air d'une panne.
 
