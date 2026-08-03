@@ -161,6 +161,14 @@ sont nettement plus sombres que le blanc du corps, isolés et petits — 66 et 5
 pixels, quand le contour est d'un seul tenant et en pèse des dizaines de milliers.
 La recherche est bornée au cou, pour ne pas aller effacer un œil.
 
+La fenêtre de l'aile haute descend jusqu'à x 285 et s'arrête à la rangée 318. Plus
+étroite, elle coupait la **base de l'aile** — le crochet qui, dans le dessin, part
+du coin de la croupe et retombe sous le dos : ce n'est pas seulement ce trait qui
+disparaissait, mais tout ce qui ne tenait au cœur de l'aile que par lui. Plus
+large, c'est le contour de croupe propre à `fly_up` qui rentrait et doublait celui
+du corps. Les deux bornes sont prises au plus juste, vérifiées en posant côte à
+côte le dessin d'origine et le sprite.
+
 Chaque aile est alors ce qui, dans son dessin, dépasse de ce corps — plus le trait
 de l'aile là où il court **sur** le corps, reconnu à ce que le dessin et le corps
 assemblé n'y disent pas la même chose. Cette seconde partie ne se distingue pas,
