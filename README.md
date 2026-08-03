@@ -143,6 +143,13 @@ gardée de côté, elle redevient l'aile de l'image du milieu, posée devant com
 deux autres. Sans cela elle restait sur le corps commun et venait gêner l'aile
 levée, qui passe pourtant au premier plan.
 
+L'aile ne se limite pas à ce qui dépasse du corps : dans le dessin elle passe
+**par-dessus**, et cette partie-là manquait — l'aile paraissait rognée à l'endroit
+où elle recouvre le corps. Son tracé étant fermé, il suffit de remplir depuis la
+partie visible, arrêté par l'encre du dessin, pour récupérer tout son intérieur, y
+compris ce qui couvre le corps. L'aile passe ainsi de 26 360 à 135 987 pixels en
+bas, de 18 643 à 127 001 en haut.
+
 Chaque image ne lui apporte donc que la sienne : ce qui,
 chez lui, déborde de ce corps, plus le trait d'aile là où il court dessus, à
 condition de tenir au reste de l'aile. On exige en plus que ce trait soit de
