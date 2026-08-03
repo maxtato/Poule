@@ -742,6 +742,46 @@ Les repères du code, dans l'ordre :
 | Particules | Poussière, plumes, traits de vitesse, pop du gobage |
 | Rendu | Trois plans, ombres portées, sprites, puis HUD calé sur le terrain |
 
+## L'écran d'accueil
+
+L'accueil n'est pas une page posée sur le jeu : le décor tourne derrière, la poule
+piétine sur place et le ciel dérive au même rythme qu'en course. Ce qui s'y ajoute se
+cale donc sur le **terrain** plutôt que sur la fenêtre.
+
+L'écran se lit du haut vers le bas en trois temps :
+
+| Bande | Contenu |
+|---|---|
+| Barre du haut | Le carnet : record, mouches gobées, parties jouées |
+| Ciel | Le sur-titre, le titre et sa phrase |
+| Terre | Le bouton *Jouer* et les trois consignes |
+
+Le **carnet** tient la barre du haut, comme le tableau de bord d'une borne d'arcade :
+trois colonnes séparées d'un filet, chacune une icône, son intitulé en petites
+capitales et son nombre en gros. Les zéros de la première partie s'affichent tels
+quels — dans un tableau ils se lisent comme un score de départ, là où un « Record 0 »
+isolé aurait eu l'air d'une panne.
+
+Le **titre** se cale en haut du ciel plutôt qu'en son milieu : centré verticalement il
+flottait bas et laissait un grand vide au-dessus. Deux paquets de traits rouges
+l'encadrent, comme les traits de vitesse d'une case de bande dessinée. Sa phrase est
+bornée à `15.5em` pour tomber sur trois lignes courtes au lieu de deux longues.
+
+Le **bouton** porte une plume rouge et un liseré **pointillé** rentré de six pixels,
+tracé en pseudo-élément : un bord en pointillé sur le bouton lui-même se serait collé
+à son arête au lieu de flotter dedans.
+
+Deux réglages tiennent à des voisins encombrants :
+
+- la bande basse vaut **au moins** la hauteur de la bande de terre (`min-height`), et
+  déborde au-dessus de la ligne d'horizon si l'écran est court — mieux vaut mordre un
+  peu sur le décor que serrer les lignes ;
+- le bouton de son occupe le coin bas-gauche. Sur un écran étroit les consignes
+  occupent toute la largeur et passaient **sous sa pastille** ; en dessous de 720 px
+  de large, la bande basse se réserve donc 66 px de marge et les remonte au-dessus.
+  La mesure est faite sur les boîtes : on compare celle de chaque ligne à celle du
+  bouton, plutôt que de juger à l'œil sur une capture.
+
 ## La chute
 
 Deux dessins, pas quatre :

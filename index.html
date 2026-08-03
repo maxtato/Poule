@@ -50,10 +50,58 @@
   /* L'accueil se cale sur le terrain : le titre dans le ciel, l'appel a l'action
      et les consignes dans la bande de terre, sous la ligne d'horizon. */
   #menu{justify-content:space-between;padding:0;gap:0}
+  /* Le titre se cale en haut du ciel, comme sur une affiche : centre verticalement,
+     il flottait trop bas et laissait un grand vide au-dessus. */
   #menu .haut{flex:1;display:flex;flex-direction:column;align-items:center;
-    justify-content:center;gap:18px;padding:26px 26px 0}
-  #menu .bas{width:100%;height:var(--ground,190px);display:flex;flex-direction:column;
-    align-items:center;justify-content:center;gap:12px;padding:0 22px}
+    justify-content:flex-start;gap:clamp(10px,2.2vh,18px);
+    padding:clamp(12px,2.6vh,26px) 26px 0}
+  /* Le carnet des records tient la barre du haut, comme le tableau de bord d'une
+     borne d'arcade, et le titre vient juste dessous. */
+  #menu .bandeau{width:100%;display:flex;flex-direction:column;align-items:center;
+    gap:clamp(7px,1.4vh,11px);margin-bottom:clamp(4px,2.4vh,30px)}
+  /* Trois lignes courtes plutot que deux longues : le texte tient sous le titre. */
+  #menu .sub{max-width:15.5em}
+  /* La bande basse tient le bouton, le tableau et les consignes. Elle vaut au moins
+     la bande de terre, et pousse au-dessus de la ligne d'horizon si l'ecran est court
+     — mieux vaut mordre un peu sur les pattes de la poule que serrer les lignes. */
+  #menu .bas{width:100%;min-height:var(--ground,190px);display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:clamp(7px,2vw,13px);
+    padding:0 22px clamp(6px,2vw,14px)}
+  /* Le bouton de son tient le coin bas-gauche. Sur un ecran etroit les consignes
+     occupent toute la largeur : elles remontent au-dessus de sa pastille plutot
+     que de passer dessous. */
+  @media (max-width:719px){ #menu .bas{padding-bottom:66px} }
+  /* Les traits de vitesse du titre, comme dans une case de bande dessinee. */
+  #menu .titre{position:relative;display:flex;align-items:center;justify-content:center}
+  #menu .vitesse{position:absolute;top:50%;width:clamp(26px,7vw,42px);height:auto;
+    transform:translateY(-50%)}
+  #menu .vitesse.gauche{right:100%;margin-right:clamp(6px,2.4vw,16px)}
+  #menu .vitesse.droite{left:100%;margin-left:clamp(6px,2.4vw,16px)}
+  /* Le bouton de lancement : cerne d'un pointille rouge rentre dans la pastille,
+     comme un ticket. Le pointille est un pseudo-element, un bord en pointille sur le
+     bouton lui-meme se serait colle a son arete. */
+  #menu .jouer{position:relative;display:flex;align-items:center;justify-content:center;
+    gap:clamp(9px,2.6vw,14px);width:min(84%,340px);
+    padding:clamp(15px,4.2vw,20px) 18px;font-size:clamp(15px,4.2vw,19px);
+    letter-spacing:.14em;background:#F7F1E5;border:1.5px solid #EBE0CD;color:#D6342B}
+  #menu .jouer::before{content:"";position:absolute;inset:6px;border-radius:999px;
+    border:2px dashed #D6342B;pointer-events:none}
+  #menu .jouer:active{background:#D6342B;color:#fff;border-color:#D6342B}
+  #menu .jouer:active::before{border-color:#F7F1E5}
+  #menu .plumule{width:clamp(19px,5.2vw,24px);height:auto;display:block}
+  /* Le carnet en trois colonnes : une icone, l'intitule, le nombre. */
+  #menu .stats{display:flex;align-items:center;justify-content:center;
+    gap:clamp(10px,3.4vw,22px)}
+  #menu .stat{display:flex;align-items:center;gap:clamp(6px,1.8vw,10px);
+    padding:0 clamp(6px,2vw,14px)}
+  #menu .stat+.stat{border-left:1px solid #CFC2AA}
+  #menu .sico{width:clamp(21px,5.6vw,26px);height:auto;display:block;flex:none}
+  #menu .stat span{display:flex;flex-direction:column;align-items:flex-start;line-height:1}
+  #menu .stat b{font-size:clamp(9px,2.4vw,11px);font-weight:900;letter-spacing:.12em;
+    text-transform:uppercase;color:#9A8F80}
+  #menu .stat i{font-style:normal;font-size:clamp(16px,4.4vw,21px);font-weight:900;
+    letter-spacing:.02em;font-variant-numeric:tabular-nums;color:#1A1614;margin-top:3px}
+  #menu .filet{width:min(88%,420px);height:0;margin:0;border:0;border-top:1px solid #DDD1BC}
   .layer.on{opacity:1;pointer-events:auto}
   .kicker{font-size:11px;font-weight:700;letter-spacing:.34em;text-transform:uppercase;color:#9A8F80}
   /* Aucune chasse negative sur le titre : Fredoka a deja des lettres larges et une
@@ -61,7 +109,7 @@
   h1{font-size:clamp(40px,12.5vw,82px);font-weight:900;letter-spacing:0;word-spacing:.08em;line-height:.86;text-transform:uppercase}
   h1 em{font-style:normal;color:#D6342B}
   .sub{font-size:15px;line-height:1.5;color:#6C6258;max-width:19em}
-  .keys{display:flex;flex-direction:column;gap:8px;font-size:13px;color:#6C6258}
+  .keys{display:flex;flex-direction:column;gap:7px;font-size:13px;color:#6C6258}
   .keys b{color:#1A1614;font-weight:700}
   .btn{border:1.5px solid #D6342B;background:#fff;color:#D6342B;
     font-size:15px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;
@@ -201,18 +249,55 @@
 
 <div class="layer on" id="menu">
   <div class="haut">
+    <div class="bandeau">
+      <div class="stats">
+        <div class="stat">
+          <svg class="sico" viewBox="0 0 26 26" aria-hidden="true">
+            <path d="M7 3h12v6.5a6 6 0 0 1-12 0V3Z" fill="#F5C765" stroke="#1A1614" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M7 5.5H3.5v1.8a4 4 0 0 0 3.3 3.9M19 5.5h3.5v1.8a4 4 0 0 1-3.3 3.9" stroke="#1A1614" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M13 16v3.5M8.5 22.5h9" stroke="#1A1614" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span><b>Record</b><i id="sRec">0</i></span>
+        </div>
+        <div class="stat">
+          <img class="sico" id="sIco" alt="">
+          <span><b>Gobées</b><i id="sMou">0</i></span>
+        </div>
+        <div class="stat">
+          <svg class="sico" viewBox="0 0 26 26" aria-hidden="true">
+            <path d="M13 2.5 16.4 9.4 24 10.5l-5.5 5.4 1.3 7.6L13 19.9l-6.8 3.6 1.3-7.6L2 10.5l7.6-1.1Z"
+                  fill="#F5C765" stroke="#1A1614" stroke-width="2" stroke-linejoin="round"/>
+          </svg>
+          <span><b>Parties</b><i id="sPar">0</i></span>
+        </div>
+      </div>
+      <hr class="filet">
+    </div>
     <div class="kicker">Yello Arcade</div>
-    <h1>La poule<br><em>qui vole</em></h1>
+    <div class="titre">
+      <svg class="vitesse gauche" viewBox="0 0 40 44" aria-hidden="true">
+        <path d="M36 6 6 2M38 22H4M36 38 6 42" stroke="#D6342B" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+      <h1>La poule<br><em>qui vole</em></h1>
+      <svg class="vitesse droite" viewBox="0 0 40 44" aria-hidden="true">
+        <path d="M4 6 34 2M2 22h34M4 38 34 42" stroke="#D6342B" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+    </div>
     <p class="sub">Elle court. Elle saute. Et si tu insistes, elle vole — tant qu'il lui reste des plumes.</p>
   </div>
   <div class="bas">
-    <button class="btn" id="play">Lâcher la poule</button>
+    <button class="btn jouer" id="play">
+      <svg class="plumule" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20.6 3c-1.2 8.2-6.4 13.1-13.8 14.4C8.1 9.7 12.8 4.3 20.6 3Z" fill="currentColor"/>
+        <path d="M20.6 3 3.6 20.8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M18.2 6.9 9.4 15.2" stroke="#F7F1E5" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>Jouer
+    </button>
     <div class="keys">
       <div><b>Appui court</b> — sauter</div>
       <div><b>Appui maintenu</b> — battre des ailes</div>
       <div>Gobe les mouches : c'est le score, et ça rend des plumes</div>
     </div>
-    <div class="tap" id="carnet"></div>
   </div>
 </div>
 
@@ -1095,15 +1180,12 @@ function die(dessus){
   carnet();
   overShown=false;
 }
-/* Rappel des totaux sur l'accueil : de quoi viser autre chose que le record. */
+/* Le carnet de l'accueil, en trois colonnes : record, mouches gobees, parties. Les
+   zeros du premier essai s'affichent — dans un tableau ils se lisent comme un depart,
+   la ou une phrase disant "Record 0" sonnait comme une erreur. */
 function carnet(){
-  const el=$("carnet"); if(!el) return;
-  if(!save.runs){ el.textContent=""; return; }
-  /* Pas de "Record 0" : au premier essai, comme apres la reprise d'un carnet
-     compte en metres, il n'y a pas encore de record en mouches a annoncer. */
-  el.textContent = (save.best ? "Record "+save.best+" · " : "")+
-    save.flies+" gobée"+(save.flies>1?"s":"")+" · "+
-    save.runs+" partie"+(save.runs>1?"s":"");
+  const r=$("sRec"); if(!r) return;
+  r.textContent=save.best; $("sMou").textContent=save.flies; $("sPar").textContent=save.runs;
 }
 $("play").onclick=start; $("again").onclick=start;
 $("resume").onclick=unhalt;
@@ -1991,7 +2073,8 @@ function demarre(){
   const el=$("load"); if(el) el.remove();
   FONT=getComputedStyle(document.body).fontFamily;
   $("fly").style.backgroundImage="url(data:image/png;base64,"+B64.bouton+")";
-  $("fico").src="data:image/png;base64,"+B64.fly_b;   // la mouche du panneau de fin
+  const mouche="data:image/png;base64,"+B64.fly_b;
+  $("fico").src=mouche; $("sIco").src=mouche;   // panneau de fin, puis carnet
   for(const k in SPR) CLE.set(SPR[k], k);
   mesurerObstacles();
   setMute(muted,true); carnet(); checkOrient();
