@@ -76,8 +76,12 @@ passe de 893 unités devant la poule à 365 derrière en moins de sept secondes.
 Le vent l'ondule au passage. La montée comme l'ondulation se lisent sur sa position et
 non sur l'horloge, donc sa boîte de collision les suit exactement.
 
-Le dessin est **retourné** à l'affichage, sans quoi sa queue précéderait son corps.
-La boîte de collision est retournée avec lui.
+Le dessin le montre déjà dans ce sens : queue à gauche, losange à droite. Il n'y a donc
+rien à retourner. La coupure entre les deux est **relevée sur le dessin** et non écrite
+à la main : en partant de la colonne la plus haute, au milieu du losange, et en
+remontant vers la gauche, c'est la première colonne où il ne reste plus que la ficelle.
+Elle tombe à 49,0 % de la largeur. La boîte de collision est le losange ainsi isolé,
+rentré de six pour cent sur chaque côté.
 
 Seul son **corps** tue — la moitié du dessin qui porte la voilure. Une queue de
 ficelle n'assomme personne, et elle est de toute façon trop mince pour qu'on lui prête
@@ -419,10 +423,15 @@ corps est gris clair et sa flaque presque blanche — un seuil de clarté les
 mangerait. On se fie donc au trait : remplissage arrêté par l'encre seule, fermée
 au préalable. Sa boîte reste écrite à la main, mais elle n'est plus devinée : les
 colonnes hautes du dessin donnent le corps du seau, la flaque et les gouttes étant
-basses et plates. Sur le dessin qui a servi jusqu'ici, la mesure retombait à
-30,1 % – 85,4 % de la largeur, contre 30,1 % – 87,3 % pour la valeur réglée à l'œil
-qu'elle remplaçait. Le seau ayant été redessiné depuis, la même mesure refaite sur le
-nouveau donne 27,6 % – 87,2 %.
+basses et plates. Sur le dessin d'origine, la mesure retombait à 30,1 % – 85,4 % de la
+largeur, contre 30,1 % – 87,3 % pour la valeur réglée à l'œil qu'elle remplaçait. Le
+seau a été redessiné deux fois depuis ; sur le dessin actuel elle donne 29,1 % – 86,2 %.
+
+Cette règle des colonnes hautes a été recoupée par une autre, indépendante : le corps
+du seau, ce sont les colonnes qui contiennent beaucoup de matière — le seau est haut,
+la flaque est plate. Elle donne 29,2 % – 85,5 %, à un dixième de pour cent près la
+même chose. Le seau étant penché, on pouvait craindre que le bas de son ouverture
+passe sous la coupure des 55 % ; les deux mesures d'accord montrent que non.
 
 ### Les six obstacles redessinés
 
@@ -452,8 +461,19 @@ La vérification est la bonne : la hauteur minimale pour franchir chaque obstacl
 **inchangée** pour cinq d'entre eux et bouge d'une unité pour la botte. Les dessins ont
 changé, le jeu non.
 
-Aucun n'est agrandi : les dessins sont réduits de 3,5 à 8,6 fois à l'écran. Le fichier
-passe de 10,6 à 12,3 Mo.
+Trois d'entre eux — les deux bottes, le seau et la fourche — ont ensuite été refaits une
+seconde fois, sur des dessins encore un peu différents. Le même report a été rejoué tel
+quel, et cette fois la hauteur de franchissement des sept obstacles ne bouge **pas d'une
+unité**. La méthode se répète donc sans réglage.
+
+Le cerf-volant a suivi, avec une différence : le nouveau dessin le montre dans le sens
+où il vole, queue à gauche, si bien que le retournement qu'il fallait faire à
+l'affichage disparaît. La coupure entre queue et losange n'est plus supposée à la moitié
+de la largeur, elle est relevée sur le dessin — 49,0 % — et la boîte de collision est le
+losange mesuré, non plus une fraction devinée.
+
+Aucun n'est agrandi : les dessins sont réduits de 3,5 à 8,9 fois à l'écran. Le fichier
+passe de 10,6 à 12,7 Mo.
 
 Il ne reste du jeu d'origine que la plume du compteur de vol — et elle sert
 maintenant deux fois : c'est elle aussi qui tombe de la poule à chaque coup d'aile
