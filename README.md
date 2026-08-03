@@ -715,7 +715,33 @@ Deux dessins, pas quatre :
 | 0 s | Le choc |
 | 0,16 s | La poule KO, qui tombe |
 | ~0,45 s | Le sol : poussière, secousse |
-| ~1,2 s | L'écran de fin |
+| ~1,2 s | Le bandeau de fin |
+
+### Le bandeau de fin
+
+La fin de partie était une fenêtre au premier plan, posée au milieu de l'écran par-dessus
+un flou : la poule morte disparaissait derrière au moment même où elle finissait de
+tomber. C'est maintenant un **bandeau** qui monte dans la bande de terre, sous la ligne
+d'horizon — là où vit le bouton de vol pendant la course, et où il n'y a rien à cacher.
+Ni flou, ni voile : le terrain reste entièrement découvert, et la poule reste en plan,
+étoiles comprises, aussi longtemps qu'on veut.
+
+Le bandeau porte le score, le record, les totaux et le bouton. Il se cale sur la largeur
+du **cadre de jeu** et non sur celle de la fenêtre, qui est plus large sur un bureau —
+`resize()` publie cette largeur en variable CSS, comme il publiait déjà la hauteur de la
+bande de terre.
+
+Aussi longtemps qu'on veut, littéralement : **seul le bouton relance**. Un appui n'importe
+où le faisait avant, et c'était le premier réflexe du joueur — celui qui tenait le vol une
+seconde plus tôt. On ne voyait jamais la chute finir. La barre d'espace non plus ne
+relance plus.
+
+Trois détails de place, tous mesurés sur quatre formats d'écran plutôt que réglés à
+l'œil : la colonne de chiffres et le bouton sont tenus par une rangée bornée à 520
+unités, si bien qu'ils restent collés aux deux marges sans jamais déborder ; la ligne des
+totaux est la plus longue de la colonne, c'est donc elle qui rétrécit quand l'écran est
+étroit ; et la colonne remonte un peu dans la bande pour laisser le coin bas-gauche au
+bouton du son, qui vit là.
 
 Le choc a trois versions, choisies selon d'où elle vient. De face, en course, elle
 est encore sur ses pattes ; de face en vol, elle file à l'horizontale. La version
