@@ -495,16 +495,18 @@ de la largeur, elle est relevée sur le dessin — 49,0 % — et la boîte de co
 losange mesuré, non plus une fraction devinée.
 
 La barrière a fini par avoir son dessin elle aussi, et les sept obstacles sont
-maintenant de la même main. Le report la place à 282 × 115 : sa hauteur de
+maintenant de la même main. Le report la place à 240 × 115 : sa hauteur de
 franchissement ne bouge pas d'une unité non plus, alors que le dessin n'a rien à voir
-avec le précédent.
+avec le précédent. Elle a été refaite deux fois, sur deux dessins de largeurs
+différentes ; les deux fois le report a donné la même hauteur de franchissement au
+chiffre près, en ajustant la largeur — 282 pour l'un, 240 pour l'autre.
 
 Les deux bottes ont été grossies de huit pour cent sur demande. C'est le seul endroit où
 le jeu bouge volontairement : il faut désormais monter à 92 unités pour les franchir au
 lieu de 84.
 
 Aucun n'est agrandi : les dessins sont réduits de 3,5 à 8,9 fois à l'écran. Le fichier
-passe de 10,6 à 12,8 Mo.
+passe de 10,6 à 13,1 Mo.
 
 Il ne reste du jeu d'origine que la plume du compteur de vol — et elle sert
 maintenant deux fois : c'est elle aussi qui tombe de la poule à chaque coup d'aile
