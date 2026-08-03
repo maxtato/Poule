@@ -155,6 +155,12 @@ milieu du corps et le bord extérieur, la gorge se voyait déplacée de cinq pix
 alors qu'elle n'en demandait qu'un demi, et le cran se déplaçait des fesses au cou.
 Écart restant, trait par trait : 0 / 0,5 / 0,5 / 0 pixel.
 
+Deux petits traits d'ombre couraient sur le corps sous le cou. Ils sont effacés,
+puis le blanc du voisinage est étalé pour combler. On les reconnaît à ce qu'ils
+sont nettement plus sombres que le blanc du corps, isolés et petits — 66 et 55
+pixels, quand le contour est d'un seul tenant et en pèse des dizaines de milliers.
+La recherche est bornée au cou, pour ne pas aller effacer un œil.
+
 Chaque aile est alors ce qui, dans son dessin, dépasse de ce corps — plus le trait
 de l'aile là où il court **sur** le corps, reconnu à ce que le dessin et le corps
 assemblé n'y disent pas la même chose. Cette seconde partie ne se distingue pas,
