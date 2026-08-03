@@ -161,13 +161,15 @@ sont nettement plus sombres que le blanc du corps, isolés et petits — 66 et 5
 pixels, quand le contour est d'un seul tenant et en pèse des dizaines de milliers.
 La recherche est bornée au cou, pour ne pas aller effacer un œil.
 
-La fenêtre de l'aile haute descend jusqu'à x 285 et s'arrête à la rangée 318. Plus
-étroite, elle coupait la **base de l'aile** — le crochet qui, dans le dessin, part
-du coin de la croupe et retombe sous le dos : ce n'est pas seulement ce trait qui
-disparaissait, mais tout ce qui ne tenait au cœur de l'aile que par lui. Plus
-large, c'est le contour de croupe propre à `fly_up` qui rentrait et doublait celui
-du corps. Les deux bornes sont prises au plus juste, vérifiées en posant côte à
-côte le dessin d'origine et le sprite.
+La fenêtre de l'aile haute s'arrête à x 330. Elle a été élargie un temps jusqu'à
+285 pour rattraper la **base de l'aile** — le crochet qui, dans le dessin, part du
+coin de la croupe et retombe sous le dos — mais cet élargissement fait entrer la
+**queue** propre à `fly_up`, qui vient alors se superposer à celle du corps : deux
+queues au lieu d'une, bien plus visible en animation que la base manquante. Les
+deux ne se séparent pas par un rectangle : la queue descend jusqu'à la rangée 300
+et le crochet occupe les rangées 250 à 315, ils se chevauchent. La fenêtre est donc
+laissée étroite, et la base de l'aile reste à récupérer par une découpe qui suive
+la forme plutôt que par une fenêtre.
 
 Chaque aile est alors ce qui, dans son dessin, dépasse de ce corps — plus le trait
 de l'aile là où il court **sur** le corps, reconnu à ce que le dessin et le corps
