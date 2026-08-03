@@ -66,17 +66,33 @@ jusqu'au bord de l'écran. Il a un temps ondulé sur une sinusoïde ; la vague e
 retirée. Vérifié sur 73 aigles suivis chacun sur 900 pas : pas une unité d'écart
 de hauteur, boîte de collision comprise.
 
-Un **cerf-volant** traverse lui aussi le ciel. Contrairement à l'aigle, il ne file
-pas à plat : il **monte en diagonale** à mesure qu'il avance, et le vent l'ondule.
-La montée comme l'ondulation se lisent sur sa position et non sur l'horloge, donc sa
-boîte de collision les suit exactement.
+Un **cerf-volant** traverse lui aussi le ciel, et c'est le seul objet qui remonte le
+décor : le vent le pousse **à contre-sens de la course**. Il entre par le bas à
+gauche, monte en diagonale et sort par le haut à droite, sept secondes plus tard.
+Le vent l'ondule au passage. La montée comme l'ondulation se lisent sur sa position
+et non sur l'horloge, donc sa boîte de collision les suit exactement.
 
-Seul son **corps** tue — la moitié gauche du dessin. Une queue de ficelle n'assomme
-personne, et elle est de toute façon trop mince pour qu'on lui prête une hitbox.
+Le dessin est **retourné** à l'affichage, sans quoi sa queue précéderait son corps.
+La boîte de collision est retournée avec lui.
+
+Comme il arrive de derrière, il n'a que quatre-vingts unités pour croiser la poule au
+lieu de toute la largeur de l'écran. Sa bande de départ est donc calée au-dessus de la
+poule qui court, dans la moitié basse du ciel : au moment où il la croise il est déjà
+hors de sa portée au sol, et ne menace qu'une poule en vol. Vérifié sur trois cents
+cerfs-volants tirés au hasard dans la bande et suivis pas à pas : aucun ne touche la
+boîte d'une poule au sol.
+
+Seul son **corps** tue — la moitié du dessin qui porte la voilure. Une queue de
+ficelle n'assomme personne, et elle est de toute façon trop mince pour qu'on lui prête
+une hitbox.
 
 Sa queue claque au vent : elle est dessinée en vingt-six tranches verticales, chacune
 décalée par une onde qui court le long d'elle, d'amplitude croissante vers le bout.
-Elle ondule donc au lieu de suivre le corps comme un bloc.
+Elle ondule donc au lieu de suivre le corps comme un bloc. L'amplitude de cette onde
+suit la taille du dessin.
+
+Il mesure 285 unités de large. Le dessin d'origine en fait 1306 : même agrandi d'une
+moitié il reste réduit de 4,6 fois à l'écran, jamais étiré.
 
 Les autres obstacles sont au sol et arrivent d'autant plus vite que la course
 dure.

@@ -313,15 +313,19 @@ const EAGLE_SPEED = 175;
 const EAGLE_BAT = 7.6;
 /* Le cerf-volant : le dessin tient le cerf-volant a gauche et sa queue a droite, la
    coupure etant a KITE_CORPS de la largeur. Seul le corps tue — une queue de ficelle
-   n'assomme personne. Il monte vers le ciel en diagonale et le vent le fait onduler,
-   la vague etant inscrite dans l'espace comme celle qu'avait l'aigle. */
-const KITE_W = 190, KITE_H = 67, KITE_CORPS = 0.50;
-const KITE_MONTE = 46;                 // unites par seconde gagnees en hauteur
+   n'assomme personne. Le vent le pousse a contre-sens de la course : il entre par le
+   bas a gauche, traverse vers le haut a droite et sort par le ciel. Le dessin est donc
+   retourne a l'affichage, sans quoi sa queue precederait son corps. L'ondulation du
+   vent est inscrite dans l'espace, comme celle qu'avait l'aigle, pour que la boite de
+   collision suive le dessin. */
+const KITE_W = 285, KITE_H = 100.6, KITE_CORPS = 0.50;
+const KITE_MONTE = 170;                // hauteur gagnee par 600 unites parcourues
 const KITE_VENT = 15, KITE_ONDE = 62;  // amplitude et rayon de l'ondulation
-const KITE_DERIVE = 40;                // il avance un peu plus vite que le decor
+const KITE_DERIVE = 220;               // sa vitesse a l'ecran, vers la droite
+const KITE_X0 = -(KITE_W+140);         // son point d'entree, hors champ a gauche
 /* La queue est dessinee en tranches, chacune decalee par une onde qui se propage :
    elle claque au vent au lieu de suivre le corps comme un bloc. */
-const QUEUE_TRANCHES = 26, QUEUE_AMP = 9, QUEUE_ONDE = 3.2, QUEUE_VIT = 5.5;
+const QUEUE_TRANCHES = 26, QUEUE_AMP = 13, QUEUE_ONDE = 3.2, QUEUE_VIT = 5.5;
 /* La mouche est dessinee centree sur sa position : sa marge est symetrique, sinon
    elle se decalerait a l'ecran. Le cadre grandit, la mouche garde sa taille. */
 const MOU_W = 49.14, MOU_H = 24.53;   // la mouche, deux poses d'ailes
@@ -968,8 +972,12 @@ function spawn(){
   const k = dist<170 ? (Math.random()<0.6?"bale":"bucket") : pool[(Math.random()*pool.length)|0];
 
   if(k==="kite"){
-    const lo=-150, hi=flyCeil+180;
-    const o={k:"kite", x:VIEW_W+140, y:0, y0:lo+Math.random()*(hi-lo),
+    /* Il entre par le bas du ciel et le traverse en montant. Sa bande de depart s'arrete
+       a la moitie basse : le haut, il va le chercher en volant. Elle reste au-dessus de
+       la poule qui court — il n'a que quatre-vingts unites avant de la croiser et ne
+       doit donc jamais menacer une poule au sol, seulement une poule en vol. */
+    const lo=-200, hi=Math.min(-200, flyCeil*0.55);
+    const o={k:"kite", x:KITE_X0, y:0, y0:lo+Math.random()*(hi-lo),
              w:KITE_W, h:KITE_H, ph:Math.random()*6,
              amp:KITE_VENT*(0.6+Math.random()*0.8)};
     vole(o); obs.push(o);
@@ -987,7 +995,7 @@ function spawn(){
 
 /* Il gagne de la hauteur a mesure qu'il avance et le vent l'ondule : les deux se
    lisent sur sa position, pas sur l'horloge, donc sa boite de collision suit. */
-function vole(o){ o.y = o.y0 - (VIEW_W+140-o.x)*KITE_MONTE/600
+function vole(o){ o.y = o.y0 - (o.x-KITE_X0)*KITE_MONTE/600
                             + Math.sin(o.x/KITE_ONDE + o.ph)*o.amp; }
 function flying(){ return hold && !hen.ground && !enSaut && hen.feathers>0 && (flapNow || holdT>0.10); }
 /* plus une seule plume et elle chute : elle pedale dans le vide, en sueur */
@@ -1070,8 +1078,10 @@ function mesurerObstacles(){
 const PARDON_X=8, PARDON_H=4;
 function obsBox(o){
   if(o.k==="eagle") return {x:o.x+8, y:o.y-24, w:102, h:48};   // le corps seul, pas l'envergure
-  if(o.k==="kite") return {x:o.x+o.w*0.05, y:o.y-o.h*0.42,
-                           w:o.w*(KITE_CORPS-0.10), h:o.h*0.84};   // le cerf-volant, pas sa queue
+  /* Le cerf-volant, pas sa queue. Le dessin etant retourne, le corps est a droite de
+     la boite : c'est la marge de gauche d'origine, 0,05, reportee a droite. */
+  if(o.k==="kite") return {x:o.x+o.w*(1.05-KITE_CORPS), y:o.y-o.h*0.42,
+                           w:o.w*(KITE_CORPS-0.10), h:o.h*0.84};
   const sk=OBS_DEF[o.k].sink, b=OBS_BORD[o.k];
   let x0, x1;
   /* Le seau garde sa boite ecrite a la main : sa flaque n'est pas un socle mince,
@@ -1264,10 +1274,12 @@ function update(dt){
     pop(hen.x+80, hen.y-150, "RECORD", "#D6342B");
   }
   for(const o of obs){
-    o.x-=(o.k==="eagle" ? speed+EAGLE_SPEED : o.k==="kite" ? speed+KITE_DERIVE : speed)*dt;
-    if(o.k==="kite") vole(o);
+    /* Le cerf-volant est le seul a remonter le decor : il va vers la droite, a sa
+       propre vitesse, sans rien devoir au defilement. */
+    if(o.k==="kite"){ o.x+=KITE_DERIVE*dt; vole(o); }
+    else o.x-=(o.k==="eagle" ? speed+EAGLE_SPEED : speed)*dt;
   }
-  obs=obs.filter(o=>o.x>-380);
+  obs=obs.filter(o=> o.k==="kite" ? o.x<VIEW_W+380 : o.x>-380);
 
   for(const c of clouds){ c.x-=c.v*speed*.10*dt; if(c.x<-180){c.x=VIEW_W+140; c.f=.15+Math.random()*.6;} }
   for(const g of sol){
@@ -1538,6 +1550,10 @@ function draw(){
     if(o.k==="kite"){
       const im=SPR.kite, nw=im.naturalWidth, nh=im.naturalHeight;
       const coupe=Math.round(nw*KITE_CORPS);
+      /* Retourne sur place, autour du milieu de sa boite : il va vers la droite, sa
+         queue doit trainer derriere lui. Le reste du calcul est inchange. */
+      ctx.save();
+      ctx.translate(o.x+o.w/2, 0); ctx.scale(-1,1); ctx.translate(-(o.x+o.w/2), 0);
       ctx.drawImage(im, 0,0,coupe,nh, o.x, o.y-o.h/2, o.w*KITE_CORPS, o.h);
       /* la queue, tranche par tranche, chacune remontee par une onde qui court */
       const larg=(nw-coupe)/QUEUE_TRANCHES, ecran=o.w*(1-KITE_CORPS)/QUEUE_TRANCHES;
@@ -1547,6 +1563,7 @@ function draw(){
         ctx.drawImage(im, coupe+i*larg,0,larg+1,nh,
           o.x+o.w*KITE_CORPS+i*ecran, o.y-o.h/2+dy, ecran+1, o.h);
       }
+      ctx.restore();
     }else if(o.k==="eagle"){                          // battement : haut, milieu, bas, milieu
       cycle(AIGLE, t*EAGLE_BAT+o.ph, (k,a)=>{
         ctx.globalAlpha=a;
