@@ -177,12 +177,53 @@ ou du ventre, alors que le dessin la montre passant par-dessus.
 Résultat mesuré : les deux images de vol diffèrent de 67 980 pixels, et ces 67 980
 sont **exactement** les deux ailes — pas un pixel de différence hors d'elles.
 
-Le battement n'a plus que deux positions au lieu de trois. Le dessin à mi-course ne
-peut plus y figurer : à mi-battement l'aile est ramenée en arrière, exactement là
-où est la queue, et un corps commun lui donne une queue, qui la masquerait. La
-traînée fait le passage entre le bas et le haut. La liste ayant deux entrées au
-lieu de quatre, l'avance a été divisée par deux : le battement garde ses 2,75
-cycles par seconde.
+Le battement retrouve ses **trois** positions. Le dessin à mi-course avait dû être
+écarté tant que l'aile passait derrière le corps : ramenée en arrière, elle tombe
+exactement là où est la queue, et un corps commun lui donne une queue, sous
+laquelle elle disparaissait. Depuis que l'aile passe devant, elle couvre la queue
+comme le fait son dessin, et la position intermédiaire redevient lisible.
+
+## Pourquoi pas d'images intermédiaires calculées
+
+La question a été posée d'un effet qui assurerait une continuité parfaite entre
+les positions dessinées, sans fondu. Trois pistes ont été mesurées, toutes trois
+sur les ailes de la poule :
+
+| Piste | Recouvrement obtenu |
+|---|---|
+| rotation seule, meilleur centre et meilleur angle | 0,40 |
+| translation, rotation et deux échelles, calées sur les moments | 0,44 |
+| morphage des silhouettes par distance signée | la forme s'effondre à mi-chemin |
+
+Les deux ailes n'ont ni la même allure ni la même orientation — l'une s'allonge
+dans un rapport de 19,6 sur 10,7, l'autre est presque ronde, 15,3 sur 14,7 — et
+les trois ailes n'ont **aucun pixel commun** : il n'existe donc même pas de racine
+autour de laquelle les faire tourner. Aucune transformation continue ne mène de
+l'une à l'autre, et une silhouette moyenne ne ressemble à aucune aile.
+
+Ce qui donne vraiment de la continuité, faute de pouvoir en calculer, c'est d'avoir
+plus de positions dessinées : trois au lieu de deux réduit de moitié l'écart d'une
+image à la suivante. C'est la voie qui a été prise.
+
+## L'aigle
+
+Même souci qu'à la poule, et même remède, mais borné à la tête. Les trois dessins
+sont déjà calés sur le bec — la tête est au même endroit dans les trois. Ce qui
+bouge, c'est son **trait** : le contour de la collerette, le tour de l'œil et le
+bec ne retombent pas au pixel près d'un dessin à l'autre, et la tête frétille au
+rythme du battement.
+
+La tête d'un seul dessin est donc posée sur les deux autres. Elle se découpe seule :
+c'est la plus grosse plage de blanc opaque du dessin — 15 982 pixels, quand les
+autres blancs sont les rectrices, bien plus petites — à quoi s'ajoute le bec, jaune
+et collé à elle. Le tout est dilaté de 26 pixels pour emporter son propre trait
+**et** celui des deux autres dessins, qui ne tombe pas au même endroit : à 14
+pixels de dilatation, le contour de tête de `eagle_down` dépassait encore de la
+greffe et laissait un halo.
+
+Le désaccord dans la tête passe de 10 383 et 8 460 pixels à 1 929 et 1 285, et ce
+qu'il en reste est en dehors de la tête elle-même : le corps brun autour, que la
+greffe ne touche pas.
 
 ## Les trois plans
 
