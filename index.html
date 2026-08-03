@@ -1453,7 +1453,7 @@ function henFrame(){
   /* Bouton lache, en chute libre ou en plein saut : le dessin bec ouvert a le meme
      corps, la meme aile et les memes pattes que la pose de vol plane — seul le bec
      change. On passe donc simplement d'une image a l'autre. */
-  if(!flying() && t>flapUntil) return SPR.jump;
+  if(!flying() && t>flapUntil) return (mouthOpen() && !hen.ground) ? SPR.jump_gobe : SPR.jump;
   return SPR[VOL[(hen.flap|0)%VOL.length]];
 }
 
@@ -1642,10 +1642,7 @@ function draw(){
       cycle(VOL, hen.flap, poser);
       if(mouthOpen()) poser("gobe_tete", 1);     // le bec s'ouvre, l'aile continue
     }
-    else {
-      poser(cle, 1);
-      if(cle==="jump" && !hen.ground && mouthOpen()) poser("jump_gobe", 1);
-    }
+    else poser(cle, 1);
     ctx.globalAlpha=1;
   }
 
