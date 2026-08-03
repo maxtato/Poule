@@ -89,12 +89,12 @@
      largeur ; la moitie du debord fait donc 0,166 fois --ko. */
   #over .carte{position:relative;width:min(calc(var(--band,100%) - 24px),400px);
     --ko:clamp(102px,29vw,142px);margin-top:calc(var(--ko)*0.166);box-sizing:border-box;
-    padding:clamp(62px,16vw,80px) clamp(34px,9vw,52px) clamp(34px,8.5vw,46px);
+    padding:clamp(70px,18vw,92px) clamp(34px,9vw,52px) clamp(46px,11.5vw,62px);
     animation:parait .26s cubic-bezier(.2,1.15,.5,1)}
   #over .blob{position:absolute;inset:0;z-index:0;
     background:center/100% 100% no-repeat}
   #over .dedans{position:relative;z-index:1;display:flex;flex-direction:column;
-    align-items:center;gap:clamp(5px,1.4vw,8px)}
+    align-items:center;gap:clamp(8px,2.2vw,13px)}
   /* La poule KO est assise sur le bord haut du panneau, entouree de ses etoiles. */
   #over .ko{position:absolute;z-index:2;left:50%;top:clamp(-6px,-1vw,0px);
     transform:translate(-50%,-46%);width:var(--ko);height:auto}
