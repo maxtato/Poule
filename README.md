@@ -796,9 +796,15 @@ de couleur vive du panneau, et il attire l'œil là où il faut appuyer. À l'ap
 à un rouge plus sombre, et non à l'inversion des autres boutons du jeu : il n'y a plus de
 blanc à inverser.
 
-La poule KO est le sprite du jeu, posé en `img` à cheval sur le bord haut ; les étoiles
-qui l'entourent sont des polygones SVG, dans le même jaune et le même trait d'encre que
-celles qui lui tournent au-dessus de la tête pendant la chute.
+La poule KO est **dessinée** à cheval sur le bord haut, pas posée : c'est un canvas à
+part, où tourne la même ronde d'étoiles que sur le terrain, avec le même code et à la
+même vitesse. Elle était d'abord entourée d'étoiles fixes en SVG — jolies mais mortes,
+et sans le tourbillon qui va avec.
+
+Pour cela `star()` et `drawStars()` prennent leur contexte en argument au lieu d'écrire
+dans celui du terrain. C'est la seule chose qu'il a fallu changer au code du jeu ; le
+reste est identique, épaisseurs de trait comprises, qui suivent l'échelle. Le canvas fait
+une fois et demie la largeur de la poule : la ronde déborde d'elle des deux côtés.
 
 Le panneau se **centre dans l'écran**, mais c'est le bloc entier — poule comprise —
 qu'on veut centré : il descend donc de la moitié de ce que la poule dépasse en haut.

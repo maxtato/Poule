@@ -88,7 +88,7 @@
      haut. Elle deborde de 46 % de sa hauteur, et sa hauteur vaut 0,72 fois sa
      largeur ; la moitie du debord fait donc 0,166 fois --ko. */
   #over .carte{position:relative;width:min(calc(var(--band,100%) - 24px),400px);
-    --ko:clamp(102px,29vw,142px);margin-top:calc(var(--ko)*0.166);box-sizing:border-box;
+    --ko:clamp(88px,25vw,122px);margin-top:calc(var(--ko)*0.166);box-sizing:border-box;
     padding:clamp(70px,18vw,92px) clamp(34px,9vw,52px) clamp(46px,11.5vw,62px);
     animation:parait .26s cubic-bezier(.2,1.15,.5,1)}
   #over .blob{position:absolute;inset:0;z-index:0;
@@ -96,10 +96,11 @@
   #over .dedans{position:relative;z-index:1;display:flex;flex-direction:column;
     align-items:center;gap:clamp(8px,2.2vw,13px)}
   /* La poule KO est assise sur le bord haut du panneau, entouree de ses etoiles. */
+  /* La poule KO et sa ronde d'etoiles sont dessinees, pas posees : c'est le meme code
+     que sur le terrain, sur un canvas a part, donc la ronde tourne pareil. Le canvas
+     est plus large que la poule pour loger la ronde, qui deborde d'elle. */
   #over .ko{position:absolute;z-index:2;left:50%;top:clamp(-6px,-1vw,0px);
-    transform:translate(-50%,-46%);width:var(--ko);height:auto}
-  #over .etoiles{position:absolute;z-index:1;inset:0;pointer-events:none}
-  #over .etoiles svg{position:absolute;overflow:visible}
+    transform:translate(-50%,-46%);width:calc(var(--ko)*1.5);height:auto}
   /* L'annonce, en rouge : c'est elle qui dit que la manche est finie. */
   #over .fin{margin:0;font-size:clamp(34px,10vw,50px);
     font-weight:900;letter-spacing:-.01em;line-height:.9;text-transform:uppercase;
@@ -218,8 +219,7 @@
 <div class="layer" id="over">
   <div class="carte">
     <div class="blob" id="blob"></div>
-    <span class="etoiles" id="fetoiles"></span>
-    <img class="ko" id="fko" alt="">
+    <canvas class="ko" id="fko" width="300" height="200" aria-hidden="true"></canvas>
     <div class="dedans">
       <h2 class="fin">Game Over</h2>
       <p class="lg" id="fbravo">Bravo, tu as attrapé</p>
@@ -1032,21 +1032,22 @@ function dessineCarte(){
     +'<path d="'+feston(w,h,FESTON_R+FESTON_BANDE,n)+'" fill="#F7F1E5"/></svg>';
   el.style.backgroundImage='url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';
 }
-/* Les etoiles du panneau sont posees a la main autour de la poule KO, dans le meme
-   jaune et le meme trait que celles qui lui tournent au-dessus de la tete en jeu. */
-const ETOILES_CARTE = [[10,10,17],[24,3,11],[76,4,20],[90,12,13],[5,27,10],[93,30,9]];
-function poseEtoiles(){
-  const el=$("fetoiles"); if(!el||el.childNodes.length) return;
-  el.innerHTML = ETOILES_CARTE.map(([x,y,s])=>{
-    const p=[];
-    for(let i=0;i<10;i++){
-      const a=-Math.PI/2+i*Math.PI/5, r=i%2?0.42:1;
-      p.push((16+Math.cos(a)*15*r).toFixed(1)+","+(16+Math.sin(a)*15*r).toFixed(1));
-    }
-    return '<svg viewBox="0 0 32 32" style="left:'+x+'%;top:'+y+'%;width:'+s+'px;'
-      +'margin:'+(-s/2)+'px 0 0 '+(-s/2)+'px"><polygon points="'+p.join(" ")+'"'
-      +' fill="#F5B93E" stroke="#1A1614" stroke-width="2.6" stroke-linejoin="round"/></svg>';
-  }).join("");
+/* La poule KO du panneau, avec sa ronde d'etoiles : meme dessin et meme code que sur
+   le terrain, redessines a chaque image pour que la ronde tourne. Le canvas fait une
+   fois et demie la largeur de la poule, la ronde debordant d'elle des deux cotes. */
+const CARTE_KO = KO_W*1.5, CARTE_ECH = 1.15;
+let cko=null;
+function dessinePoule(){
+  const el=$("fko"); if(!el) return;
+  if(!cko){
+    el.width=Math.round(CARTE_KO*2); el.height=Math.round(KO_H*1.34*2);
+    cko=el.getContext("2d"); cko.scale(2,2);          // deux fois, pour rester net
+  }
+  const w=CARTE_KO/2, h=el.height/4;
+  cko.clearRect(0,0,el.width,el.height);
+  const hx=w-KO_W/2, hy=h-KO_H/2+13;
+  cko.drawImage(SPR.ko, hx, hy, KO_W, KO_H);
+  drawStars(cko, hx+KO_TETE[0]*KO_W-14*CARTE_ECH, hy+KO_TETE[1]*KO_H-22*CARTE_ECH, 0.66*CARTE_ECH);
 }
 
 function start(){
@@ -1308,7 +1309,7 @@ function update(dt){
         overShown=true; $("over").classList.add("on");
         /* Le contour festonne se trace sur la taille reelle du panneau : il faut donc
            qu'il soit dans le flux, et il ne l'est qu'une fois la couche affichee. */
-        dessineCarte();
+        dessineCarte(); dessinePoule();
       }
     }
     for(const p of puffs){ p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=140*dt; p.l-=dt*1.7; }
@@ -1605,17 +1606,19 @@ function drawTraits(){
   }
   ctx.globalAlpha=1;
 }
-function star(x,y,r,rot,trait){
-  ctx.save(); ctx.translate(x,y); ctx.rotate(rot);
-  ctx.beginPath();
+/* Les deux fonctions prennent leur contexte : la ronde d'etoiles sert au jeu, sur le
+   canvas du terrain, et au panneau de fin, sur le sien. */
+function star(g,x,y,r,rot,trait){
+  g.save(); g.translate(x,y); g.rotate(rot);
+  g.beginPath();
   for(let i=0;i<10;i++){
     const rad=(i%2)?r*0.44:r, a=-Math.PI/2+i*Math.PI/5;
-    if(i) ctx.lineTo(Math.cos(a)*rad,Math.sin(a)*rad); else ctx.moveTo(Math.cos(a)*rad,Math.sin(a)*rad);
+    if(i) g.lineTo(Math.cos(a)*rad,Math.sin(a)*rad); else g.moveTo(Math.cos(a)*rad,Math.sin(a)*rad);
   }
-  ctx.closePath();
-  ctx.fillStyle="#F5B93E"; ctx.fill();
-  ctx.strokeStyle=INK; ctx.lineWidth=trait||STROKE; ctx.lineJoin="round"; ctx.stroke();
-  ctx.restore();
+  g.closePath();
+  g.fillStyle="#F5B93E"; g.fill();
+  g.strokeStyle=INK; g.lineWidth=trait||STROKE; g.lineJoin="round"; g.stroke();
+  g.restore();
 }
 /* La ronde d'etoiles se dimensionne sur la pose qu'elle couronne : ecrite en dur,
    elle debordait largement de la poule KO, plus compacte que l'ancienne pose.
@@ -1629,17 +1632,17 @@ function star(x,y,r,rot,trait){
 const ETOILE_LEVE   = [0, 13, 3, 8, 0];        // ce que chaque etoile gagne en hauteur
 const ETOILE_TAILLE = [1, 1.3, 1, 1.18, 1];
 const ETOILE_TRAIT  = 0.55;                    // en part du trait des dessins
-function drawStars(cx,cy,e){
+function drawStars(g,cx,cy,e){
   e=e||1;
   const rot=(t-deadAt)*2.4, rx=54*e, ry=17*e;
-  ctx.strokeStyle=INK; ctx.lineWidth=STROKE; ctx.lineCap="round"; ctx.globalAlpha=.45;
-  ctx.beginPath(); ctx.ellipse(cx,cy,rx,ry,0,0.5,3.5); ctx.stroke();
-  ctx.beginPath(); ctx.ellipse(cx-4*e,cy-9*e,rx*.7,ry*.8,0,3.5,6.1); ctx.stroke();
-  ctx.globalAlpha=1;
+  g.strokeStyle=INK; g.lineWidth=STROKE*e; g.lineCap="round"; g.globalAlpha=.45;
+  g.beginPath(); g.ellipse(cx,cy,rx,ry,0,0.5,3.5); g.stroke();
+  g.beginPath(); g.ellipse(cx-4*e,cy-9*e,rx*.7,ry*.8,0,3.5,6.1); g.stroke();
+  g.globalAlpha=1;
   for(let i=0;i<5;i++){
     const a=rot+i*Math.PI*0.4;
     const x=cx+Math.cos(a)*rx, y=cy-(9+ETOILE_LEVE[i])*e+Math.sin(a)*ry;
-    star(x, y, (5.5+((Math.sin(a)+1)/2)*4)*e*ETOILE_TAILLE[i], a*0.5, STROKE*ETOILE_TRAIT);
+    star(g, x, y, (5.5+((Math.sin(a)+1)/2)*4)*e*ETOILE_TAILLE[i], a*0.5, STROKE*ETOILE_TRAIT*e);
   }
 }
 function henFrame(){
@@ -1821,7 +1824,7 @@ function draw(){
          dessin place aux deux tiers de sa largeur. La ronde est ramenee a la taille
          de la pose, et decalee vers son corps : centree sur la tete elle debordait
          sur l'obstacle qu'elle vient de percuter. */
-      drawStars(hx+KO_TETE[0]*w-14, hy+KO_TETE[1]*h-22, 0.66);
+      drawStars(ctx, hx+KO_TETE[0]*w-14, hy+KO_TETE[1]*h-22, 0.66);
     }
   }else if(im===SPR.gobe){                        // bec ouvert en vol : meme tete que les poses de vol
     const w=GOBE_W*sc(), h=GOBE_H*sc();
@@ -1971,6 +1974,7 @@ let last=0;
 function frame(ts){
   const dt=Math.min((ts-last)/1000||0, 1/30); last=ts;
   if(!frozen()){ update(dt); draw(); }
+  if(overShown) dessinePoule();      // la ronde d'etoiles du panneau tourne aussi
   requestAnimationFrame(frame);
 }
 /* Le canvas ne connait que le nom de la police : si elle n'est pas encore chargee
@@ -1988,8 +1992,6 @@ function demarre(){
   FONT=getComputedStyle(document.body).fontFamily;
   $("fly").style.backgroundImage="url(data:image/png;base64,"+B64.bouton+")";
   $("fico").src="data:image/png;base64,"+B64.fly_b;   // la mouche du panneau de fin
-  $("fko").src ="data:image/png;base64,"+B64.ko;      // et la poule KO, assise dessus
-  poseEtoiles();
   for(const k in SPR) CLE.set(SPR[k], k);
   mesurerObstacles();
   setMute(muted,true); carnet(); checkOrient();
