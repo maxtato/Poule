@@ -727,21 +727,21 @@ Deux dessins, pas quatre :
 | 0 s | Le choc |
 | 0,16 s | La poule KO, qui tombe |
 | ~0,45 s | Le sol : poussière, secousse |
-| ~1,2 s | Le bandeau de fin |
+| ~1,2 s | Le panneau de fin |
 
-### Le bandeau de fin
+### Le panneau de fin
 
 La fin de partie était une fenêtre au premier plan, posée au milieu de l'écran par-dessus
 un flou : la poule morte disparaissait derrière au moment même où elle finissait de
-tomber. C'est maintenant un **bandeau fin** en travers de la moitié haute de l'écran —
-une cinquantaine de pixels de haut, tout sur une seule ligne. Ni flou, ni voile : le bas
-du terrain, là où la poule s'écrase, reste entièrement découvert, et elle y reste en
-plan, étoiles comprises, aussi longtemps qu'on veut.
+tomber. C'est maintenant un **panneau** posé dans la moitié haute de l'écran. Ni flou,
+ni voile : le bas du terrain, là où la poule s'écrase, reste entièrement découvert, et
+elle y reste en plan, étoiles comprises, aussi longtemps qu'on veut.
 
-Le bandeau porte le titre, le score, le record, les totaux et le bouton. Il se cale sur
-la largeur du **cadre de jeu** et non sur celle de la fenêtre, qui est plus large sur un
-bureau — `resize()` publie cette largeur en variable CSS, comme il publiait déjà la
-hauteur de la bande de terre.
+Il **annonce la fin de la manche** : un grand *Game Over* rouge, précédé du petit
+« poule cuite » qui donne le ton. Puis le décompte, le record, les totaux, et le bouton
+sur toute la largeur. Le panneau se borne à la largeur du **cadre de jeu** et non à celle
+de la fenêtre, plus large sur un bureau — `resize()` publie cette largeur en variable CSS,
+comme il publiait déjà la hauteur de la bande de terre.
 
 Aussi longtemps qu'on veut, littéralement : **seul le bouton relance**. Un appui n'importe
 où le faisait avant, et c'était le premier réflexe du joueur — celui qui tenait le vol une
@@ -750,23 +750,15 @@ relance plus.
 
 Le décompte ne s'écrit pas, il se **montre** : la mouche du jeu tient lieu d'unité, comme
 au compteur en haut de l'écran, et le nombre est posé avec elle sur une plaque blanche
-cernée d'encre. Le titre est une pastille rouge, le record une pastille sobre qui passe
-au rouge quand il tombe, et tout ce qui est cliquable ou compté porte la même **ombre
-franche décalée de deux pixels** que le bouton de vol — pas un flou, un aplat d'encre. Le
-bouton s'enfonce à l'appui : il descend de deux pixels et son ombre disparaît, sans
-transition. Le bandeau se lit donc comme un tableau de bord et non comme un paragraphe.
+cernée d'encre. Le record est une pastille sobre qui passe au rouge quand il tombe, et
+le panneau comme son bouton portent la même **ombre franche** que les plaques — pas un
+flou, un aplat d'encre. Le bouton s'enfonce à l'appui : il descend de trois pixels et son
+ombre disparaît, sans transition.
 
-Une ligne unique ne tient pas partout. Les deux mentions les moins utiles s'effacent donc
-à mesure que le cadre rétrécit : **les totaux d'abord** sous 820, **le titre ensuite** sous
-580. Le score et le record ne s'en vont jamais. Les seuils ne sont pas choisis à l'œil,
-ils sortent de la largeur que le contenu occupe réellement.
-
-Le piège était de mesurer le débordement au mauvais endroit : la rangée qui porte les
-chiffres a beau être comprimée par le bouton, le texte, lui, continue de se peindre
-par-dessus. Ce n'est donc pas le débordement de la rangée qu'il faut regarder mais celui
-de la colonne de chiffres à l'intérieur, et le chevauchement des deux boîtes. Vérifié sur
-sept formats, du 360 × 640 au 1800 × 1700 : rien ne déborde, rien ne chevauche, et le
-bandeau reste entre 27 et 32 % de la hauteur de l'écran.
+Le panneau descend de treize pour cent de la hauteur au lieu de neuf : plus haut, son
+coin mordait sur la ligne du record que le HUD écrit en haut à droite. Vérifié sur sept
+formats, du 360 × 640 au 1800 × 1700 : rien ne déborde, rien ne chevauche le bouton du
+son, et le panneau tient entre 13 et 50 % de la hauteur — la moitié haute, partout.
 
 Le choc a trois versions, choisies selon d'où elle vient. De face, en course, elle
 est encore sur ses pattes ; de face en vol, elle file à l'horizontale. La version
