@@ -112,7 +112,10 @@
     padding:clamp(5px,1.4vw,8px) clamp(20px,6vw,34px)}
   #over .pastille span{font-size:clamp(34px,9.6vw,48px);font-weight:900;line-height:1;
     font-variant-numeric:tabular-nums;letter-spacing:-.02em;color:#2B2118}
-  #over .score{background:#EDE4D3;width:100%}
+  /* Les deux pastilles se serrent sur leur contenu : celle du decompte tirait sur
+     toute la largeur et faisait une barre, la ou l'autre etait une pastille. */
+  #over .score{background:#EDE4D3;padding-left:clamp(24px,7vw,40px);
+    padding-right:clamp(28px,8vw,44px)}
   #over .record{background:#F8CE72}
   #over .record span{font-size:clamp(27px,7.4vw,37px)}
   #over .ico{height:clamp(26px,7.2vw,38px);width:auto;display:block}
@@ -124,7 +127,7 @@
   /* Le bouton est en bas, la ou le contour se recourbe : a pleine largeur ses bouts
      venaient toucher la bosse du coin. */
   #over .btn{display:flex;align-items:center;justify-content:center;
-    gap:clamp(8px,2.4vw,12px);width:88%;
+    gap:clamp(8px,2.4vw,12px);width:72%;
     padding:clamp(12px,3.4vw,16px) 18px;font-size:clamp(14px,3.9vw,17px);
     letter-spacing:.08em;white-space:nowrap;margin-top:clamp(12px,3.4vw,18px);
     background:#fff;border:1px solid #E4DACA;color:#D6342B}

@@ -790,7 +790,8 @@ Le compte de bosses se prend sur le périmètre réellement parcouru, coins arro
 compris : sur celui du rectangle vif, elles sortaient toutes un peu trop petites.
 
 Le bouton est en bas, là où le contour se recourbe : à pleine largeur ses bouts venaient
-toucher la bosse du coin, il n'en occupe donc que 88 %.
+toucher la bosse du coin. Il n'en occupe que 72 %, ce qui le dégage et le rapproche des
+deux pastilles au-dessus.
 
 La poule KO est le sprite du jeu, posé en `img` à cheval sur le bord haut ; les étoiles
 qui l'entourent sont des polygones SVG, dans le même jaune et le même trait d'encre que
@@ -812,8 +813,10 @@ seconde plus tôt. On ne voyait jamais la chute finir. La barre d'espace non plu
 relance plus.
 
 Le décompte ne s'écrit pas, il se **montre** : la mouche du jeu tient lieu d'unité, comme
-au compteur en haut de l'écran. Elle et son nombre occupent une pastille pleine sur toute
-la largeur ; le record en occupe une autre, ambre, avec sa couronne.
+au compteur en haut de l'écran. Elle et son nombre occupent une pastille pleine ; le
+record en occupe une autre, ambre, avec sa couronne. Les deux se serrent sur leur
+contenu — à pleine largeur, celle du décompte faisait une barre là où l'autre était une
+pastille.
 
 **Aucune ombre nulle part**, et des aplats plutôt que des cernés : les pastilles n'ont pas
 de contour, elles se détachent par leur fond. Seul le bouton en garde un, d'un pixel.
