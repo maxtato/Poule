@@ -761,11 +761,34 @@ tomber. C'est maintenant un **panneau** posé dans la moitié haute de l'écran.
 ni voile : le bas du terrain, là où la poule s'écrase, reste entièrement découvert, et
 elle y reste en plan, étoiles comprises, aussi longtemps qu'on veut.
 
-Il **annonce la fin de la manche** : un grand *Game Over* rouge, précédé du petit
-« poule cuite » qui donne le ton. Puis le décompte, le record, les totaux, et le bouton
-sur toute la largeur. Le panneau se borne à la largeur du **cadre de jeu** et non à celle
-de la fenêtre, plus large sur un bureau — `resize()` publie cette largeur en variable CSS,
+Il **annonce la fin de la manche** : un grand *Game Over* rouge, la poule KO assise sur
+son bord haut avec ses étoiles, puis le décompte, le record couronné, les totaux et le
+bouton. Le panneau se borne à la largeur du **cadre de jeu** et non à celle de la
+fenêtre, plus large sur un bureau — `resize()` publie cette largeur en variable CSS,
 comme il publiait déjà la hauteur de la bande de terre.
+
+### Un panneau qui n'est pas un rectangle
+
+Son bord est **festonné**, une suite de bosses rondes comme un nuage de bande dessinée.
+Le tracé est calculé, pas dessiné : on échantillonne le périmètre d'un rectangle rentré
+du rayon des bosses, à pas constant, et **chaque pas devient un arc qui bombe vers
+l'extérieur**. Aux angles la corde est plus courte que le pas, l'arc bombe donc un peu
+plus — c'est exactement ce qu'il faut pour arrondir le coin.
+
+Deux chemins concentriques, l'extérieur beige et l'intérieur crème, donnent la bande
+claire qui fait le tour. Ils partagent **le même nombre de bosses** : avec un compte
+propre à chacun, leurs bosses se déphasent et la bande change de largeur tout du long.
+
+Le fond est **régénéré à la taille exacte du panneau**, à l'affichage et à chaque
+`resize()`. Une image étirée aurait des bosses ovales d'un côté et rondes de l'autre.
+
+La poule KO est le sprite du jeu, posé en `img` à cheval sur le bord haut ; les étoiles
+qui l'entourent sont des polygones SVG, dans le même jaune et le même trait d'encre que
+celles qui lui tournent au-dessus de la tête pendant la chute. La couronne du record et
+la flèche du bouton sont deux petits tracés SVG écrits à la main.
+
+Les pastilles ne portent **que des nombres** : c'est la ligne au-dessus qui dit de quoi
+il s'agit, et c'est elle qui annonce le record battu.
 
 Aussi longtemps qu'on veut, littéralement : **seul le bouton relance**. Un appui n'importe
 où le faisait avant, et c'était le premier réflexe du joueur — celui qui tenait le vol une
@@ -773,18 +796,11 @@ seconde plus tôt. On ne voyait jamais la chute finir. La barre d'espace non plu
 relance plus.
 
 Le décompte ne s'écrit pas, il se **montre** : la mouche du jeu tient lieu d'unité, comme
-au compteur en haut de l'écran. C'est le héros du panneau — le plus gros caractère de
-tout le jeu — et le record passe en petit juste dessous, sans ornement.
+au compteur en haut de l'écran. Elle et son nombre occupent une pastille pleine sur toute
+la largeur ; le record en occupe une autre, ambre, avec sa couronne.
 
-**Deux contours en tout**, celui du panneau et celui du bouton. La plaque qui entourait
-le score et la pastille qui entourait le record ont sauté : une boîte dans une boîte dans
-une boîte, ça ne se lit plus, ça se compte. Le poids vient de la taille et de la couleur,
-pas du cerné. **Aucune ombre nulle part** non plus, et des traits d'un pixel.
-
-Le panneau est **gris neutre** et non crème : posé sur le beige du terrain, un panneau
-crème s'y fondait. Les gris chauds du jeu — le `#B5AA9A` des mentions discrètes et sa
-famille — n'ont donc plus cours à l'intérieur, ils l'auraient retiré vers le marron ; les
-textes du panneau prennent des gris franchement neutres.
+**Aucune ombre nulle part**, et des aplats plutôt que des cernés : les pastilles n'ont pas
+de contour, elles se détachent par leur fond. Seul le bouton en garde un, d'un pixel.
 
 Le panneau descend de treize pour cent de la hauteur au lieu de neuf : plus haut, son
 coin mordait sur la ligne du record que le HUD écrit en haut à droite. Vérifié sur sept

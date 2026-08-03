@@ -79,37 +79,50 @@
      moitie haute de l'ecran. Le bas du terrain — ou la poule morte finit sa chute —
      reste entierement decouvert, et elle y reste en plan. */
   #over{justify-content:flex-start;padding:0;gap:0}
-  /* Un gris franchement neutre, pour que le panneau ne se confonde pas avec le beige
-     du terrain. Les gris chauds du jeu — #B5AA9A et compagnie — n'ont plus cours ici,
-     ils tireraient le panneau vers le marron : les textes prennent des gris neutres.
-     Un seul contour dans tout le panneau, celui du bouton, plus celui du panneau. */
-  #over .carte{width:min(calc(var(--band,100%) - 36px),430px);margin-top:13vh;
-    box-sizing:border-box;display:flex;flex-direction:column;align-items:center;
-    gap:clamp(6px,1.6vw,9px);
-    padding:clamp(16px,4.4vw,24px) clamp(16px,4vw,26px) clamp(18px,4.8vw,26px);
-    background:#E7E7EB;border:1px solid #1A1614;border-radius:18px;
+  /* Le panneau n'est pas un rectangle : son fond est un contour festonne, deux
+     chemins concentriques poses en SVG par dessineCarte(). Il est donc regenere a
+     la taille exacte du panneau, ce qui garde des bosses rondes au lieu de les
+     etirer. Le contenu vit au-dessus, avec assez de marge pour ne pas mordre dessus. */
+  #over .carte{position:relative;width:min(calc(var(--band,100%) - 24px),400px);
+    margin-top:clamp(92px,17vh,150px);box-sizing:border-box;
+    padding:clamp(62px,16vw,80px) clamp(34px,9vw,52px) clamp(34px,8.5vw,46px);
     animation:parait .26s cubic-bezier(.2,1.15,.5,1)}
+  #over .blob{position:absolute;inset:0;z-index:0;
+    background:center/100% 100% no-repeat}
+  #over .dedans{position:relative;z-index:1;display:flex;flex-direction:column;
+    align-items:center;gap:clamp(5px,1.4vw,8px)}
+  /* La poule KO est assise sur le bord haut du panneau, entouree de ses etoiles. */
+  #over .ko{position:absolute;z-index:2;left:50%;top:clamp(-6px,-1vw,0px);
+    transform:translate(-50%,-46%);width:clamp(120px,34vw,168px);height:auto}
+  #over .etoiles{position:absolute;z-index:1;inset:0;pointer-events:none}
+  #over .etoiles svg{position:absolute;overflow:visible}
   /* L'annonce, en rouge : c'est elle qui dit que la manche est finie. */
-  #over .fin{margin:0 0 clamp(4px,1.4vw,8px);font-size:clamp(28px,8.4vw,42px);
-    font-weight:900;letter-spacing:-.01em;line-height:.88;text-transform:uppercase;
+  #over .fin{margin:0;font-size:clamp(34px,10vw,50px);
+    font-weight:900;letter-spacing:-.01em;line-height:.9;text-transform:uppercase;
     color:#D6342B}
-  /* Le decompte est le heros du panneau : gros, et la mouche du jeu lui tient lieu
-     d'unite, comme au compteur en haut de l'ecran. */
-  #over .chiffres{display:flex;align-items:center;justify-content:center;
-    gap:clamp(7px,2.2vw,12px)}
-  #over .ico{height:clamp(28px,7.6vw,42px);width:auto;display:block}
-  #over #fscore{font-size:clamp(48px,14vw,74px);font-weight:900;line-height:.9;
-    font-variant-numeric:tabular-nums;letter-spacing:-.02em;color:#1A1614}
-  #over .kicker{white-space:nowrap;font-size:clamp(10px,2.7vw,12px);font-weight:900;
-    letter-spacing:.22em;color:#8A8A93}
-  #over .rec{white-space:nowrap;font-size:clamp(11px,2.9vw,13px);font-weight:900;
-    letter-spacing:.12em;color:#5E5E66;border:0;padding:0}
-  #over .rec.new{color:#D6342B}
-  #over .totaux{white-space:nowrap;font-size:clamp(9px,2.4vw,11px);letter-spacing:.05em;
-    font-weight:700;text-transform:uppercase;color:#9C9CA4}
-  #over .btn{width:100%;padding:14px 18px;font-size:clamp(13px,3.6vw,16px);
-    letter-spacing:.09em;white-space:nowrap;margin-top:clamp(8px,2.6vw,14px);
-    border-width:1px;background:transparent}
+  #over .lg{margin:clamp(6px,1.8vw,10px) 0 0;font-size:clamp(11px,3vw,14px);
+    font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#7A6A57}
+  /* Deux pastilles pleines, sans contour : le decompte du tour, puis le record. */
+  #over .pastille{display:flex;align-items:center;justify-content:center;
+    gap:clamp(8px,2.4vw,13px);border-radius:999px;
+    padding:clamp(5px,1.4vw,8px) clamp(20px,6vw,34px)}
+  #over .pastille span{font-size:clamp(34px,9.6vw,48px);font-weight:900;line-height:1;
+    font-variant-numeric:tabular-nums;letter-spacing:-.02em;color:#2B2118}
+  #over .score{background:#EDE4D3;width:100%}
+  #over .record{background:#F8CE72}
+  #over .record span{font-size:clamp(27px,7.4vw,37px)}
+  #over .ico{height:clamp(26px,7.2vw,38px);width:auto;display:block}
+  #over .couronne{height:clamp(24px,6.6vw,34px);width:auto;display:block}
+  #over .tirets{width:100%;height:0;margin:clamp(10px,3vw,16px) 0 0;border:0;
+    border-top:2px dashed #D5C9B4}
+  #over .totaux{margin:clamp(8px,2.4vw,12px) 0 0;font-size:clamp(10px,2.7vw,13px);
+    letter-spacing:.04em;font-weight:900;text-transform:uppercase;color:#8B7C69}
+  #over .btn{display:flex;align-items:center;justify-content:center;
+    gap:clamp(8px,2.4vw,12px);width:100%;
+    padding:clamp(12px,3.4vw,16px) 18px;font-size:clamp(14px,3.9vw,17px);
+    letter-spacing:.08em;white-space:nowrap;margin-top:clamp(12px,3.4vw,18px);
+    background:#fff;border:1px solid #E4DACA;color:#D6342B}
+  #over .btn svg{width:clamp(17px,4.6vw,22px);height:auto;display:block}
   @keyframes parait{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
   @media (prefers-reduced-motion:reduce){ #over .carte{animation:none} }
 
@@ -192,12 +205,31 @@
 
 <div class="layer" id="over">
   <div class="carte">
-    <span class="kicker">Poule cuite</span>
-    <h2 class="fin">Game Over</h2>
-    <div class="chiffres"><img class="ico" id="fico" alt="mouches"><span id="fscore">0</span></div>
-    <span class="rec" id="frec">Record 0</span>
-    <span class="totaux" id="ftot"></span>
-    <button class="btn" id="again">Recommencer</button>
+    <div class="blob" id="blob"></div>
+    <span class="etoiles" id="fetoiles"></span>
+    <img class="ko" id="fko" alt="">
+    <div class="dedans">
+      <h2 class="fin">Game Over</h2>
+      <p class="lg" id="fbravo">Bravo, tu as attrapé</p>
+      <div class="pastille score"><img class="ico" id="fico" alt="mouches"><span id="fscore">0</span></div>
+      <p class="lg" id="frectitre">Ton record personnel</p>
+      <div class="pastille record">
+        <svg class="couronne" viewBox="0 0 32 26" fill="none" aria-hidden="true">
+          <path d="M3 9.5 8 15 16 4.5 24 15 29 9.5 26.5 22.5H5.5L3 9.5Z"
+                fill="#F8CE72" stroke="#1A1614" stroke-width="2.4" stroke-linejoin="round"/>
+        </svg>
+        <span id="frec">0</span>
+      </div>
+      <hr class="tirets">
+      <p class="totaux" id="ftot"></p>
+      <button class="btn" id="again">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M20 12a8 8 0 1 1-2.6-5.9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+          <path d="M20.4 2.6V8h-5.4" stroke="currentColor" stroke-width="2.6"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>Réessayer
+      </button>
+    </div>
   </div>
 </div>
 
@@ -669,6 +701,7 @@ function resize(){
   /* Largeur du cadre de jeu : le panneau de fin s'y borne au lieu de se caler sur
      l'ecran, qui est plus large que le jeu sur un bureau. */
   document.documentElement.style.setProperty("--band", bandW+"px");
+  if(overShown) dessineCarte();      // le panneau change de taille avec le cadre
   groundY=worldH-GROUND_GAP;                 // le sol reste a distance fixe du bas de l'ecran
   skyH=groundY;                              // tout l'espace au-dessus du sol est jouable
   flyCeil=-(skyH-70);
@@ -934,6 +967,58 @@ addEventListener("pointercancel",pup);
 /* Perdre le focus, c'est lacher la poule : on relache l'appui et on gele la course. */
 addEventListener("blur",()=>{ fingers.clear(); release(); halt(); });
 
+/* ---------- le panneau de fin ----------
+   Son fond est un contour festonne, pas un rectangle : deux chemins concentriques
+   dessines en SVG et poses en image de fond. Il est regenere a la taille exacte du
+   panneau — une image etiree aurait des bosses ovales d'un cote et rondes de l'autre.
+   Le trace : on echantillonne le perimetre d'un rectangle rentre de FESTON_R a pas
+   constant, et chaque pas devient un arc qui bombe vers l'exterieur. Le nombre de
+   bosses est le meme pour les deux chemins, sinon leurs bosses se dephasent et la
+   bande entre eux change de largeur tout du long. */
+const FESTON_R = 25, FESTON_BANDE = 14;
+function feston(w,h,rentre,n){
+  const W=w-2*rentre, H=h-2*rentre, per=2*(W+H), pas=per/n, rr=pas/2;
+  const pt=u=>{
+    u=((u%per)+per)%per;
+    if(u<W) return [rentre+u, rentre];
+    u-=W; if(u<H) return [w-rentre, rentre+u];
+    u-=H; if(u<W) return [w-rentre-u, h-rentre];
+    u-=W; return [rentre, h-rentre-u];
+  };
+  const q=v=>v.map(z=>z.toFixed(1)).join(",");
+  let d="M"+q(pt(0));
+  for(let i=1;i<=n;i++) d+="A"+rr.toFixed(1)+","+rr.toFixed(1)+" 0 0 1 "+q(pt(i*pas));
+  return d+"Z";
+}
+function dessineCarte(){
+  const el=$("blob"); if(!el) return;
+  const c=el.parentNode.getBoundingClientRect();
+  const w=Math.round(c.width), h=Math.round(c.height);
+  if(!w||!h) return;
+  const per=2*((w-2*FESTON_R)+(h-2*FESTON_R));
+  const n=Math.max(16, Math.round(per/(2*FESTON_R)));
+  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'">'
+    +'<path d="'+feston(w,h,FESTON_R,n)+'" fill="#E9DFCE"/>'
+    +'<path d="'+feston(w,h,FESTON_R+FESTON_BANDE,n)+'" fill="#F7F1E5"/></svg>';
+  el.style.backgroundImage='url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';
+}
+/* Les etoiles du panneau sont posees a la main autour de la poule KO, dans le meme
+   jaune et le meme trait que celles qui lui tournent au-dessus de la tete en jeu. */
+const ETOILES_CARTE = [[10,10,17],[24,3,11],[76,4,20],[90,12,13],[5,27,10],[93,30,9]];
+function poseEtoiles(){
+  const el=$("fetoiles"); if(!el||el.childNodes.length) return;
+  el.innerHTML = ETOILES_CARTE.map(([x,y,s])=>{
+    const p=[];
+    for(let i=0;i<10;i++){
+      const a=-Math.PI/2+i*Math.PI/5, r=i%2?0.42:1;
+      p.push((16+Math.cos(a)*15*r).toFixed(1)+","+(16+Math.sin(a)*15*r).toFixed(1));
+    }
+    return '<svg viewBox="0 0 32 32" style="left:'+x+'%;top:'+y+'%;width:'+s+'px;'
+      +'margin:'+(-s/2)+'px 0 0 '+(-s/2)+'px"><polygon points="'+p.join(" ")+'"'
+      +' fill="#F5B93E" stroke="#1A1614" stroke-width="2.6" stroke-linejoin="round"/></svg>';
+  }).join("");
+}
+
 function start(){
   overShown=false; unhalt(); reset(); state=S.PLAY;
   $("menu").classList.remove("on"); $("over").classList.remove("on");
@@ -969,11 +1054,13 @@ function die(dessus){
   if(rec) best=eaten;
   save.best=best; save.flies+=eaten; save.runs++; storeSave();
   $("fscore").textContent=eaten;
-  const fr=$("frec");
-  fr.textContent = rec ? "Nouveau record" : "Record "+best;
-  fr.classList.toggle("new",rec);
+  /* Les pastilles ne portent que des nombres : c'est la ligne au-dessus qui dit
+     de quoi il s'agit, et c'est elle qui annonce le record battu. */
+  $("frec").textContent=best;
+  $("frectitre").textContent = rec ? "Nouveau record !" : "Ton record personnel";
+  $("fbravo").textContent = eaten ? "Bravo, tu as attrapé" : "Tu n'as rien attrapé";
   $("ftot").textContent = save.runs>1
-    ? save.flies+" en tout · "+save.runs+" parties" : "";
+    ? save.flies+" mouches en tout · "+save.runs+" parties" : "";
   carnet();
   overShown=false;
 }
@@ -1189,6 +1276,9 @@ function update(dt){
       const age=t-deadAt;
       if(!overShown && ((deadLand>=0 && t-deadLand>0.75) || age>3.2)){
         overShown=true; $("over").classList.add("on");
+        /* Le contour festonne se trace sur la taille reelle du panneau : il faut donc
+           qu'il soit dans le flux, et il ne l'est qu'une fois la couche affichee. */
+        dessineCarte();
       }
     }
     for(const p of puffs){ p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=140*dt; p.l-=dt*1.7; }
@@ -1867,7 +1957,9 @@ function demarre(){
   const el=$("load"); if(el) el.remove();
   FONT=getComputedStyle(document.body).fontFamily;
   $("fly").style.backgroundImage="url(data:image/png;base64,"+B64.bouton+")";
-  $("fico").src="data:image/png;base64,"+B64.fly_b;   // la mouche du bandeau de fin
+  $("fico").src="data:image/png;base64,"+B64.fly_b;   // la mouche du panneau de fin
+  $("fko").src ="data:image/png;base64,"+B64.ko;      // et la poule KO, assise dessus
+  poseEtoiles();
   for(const k in SPR) CLE.set(SPR[k], k);
   mesurerObstacles();
   setMute(muted,true); carnet(); checkOrient();
