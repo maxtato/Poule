@@ -66,6 +66,18 @@ jusqu'au bord de l'écran. Il a un temps ondulé sur une sinusoïde ; la vague e
 retirée. Vérifié sur 73 aigles suivis chacun sur 900 pas : pas une unité d'écart
 de hauteur, boîte de collision comprise.
 
+Un **cerf-volant** traverse lui aussi le ciel. Contrairement à l'aigle, il ne file
+pas à plat : il **monte en diagonale** à mesure qu'il avance, et le vent l'ondule.
+La montée comme l'ondulation se lisent sur sa position et non sur l'horloge, donc sa
+boîte de collision les suit exactement.
+
+Seul son **corps** tue — la moitié gauche du dessin. Une queue de ficelle n'assomme
+personne, et elle est de toute façon trop mince pour qu'on lui prête une hitbox.
+
+Sa queue claque au vent : elle est dessinée en vingt-six tranches verticales, chacune
+décalée par une onde qui court le long d'elle, d'amplitude croissante vers le bout.
+Elle ondule donc au lieu de suivre le corps comme un bloc.
+
 Les autres obstacles sont au sol et arrivent d'autant plus vite que la course
 dure.
 
