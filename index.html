@@ -409,7 +409,10 @@ const VOL    = ["fly_down","fly_mid","fly_up","fly_mid"];
    parce que EAGLE_BAT suit la longueur de la liste. */
 const AIGLE  = ["eagle_up","eagle_mid","eagle_down"];
 const MOUCHE = ["fly_b","fly_a"];
-const FONDU_BAT = 0.45, TRACE_BAT = 0.5;
+/* TRACE_BAT a 0 : plus de trainee du tout sur les battements d'ailes. Les positions
+   se succedent nettes, sans rien pour combler l'ecart. La course garde la sienne,
+   qui est reglee par FONDU et TRACE, plus haut. */
+const FONDU_BAT = 0.45, TRACE_BAT = 0;
 /* `poser(cle, alpha)` fait le rendu proprement dit : la meme mecanique sert aux
    trois, seul le dessin change. */
 function cycle(liste, avance, poser){

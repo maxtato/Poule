@@ -108,12 +108,21 @@ poule en vol (`VOL`), celui de l'aigle (`AIGLE`) et celui des mouches
 (`MOUCHE`). La fonction `cycle()` les traite toutes les trois : elle reçoit une
 liste de poses et une avance décimale, pose la précédente en traînée tant qu'on
 est dans les premiers `FONDU_BAT` de l'image, puis la courante par-dessus et
-opaque. Les ailes n'ont que deux ou trois positions dessinées ; la traînée
-comble l'écart entre elles et le battement cesse de sauter d'une position à
-l'autre. C'est elle, depuis, qui tient lieu de position intermédiaire au vol de la
-poule. Les mouches battent quatorze fois par seconde : le recouvrement y dure
-moins de trente millisecondes, assez pour lisser le battement sans jamais
-laisser voir deux mouches.
+opaque.
+
+Pour les battements d'ailes, `TRACE_BAT` est à **zéro** : la traînée est coupée, les
+positions se succèdent nettes. Elle estompait l'écart entre deux positions sans le
+combler, et il a été décidé de voir sans. La remettre tient à un chiffre — 0,5
+rétablit ce qu'elle était. La course, elle, garde la sienne, réglée à part par
+`FONDU` et `TRACE`.
+
+Aucun calcul ne peut fabriquer les images manquantes, cela a été mesuré : entre
+deux positions d'aile voisines de l'aigle, le recouvrement est de 0,18 et 0,37, et
+la meilleure rotation possible — tous centres et tous angles essayés — ne le monte
+qu'à 0,21 et 0,38. L'aigle est vu de profil : son aile ne tourne pas dans le plan
+de l'image, elle **raccourcit**. Ce n'est pas un solide qui pivote, c'est une forme
+qui change, et une silhouette moyenne ne ressemble à aucune aile. La seule chose
+qui donne vraiment de la fluidité est d'avoir plus de positions dessinées.
 
 ## Le vol
 
