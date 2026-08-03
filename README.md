@@ -192,40 +192,22 @@ image à la suivante. C'est la voie qui a été prise.
 
 ## L'aigle
 
-**Trois positions d'aile et un corps commun**, comme la poule. Les trois dessins
-partagent corps, tête et queue ; le corps a de plus été fourni à part, sans aucune
-aile. C'est ce qui manquait — le corps de l'aigle ne se découpe pas seul, un
-remplissage parti du torse passe dans l'aile de devant, qu'aucun trait n'en sépare,
-et cela vaut aussi sur le dessin aux ailes hautes, pourtant celui où le torse est
-le plus dégagé.
+Trois dessins, **posés tels quels**, affichés l'un à la suite de l'autre. Pas de
+corps commun ici : les trois dessins partagent déjà corps, tête et queue, et une
+composition n'apporterait rien qu'un endroit de plus où quelque chose peut se voir.
 
-Détourage habituel — fond clair et peu coloré, remplissage depuis les bords, plus
-grosse composante, ce qui laisse dehors les traits de vitesse — puis calage sur la
-**tache blanche de la tête**, seul repère commun sûr. Les quatre dessins s'y mettent
-à l'échelle 0,974 à 0,999, moins de trois pour cent d'écart.
+Ils arrivaient sur un blanc chaud avec des traits de vitesse dont le jeu n'a pas
+besoin : le fond est reconnu clair et peu coloré, le remplissage part des bords, et
+seule la plus grosse composante est gardée — les traits de vitesse restent dehors.
+Ils sont retournés comme le reste et calés sur la **tache blanche de la tête**, seul
+repère commun sûr : mise à l'échelle 0,985, 1,000 et 0,994, moins de deux pour cent
+d'écart entre les trois.
 
-L'ordre des positions n'est pas donné, il est mesuré : le dessin dont le sommet est
-le plus haut est celui aux ailes levées, et parmi les deux autres, celui qui
-descend le plus bas est celui aux ailes basses.
-
-Chaque pose n'apporte que ses ailes : ce qui, chez elle, déborde du corps commun.
-On garde les **deux plus grosses composantes**, parce que l'aigle a deux ailes et
-pas davantage. La **queue** et les **serres** touchent pourtant l'aile et font
-partie de la même composante — on voyait deux queues et quatre pattes. Elles n'ont
-pas la couleur d'une aile : l'aile est brune de bout en bout, la queue est blanche
-et les serres oranges. On les reconnaît donc à la couleur, on élargit de seize
-pixels pour emporter leur propre trait, et on les retire, le corps commun les
-fournissant déjà.
-
-Le bout des ailes porte lui aussi des plumes claires : la couleur seule emportait
-des taches en plein milieu de l'aile. Le retrait ne s'applique donc **que là où le
-corps commun a déjà les siennes** — sa queue et ses serres, élargies de soixante-dix
-pixels. C'est bien le double qu'on vise, pas les rectrices d'une aile. Les ailes
-pèsent 81 270, 77 237 et 78 387 pixels.
-
-Les poses sont relues depuis les dessins d'origine sur disque et non depuis le jeu :
-sinon la composition repartait d'une composition, et l'échelle du corps dérivait
-d'une passe à l'autre.
+L'ordre n'est pas donné, il est mesuré : le dessin dont le sommet est le plus haut
+est celui aux ailes levées — rangée 21, contre 262 et 263 pour les deux autres — et
+parmi ceux-là, celui qui descend le plus bas est celui aux ailes basses, 606 contre
+581. Le cycle les parcourt dans cet ordre, et `EAGLE_BAT` suit la longueur de la
+liste pour que la cadence ne bouge pas : 1,9 battement par seconde.
 
 ## Les trois plans
 
