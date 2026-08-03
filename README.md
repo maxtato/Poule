@@ -147,8 +147,12 @@ L'aile ne se limite pas à ce qui dépasse du corps : dans le dessin elle passe
 **par-dessus**, et cette partie-là manquait — l'aile paraissait rognée à l'endroit
 où elle recouvre le corps. Son tracé étant fermé, il suffit de remplir depuis la
 partie visible, arrêté par l'encre du dessin, pour récupérer tout son intérieur, y
-compris ce qui couvre le corps. L'aile passe ainsi de 26 360 à 135 987 pixels en
-bas, de 18 643 à 127 001 en haut.
+compris ce qui couvre le corps. Ce tracé n'est cependant pas toujours fermé du côté du corps : laissé libre, le
+remplissage s'échappe dans toute la poule et l'image se dédouble. Il est donc borné
+à la boîte de la partie visible de l'aile, élargie de soixante-dix pixels — l'aile
+ne rentre pas plus loin que cela dans le corps. Elle pèse alors 76 880 pixels en
+bas et 37 569 en haut, contre 26 360 et 18 643 quand seule la partie débordante
+était prise, et 135 987 et 127 001 quand le remplissage fuyait.
 
 Chaque image ne lui apporte donc que la sienne : ce qui,
 chez lui, déborde de ce corps, plus le trait d'aile là où il court dessus, à
