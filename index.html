@@ -117,8 +117,10 @@
     border-top:2px dashed #D5C9B4}
   #over .totaux{margin:clamp(8px,2.4vw,12px) 0 0;font-size:clamp(10px,2.7vw,13px);
     letter-spacing:.04em;font-weight:900;text-transform:uppercase;color:#8B7C69}
+  /* Le bouton est en bas, la ou le contour se recourbe : a pleine largeur ses bouts
+     venaient toucher la bosse du coin. */
   #over .btn{display:flex;align-items:center;justify-content:center;
-    gap:clamp(8px,2.4vw,12px);width:100%;
+    gap:clamp(8px,2.4vw,12px);width:88%;
     padding:clamp(12px,3.4vw,16px) 18px;font-size:clamp(14px,3.9vw,17px);
     letter-spacing:.08em;white-space:nowrap;margin-top:clamp(12px,3.4vw,18px);
     background:#fff;border:1px solid #E4DACA;color:#D6342B}
@@ -976,14 +978,29 @@ addEventListener("blur",()=>{ fingers.clear(); release(); halt(); });
    bosses est le meme pour les deux chemins, sinon leurs bosses se dephasent et la
    bande entre eux change de largeur tout du long. */
 const FESTON_R = 25, FESTON_BANDE = 14;
+/* Le rectangle echantillonne a lui-meme les coins arrondis : sans cela la silhouette
+   reste carree, les bosses ne font que border un angle droit. La part de la plus
+   petite cote qu'occupe le rayon de coin decide de la rondeur d'ensemble. */
+const FESTON_COIN = 0.30;
 function feston(w,h,rentre,n){
-  const W=w-2*rentre, H=h-2*rentre, per=2*(W+H), pas=per/n, rr=pas/2;
+  const W=w-2*rentre, H=h-2*rentre;
+  const rc=Math.min(W,H)*FESTON_COIN;
+  const dW=W-2*rc, dH=H-2*rc, arc=rc*Math.PI/2;      // droits et quarts de tour
+  const per=2*(dW+dH)+4*arc, pas=per/n, rr=pas/2;
+  const x0=rentre, y0=rentre, x1=w-rentre, y1=h-rentre;
+  /* angle a l'interieur d'un quart de tour, puis le point sur le cercle du coin */
+  const coin=(cx,cy,a0,u)=>{ const a=a0+u/rc;
+    return [cx+Math.cos(a)*rc, cy+Math.sin(a)*rc]; };
   const pt=u=>{
     u=((u%per)+per)%per;
-    if(u<W) return [rentre+u, rentre];
-    u-=W; if(u<H) return [w-rentre, rentre+u];
-    u-=H; if(u<W) return [w-rentre-u, h-rentre];
-    u-=W; return [rentre, h-rentre-u];
+    if(u<dW) return [x0+rc+u, y0];
+    u-=dW; if(u<arc) return coin(x1-rc, y0+rc, -Math.PI/2, u);
+    u-=arc; if(u<dH) return [x1, y0+rc+u];
+    u-=dH; if(u<arc) return coin(x1-rc, y1-rc, 0, u);
+    u-=arc; if(u<dW) return [x1-rc-u, y1];
+    u-=dW; if(u<arc) return coin(x0+rc, y1-rc, Math.PI/2, u);
+    u-=arc; if(u<dH) return [x0, y1-rc-u];
+    u-=dH; return coin(x0+rc, y0+rc, Math.PI, u);
   };
   const q=v=>v.map(z=>z.toFixed(1)).join(",");
   let d="M"+q(pt(0));
@@ -995,7 +1012,10 @@ function dessineCarte(){
   const c=el.parentNode.getBoundingClientRect();
   const w=Math.round(c.width), h=Math.round(c.height);
   if(!w||!h) return;
-  const per=2*((w-2*FESTON_R)+(h-2*FESTON_R));
+  /* Le compte de bosses se prend sur le perimetre reellement parcouru, coins arrondis
+     compris : sur celui du rectangle vif, elles sortaient toutes un peu trop petites. */
+  const W=w-2*FESTON_R, H=h-2*FESTON_R, rc=Math.min(W,H)*FESTON_COIN;
+  const per=2*(W-2*rc)+2*(H-2*rc)+2*Math.PI*rc;
   const n=Math.max(16, Math.round(per/(2*FESTON_R)));
   const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'">'
     +'<path d="'+feston(w,h,FESTON_R,n)+'" fill="#E9DFCE"/>'

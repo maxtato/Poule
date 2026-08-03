@@ -772,8 +772,13 @@ comme il publiait déjà la hauteur de la bande de terre.
 Son bord est **festonné**, une suite de bosses rondes comme un nuage de bande dessinée.
 Le tracé est calculé, pas dessiné : on échantillonne le périmètre d'un rectangle rentré
 du rayon des bosses, à pas constant, et **chaque pas devient un arc qui bombe vers
-l'extérieur**. Aux angles la corde est plus courte que le pas, l'arc bombe donc un peu
-plus — c'est exactement ce qu'il faut pour arrondir le coin.
+l'extérieur**.
+
+Ce rectangle a lui-même les coins arrondis, et c'est ce qui fait la rondeur d'ensemble :
+sans cela la silhouette reste carrée, les bosses ne font que border un angle droit. Le
+rayon du coin vaut trois dixièmes du plus petit côté. Sur les quarts de tour la corde
+entre deux points est plus courte que le pas, l'arc y bombe donc un peu plus — ce qui
+arrondit encore, sans avoir à traiter les angles à part.
 
 Deux chemins concentriques, l'extérieur beige et l'intérieur crème, donnent la bande
 claire qui fait le tour. Ils partagent **le même nombre de bosses** : avec un compte
@@ -781,6 +786,11 @@ propre à chacun, leurs bosses se déphasent et la bande change de largeur tout 
 
 Le fond est **régénéré à la taille exacte du panneau**, à l'affichage et à chaque
 `resize()`. Une image étirée aurait des bosses ovales d'un côté et rondes de l'autre.
+Le compte de bosses se prend sur le périmètre réellement parcouru, coins arrondis
+compris : sur celui du rectangle vif, elles sortaient toutes un peu trop petites.
+
+Le bouton est en bas, là où le contour se recourbe : à pleine largeur ses bouts venaient
+toucher la bosse du coin, il n'en occupe donc que 88 %.
 
 La poule KO est le sprite du jeu, posé en `img` à cheval sur le bord haut ; les étoiles
 qui l'entourent sont des polygones SVG, dans le même jaune et le même trait d'encre que
