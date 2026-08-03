@@ -130,14 +130,27 @@ plus de deux cents cent rangées plus bas. La racine de l'aile baissée, un trai
 traîne au-dessus de la couture, est reprise à `fly_up` dans une fenêtre mesurée sur
 elle : 227 pixels d'encre présents chez l'un et absents chez l'autre.
 
-Chaque aile est alors ce qui, dans son dessin, dépasse de ce corps. On n'en garde
-que la composante principale — le reste est le trait qui déborde d'un ou deux
-pixels autour de la tête, là où les deux mains n'ont pas tremblé pareil : 749
-pixels jetés pour l'aile haute, 3 882 pour la basse. L'aile se pose **derrière** le
-corps, débordant de trois pixels sous lui, de sorte que le trait épais du corps
-couvre la jointure.
+La couture laissait une marche dans le contour : quatorze pixels aux fesses, neuf
+sous les barbillons — les deux dessins n'ont pas exactement la même largeur de
+corps à cette hauteur. Le bas est donc **étiré** vers le haut, rangée par rangée :
+le bord gauche est ramené sur celui du haut, le bord droit aussi, la correction
+s'effaçant sur quarante rangées. Entre les deux bords c'est du blanc plat, où un
+étirement de cinq pour cent ne se voit pas. Marche restante : zéro de chaque côté.
 
-Résultat mesuré : les deux images de vol diffèrent de 54 514 pixels, et ces 54 514
+Chaque aile est alors ce qui, dans son dessin, dépasse de ce corps — plus le trait
+de l'aile là où il court **sur** le corps, reconnu à ce que le dessin et le corps
+assemblé n'y disent pas la même chose. Cette seconde partie ne se distingue pas,
+par la seule couleur, du contour propre au dessin : les deux diffèrent du corps et
+ils se touchent. On la borne donc par la position, sur des bornes prises du cœur de
+l'aile — ce qui d'elle déborde du corps, mesuré à x 309-541 pour l'aile haute et
+x 329-648 pour la basse. Sans cette borne, l'aile basse emportait les pattes du
+dessin dont elle vient, et l'aile haute le contour de sa propre croupe.
+
+L'aile se pose **devant** le corps, non derrière : posée derrière, le corps lui
+mangeait tout ce qui rentre dedans et elle paraissait coupée net au niveau du dos
+ou du ventre, alors que le dessin la montre passant par-dessus.
+
+Résultat mesuré : les deux images de vol diffèrent de 67 980 pixels, et ces 67 980
 sont **exactement** les deux ailes — pas un pixel de différence hors d'elles.
 
 Le battement n'a plus que deux positions au lieu de trois. Le dessin à mi-course ne
