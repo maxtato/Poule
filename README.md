@@ -215,33 +215,20 @@ image à la suivante. C'est la voie qui a été prise.
 
 ## L'aigle
 
-Même souci qu'à la poule, et même remède, mais borné à la tête. Les trois dessins
-sont déjà calés sur le bec — la tête est au même endroit dans les trois. Ce qui
-bouge, c'est son **trait** : le contour de la collerette, le tour de l'œil et le
-bec ne retombent pas au pixel près d'un dessin à l'autre, et la tête frétille au
-rythme du battement.
+Quatre positions d'aile, du haut vers le bas. Le dessin aux ailes basses d'origine
+a été retiré et remplacé par deux nouveaux, qui décomposent la descente.
 
-La tête d'un seul dessin est donc posée sur les deux autres. Elle se découpe seule :
-c'est la plus grosse plage de blanc opaque du dessin — 15 982 pixels, quand les
-autres blancs sont les rectrices, bien plus petites — à quoi s'ajoute le bec, jaune
-et collé à elle. Le tout est dilaté de 26 pixels pour emporter son propre trait
-**et** celui des deux autres dessins, qui ne tombe pas au même endroit : à 14
-pixels de dilatation, le contour de tête de `eagle_down` dépassait encore de la
-greffe et laissait un halo.
+Ils arrivaient sur un blanc chaud avec des traits de vitesse dont le jeu n'a pas
+besoin : le fond est reconnu clair et peu coloré, le remplissage part des bords, et
+seule la plus grosse composante est gardée — les traits de vitesse et le grain du
+papier restent dehors. Ils sont retournés comme les autres aigles, puis calés sur
+la **tache blanche de la tête**, seul repère sûr et commun aux quatre : mise à
+l'échelle 0,921 et 0,926.
 
-Le désaccord dans la tête passe de 10 383 et 8 460 pixels à 1 929 et 1 285, et ce
-qu'il en reste est en dehors de la tête elle-même : le corps brun autour, que la
-greffe ne touche pas.
-
-Le battement compte **quatre** dessins. Celui aux ailes basses a été retiré et
-remplacé par deux nouveaux, plus bas, qui décomposent la descente. Ils arrivaient
-sur un blanc chaud avec des traits de vitesse dont le jeu n'a pas besoin : le fond
-est reconnu clair et peu coloré, le remplissage part des bords, et seule la plus
-grosse composante est gardée — les traits de vitesse et le grain restent dehors.
-Ils sont retournés comme les autres aigles, puis calés sur la **tache blanche de la
-tête**, seul repère sûr et commun aux quatre : mise à l'échelle 0,921 et 0,926, à
-quoi la greffe de tête met ensuite tout le monde d'accord au pixel près — le
-désaccord tombe de 15 078 et 13 492 pixels à 1 323 et 1 271.
+Les quatre dessins sont **posés tels quels**, sans corps ni tête communs. Une greffe
+de tête avait été essayée, et une de corps : la première marchait, mais les quatre
+dessins se ressemblent assez pour s'en passer, et une greffe qui ne sert à rien
+n'est qu'un endroit de plus où quelque chose peut se voir.
 
 Le cycle parcourt les quatre positions **dans les deux sens** : la descente passe
 par toutes, la remontée repasse par celles du milieu. Six entrées pour quatre
