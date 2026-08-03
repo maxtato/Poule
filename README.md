@@ -790,8 +790,11 @@ Le compte de bosses se prend sur le périmètre réellement parcouru, coins arro
 compris : sur celui du rectangle vif, elles sortaient toutes un peu trop petites.
 
 Le bouton est en bas, là où le contour se recourbe : à pleine largeur ses bouts venaient
-toucher la bosse du coin. Il n'en occupe que 72 %, ce qui le dégage et le rapproche des
-deux pastilles au-dessus.
+toucher la bosse du coin. Il n'en occupe que 62 %, ce qui le dégage et le rapproche des
+deux pastilles au-dessus. Il est **rouge plein, écriture blanche** — c'est le seul aplat
+de couleur vive du panneau, et il attire l'œil là où il faut appuyer. À l'appui il passe
+à un rouge plus sombre, et non à l'inversion des autres boutons du jeu : il n'y a plus de
+blanc à inverser.
 
 La poule KO est le sprite du jeu, posé en `img` à cheval sur le bord haut ; les étoiles
 qui l'entourent sont des polygones SVG, dans le même jaune et le même trait d'encre que

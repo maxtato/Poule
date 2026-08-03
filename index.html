@@ -127,10 +127,13 @@
   /* Le bouton est en bas, la ou le contour se recourbe : a pleine largeur ses bouts
      venaient toucher la bosse du coin. */
   #over .btn{display:flex;align-items:center;justify-content:center;
-    gap:clamp(8px,2.4vw,12px);width:72%;
+    gap:clamp(8px,2.4vw,12px);width:62%;
     padding:clamp(12px,3.4vw,16px) 18px;font-size:clamp(14px,3.9vw,17px);
     letter-spacing:.08em;white-space:nowrap;margin-top:clamp(12px,3.4vw,18px);
-    background:#fff;border:1px solid #E4DACA;color:#D6342B}
+    background:#D6342B;border:1px solid #D6342B;color:#fff}
+  /* Rouge plein, ecriture blanche : a l'appui c'est un rouge plus sombre, pas
+     l'inversion des autres boutons — il n'y a plus de blanc a inverser. */
+  #over .btn:active{background:#B32A22;border-color:#B32A22;color:#fff}
   #over .btn svg{width:clamp(17px,4.6vw,22px);height:auto;display:block}
   @keyframes parait{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
   @media (prefers-reduced-motion:reduce){ #over .carte{animation:none} }
