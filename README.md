@@ -233,6 +233,21 @@ Le désaccord dans la tête passe de 10 383 et 8 460 pixels à 1 929 et 1 285, e
 qu'il en reste est en dehors de la tête elle-même : le corps brun autour, que la
 greffe ne touche pas.
 
+Le battement compte **quatre** dessins. Celui aux ailes basses a été retiré et
+remplacé par deux nouveaux, plus bas, qui décomposent la descente. Ils arrivaient
+sur un blanc chaud avec des traits de vitesse dont le jeu n'a pas besoin : le fond
+est reconnu clair et peu coloré, le remplissage part des bords, et seule la plus
+grosse composante est gardée — les traits de vitesse et le grain restent dehors.
+Ils sont retournés comme les autres aigles, puis calés sur la **tache blanche de la
+tête**, seul repère sûr et commun aux quatre : mise à l'échelle 0,921 et 0,926, à
+quoi la greffe de tête met ensuite tout le monde d'accord au pixel près — le
+désaccord tombe de 15 078 et 13 492 pixels à 1 323 et 1 271.
+
+Le cycle parcourt les quatre positions **dans les deux sens** : la descente passe
+par toutes, la remontée repasse par celles du milieu. Six entrées pour quatre
+dessins, et `EAGLE_BAT` suit la longueur de la liste pour que la cadence ne bouge
+pas — 1,9 battement par seconde.
+
 ## Les trois plans
 
 Le décor défile sur trois épaisseurs, à trois vitesses, ce qui donne la
