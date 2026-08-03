@@ -1371,10 +1371,13 @@ function ombreObs(o){
    trop bas et donnaient l'impression que l'objet flottait au-dessus de la sienne.
    Celles des obstacles remontent plus que celle de la poule, parce qu'elles partent
    du bas du dessin et que l'objet, lui, est plante sous la ligne de sol : le bas du
-   dessin est donc bien plus bas que l'endroit ou l'objet touche terre. Au-dela d'une
-   dizaine d'unites l'ombre repasse au-dessus de la ligne pour les obstacles a peine
-   enfonces — la barriere, la fourche — et se detache derriere eux. */
-const OMBRE_HAUT = 3, OMBRE_OBS_HAUT = 8;
+   dessin est donc bien plus bas que l'endroit ou l'objet touche terre. La remontee ne
+   peut pas etre la meme pour tous — treize convient aux objets massifs, mais le seau
+   et la fourche, moins enfonces, verraient leur ombre remonter dans leurs pieds, et
+   la barriere, qui n'est enfoncee que de deux, la verrait passer au-dessus de la
+   ligne de sol et se detacher derriere elle. */
+const OMBRE_HAUT = 3;
+const OMBRE_OBS_HAUT = {bucket:8, fork:8, fence:3};   // 13 pour les autres
 function ombres(){
   ctx.save();
   ctx.fillStyle=INK;
@@ -1383,7 +1386,8 @@ function ombres(){
     const b=ombreObs(o);
     ctx.globalAlpha=.12;
     ctx.beginPath();
-    ctx.ellipse(b.cx, OBS_DEF[o.k].sink+OBS_EXTRA-OMBRE_OBS_HAUT, b.rx, b.rx*0.17, 0, 0, 7);
+    const haut = OMBRE_OBS_HAUT[o.k]!==undefined ? OMBRE_OBS_HAUT[o.k] : 13;
+    ctx.ellipse(b.cx, OBS_DEF[o.k].sink+OBS_EXTRA-haut, b.rx, b.rx*0.17, 0, 0, 7);
     ctx.fill();
   }
   /* L'ombre de la poule reste au sol pendant qu'elle monte, en retrecissant et en

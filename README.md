@@ -530,13 +530,23 @@ la sienne. La pose KO a la sienne, plus large et plus basse : calée sur la lign
 d'horizon comme celle de la pose debout, elle passait entièrement sous le ventre de la
 poule à plat et ne se voyait plus.
 
-Celles des obstacles remontent **plus** que celle de la poule — huit unités contre
-trois. C'est qu'elles partent du bas du dessin, alors que l'objet est planté sous la
-ligne de sol : le bas du dessin est donc bien plus bas que l'endroit où l'objet touche
-terre, et l'écart vaut l'enfoncement, treize à vingt-deux unités. Le réglage a une
-limite haute nette : au-delà d'une dizaine d'unités, l'ombre repasse **au-dessus** de la
-ligne pour les obstacles à peine enfoncés — la barrière et la fourche — et se détache
-derrière eux au lieu de les poser. Huit tient tout le monde.
+Celles des obstacles remontent **plus** que celle de la poule. C'est qu'elles partent du
+bas du dessin, alors que l'objet est planté sous la ligne de sol : le bas du dessin est
+donc bien plus bas que l'endroit où l'objet touche terre, et l'écart vaut l'enfoncement,
+deux à vingt-deux unités selon l'objet.
+
+Une remontée unique ne peut donc pas convenir à tous, et chacun a la sienne. Treize pour
+les objets massifs — les ballots, le pneu, la brouette. Huit pour le seau et la fourche,
+moins enfoncés, dont l'ombre remonterait sinon dans leurs pieds. Trois pour la barrière,
+enfoncée de deux seulement, dont l'ombre passerait au-dessus de la ligne de sol et se
+détacherait derrière elle.
+
+| | enfoncement | remontée | l'ombre finit à |
+|---|---|---|---|
+| ballot, ballots, pneu, brouette | 13 à 22 | 13 | 5 à 14 sous la ligne |
+| seau | 11 | 8 | 8 |
+| fourche | 6 | 8 | 3 |
+| barrière | 2 | 3 | 4 |
 
 Les deux ballots de paille ont en plus une ombre **plus large** : ils posent à plat une
 empreinte que le rayon commun, réglé pour des objets étroits, ne rejoignait pas. Un demi
