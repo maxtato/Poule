@@ -974,8 +974,12 @@ function flying(){ return hold && !hen.ground && !enSaut && hen.feathers>0 && (f
    le temps de se lire avant que la proie soit avalee. */
 function mouthOpen(){
   if(hen.dead) return false;
-  for(const f of flies)
-    if(Math.abs(f.x-(hen.x+80))<115 && Math.abs(f.y-(hen.y-56))<95) return true;
+  /* Elle anticipe : la fenetre est bien plus large devant que derriere, puisque les
+     mouches arrivent de la droite. Le bec s'ouvre donc avant d'atteindre la proie,
+     et il s'ouvre meme quand elle passe a cote sans etre gobee. */
+  for(const f of flies){
+    const dx=f.x-(hen.x+80);
+    if(dx>-115 && dx<300 && Math.abs(f.y-(hen.y-56))<120) return true; }
   return false;
 }
 function panic(){ return !hen.ground && !hen.dead && hen.feathers<=0.02 && hen.vy>50; }

@@ -126,8 +126,12 @@ qui donne vraiment de la fluidité est d'avoir plus de positions dessinées.
 
 ## Le vol
 
-Quand une mouche est à portée, la poule ouvre le bec **sans cesser de battre des
-ailes** : ce n'est plus la pose de gobage entière qui remplace la pose de vol — elle
+La poule **anticipe** : la fenêtre qui déclenche l'ouverture du bec est bien plus
+large devant que derrière — de 115 unités en arrière à 300 en avant — puisque les
+mouches arrivent de la droite. Le bec s'ouvre donc avant qu'elle atteigne la proie,
+et il s'ouvre aussi quand la mouche passe à côté sans être gobée.
+
+Elle ouvre le bec **sans cesser de battre des ailes** : ce n'est plus la pose de gobage entière qui remplace la pose de vol — elle
 figeait l'aile — mais seulement sa **tête**, posée par-dessus la pose en cours.
 Le dessin dont elle vient est de la même famille que les trois du vol : même corps,
 même aile repliée, seul le bec s'ouvre en grand. Il est posé dans le cadre de vol
