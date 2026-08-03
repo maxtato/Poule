@@ -126,6 +126,17 @@ qui donne vraiment de la fluidité est d'avoir plus de positions dessinées.
 
 ## Le vol
 
+Quand une mouche est à portée, la poule ouvre le bec **sans cesser de battre des
+ailes** : ce n'est plus la pose de gobage entière qui remplace la pose de vol — elle
+figeait l'aile — mais seulement sa **tête**, posée par-dessus la pose en cours.
+Le dessin du gobage a son propre cadre et son propre ancrage sur la crête ; il est
+donc replacé dans le cadre de vol en faisant coïncider les deux crêtes. La coupe
+est verticale, à la colonne où le gobage et le corps de vol s'accordent le mieux —
+du blanc plat, où elle ne se voit pas — et la couche est retenue à l'intérieur de la
+silhouette de vol élargie de trente-quatre pixels, sans quoi le corps du gobage
+débordait du dos. L'élargissement laisse passer le bec ouvert, qui va plus loin que
+le bec fermé. Au sol, la pose de becquée reste entière.
+
 La poule bat **quatre fois par seconde** : l'avance dans la liste `VOL` est passée
 de 11 à 16, soit quatre cycles complets par seconde pour quatre entrées. Le vol
 plané suit dans le même rapport, de 4 à 6.
