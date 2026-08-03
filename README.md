@@ -132,10 +132,19 @@ assez pour qu'on voie le corps s'allonger d'une image à l'autre. Les trois part
 donc **une seule échelle**, la moyenne — 1,1999 — et ne diffèrent plus que par la
 position du centre de leur crête.
 
-Il reste que les contours ne retombent pas exactement : à l'intérieur les trois
-corps se superposent, mais le trait varie d'un à trois pixels tout autour. Le
-partage d'un corps unique, comme il a été fait pour les anciens dessins, reste à
-reprendre pour ceux-ci.
+L'échelle unique ne suffisait pas : à l'intérieur les trois corps se superposaient,
+mais le trait du contour variait encore d'un à trois pixels tout autour. Le corps
+est donc partagé, par une méthode bien plus courte que celle des anciens dessins,
+justement parce que ceux-ci se ressemblent. **Le dessin du milieu sert de corps
+entier** — sa silhouette est celle d'une poule sans aile, son aile repliée n'étant
+que du trait à l'intérieur — et chaque autre ne lui apporte que la sienne : ce qui,
+chez lui, déborde de ce corps, plus le trait d'aile là où il court dessus, à
+condition de tenir au reste de l'aile. On exige en plus que ce trait soit de
+l'encre, sans quoi un contour déplacé d'un pixel entrerait aussi. L'aile passe
+devant, débordant de trois pixels sous le corps.
+
+Ni couture, ni fenêtre, ni recalage : le corps est le même au pixel près dans les
+trois images, et l'aile pèse 26 360 pixels en bas, 18 643 en haut.
 
 Tout ce qui suit — corps assemblé de deux dessins, couture recalée trait par trait,
 fenêtres d'aile, traits d'ombre effacés — a été rendu inutile par ces trois
