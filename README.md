@@ -135,9 +135,15 @@ position du centre de leur crête.
 L'échelle unique ne suffisait pas : à l'intérieur les trois corps se superposaient,
 mais le trait du contour variait encore d'un à trois pixels tout autour. Le corps
 est donc partagé, par une méthode bien plus courte que celle des anciens dessins,
-justement parce que ceux-ci se ressemblent. **Le dessin du milieu sert de corps
-entier** — sa silhouette est celle d'une poule sans aile, son aile repliée n'étant
-que du trait à l'intérieur — et chaque autre ne lui apporte que la sienne : ce qui,
+justement parce que ceux-ci se ressemblent. **Le dessin du milieu sert de corps**, son
+aile repliée effacée. Elle est un tracé fermé qui ne coupe pas le contour : c'est
+donc une composante d'encre à part, 5 837 pixels quand le contour du corps en pèse
+38 392, qu'on isole sans rien lui indiquer. Effacée, le blanc du voisinage comble ;
+gardée de côté, elle redevient l'aile de l'image du milieu, posée devant comme les
+deux autres. Sans cela elle restait sur le corps commun et venait gêner l'aile
+levée, qui passe pourtant au premier plan.
+
+Chaque image ne lui apporte donc que la sienne : ce qui,
 chez lui, déborde de ce corps, plus le trait d'aile là où il court dessus, à
 condition de tenir au reste de l'aile. On exige en plus que ce trait soit de
 l'encre, sans quoi un contour déplacé d'un pixel entrerait aussi. L'aile passe
