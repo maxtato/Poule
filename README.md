@@ -174,9 +174,11 @@ c'est un gros plan.
 
 Au sol, la pose de becquée reste entière.
 
-La poule bat **quatre fois par seconde** : l'avance dans la liste `VOL` est passée
-de 11 à 16, soit quatre cycles complets par seconde pour quatre entrées. Le vol
-plané suit dans le même rapport, de 4 à 6.
+La poule bat **3,25 fois par seconde** : l'avance dans la liste `VOL` est à 13 pour
+quatre entrées. Le vol plané suit dans le même rapport.
+
+La jauge de plumes se vide de 0,24 par seconde, soit **4,2 secondes de vol continu**
+à jauge pleine, contre 3,2 auparavant.
 
 Trois positions d'aile, prises sur trois dessins **faits pour aller ensemble** :
 même corps, même queue, même tête, seule l'aile change. Il n'y a donc plus rien à

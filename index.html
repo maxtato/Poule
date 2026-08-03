@@ -1136,10 +1136,10 @@ function update(dt){
   const fly=flying();
   if(fly){
     hen.vy=Math.max(hen.vy-4400*dt, -310);
-    hen.feathers-=dt*0.31;      // ~3,2 s de vol continu a jauge pleine
-    hen.flap+=dt*16;                    // 4 battements complets par seconde
+    hen.feathers-=dt*0.24;      // ~4,2 s de vol continu a jauge pleine
+    hen.flap+=dt*13;                    // 3,25 battements complets par seconde
     if(Math.random()<dt*7) feather(hen.x+30, hen.y-62);
-  }else hen.flap += (t<flapUntil ? dt*16 : dt*6);
+  }else hen.flap += (t<flapUntil ? dt*13 : dt*5);
 
   hen.vy=Math.min(hen.vy+3500*dt, 1800);
   hen.y+=hen.vy*dt;
