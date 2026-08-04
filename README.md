@@ -1083,11 +1083,11 @@ K.-O., la jauge de plumes, la poussière et le contour festonné du panneau de f
 
 ## L'icône, et le jeu ajouté à l'écran d'accueil
 
-`icone.png` : une petite scène du jeu. Montagnes, colline, arbres et bande de terre
-dans les teintes du matin — celles du jeu, pas des couleurs choisies pour l'occasion —
-et la poule en vol qui gobe une mouche. Rien n'est redessiné : ce sont les planches du
-jeu, la pose `gobe` du vol bec ouvert, la mouche ailes écartées et les silhouettes du
-second plan, teintées comme le jeu les teinte.
+`icone.png` : une petite scène du jeu, **en pixel art**. Montagnes, colline, arbres et
+bande de terre dans les teintes du matin — celles du jeu, pas des couleurs choisies
+pour l'occasion — et la poule en vol qui gobe une mouche. Rien n'est redessiné : ce
+sont les planches du jeu, la pose `gobe` du vol bec ouvert, la mouche ailes écartées
+et les silhouettes du second plan, teintées comme le jeu les teinte.
 
 Le décor n'est pas une décoration : un sujet découpé sur un aplat n'a pas de
 profondeur, et à soixante pixels il ne reste qu'une tache. Les trois plans prennent
@@ -1106,7 +1106,9 @@ Trois choses commandent la composition, et elles viennent toutes d'iOS :
   la poule monte vers la mouche au lieu de passer devant.
 
 La mouche n'est pas placée à l'œil : le bout du bec est suivi **dans le repère
-tourné** de la poule, ce qui la pose juste devant quel que soit l'angle choisi.
+tourné** de la poule, puis décalée d'un écart nommé — un peu à droite, un peu plus bas
+— pour tomber en face de l'ouverture du bec plutôt que de la toucher. L'angle de la
+poule peut changer sans qu'il faille tout recaler.
 
 L'icône est **embarquée en base64** dans la page, comme tout le reste : le jeu ne
 demande rien au réseau, pas même pour son icône. Une version 180 pour l'écran
@@ -1116,8 +1118,8 @@ Ajouté à l'écran d'accueil, le jeu s'ouvre **en plein écran**, sans la barre
 Safari, sous le nom court *La poule*. Le terrain se cale déjà sur `env(safe-area-inset-*)`,
 il n'y avait rien à reprendre pour ça.
 
-`icone-pixel.png` est la même composition avec les planches en pixel art, si le style
-pixel devient le style par défaut.
+`icone-trait.png` est la même composition avec les dessins d'origine, si le style au
+trait redevient le style par défaut.
 
 ## Les outils du téléphone
 
