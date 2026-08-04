@@ -422,6 +422,11 @@ quatre entrées. Le vol plané suit dans le même rapport.
 La jauge de plumes se vide de 0,24 par seconde, soit **4,2 secondes de vol continu**
 à jauge pleine, contre 3,2 auparavant.
 
+Il s'en échappe des plumes, mais moins qu'avant : **trois par seconde** en vol tenu, au
+lieu de sept. À sept, elles faisaient une traînée continue derrière elle et la perte de
+plumes ne se lisait plus comme un événement. Le coup d'aile, lui, garde la sienne : une
+plume par battement voulu, puisque c'est le geste qui la paie.
+
 Trois positions d'aile, prises sur trois dessins **faits pour aller ensemble** :
 même corps, même queue, même tête, seule l'aile change. Il n'y a donc plus rien à
 assembler — pas de corps recousu, pas de fenêtre pour découper l'aile, pas de
@@ -974,6 +979,11 @@ flottait bas et laissait un grand vide au-dessus. Deux paquets de traits rouges
 l'encadrent, comme les traits de vitesse d'une case de bande dessinée. Sa phrase est
 bornée à `15.5em` pour tomber sur des lignes courtes au lieu de longues.
 
+Ses deux lignes étaient serrées à un interligne de **0,86**, ce qui les faisait lire
+comme un bloc ; à **1,0** elles respirent et « qui vole » se détache de « la poule »,
+ce qui est le sens du titre. La phrase, elle, s'écarte du titre en plus de l'écart
+commun de la bande : collée dessous, elle en avait l'air d'une troisième ligne.
+
 ### Une phrase, pas un mode d'emploi
 
 Il y avait, en bas, trois consignes : appui court, appui maintenu, gober les mouches.
@@ -1204,16 +1214,27 @@ originales. Les deux tiennent dans le même fichier sans discussion.
 Convertir chaque dessin à une largeur fixe — 64 pixels pour la poule, 64 pour la
 montagne — donnerait des pixels **gros comme une maison** sur la montagne et
 minuscules sur la mouche : cinquante-neuf grilles différentes, et un décor qui jure
-avec le personnage. Le pixel vaut donc **0,40 pixel CSS**, le même partout ; chaque
+avec le personnage. Le pixel vaut donc **0,30 pixel CSS**, le même partout ; chaque
 dessin est converti à sa taille d'affichage divisée par cette valeur. La poule fait
-192 pixels de large, la mouche 60, la montagne 1203.
+256 pixels de large, la mouche 80, la montagne 1732.
 
-Il y a un plancher, et il vaut la peine d'être connu : sous **0,33** le pixel d'art
-descend sous le pixel d'écran d'un téléphone à `dpr` 3, et le navigateur doit alors
-jeter des pixels de la planche pour la faire tenir. Ce qu'il jette change d'une image
-à l'autre : le dessin grouille dès qu'il bouge. Un dessin immobile, lui, ne trahit
-rien, ce qui rend le défaut facile à ne pas voir sur une capture. La valeur retenue
-garde une marge de vingt et un pour cent au-dessus de ce plancher.
+Il y a un seuil, et il vaut la peine d'être connu, parce que **0,30 passe dessous**.
+La scène est peinte dans un tampon large de `largeur / PX_JEU`, puis posée sur une
+toile large de `largeur × dpr`, où `dpr` est **plafonné à 2,5**. À 0,40 ces deux nombres
+sont égaux : `1 / 0,40 = 2,5`. Le tampon faisait exactement la taille de la toile, la
+pose était un report pixel pour pixel, rien n'était ni agrandi ni réduit. Ce n'était pas
+un hasard, c'était la raison du choix.
+
+À 0,30 le tampon fait **un tiers de plus** que la toile, et le lissage étant coupé, le
+navigateur **jette** ce qui ne rentre pas : mesuré sur le ballot de paille, 281 colonnes
+de planche pour 211 pixels d'écran, soit **un quart de jetées**. Et ce qu'il jette dépend
+de la position : en recalant deux images d'un nombre entier de pixels d'écran, il reste
+47 % des pixels du ballot qui ont bougé quand même, contre 35 % à 0,40. C'est ce qui fait
+grouiller un dessin en mouvement. Sur une capture immobile, rien ne se voit.
+
+Deux façons d'avoir des pixels plus fins **sans** ce défaut, si le grouillement gêne :
+relever le plafond de `dpr` à 3 et poser `PX_JEU` à un tiers, le report redevient exact
+et le pixel reste plus fin qu'à 0,40 ; ou revenir à 0,40.
 
 C'est d'ailleurs par là que la bonne finesse a été trouvée. La poule assommée était
 dessinée bien plus finement que le reste — non par choix, mais parce que sa planche
@@ -1315,15 +1336,16 @@ grille unique, mesure faite : de 0,38 pixel CSS sur les petites capitales à **3
 le titre — sept fois et demie d'écart, et huit fois la finesse des dessins sur le titre.
 Une fonte à pixels ne peut pas avoir un pixel constant si les corps varient.
 
-Il y a donc une **échelle de grilles** — 20, 26, 35, 46, 61, 80, 106, 140, 185 — et
+Il y a donc une **échelle de grilles** — 27, 35, 47, 61, 81, 107, 141, 187, 247 — et
 `fontePixel()` donne à chaque texte celle qui le rapproche le plus de `PX_JEU`. Le
 choix est refait à chaque redimensionnement : les corps sont en `clamp()`, ils changent
 avec la fenêtre. Les graisses légères ne sont fabriquées que pour les petits corps —
 au-delà, tout est en 800 ou 900.
 
-Résultat mesuré sur les vingt-neuf textes du document, à quatre gabarits : le pixel
-apparent tient entre **0,34 et 0,45** pour une cible de 0,40, soit 14 % d'écart au pire.
-Dix-sept faces, **93 Ko**. Elles ne servent qu'en mode pixel et qu'au document : le
+Résultat mesuré sur les textes du document, à quatre gabarits : le pixel apparent tient
+entre **0,26 et 0,34** pour une cible de 0,30, soit 14 % d'écart au pire. L'échelle est
+refaite à chaque changement de finesse : les grilles valent `taille / PX_JEU`, elles ont
+donc toutes grandi d'un tiers en passant de 0,40 à 0,30. Dix-sept faces, **146 Ko**. Elles ne servent qu'en mode pixel et qu'au document : le
 texte du canevas passe déjà par le tampon.
 
 ### Le panneau de fin, qui restait lisse
@@ -1335,7 +1357,7 @@ pixel il était la seule chose de cet écran à garder des bords parfaitement ne
 à côté d'une poule assommée en escalier.
 
 Le même chemin est maintenant peint dans un **canevas à la grille** — un pixel d'image
-pour 0,40 pixel CSS, exactement comme la poule posée dessus — puis agrandi en dur par
+pour `PX_JEU` pixel CSS, exactement comme la poule posée dessus — puis agrandi en dur par
 `image-rendering`. Même géométrie, même nombre de bosses ; seule la trame change.
 Mesuré : cinq teintes distinctes sur une ligne qui traverse le bord, contre le dégradé
 continu d'avant.
@@ -1343,7 +1365,7 @@ continu d'avant.
 En le vérifiant, un second écart est apparu sur le même écran : la planche pixel de
 l'icône de mouche avait été taillée sur la mouche du HUD, large de 39,7 pixels CSS,
 alors que le panneau de fin la pose à 76 sur grand écran. Son pixel d'art y valait
-**0,56** au lieu de 0,40 — c'était le seul élément visiblement plus grossier que le
+**0,56** au lieu de la grille du jeu — c'était le seul élément visiblement plus grossier que le
 reste. Elle est refaite sur la plus grande de ses trois utilisations ; les deux autres
 la réduisent, ce qui ne coûte rien.
 
