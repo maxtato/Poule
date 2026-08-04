@@ -961,7 +961,7 @@ L'écran se lit du haut vers le bas en trois temps :
 |---|---|
 | Barre du haut | Le carnet : record, mouches gobées, parties jouées |
 | Ciel | Le titre et sa phrase |
-| Terre | Le bouton *Jouer*, seul |
+| Terre | Le bouton *Start*, seul |
 
 Le **carnet** tient la barre du haut, comme le tableau de bord d'une borne d'arcade :
 trois colonnes séparées d'un filet, chacune une icône, son intitulé en petites
@@ -1369,7 +1369,7 @@ alors que le panneau de fin la pose à 76 sur grand écran. Son pixel d'art y va
 reste. Elle est refaite sur la plus grande de ses trois utilisations ; les deux autres
 la réduisent, ce qui ne coûte rien.
 
-Reste vectoriel : les icônes SVG du carnet et le liseré pointillé du bouton *Jouer*.
+Reste vectoriel : les icônes SVG du carnet.
 
 ## L'icône, et le jeu ajouté à l'écran d'accueil
 
