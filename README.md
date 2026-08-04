@@ -371,6 +371,36 @@ la couche de tête ne le couvre pas partout. On relève donc le jaune du bec des
 poses de vol qui dépasse d'elle — 9 767 pixels une fois élargis — et on comble avec
 la couleur du voisinage de la couche elle-même.
 
+### Le bec de dessous, deuxième prise
+
+Ce comblage n'a traité que le **jaune**. Le **trait d'encre** qui le cerne, lui, est
+resté : une pique noire pointue au milieu du gosier, à l'endroit où les deux mandibules
+se rejoignent. Mesurée : 198 pixels sur `fly_mid`, 242 sur `fly_up`, tous d'encre pure.
+À taille de jeu on la prend pour un détail du dessin ; sur l'icône en gros plan elle
+saute aux yeux.
+
+Elle est maintenant traitée à la composition et non plus sur la planche. On efface la
+**gorge** de la pose de vol avant d'y poser la tête. Le bouchon, c'est la gorge
+elle-même — le brun sombre, relevé sur le dessin, aucune autre partie n'a cette
+couleur — épaissie de 5,5 % de la largeur pour attraper le contour. Il est confiné à
+l'intérieur de la tête : ni la crête ni le corps ne sont touchés, et la crête
+volontairement incomplète de la couche continue d'être terminée par celle de dessous.
+
+Le relevé se fait toujours sur la planche **au trait**, même en mode pixel : la
+réduction de palette assombrit ce brun et le test de couleur ne le reconnaissait plus.
+C'est la même géométrie dans les deux styles, et le bouchon est mis à l'échelle de la
+sortie au moment de servir.
+
+La composition se fait **hors écran** — effacer sur le canevas du jeu emporterait le
+ciel avec — dans un canevas gardé d'une image à l'autre, refait seulement si la taille
+d'affichage change, c'est-à-dire jamais pendant une partie. Le clignotement du pouvoir
+se pose alors sur la composition entière plutôt que sur chaque planche, ce qui est de
+toute façon plus juste : l'éclipse porte sur toute la poule.
+
+Vérification : dans la boîte de la bouche, la composition est maintenant **identique au
+pixel près** à la tête posée sur le ciel seul. 120 pixels de différence avant, zéro
+après, dans les deux styles.
+
 Bouton lâché, en chute libre ou en plein saut, la poule n'agite pas les ailes mais
 elle ouvre quand même le bec en approchant d'une mouche. Là, **pas de couche du
 tout** : le dessin bec ouvert a le même corps, la même aile et les mêmes pattes que
@@ -920,7 +950,7 @@ L'écran se lit du haut vers le bas en trois temps :
 |---|---|
 | Barre du haut | Le carnet : record, mouches gobées, parties jouées |
 | Ciel | Le titre et sa phrase |
-| Terre | Le bouton *Jouer* et les trois consignes |
+| Terre | Le bouton *Jouer*, seul |
 
 Le **carnet** tient la barre du haut, comme le tableau de bord d'une borne d'arcade :
 trois colonnes séparées d'un filet, chacune une icône, son intitulé en petites
@@ -936,22 +966,33 @@ isolé aurait eu l'air d'une panne.
 Le **titre** se cale en haut du ciel plutôt qu'en son milieu : centré verticalement il
 flottait bas et laissait un grand vide au-dessus. Deux paquets de traits rouges
 l'encadrent, comme les traits de vitesse d'une case de bande dessinée. Sa phrase est
-bornée à `15.5em` pour tomber sur trois lignes courtes au lieu de deux longues.
+bornée à `15.5em` pour tomber sur des lignes courtes au lieu de longues.
 
-Le **bouton** porte une plume rouge et un liseré **pointillé** rentré de six pixels,
-tracé en pseudo-élément : un bord en pointillé sur le bouton lui-même se serait collé
-à son arête au lieu de flotter dedans.
+### Une phrase, pas un mode d'emploi
+
+Il y avait, en bas, trois consignes : appui court, appui maintenu, gober les mouches.
+Elles ont disparu. Un jeu qui tient dans deux gestes n'a pas besoin d'une notice — on
+appuie, on voit ce qui se passe. Ce qui ne se devine pas, en revanche, c'est que les
+mouches **rendent des plumes** : sans ça on les gobe pour le score sans comprendre
+qu'on rachète du vol. Cette seule chose a rejoint la phrase du haut, en une ligne :
+« Gober des mouches lui en rend. »
+
+Le **bouton** est maintenant rouge plein, écriture blanche : exactement le bouton
+*Recommencer* du panneau de fin. Les deux boutons du jeu se ressemblent donc, et c'est
+la seule chose rouge et pleine de l'accueil. Il portait un liseré pointillé rentré de
+six pixels, comme un ticket ; sur du rouge plein il n'y avait plus de fond clair pour
+le porter. La nervure de la plume est passée du crème au rouge du bouton, sans quoi
+elle disparaissait sur la plume devenue blanche.
 
 Deux réglages tiennent à des voisins encombrants :
 
 - la bande basse vaut **au moins** la hauteur de la bande de terre (`min-height`), et
   déborde au-dessus de la ligne d'horizon si l'écran est court — mieux vaut mordre un
   peu sur le décor que serrer les lignes ;
-- le bouton de son occupe le coin bas-gauche. Sur un écran étroit les consignes
-  occupent toute la largeur et passaient **sous sa pastille** ; en dessous de 720 px
-  de large, la bande basse se réserve donc 66 px de marge et les remonte au-dessus.
-  La mesure est faite sur les boîtes : on compare celle de chaque ligne à celle du
-  bouton, plutôt que de juger à l'œil sur une capture.
+- le bouton de son occupe le coin bas-gauche. En dessous de 720 px de large, la bande
+  basse se réserve 66 px de marge pour ne pas passer **sous sa pastille**. La mesure
+  est faite sur les boîtes, sur cinq gabarits : on compare celle du bouton à celles du
+  son et des réglages, plutôt que de juger à l'œil sur une capture.
 
 ## La chute
 
@@ -1304,65 +1345,31 @@ Reste vectoriel : les icônes SVG du carnet et le liseré pointillé du bouton *
 
 ## L'icône, et le jeu ajouté à l'écran d'accueil
 
-`icone.png` : un **gros plan**, en pixel art. La tête, le bec grand ouvert, la mouche
-juste devant, un paysage derrière. Rien n'est redessiné : ce sont les dessins du jeu,
-recadrés et composés.
+`icone.png` : une **petite scène du jeu** plutôt qu'un sujet découpé. La poule en vol,
+bec ouvert, une mouche juste devant, et derrière elle des montagnes, une colline, deux
+arbres et la bande de terre. Rien n'est redessiné : ce sont les dessins du jeu, teintés
+comme il les teinte, dans les couleurs du matin.
 
-Le premier essai montrait la scène entière — poule en vol, montagnes, arbres, bande de
-terre. Elle tenait à 1024 pixels et devenait une tache à soixante, ce qui est la seule
-taille qui compte sur un écran d'accueil. Une icône ne peut pas porter plus de **trois
-formes** : ici la crête, le bec ouvert et la mouche.
+Deux autres pistes ont été essayées et abandonnées. Une **scène entière** avec le décor
+complet, trop chargée. Un **gros plan de la tête** en pixel art, bec ouvert et mouche
+devant, qui tenait mieux à soixante pixels mais ne montrait plus de quoi parle le jeu.
+C'est celle-ci qui reste, **sans pixel** : les dessins d'origine, au trait, lissés.
 
-### Un cadrage de photo, pas une vignette
+À soixante pixels — la seule taille qui compte sur un écran d'accueil — la poule
+devient petite. C'est le prix d'une scène plutôt que d'un sujet, et c'est assumé : on y
+reconnaît une poule qui vole vers une mouche, ce qui est le sujet du jeu.
 
-Le sujet est `gobe_tete`, la tête seule, dont le cou file déjà vers le bas à gauche.
-Elle est posée **assez grande pour que la coupe du cou tombe hors du carré** : le cou
-sort par le bord gauche et par le bas, comme sur une photo cadrée serré. Une silhouette
-entière posée au milieu d'un fond se lit comme un autocollant ; un cadrage qui déborde
-se lit comme une image.
+Trois choses commandent la composition :
 
-La tête est **inclinée de seize degrés**, bec levé vers la mouche. L'inclinaison sert
-deux fois : elle donne une direction au regard, et elle fait plonger le cou plus
-franchement hors du coin bas gauche.
-
-La mouche est calée sur **l'ouverture du bec**, relevée et non estimée : on cherche le
-brun de la gorge dans la moitié droite du dessin — aucune autre partie n'a cette
-couleur — et son centre donne la hauteur. Le repérage se fait sur la planche au trait :
-la réduction de palette du pixel fond ce brun dans l'encre, et il n'y aurait plus rien
-à mesurer. Tous les repères sont exprimés en fractions de la boîte de matière.
-
-### Le fond, celui du jeu
-
-Plus un aplat : le ciel en dégradé, des montagnes, des collines, deux arbres, la terre.
-Trois plans, chacun plus grand **et plus foncé** que le précédent — c'est l'écart de
-valeur qui fait la profondeur, pas le nombre d'objets. La palette du jeu est
-volontairement pâle ; telle quelle, à soixante pixels, les trois plans se confondaient
-en une seule bouillie beige. Ils sont donc étagés vers le foncé à partir des teintes du
-jeu.
-
-Deux pièges de grille, réglés en mesurant plutôt qu'en regardant : la ligne d'horizon
-faisait trois pixels sur 1024, moins d'un demi-carré de la grille, et le vote de bloc
-l'effaçait purement et simplement — elle en fait seize. Les arbres, eux, étaient assez
-petits pour se réduire à deux taches ; ils ont doublé.
-
-### La grille
-
-La composition est faite **avec les dessins au trait**, même pour l'icône en pixel,
-puis la scène entière est ramenée sur une grille. Faire tourner une planche déjà
-pixelisée produit des escaliers irréguliers qu'aucune grille ne rattrape ensuite. En
-prime, le ciel sort en bandes franches et les montagnes ont la même trame que la poule.
-
-La grille fait **128 carrés de côté**, seize nuances. C'est un compromis mesuré : à 64
-la mouche n'occupait plus que dix carrés et devenait une tache noire ; à 128 elle garde
-ses ailes et son œil rouge, et le contour de la tête reste franchement en escalier.
-
-Deux autres choses commandent la composition, et elles viennent d'iOS :
-
-- **Le système arrondit lui-même les angles**, en superellipse et non en cercle. Le
-  carré est donc plein jusqu'aux bords, et le sujet tenu à l'écart des quatre coins.
-  La vérification se fait sous le vrai masque, à 180, 120, 87 et 60 pixels : c'est à
-  60 que se juge une icône, pas à 1024.
-- **La transparence est composée sur du noir.** Le fond est donc opaque.
+- Le décor est **étagé en trois teintes** de plus en plus soutenues : montagne, colline,
+  arbres. Sans cet écart les silhouettes se confondent et il ne reste qu'une tache.
+- La mouche n'est pas posée à l'œil. Le bout du bec est repéré en fractions du dessin,
+  puis **suivi dans le repère tourné** de la poule inclinée de treize degrés ; la mouche
+  se pose devant, décollée d'un écart fixe.
+- **Le système arrondit lui-même les angles**, en superellipse et non en cercle, et
+  **compose la transparence sur du noir**. Le carré est donc plein jusqu'aux bords, le
+  sujet tenu à l'écart des quatre coins, et le fond opaque. La vérification se fait sous
+  le vrai masque, à 180, 120, 87 et 60 pixels.
 
 L'icône est **embarquée en base64** dans la page, comme tout le reste : le jeu ne
 demande rien au réseau, pas même pour son icône. Une version 180 pour l'écran
@@ -1371,9 +1378,6 @@ d'accueil, une version 48 pour l'onglet.
 Ajouté à l'écran d'accueil, le jeu s'ouvre **en plein écran**, sans la barre de
 Safari, sous le nom court *La poule*. Le terrain se cale déjà sur `env(safe-area-inset-*)`,
 il n'y avait rien à reprendre pour ça.
-
-`icone-trait.png` est la même composition avec les dessins d'origine, si le style au
-trait redevient le style par défaut.
 
 ## Les outils du téléphone
 
