@@ -746,7 +746,7 @@ const OR_RAMPE=[[0,[38,26,6]],[.22,[122,80,14]],[.48,[214,150,32]],
                 [.72,[247,199,78]],[.90,[255,236,170]],[1,[255,252,235]]];
 const OR_ATTENTE=[19,32];     // secondes entre deux mouches dorees
 const OR_DUREE=6;             // duree du pouvoir
-const OR_FIN=1.4;             // derniere seconde : le halo clignote
+const OR_FIN=1.4;             // derniere seconde : le clignotement s'emballe
 const OR=["or_b","or_a"];     // les deux poses, memes indices que MOUCHE
 function dore(k){
   const im=SPR[k], W=im.naturalWidth, H=im.naturalHeight;
@@ -1965,6 +1965,30 @@ function drawTraits(){
    affiche a 157. La borne laisse les planches pixel intactes. */
 const LUIS_MAX=256;
 const luis=new Map();
+/* Les silhouettes du clignotement, une par dessin ET par couleur. teinter() ne garde
+   qu'une couleur par cle : le clignotement alternant blanc et or, il repeignait la
+   poule — 920 pixels de large en mode trait — a chaque bascule, et la cadence tombait
+   de 60 a 44 images par seconde. Ici chaque paire est peinte une fois pour toutes, et
+   bornee a la meme taille que le reflet, puisque la poule s'affiche a 157. */
+const teints=new Map();
+function silhouette(im, coul){
+  let par=teints.get(im);
+  if(!par){ par=new Map(); teints.set(im,par); }
+  let c=par.get(coul);
+  if(!c){
+    const [nw,nh]=taille(im);
+    const k=Math.min(1, LUIS_MAX/Math.max(nw,nh));
+    c=document.createElement("canvas");
+    c.width=Math.max(1,Math.round(nw*k)); c.height=Math.max(1,Math.round(nh*k));
+    const g=c.getContext("2d");
+    g.imageSmoothingEnabled=!save.pixel;
+    g.drawImage(im,0,0,c.width,c.height);
+    g.globalCompositeOperation="source-in";
+    g.fillStyle=coul; g.fillRect(0,0,c.width,c.height);
+    par.set(coul,c);
+  }
+  return c;
+}
 /* La mouche doree est un canevas, pas une image : elle n'a pas de naturalWidth. */
 function taille(im){ return [im.naturalWidth||im.width, im.naturalHeight||im.height]; }
 function reflet(im, u, force, lisse){
@@ -1992,22 +2016,6 @@ function reflet(im, u, force, lisse){
   g.fillStyle=gr; g.fillRect(0,0,sw,sh);
   g.globalCompositeOperation="source-over";
   return c;
-}
-/* L'etoile de lumiere : quatre branches fines et un coeur clair, comme l'eclat qu'on
-   pose sur un bijou. Elle bat, et c'est ce battement qu'on voit du coin de l'oeil. */
-function lueur(g,x,y,r,rot,a){
-  g.save(); g.translate(x,y); g.rotate(rot); g.globalAlpha=a;
-  g.fillStyle="#FFF6D2";
-  for(let i=0;i<2;i++){
-    g.beginPath();
-    g.moveTo(0,-r); g.quadraticCurveTo(r*0.11,-r*0.11, r,0);
-    g.quadraticCurveTo(r*0.11,r*0.11, 0,r);
-    g.quadraticCurveTo(-r*0.11,r*0.11, -r,0);
-    g.quadraticCurveTo(-r*0.11,-r*0.11, 0,-r);
-    g.fill();
-    g.rotate(Math.PI/4); r*=0.52;
-  }
-  g.restore();
 }
 function star(g,x,y,r,rot,trait){
   g.save(); g.translate(x,y); g.rotate(rot);
@@ -2216,22 +2224,16 @@ function draw(){
   for(const f of flies){                          // battement rapide : deux poses alternees
     const x=f.x+(f.jx||0), y=f.y+(f.jy||0);
     if(f.or){
-      /* Le halo respire, l'etoile bat, le reflet passe : trois rythmes differents,
-         pour que la mouche scintille au lieu de pulser comme une ampoule. */
-      const bat=0.5+0.5*Math.sin(t*5+f.ph);
-      const r=MOU_W*(0.66+0.14*bat);
+      /* Un halo qui respire, et rien d'autre autour : c'est le reflet qui balaie le
+         corps, plus bas, qui fait l'evenement. Charger la mouche d'etoiles et
+         d'eclats brouillait la lecture au lieu de l'aider. */
+      const bat=0.5+0.5*Math.sin(t*4.4+f.ph);
+      const r=MOU_W*(0.72+0.16*bat);
       const h=ctx.createRadialGradient(x,y,0,x,y,r);
-      h.addColorStop(0,"rgba(255,232,158,"+(0.62+0.28*bat).toFixed(3)+")");
-      h.addColorStop(0.55,"rgba(247,199,78,0.30)");
+      h.addColorStop(0,"rgba(255,232,158,"+(0.44+0.26*bat).toFixed(3)+")");
+      h.addColorStop(0.55,"rgba(247,199,78,"+(0.20+0.12*bat).toFixed(3)+")");
       h.addColorStop(1,"rgba(247,199,78,0)");
       ctx.fillStyle=h; ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill();
-      const pl=0.5+0.5*Math.sin(t*3.3+f.ph*1.7);
-      lueur(ctx, x, y, MOU_W*(0.52+0.30*pl), t*0.8+f.ph, 0.45+0.45*pl);
-      for(let i=0;i<3;i++){
-        const a=t*2.4+f.ph+i*2.094;
-        star(ctx, x+Math.cos(a)*MOU_W*0.66, y+Math.sin(a)*MOU_H*1.05,
-             2.6+1.4*Math.sin(t*6+i), a*0.6, 1.6);
-      }
     }
     cycle(f.or?OR:MOUCHE, t*14+f.ph, (k,a)=>{
       ctx.globalAlpha=a;
@@ -2241,7 +2243,7 @@ function draw(){
            permanente cesse d'etre un evenement et redevient une couleur. */
         const c=(t*1.05+f.ph*0.31)%1.9;
         if(c<1){
-          ctx.drawImage(reflet(im, c, 0.85, !save.pixel),
+          ctx.drawImage(reflet(im, c, 0.92, !save.pixel),
             x-MOU_W/2, y-MOU_H/2, MOU_W, MOU_H);
           return;
         }
@@ -2270,60 +2272,21 @@ function draw(){
   drawTraits();                     // derriere la poule : le mouvement, pas le sujet
 
   const im=henFrame();
-  /* Le pouvoir se lit sur la poule elle-meme : une silhouette doree un peu plus
-     grande posee derriere elle lui fait un lisere, et trois etincelles tournent
-     autour. La derniere seconde clignote : on doit sentir que ca se termine. */
-  if(traverse()){
+  /* Le pouvoir se lit sur la poule elle-meme : elle passe par eclipses en silhouette
+     blanche puis doree, comme l'invincibilite d'un jeu d'arcade. Le blanc et l'or
+     alternent dans le meme battement, ce qui donne la sensation de charge sans rien
+     ajouter autour d'elle.
+     Le rythme s'accelere dans la derniere seconde : c'est ce qui previent que ca va
+     s'arreter, la ou un simple clignotement dirait seulement que ca dure. */
+  const clignote=(()=>{
+    if(!traverse()) return null;
     const reste=orJusqu-t;
-    /* Deux battements superposes : une pulsation lente et reguliere pendant tout le
-       pouvoir, puis un clignotement franc dans la derniere seconde. Le premier dit
-       « ca dure », le second dit « ca va s'arreter ». */
-    const puls=0.62+0.38*Math.sin(t*7.4);
-    const bat = reste<OR_FIN ? (Math.sin(reste*26)>0?1:0.14) : puls;
-    const k=CLE.get(im);
-    if(k && FOOT_POSE[k]!==undefined){
-      /* Le lisere est pose exactement comme la poule elle-meme — meme recalage au
-         sol par FOOT_POSE, sinon il flotte a cote d'elle sur les poses dont les
-         pattes ne tombent pas a la meme hauteur. */
-      const w=SW*sc(), h=SH*sc();
-      const cale = hen.ground ? (FOOT_Y-FOOT_POSE[k])*sc() : 0;
-      const hx=hen.x, hy=hen.y-footOff()+cale;
-      /* Une lueur d'abord, le lisere ensuite : sur un ciel clair, un simple contour
-         dore ne se voit pas. La lueur donne la presence, le lisere donne la forme. */
-      const cx=hx+w/2, cy=hy+h*0.52;
-      const R=w*(0.72+0.14*puls);
-      const lu=ctx.createRadialGradient(cx,cy,w*0.16,cx,cy,R);
-      lu.addColorStop(0,"rgba(255,220,110,"+(0.50*bat).toFixed(3)+")");
-      lu.addColorStop(0.6,"rgba(247,199,78,"+(0.24*bat).toFixed(3)+")");
-      lu.addColorStop(1,"rgba(247,199,78,0)");
-      ctx.save();
-      ctx.fillStyle=lu; ctx.beginPath(); ctx.arc(cx,cy,R,0,7); ctx.fill();
-      /* Le lisere : la meme pose, doree, posee quatre fois autour d'elle. Un simple
-         agrandissement epaissit le contour d'un cote et l'amincit de l'autre, selon
-         ou le dessin est plein ; quatre decalages donnent une bordure reguliere. */
-      const d=Math.max(2, w*0.030);
-      ctx.globalAlpha=bat;
-      const sil=teinter(k,"#EFA81C");
-      for(const [ox,oy] of [[-d,0],[d,0],[0,-d],[0,d]])
-        ctx.drawImage(sil, hx+ox, hy+oy, w, h);
-      ctx.restore();
-      /* Et un reflet qui la balaie, comme sur la mouche : c'est ce passage de lumiere
-         qui dit « elle est chargee » mieux qu'un contour immobile. */
-      const c=(t*1.15)%1.7;
-      if(c<1){
-        ctx.save(); ctx.globalAlpha=0.9*bat;
-        ctx.drawImage(reflet(SPR[k], c, 0.75, !save.pixel), hx, hy, w, h);
-        ctx.restore();
-      }
-      for(let i=0;i<3;i++){
-        const a=t*3.1+i*2.094;
-        ctx.save(); ctx.globalAlpha=bat;
-        star(ctx, cx+Math.cos(a)*w*0.54, cy+Math.sin(a)*h*0.40,
-             5+2.2*Math.sin(t*7+i), a*0.5, 1.6);
-        ctx.restore();
-      }
-    }
-  }
+    const cad = reste<OR_FIN ? 11 : 5.5;
+    const ph=(t*cad)%1;
+    if(ph>=0.34) return null;
+    return ph<0.17 ? "#FFFDF0" : "#F5C33C";
+  })();
+
   if(hen.dead){
     if(deadPhase()===0 && chocSur){   // le rebond : cale par l'eclat du dessin
       ctx.drawImage(im, hen.x+80-REB_ECLAT[0]*REB_W, hen.y-REB_ECLAT[1]*REB_H, REB_W, REB_H);
@@ -2360,7 +2323,10 @@ function draw(){
     const poser=(key,alpha)=>{
       const cale = hen.ground ? (FOOT_Y-FOOT_POSE[key])*sc() : 0;
       ctx.globalAlpha=alpha;
-      ctx.drawImage(SPR[key], hen.x+jitter, hen.y-footOff()+cale-bob, w, h);
+      /* Sous pouvoir, c'est la silhouette teintee qui est posee, pas le dessin :
+         l'eclipse porte sur toute la poule, contour compris. */
+      ctx.drawImage(clignote ? silhouette(SPR[key], clignote) : SPR[key],
+        hen.x+jitter, hen.y-footOff()+cale-bob, w, h);
     };
     /* Le cycle et sa trainee ne valent que pour les poses de course : la pose de
        gobage se joue aussi au sol, et elle doit rester seule a l'ecran. */
@@ -2454,7 +2420,7 @@ function drawHUD(){
   }
 
   /* Le pouvoir : une barre doree sous la jauge de plumes, qui se vide. Elle dit ce
-     que le lisere de la poule ne dit pas — combien de temps il reste. */
+     que le clignotement de la poule ne dit pas — combien de temps il reste. */
   if(traverse()){
     const reste=(orJusqu-t)/OR_DUREE;
     const py=by+bh+9, ph2=bh*0.82;
@@ -2556,6 +2522,7 @@ function styleJeu(px, init){
   for(const k in t) SPR[k]=t[k];
   CLE.clear(); for(const k in SPR) if(!ALIAS[k]) CLE.set(SPR[k], k);
   for(const k in calques) delete calques[k];
+  teints.clear(); luis.clear();          // caches lies aux dessins du style precedent
   /* Les planches pixel sont dessinees a la grille du jeu puis agrandies : sans cette
      ligne le navigateur les lisserait et il ne resterait rien du travail. */
   vue.imageSmoothingEnabled=!px;

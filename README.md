@@ -146,44 +146,55 @@ et refaite à chaque bascule de style, si bien qu'elle suit le trait comme le pi
 ### La brillance
 
 Une couleur n'attire pas l'œil : c'est le mouvement qui l'attire. La mouche et la poule
-portent donc deux effets **animés**, en plus de l'or.
+portent donc chacune un effet **animé**, en plus de l'or. Plusieurs pistes ont été
+dessinées et animées côte à côte pour choisir ; ce sont celles-ci qui ont été retenues,
+et les autres — l'étoile de lumière qui bat, le liseré doré, les étincelles qui
+tournent autour de la poule — ont été abandonnées.
 
-**Le reflet** : une bande claire balaie le dessin, retenue à l'intérieur par
-`source-atop`. C'est la mécanique d'un reflet sur du métal — elle épouse la silhouette
-au lieu de la déborder. Il ne balaie pas en continu : il passe, puis attend. Une
-brillance permanente cesse d'être un événement et redevient une couleur.
+**Sur la mouche, un halo qui respire et un reflet qui passe.** Le halo est un dégradé
+radial dont le rayon et l'opacité battent ensemble : c'est ce qui la fait repérer de
+loin, avant qu'on distingue le dessin. Le reflet est une bande claire qui balaie la
+mouche, retenue à l'intérieur par `source-atop` — la mécanique d'un reflet sur du
+métal, qui épouse la silhouette au lieu de la déborder. Il ne balaie pas en continu :
+il passe, puis attend presque une seconde. Une brillance permanente cesse d'être un
+événement et redevient une couleur. Les deux rythmes sont volontairement décalés, pour
+que ça scintille au lieu de pulser comme une ampoule.
 
-**L'étoile de lumière** : quatre branches fines et un cœur clair, comme l'éclat qu'on
-pose sur un bijou. Elle bat, et c'est ce battement qu'on voit du coin de l'œil.
+**Sur la poule, le clignotement d'invincibilité des jeux d'arcade.** Elle passe par
+éclipses en silhouette pleine, **blanche puis dorée**, dans le même battement. Rien
+n'est ajouté autour d'elle : c'est elle qui change d'état, ce qui se lit tout de suite
+même quand elle est petite et que le décor est chargé. Le battement occupe un tiers du
+cycle, assez pour être franc sans qu'on perde la pose.
 
-Sur la poule, deux battements se superposent : une **pulsation** lente et régulière
-pendant tout le pouvoir, puis un **clignotement** franc dans la dernière seconde. Le
-premier dit « ça dure », le second dit « ça va s'arrêter ».
+La cadence **s'emballe dans la dernière seconde**, de 5,5 à 11 battements par seconde.
+C'est ce qui prévient que le pouvoir va s'arrêter, là où un clignotement régulier
+dirait seulement qu'il dure.
 
-Un piège de performance en passant. Le reflet repeint un dégradé à chaque image ; un
-seul canevas hors écran partagé se **redimensionnait entre la mouche et la poule**,
-donc deux réallocations par image — 54 images par seconde au lieu de 60. Il y a
-maintenant un canevas par dessin, et il est borné à 256 pixels : le dessin de la poule
-en fait 920, remplir un dégradé là-dessus soixante fois par seconde ne sert à rien
-puisqu'il est affiché à 157. La borne laisse les planches pixel intactes. Mesuré à 60
-images par seconde dans les deux styles, pouvoir allumé et mouches dorées à l'écran.
+Deux pièges de performance en passant, tous deux dus au fait que ces effets repeignent
+un dessin à chaque image.
+
+Le reflet d'abord : un seul canevas hors écran partagé se **redimensionnait entre la
+mouche et la poule**, donc deux réallocations par image — 54 images par seconde au lieu
+de 60. Il y a maintenant un canevas par dessin, borné à 256 pixels : la planche de la
+poule en fait 920, remplir un dégradé là-dessus soixante fois par seconde ne sert à
+rien puisqu'elle est affichée à 157.
+
+Le clignotement ensuite : la fonction de teinte du décor ne garde **qu'une couleur par
+dessin**, et le blanc et l'or se chassaient l'un l'autre — la poule était donc
+entièrement repeinte à chaque bascule, 44 images par seconde. Les silhouettes sont
+maintenant gardées par couple (dessin, couleur), peintes une fois pour toutes, bornées
+elles aussi. Les deux bornes laissent les planches pixel intactes.
+
+Mesuré ensuite en conditions réelles : le pouvoir allumé et une mouche dorée à l'écran
+coûtent, à la mesure près, **ce que coûtent quatre mouches ordinaires**.
 
 Le pouvoir se lit à trois endroits, et il en faut trois :
 
 | Où | Quoi |
 |---|---|
-| Sur la mouche | Halo qui respire, étoile qui bat, reflet qui passe — trois rythmes différents, pour que ça scintille au lieu de pulser comme une ampoule |
-| Sur la poule | Lueur pulsée, liseré doré, reflet qui la balaie, trois étincelles qui tournent. La dernière seconde clignote |
+| Sur la mouche | Un halo qui respire, un reflet qui la balaie par intermittence |
+| Sur la poule | Elle clignote en blanc et en or ; le rythme double dans la dernière seconde |
 | Dans le HUD | Une barre dorée qui se vide sous la jauge de plumes |
-
-Le liseré n'est pas un simple agrandissement de la pose : agrandir épaissit le contour
-d'un côté et l'amincit de l'autre, selon où le dessin est plein. C'est la même pose,
-dorée, posée **quatre fois autour** d'elle. Elle est calée exactement comme la poule,
-`FOOT_POSE` compris, sinon le liseré flotte à côté d'elle sur les poses dont les pattes
-ne tombent pas à la même hauteur.
-
-Une lueur seule ne suffisait pas non plus : sur un ciel clair, un contour doré ne se
-voit pas. La lueur donne la présence, le liseré donne la forme.
 
 Deux règles de jeu, pour que ça reste lisible :
 
