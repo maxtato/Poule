@@ -998,23 +998,30 @@ ouvre une feuille où l'on choisit — deux vignettes montrant la même poule de
 deux façons, parce que montrer la différence vaut mieux que la nommer. Le choix est
 gardé dans la sauvegarde et survit au rechargement.
 
-Ça ne coûte presque rien : les planches en pixel pèsent **137 Ko** contre 13 Mo pour
-les originales. Les deux tiennent dans le même fichier sans discussion.
+Ça coûte peu : les planches en pixel pèsent **519 Ko** contre 13 Mo pour les
+originales. Les deux tiennent dans le même fichier sans discussion.
 
 ### Une seule grille pour tout le jeu
 
 Convertir chaque dessin à une largeur fixe — 64 pixels pour la poule, 64 pour la
 montagne — donnerait des pixels **gros comme une maison** sur la montagne et
 minuscules sur la mouche : cinquante-neuf grilles différentes, et un décor qui jure
-avec le personnage. Le pixel vaut donc **0,85 pixel CSS**, le même partout ; chaque
+avec le personnage. Le pixel vaut donc **0,33 pixel CSS**, le même partout ; chaque
 dessin est converti à sa taille d'affichage divisée par cette valeur. La poule fait
-90 pixels de large, la mouche 28, la montagne 566.
+232 pixels de large, la mouche 73, la montagne 1458.
 
-C'est la grille la plus fine qui tienne encore debout. En dessous, le pixel d'art
-descend sous les deux pixels d'écran d'un téléphone ordinaire — 1,70 à `dpr` 2 avec
-cette valeur, 1,39 à 0,70 — et le navigateur se met à rendre les carrés inégaux :
-certains sur deux pixels, d'autres sur un. La finesse tient dans un seul nombre, et
-`1.00` donne le doublement propre si on préfère la régularité au détail.
+Cette valeur n'est pas choisie au jugé : **un pixel d'art y vaut exactement un pixel
+d'écran** sur un téléphone à `dpr` 3. C'est la grille la plus fine qui garde un sens —
+en dessous, le navigateur doit jeter des pixels de la planche pour la faire tenir, et
+ce qu'il jette change d'une image à l'autre : le dessin grouille dès qu'il bouge. Un
+dessin immobile, lui, ne trahit rien, ce qui rend le défaut facile à ne pas voir sur
+une capture.
+
+C'est d'ailleurs par là que la bonne finesse a été trouvée. La poule assommée était
+dessinée bien plus finement que le reste — non par choix, mais parce que sa planche
+était taillée pour le panneau de fin et employée au sol, quatre fois trop grande.
+Ce défaut était le bon résultat : c'est cette finesse-là, ramenée au seuil où elle
+tient en mouvement, qui vaut maintenant pour tout le jeu.
 
 Cette taille d'affichage est **mesurée, pas devinée** : `drawImage` est emballé le
 temps d'une partie et relève, pour chaque dessin, la taille à laquelle il est posé. La
