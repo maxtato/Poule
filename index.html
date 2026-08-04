@@ -1951,6 +1951,63 @@ function drawTraits(){
 }
 /* Les deux fonctions prennent leur contexte : la ronde d'etoiles sert au jeu, sur le
    canvas du terrain, et au panneau de fin, sur le sien. */
+/* ---------- la brillance ----------
+   Une couleur ne suffit pas a attirer l'oeil : c'est le mouvement qui l'attire. Deux
+   effets, tous deux animes.
+   Le reflet : une bande claire qui balaie le dessin, retenue dedans par `source-atop`
+   — c'est la meme mecanique qu'un reflet sur du metal, et elle epouse la silhouette
+   au lieu de la deborder. Un seul canevas hors ecran sert a tout le monde. */
+/* Un canevas par dessin, jamais redimensionne : un seul canevas partage se
+   redimensionnait entre la mouche et la poule a chaque image, ce qui reallouait deux
+   fois par image. Et il est borne — le dessin de la poule fait 920 pixels de large,
+   remplir un degrade la-dessus soixante fois par seconde ne sert a rien puisqu'il est
+   affiche a 157. La borne laisse les planches pixel intactes. */
+const LUIS_MAX=256;
+const luis=new Map();
+/* La mouche doree est un canevas, pas une image : elle n'a pas de naturalWidth. */
+function taille(im){ return [im.naturalWidth||im.width, im.naturalHeight||im.height]; }
+function reflet(im, u, force, lisse){
+  let e=luis.get(im);
+  if(!e){
+    const [nw,nh]=taille(im);
+    const k=Math.min(1, LUIS_MAX/Math.max(nw,nh));
+    const cv2=document.createElement("canvas");
+    cv2.width=Math.max(1,Math.round(nw*k)); cv2.height=Math.max(1,Math.round(nh*k));
+    e={c:cv2, g:cv2.getContext("2d")};
+    luis.set(im,e);
+  }
+  const c=e.c, g=e.g, sw=c.width, sh=c.height;
+  g.imageSmoothingEnabled=!!lisse;
+  g.globalCompositeOperation="source-over";
+  g.clearRect(0,0,sw,sh);
+  g.drawImage(im,0,0,sw,sh);
+  g.globalCompositeOperation="source-atop";
+  const larg=sw*0.55, x=-larg+u*(sw+2*larg);
+  const gr=g.createLinearGradient(x-larg/2, -sh*0.3, x+larg/2, sh*1.3);
+  gr.addColorStop(0,"rgba(255,255,255,0)");
+  gr.addColorStop(0.45,"rgba(255,252,226,"+force.toFixed(3)+")");
+  gr.addColorStop(0.55,"rgba(255,252,226,"+force.toFixed(3)+")");
+  gr.addColorStop(1,"rgba(255,255,255,0)");
+  g.fillStyle=gr; g.fillRect(0,0,sw,sh);
+  g.globalCompositeOperation="source-over";
+  return c;
+}
+/* L'etoile de lumiere : quatre branches fines et un coeur clair, comme l'eclat qu'on
+   pose sur un bijou. Elle bat, et c'est ce battement qu'on voit du coin de l'oeil. */
+function lueur(g,x,y,r,rot,a){
+  g.save(); g.translate(x,y); g.rotate(rot); g.globalAlpha=a;
+  g.fillStyle="#FFF6D2";
+  for(let i=0;i<2;i++){
+    g.beginPath();
+    g.moveTo(0,-r); g.quadraticCurveTo(r*0.11,-r*0.11, r,0);
+    g.quadraticCurveTo(r*0.11,r*0.11, 0,r);
+    g.quadraticCurveTo(-r*0.11,r*0.11, -r,0);
+    g.quadraticCurveTo(-r*0.11,-r*0.11, 0,-r);
+    g.fill();
+    g.rotate(Math.PI/4); r*=0.52;
+  }
+  g.restore();
+}
 function star(g,x,y,r,rot,trait){
   g.save(); g.translate(x,y); g.rotate(rot);
   g.beginPath();
@@ -2158,24 +2215,37 @@ function draw(){
   for(const f of flies){                          // battement rapide : deux poses alternees
     const x=f.x+(f.jx||0), y=f.y+(f.jy||0);
     if(f.or){
-      /* Un halo qui bat et trois etincelles en ronde : de loin c'est la lueur qu'on
-         repere, pas la mouche. */
+      /* Le halo respire, l'etoile bat, le reflet passe : trois rythmes differents,
+         pour que la mouche scintille au lieu de pulser comme une ampoule. */
       const bat=0.5+0.5*Math.sin(t*5+f.ph);
-      const r=MOU_W*(0.62+0.10*bat);
+      const r=MOU_W*(0.66+0.14*bat);
       const h=ctx.createRadialGradient(x,y,0,x,y,r);
-      h.addColorStop(0,"rgba(255,226,140,"+(0.55+0.25*bat).toFixed(3)+")");
-      h.addColorStop(0.55,"rgba(247,199,78,0.28)");
+      h.addColorStop(0,"rgba(255,232,158,"+(0.62+0.28*bat).toFixed(3)+")");
+      h.addColorStop(0.55,"rgba(247,199,78,0.30)");
       h.addColorStop(1,"rgba(247,199,78,0)");
       ctx.fillStyle=h; ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill();
+      const pl=0.5+0.5*Math.sin(t*3.3+f.ph*1.7);
+      lueur(ctx, x, y, MOU_W*(0.52+0.30*pl), t*0.8+f.ph, 0.45+0.45*pl);
       for(let i=0;i<3;i++){
         const a=t*2.4+f.ph+i*2.094;
-        star(ctx, x+Math.cos(a)*MOU_W*0.62, y+Math.sin(a)*MOU_H*0.95,
+        star(ctx, x+Math.cos(a)*MOU_W*0.66, y+Math.sin(a)*MOU_H*1.05,
              2.6+1.4*Math.sin(t*6+i), a*0.6, 1.6);
       }
     }
     cycle(f.or?OR:MOUCHE, t*14+f.ph, (k,a)=>{
       ctx.globalAlpha=a;
-      ctx.drawImage(SPR[k], x-MOU_W/2, y-MOU_H/2, MOU_W, MOU_H);
+      const im=SPR[k];
+      if(f.or){
+        /* Le reflet ne balaie pas en continu : il passe, puis attend. Une brillance
+           permanente cesse d'etre un evenement et redevient une couleur. */
+        const c=(t*1.05+f.ph*0.31)%1.9;
+        if(c<1){
+          ctx.drawImage(reflet(im, c, 0.85, !save.pixel),
+            x-MOU_W/2, y-MOU_H/2, MOU_W, MOU_H);
+          return;
+        }
+      }
+      ctx.drawImage(im, x-MOU_W/2, y-MOU_H/2, MOU_W, MOU_H);
     });
   }
   ctx.globalAlpha=1;
@@ -2204,7 +2274,11 @@ function draw(){
      autour. La derniere seconde clignote : on doit sentir que ca se termine. */
   if(traverse()){
     const reste=orJusqu-t;
-    const bat = reste<OR_FIN ? (Math.sin(reste*26)>0?1:0.15) : 1;
+    /* Deux battements superposes : une pulsation lente et reguliere pendant tout le
+       pouvoir, puis un clignotement franc dans la derniere seconde. Le premier dit
+       « ca dure », le second dit « ca va s'arreter ». */
+    const puls=0.62+0.38*Math.sin(t*7.4);
+    const bat = reste<OR_FIN ? (Math.sin(reste*26)>0?1:0.14) : puls;
     const k=CLE.get(im);
     if(k && FOOT_POSE[k]!==undefined){
       /* Le lisere est pose exactement comme la poule elle-meme — meme recalage au
@@ -2216,12 +2290,13 @@ function draw(){
       /* Une lueur d'abord, le lisere ensuite : sur un ciel clair, un simple contour
          dore ne se voit pas. La lueur donne la presence, le lisere donne la forme. */
       const cx=hx+w/2, cy=hy+h*0.52;
-      const lu=ctx.createRadialGradient(cx,cy,w*0.16,cx,cy,w*0.78);
-      lu.addColorStop(0,"rgba(255,214,92,"+(0.42*bat).toFixed(3)+")");
-      lu.addColorStop(0.6,"rgba(247,199,78,"+(0.20*bat).toFixed(3)+")");
+      const R=w*(0.72+0.14*puls);
+      const lu=ctx.createRadialGradient(cx,cy,w*0.16,cx,cy,R);
+      lu.addColorStop(0,"rgba(255,220,110,"+(0.50*bat).toFixed(3)+")");
+      lu.addColorStop(0.6,"rgba(247,199,78,"+(0.24*bat).toFixed(3)+")");
       lu.addColorStop(1,"rgba(247,199,78,0)");
       ctx.save();
-      ctx.fillStyle=lu; ctx.beginPath(); ctx.arc(cx,cy,w*0.78,0,7); ctx.fill();
+      ctx.fillStyle=lu; ctx.beginPath(); ctx.arc(cx,cy,R,0,7); ctx.fill();
       /* Le lisere : la meme pose, doree, posee quatre fois autour d'elle. Un simple
          agrandissement epaissit le contour d'un cote et l'amincit de l'autre, selon
          ou le dessin est plein ; quatre decalages donnent une bordure reguliere. */
@@ -2231,6 +2306,14 @@ function draw(){
       for(const [ox,oy] of [[-d,0],[d,0],[0,-d],[0,d]])
         ctx.drawImage(sil, hx+ox, hy+oy, w, h);
       ctx.restore();
+      /* Et un reflet qui la balaie, comme sur la mouche : c'est ce passage de lumiere
+         qui dit « elle est chargee » mieux qu'un contour immobile. */
+      const c=(t*1.15)%1.7;
+      if(c<1){
+        ctx.save(); ctx.globalAlpha=0.9*bat;
+        ctx.drawImage(reflet(SPR[k], c, 0.75, !save.pixel), hx, hy, w, h);
+        ctx.restore();
+      }
       for(let i=0;i<3;i++){
         const a=t*3.1+i*2.094;
         ctx.save(); ctx.globalAlpha=bat;

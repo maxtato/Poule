@@ -143,12 +143,37 @@ l'éclat : sans lui la mouche dorée n'a plus de regard. Elle est fabriquée au 
 et refaite à chaque bascule de style, si bien qu'elle suit le trait comme le pixel
 **sans peser un octet de plus** dans le fichier.
 
+### La brillance
+
+Une couleur n'attire pas l'œil : c'est le mouvement qui l'attire. La mouche et la poule
+portent donc deux effets **animés**, en plus de l'or.
+
+**Le reflet** : une bande claire balaie le dessin, retenue à l'intérieur par
+`source-atop`. C'est la mécanique d'un reflet sur du métal — elle épouse la silhouette
+au lieu de la déborder. Il ne balaie pas en continu : il passe, puis attend. Une
+brillance permanente cesse d'être un événement et redevient une couleur.
+
+**L'étoile de lumière** : quatre branches fines et un cœur clair, comme l'éclat qu'on
+pose sur un bijou. Elle bat, et c'est ce battement qu'on voit du coin de l'œil.
+
+Sur la poule, deux battements se superposent : une **pulsation** lente et régulière
+pendant tout le pouvoir, puis un **clignotement** franc dans la dernière seconde. Le
+premier dit « ça dure », le second dit « ça va s'arrêter ».
+
+Un piège de performance en passant. Le reflet repeint un dégradé à chaque image ; un
+seul canevas hors écran partagé se **redimensionnait entre la mouche et la poule**,
+donc deux réallocations par image — 54 images par seconde au lieu de 60. Il y a
+maintenant un canevas par dessin, et il est borné à 256 pixels : le dessin de la poule
+en fait 920, remplir un dégradé là-dessus soixante fois par seconde ne sert à rien
+puisqu'il est affiché à 157. La borne laisse les planches pixel intactes. Mesuré à 60
+images par seconde dans les deux styles, pouvoir allumé et mouches dorées à l'écran.
+
 Le pouvoir se lit à trois endroits, et il en faut trois :
 
 | Où | Quoi |
 |---|---|
-| Sur la mouche | Un halo qui bat et trois étincelles en ronde. De loin c'est la lueur qu'on repère, pas la mouche |
-| Sur la poule | Une lueur, un liseré doré, trois étincelles qui tournent. La dernière seconde clignote |
+| Sur la mouche | Halo qui respire, étoile qui bat, reflet qui passe — trois rythmes différents, pour que ça scintille au lieu de pulser comme une ampoule |
+| Sur la poule | Lueur pulsée, liseré doré, reflet qui la balaie, trois étincelles qui tournent. La dernière seconde clignote |
 | Dans le HUD | Une barre dorée qui se vide sous la jauge de plumes |
 
 Le liseré n'est pas un simple agrandissement de la pose : agrandir épaissit le contour
