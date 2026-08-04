@@ -734,6 +734,43 @@ const VOL    = ["fly_down","fly_mid","fly_up","fly_mid"];
    parce que EAGLE_BAT suit la longueur de la liste. */
 const AIGLE  = ["eagle_up","eagle_up2","eagle_mid","eagle_down"];
 const MOUCHE = ["fly_b","fly_a"];
+/* ---------- la mouche doree ----------
+   Rare, brillante, et elle donne un pouvoir : pendant OR_DUREE secondes la poule
+   traverse les obstacles au lieu de s'y assommer.
+   Ce n'est pas un autre dessin : c'est la meme mouche passee dans une rampe d'or. On
+   garde la luminance du dessin — donc son modele, ses reflets et son trait — et on ne
+   remplace que la teinte. Fabriquee au demarrage et refaite a chaque bascule de style,
+   elle suit le trait comme le pixel sans peser un octet de plus dans le fichier. */
+const OR_RAMPE=[[0,[38,26,6]],[.22,[122,80,14]],[.48,[214,150,32]],
+                [.72,[247,199,78]],[.90,[255,236,170]],[1,[255,252,235]]];
+const OR_ATTENTE=[19,32];     // secondes entre deux mouches dorees
+const OR_DUREE=6;             // duree du pouvoir
+const OR_FIN=1.4;             // derniere seconde : le halo clignote
+const OR=["or_b","or_a"];     // les deux poses, memes indices que MOUCHE
+function dore(k){
+  const im=SPR[k], W=im.naturalWidth, H=im.naturalHeight;
+  const c=document.createElement("canvas"); c.width=W; c.height=H;
+  const g=c.getContext("2d",{willReadFrequently:true});
+  g.imageSmoothingEnabled=false; g.drawImage(im,0,0);
+  const d=g.getImageData(0,0,W,H), q=d.data;
+  const rampe=u=>{ for(let i=1;i<OR_RAMPE.length;i++){
+      if(u<=OR_RAMPE[i][0]||i===OR_RAMPE.length-1){
+        const a=OR_RAMPE[i-1], b=OR_RAMPE[i];
+        const e=Math.max(0,Math.min(1,(u-a[0])/(b[0]-a[0])));
+        return [0,1,2].map(j=>Math.round(a[1][j]+(b[1][j]-a[1][j])*e)); } } };
+  for(let i=0;i<W*H;i++){
+    const o=i*4; if(q[o+3]<8) continue;
+    const R=q[o],G=q[o+1],B=q[o+2];
+    const sat=Math.max(R,G,B)-Math.min(R,G,B);
+    let l=(0.299*R+0.587*G+0.114*B)/255;
+    /* L'oeil rouge est le seul point sature du dessin : il passe en clair et fait
+       l'eclat, sinon la mouche doree n'a plus de regard. */
+    if(sat>90 && R>G+40) l=Math.min(1, l+0.55);
+    const c2=rampe(l); q[o]=c2[0]; q[o+1]=c2[1]; q[o+2]=c2[2];
+  }
+  g.putImageData(d,0,0);
+  return c;
+}
 /* TRACE_BAT a 0 : plus de trainee du tout sur les battements d'ailes. Les positions
    se succedent nettes, sans rien pour combler l'ecart. La course garde la sienne,
    qui est reglee par FONDU et TRACE, plus haut. */
@@ -882,7 +919,12 @@ const SFX={
                tone(f,.06,{vol:.20,to:f*1.5}); tone(f*1.5,.09,{vol:.16,at:.05}); },
   choc:  ()=>{ souffle(.30,{vol:.30,cut:700}); tone(280,.38,{type:"sawtooth",vol:.26,to:52}); },
   palier:()=>{ tone(880,.09,{type:"triangle",vol:.16}); tone(1320,.13,{type:"triangle",vol:.13,at:.07}); },
-  record:()=>{ [660,880,1100,1320].forEach((f,i)=>tone(f,.14,{type:"triangle",vol:.18,at:i*.075})); }
+  record:()=>{ [660,880,1100,1320].forEach((f,i)=>tone(f,.14,{type:"triangle",vol:.18,at:i*.075})); },
+  /* La doree : une montee plus longue et plus brillante que le record, pour qu'on
+     n'hesite pas une seconde sur ce qui vient de se passer. */
+  pouvoir:()=>{ [523,659,784,1047,1319].forEach((f,i)=>
+                  tone(f,.20,{type:"triangle",vol:.20,at:i*.055,to:f*1.02}));
+                souffle(.22,{vol:.10,cut:2600,at:.02}); }
 };
 /* Le rappel au demarrage se fait sans bruit : personne ne veut d'un bip a
    l'ouverture de la page. */
@@ -961,6 +1003,8 @@ addEventListener("orientationchange",()=>setTimeout(resize,120));
 /* ---------- etat ---------- */
 const S={MENU:0,PLAY:1,DEAD:2};
 let state=S.MENU, best=save.best, deadAt=-9, overShown=false;
+let tOr=0, orJusqu=-9;      // prochaine mouche doree, et fin du pouvoir
+function traverse(){ return t<orJusqu && !hen.dead; }
 let deadLand=-9;      // instant du contact au sol
 /* D'ou vient le choc : en vol ou en course. Fige au moment du coup, sinon la pose
    changerait au premier dixieme de seconde, quand elle quitte le sol. */
@@ -1034,7 +1078,7 @@ function reset(){
   obs=[]; flies=[]; puffs=[]; plumes=[]; traits=[]; pops=[]; miettes=[];
   combo=0; lastEat=-9; palier=0; recBeaten=false; flashT=-9; flashTxt="";
   deadLand=-9; chocVol=false; chocSur=false; deadVx=0; deadFrein=0;
-  tFly=3;
+  tFly=3; tOr=OR_ATTENTE[0]*0.55; orJusqu=-9;
   clouds=[]; for(let i=0;i<5;i++) clouds.push({x:Math.random()*VIEW_W*1.5, f:.15+Math.random()*.6, s:.55+Math.random()*.6, v:.5+Math.random()*.7});
   /* Les massifs debordent largement du cadre : on seme au-dela des deux bords pour
      qu'aucun n'entre ni ne sorte a vue. */
@@ -1693,6 +1737,15 @@ function update(dt){
     }
   }
 
+  /* La doree arrive seule, a hauteur de vol franche, et sans derive : on doit la
+     voir venir et decider d'aller la chercher. */
+  tOr-=dt;
+  if(tOr<=0){
+    tOr=OR_ATTENTE[0]+Math.random()*(OR_ATTENTE[1]-OR_ATTENTE[0]);
+    flies.push({x:VIEW_W+90, y:Math.max(-skyH+160, -230-Math.random()*260),
+      ph:Math.random()*7, amp:9, sp:1.7, drift:0, or:true});
+  }
+
   const FLY_MIN=-52-MOU_H/2;
   for(const f of flies){
     f.x-=(speed+f.drift)*dt;
@@ -1715,13 +1768,21 @@ function update(dt){
     if(Math.abs(f.x-(hen.x+78))<52 && Math.abs(f.y-(hen.y-56))<54){
       flies.splice(i,1);
       eaten++;
-      hen.feathers=Math.min(1,hen.feathers+2/6);   // une mouche = deux plumes
+      hen.feathers=Math.min(1,hen.feathers+(f.or?1:2/6));   // la doree rend tout
       combo = (t-lastEat<COMBO_T) ? combo+1 : 1;
       lastEat=t;
-      SFX.gobe(combo-1);
-      /* Plus la chaine est longue, plus l'eclat est fourni : le gain se lit dans
-         la gerbe plutot que dans un chiffre. */
-      eclat(f.x, f.y, 7+Math.min(combo,8));
+      if(f.or){
+        /* Le pouvoir ne s'additionne pas indefiniment : une doree gobee pendant qu'il
+           dure repart de la duree pleine, elle ne l'empile pas. */
+        orJusqu=t+OR_DUREE;
+        SFX.pouvoir(); flash("Traversée !"); pop(f.x, f.y-30, "TRAVERSÉE", "#D9A520");
+        eclat(f.x, f.y, 22);
+      }else{
+        SFX.gobe(combo-1);
+        /* Plus la chaine est longue, plus l'eclat est fourni : le gain se lit dans
+           la gerbe plutot que dans un chiffre. */
+        eclat(f.x, f.y, 7+Math.min(combo,8));
+      }
     }
   }
 
@@ -1769,6 +1830,7 @@ function update(dt){
   miettes=miettes.filter(p=>p.l>0);
 
   const hb=henBox();
+  if(traverse()) { shake=Math.max(0,shake-dt*45); return; }   // rien ne l'arrete
   for(const o of obs){
     const b=obsBox(o);
     if(hb.x<b.x+b.w && hb.x+hb.w>b.x && hb.y<b.y+b.h && hb.y+hb.h>b.y){
@@ -2094,9 +2156,26 @@ function draw(){
   ctx.globalAlpha=1;
 
   for(const f of flies){                          // battement rapide : deux poses alternees
-    cycle(MOUCHE, t*14+f.ph, (k,a)=>{
+    const x=f.x+(f.jx||0), y=f.y+(f.jy||0);
+    if(f.or){
+      /* Un halo qui bat et trois etincelles en ronde : de loin c'est la lueur qu'on
+         repere, pas la mouche. */
+      const bat=0.5+0.5*Math.sin(t*5+f.ph);
+      const r=MOU_W*(0.62+0.10*bat);
+      const h=ctx.createRadialGradient(x,y,0,x,y,r);
+      h.addColorStop(0,"rgba(255,226,140,"+(0.55+0.25*bat).toFixed(3)+")");
+      h.addColorStop(0.55,"rgba(247,199,78,0.28)");
+      h.addColorStop(1,"rgba(247,199,78,0)");
+      ctx.fillStyle=h; ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill();
+      for(let i=0;i<3;i++){
+        const a=t*2.4+f.ph+i*2.094;
+        star(ctx, x+Math.cos(a)*MOU_W*0.62, y+Math.sin(a)*MOU_H*0.95,
+             2.6+1.4*Math.sin(t*6+i), a*0.6, 1.6);
+      }
+    }
+    cycle(f.or?OR:MOUCHE, t*14+f.ph, (k,a)=>{
       ctx.globalAlpha=a;
-      ctx.drawImage(SPR[k], f.x-MOU_W/2+(f.jx||0), f.y-MOU_H/2+(f.jy||0), MOU_W, MOU_H);
+      ctx.drawImage(SPR[k], x-MOU_W/2, y-MOU_H/2, MOU_W, MOU_H);
     });
   }
   ctx.globalAlpha=1;
@@ -2120,6 +2199,47 @@ function draw(){
   drawTraits();                     // derriere la poule : le mouvement, pas le sujet
 
   const im=henFrame();
+  /* Le pouvoir se lit sur la poule elle-meme : une silhouette doree un peu plus
+     grande posee derriere elle lui fait un lisere, et trois etincelles tournent
+     autour. La derniere seconde clignote : on doit sentir que ca se termine. */
+  if(traverse()){
+    const reste=orJusqu-t;
+    const bat = reste<OR_FIN ? (Math.sin(reste*26)>0?1:0.15) : 1;
+    const k=CLE.get(im);
+    if(k && FOOT_POSE[k]!==undefined){
+      /* Le lisere est pose exactement comme la poule elle-meme — meme recalage au
+         sol par FOOT_POSE, sinon il flotte a cote d'elle sur les poses dont les
+         pattes ne tombent pas a la meme hauteur. */
+      const w=SW*sc(), h=SH*sc();
+      const cale = hen.ground ? (FOOT_Y-FOOT_POSE[k])*sc() : 0;
+      const hx=hen.x, hy=hen.y-footOff()+cale;
+      /* Une lueur d'abord, le lisere ensuite : sur un ciel clair, un simple contour
+         dore ne se voit pas. La lueur donne la presence, le lisere donne la forme. */
+      const cx=hx+w/2, cy=hy+h*0.52;
+      const lu=ctx.createRadialGradient(cx,cy,w*0.16,cx,cy,w*0.78);
+      lu.addColorStop(0,"rgba(255,214,92,"+(0.42*bat).toFixed(3)+")");
+      lu.addColorStop(0.6,"rgba(247,199,78,"+(0.20*bat).toFixed(3)+")");
+      lu.addColorStop(1,"rgba(247,199,78,0)");
+      ctx.save();
+      ctx.fillStyle=lu; ctx.beginPath(); ctx.arc(cx,cy,w*0.78,0,7); ctx.fill();
+      /* Le lisere : la meme pose, doree, posee quatre fois autour d'elle. Un simple
+         agrandissement epaissit le contour d'un cote et l'amincit de l'autre, selon
+         ou le dessin est plein ; quatre decalages donnent une bordure reguliere. */
+      const d=Math.max(2, w*0.030);
+      ctx.globalAlpha=bat;
+      const sil=teinter(k,"#EFA81C");
+      for(const [ox,oy] of [[-d,0],[d,0],[0,-d],[0,d]])
+        ctx.drawImage(sil, hx+ox, hy+oy, w, h);
+      ctx.restore();
+      for(let i=0;i<3;i++){
+        const a=t*3.1+i*2.094;
+        ctx.save(); ctx.globalAlpha=bat;
+        star(ctx, cx+Math.cos(a)*w*0.54, cy+Math.sin(a)*h*0.40,
+             5+2.2*Math.sin(t*7+i), a*0.5, 1.6);
+        ctx.restore();
+      }
+    }
+  }
   if(hen.dead){
     if(deadPhase()===0 && chocSur){   // le rebond : cale par l'eclat du dessin
       ctx.drawImage(im, hen.x+80-REB_ECLAT[0]*REB_W, hen.y-REB_ECLAT[1]*REB_H, REB_W, REB_H);
@@ -2249,6 +2369,22 @@ function drawHUD(){
     rr(bx,by,bw,bh,r); ctx.stroke();
   }
 
+  /* Le pouvoir : une barre doree sous la jauge de plumes, qui se vide. Elle dit ce
+     que le lisere de la poule ne dit pas — combien de temps il reste. */
+  if(traverse()){
+    const reste=(orJusqu-t)/OR_DUREE;
+    const py=by+bh+9, ph2=bh*0.82;
+    ctx.lineWidth=Math.max(1.4,fh*0.075); ctx.strokeStyle=INK;
+    rr(bx,py,bw,ph2,ph2/2); ctx.fillStyle="#EFE6D6"; ctx.fill(); ctx.stroke();
+    ctx.save(); rr(bx,py,bw,ph2,ph2/2); ctx.clip();
+    ctx.fillStyle="#EFA81C"; ctx.fillRect(bx,py,bw*Math.max(0,reste),ph2);
+    ctx.restore();
+    rr(bx,py,bw,ph2,ph2/2); ctx.stroke();
+    ctx.textAlign="left"; ctx.textBaseline="top";
+    ctx.font="900 11px "+FONT; ctx.fillStyle="#B8860B";
+    ctx.fillText("TRAVERSÉE", bx, py+ph2+6);
+  }
+
   /* Le combo ne s'affiche qu'a partir de deux mouches, avec le temps qu'il reste
      pour l'entretenir : sans cette barre, la chaine casse sans prevenir. Le petit
      compteur de mouches qui vivait ici a disparu — le grand chiffre en haut a droite
@@ -2349,6 +2485,7 @@ function styleJeu(px, init){
     im.src="data:image/png;base64,"+(im.dataset.px==="1"?B64_PX:B64)[im.dataset.spr];
   for(const b of document.querySelectorAll("#pref .opt"))
     b.classList.toggle("actif", (b.dataset.px==="1")===!!px);
+  SPR.or_a=dore("fly_a"); SPR.or_b=dore("fly_b");   // la doree suit le style
   mesurerObstacles();
   fontePixel();
   /* Le decor est seme une fois pour toutes : l'echelle des arbres change avec le

@@ -130,6 +130,42 @@ moitié il reste réduit de 4,6 fois à l'écran, jamais étiré.
 Les autres obstacles sont au sol et arrivent d'autant plus vite que la course
 dure.
 
+## La mouche dorée
+
+De loin en loin, une mouche **dorée** traverse le ciel, seule, à hauteur de vol
+franche et sans dérive : on doit la voir venir et décider d'aller la chercher. La
+gober donne **six secondes de traversée** — les obstacles ne l'arrêtent plus.
+
+Ce n'est pas un autre dessin : c'est la même mouche passée dans une rampe d'or. On
+garde la **luminance** du dessin, donc son modelé, ses reflets et son trait, et on ne
+remplace que la teinte. L'œil rouge, seul point saturé, passe en clair et fait
+l'éclat : sans lui la mouche dorée n'a plus de regard. Elle est fabriquée au démarrage
+et refaite à chaque bascule de style, si bien qu'elle suit le trait comme le pixel
+**sans peser un octet de plus** dans le fichier.
+
+Le pouvoir se lit à trois endroits, et il en faut trois :
+
+| Où | Quoi |
+|---|---|
+| Sur la mouche | Un halo qui bat et trois étincelles en ronde. De loin c'est la lueur qu'on repère, pas la mouche |
+| Sur la poule | Une lueur, un liseré doré, trois étincelles qui tournent. La dernière seconde clignote |
+| Dans le HUD | Une barre dorée qui se vide sous la jauge de plumes |
+
+Le liseré n'est pas un simple agrandissement de la pose : agrandir épaissit le contour
+d'un côté et l'amincit de l'autre, selon où le dessin est plein. C'est la même pose,
+dorée, posée **quatre fois autour** d'elle. Elle est calée exactement comme la poule,
+`FOOT_POSE` compris, sinon le liseré flotte à côté d'elle sur les poses dont les pattes
+ne tombent pas à la même hauteur.
+
+Une lueur seule ne suffisait pas non plus : sur un ciel clair, un contour doré ne se
+voit pas. La lueur donne la présence, le liseré donne la forme.
+
+Deux règles de jeu, pour que ça reste lisible :
+
+- une dorée gobée pendant que le pouvoir dure **repart de la durée pleine**, elle ne
+  l'empile pas ;
+- elle rend **toutes** les plumes, là où une mouche ordinaire en rend deux.
+
 ## Le score
 
 Le score est le nombre de mouches gobées. Les mètres ne comptent plus : ils
