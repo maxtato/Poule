@@ -4,9 +4,8 @@ Un jeu de course infinie tenant dans un seul fichier HTML. La poule court, saute
 et vole tant qu'il lui reste des plumes. Ouvre `index.html` : rien à installer,
 rien à télécharger, aucun réseau.
 
-Un essai en **pixel art** vit à côté, dans `pixel/` : le même jeu, toutes ses images
-converties sur une grille commune. Il ne touche pas à celui-ci. Voir
-[`pixel/README.md`](pixel/README.md).
+Il se joue en deux styles : le **trait d'origine** ou le **pixel art**. Le bouton
+d'engrenage, à côté du bouton de son, bascule de l'un à l'autre.
 
 ## Jouer
 
@@ -990,6 +989,60 @@ poule par rapport au sol. `FOOT_POSE` donne, pour chaque pose, la rangée du bas
 du dessin ; le rendu s'en sert pour poser les pattes sur le sol quelle que soit la
 pose, ce qui autorise des dessins dont les pattes ne tombent pas toutes à la même
 hauteur.
+
+## Deux styles dans un seul fichier
+
+Le jeu porte **deux jeux de dessins** : le trait d'origine et sa conversion en pixel
+art. Le bouton d'engrenage, posé à côté du bouton de son dans la bande de terre,
+ouvre une feuille où l'on choisit — deux vignettes montrant la même poule dessinée des
+deux façons, parce que montrer la différence vaut mieux que la nommer. Le choix est
+gardé dans la sauvegarde et survit au rechargement.
+
+Ça ne coûte presque rien : les planches en pixel pèsent **87 Ko** contre 13 Mo pour
+les originales. Les deux tiennent dans le même fichier sans discussion.
+
+### Une seule grille pour tout le jeu
+
+Convertir chaque dessin à une largeur fixe — 64 pixels pour la poule, 64 pour la
+montagne — donnerait des pixels **gros comme une maison** sur la montagne et
+minuscules sur la mouche : cinquante-neuf grilles différentes, et un décor qui jure
+avec le personnage. Le pixel vaut donc **1,22 pixel CSS**, le même partout ; chaque
+dessin est converti à sa taille d'affichage divisée par cette valeur. La poule fait
+63 pixels de large, la mouche 20, la montagne 394.
+
+Cette taille d'affichage est **mesurée, pas devinée** : `drawImage` est emballé le
+temps d'une partie et relève, pour chaque dessin, la plus grande taille à laquelle il
+est posé. La mesure se fait **à l'écran**, matrice courante appliquée : le terrain
+dessine en unités de monde et le HUD en pixels CSS, deux échelles qu'un relevé naïf
+mélange — et qui donnaient des grilles fausses d'un facteur deux. Deux dessins servent
+à deux tailles (la poule K.-O. au sol puis, plus grande, sur le panneau de fin ; la
+mouche dans le HUD, sur le panneau et dans le carnet) : c'est la plus grande qui
+commande, sinon le panneau agrandit une planche faite pour le sol.
+
+Deux précautions dans la conversion : la **palette est relevée** sur chaque dessin,
+doublons fusionnés — il restait trois rouges de crête à deux unités d'écart — et le
+**trait d'encre est prioritaire** au vote de bloc. Une moyenne noie une ligne d'un
+pixel dans le blanc qui l'entoure, et la poule reviendrait en tache sans contour.
+
+### Ce que la bascule doit reprendre
+
+Tout ce qui **dérive** des dessins, et pas seulement les dessins :
+
+| Ce qui repart | Pourquoi |
+|---|---|
+| La table inverse dessin → nom | Le calage au sol se lit par nom |
+| Les calques de teinte du décor | Ils sont peints à partir d'un dessin précis |
+| Les boîtes de collision | Elles sont **relevées sur le dessin**, pas écrites |
+| La poule du panneau de fin | Elle est en cache dans son propre canevas |
+| `imageSmoothingEnabled` | Sur les trois contextes, sinon les planches sont lissées |
+| Le ciel | En pixel il passe en dix-huit bandes franches : un dégradé continu derrière un décor en pixels trahit le montage |
+
+Les boîtes de collision bougent donc un peu en pixel : de 2 à 7 unités sur les côtés,
+**toujours vers l'intérieur**. Le contour à basse résolution tombe un pixel plus tôt,
+si bien que le mode pixel est marginalement plus indulgent, jamais plus dur.
+
+Ce qui reste vectoriel dans les deux styles : la typographie, la ronde d'étoiles du
+K.-O., la jauge de plumes, la poussière et le contour festonné du panneau de fin.
 
 ## Les outils du téléphone
 

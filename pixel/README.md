@@ -5,6 +5,11 @@ art** : la poule, ses onze poses, les sept obstacles, l'aigle, le cerf-volant, l
 mouches, les plumes, l'herbe, les cailloux, les arbres, les montagnes, les collines
 et la pastille de saut. Cinquante-neuf planches.
 
+> **Ce dossier est devenu redondant.** Le jeu de la racine porte maintenant les deux
+> jeux de dessins et un bouton de réglages qui bascule de l'un à l'autre — les planches
+> en pixel ne pèsent que 87 Ko. Ce dossier reste comme témoin de l'essai ; il peut être
+> supprimé sans rien casser. Ce qui suit explique la conversion, qui est la même.
+
 Ouvre `pixel/index.html`. Le jeu de la racine ne bouge pas : les deux vivent côte à
 côte, et celui-ci peut être jeté sans rien casser.
 
