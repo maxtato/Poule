@@ -397,9 +397,15 @@ d'affichage change, c'est-à-dire jamais pendant une partie. Le clignotement du 
 se pose alors sur la composition entière plutôt que sur chaque planche, ce qui est de
 toute façon plus juste : l'éclipse porte sur toute la poule.
 
-Vérification : dans la boîte de la bouche, la composition est maintenant **identique au
-pixel près** à la tête posée sur le ciel seul. 120 pixels de différence avant, zéro
-après, dans les deux styles.
+Vérification en deux temps. Sur la composition d'abord : dans la boîte de la bouche,
+elle est maintenant **identique au pixel près** à la tête posée sur le ciel seul, 120
+pixels de différence avant, zéro après, dans les deux styles.
+
+Puis **sur le jeu lui-même**, parce qu'une composition refaite à la main ne prouve rien
+du chemin de rendu réel. On fige une image où la poule vole bec ouvert, on lit le
+canevas, on désamorce le bouchon, on refait la même image : la différence est la pique,
+et elle est bien là — 18 pixels d'appareil en trait, 3 en pixel. C'est peu, et c'est
+exactement ce qu'on voyait : un petit bout de bec noir au coin de la bouche.
 
 Bouton lâché, en chute libre ou en plein saut, la poule n'agite pas les ailes mais
 elle ouvre quand même le bec en approchant d'une mouche. Là, **pas de couche du
