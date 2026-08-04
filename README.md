@@ -1078,8 +1078,34 @@ Les boîtes de collision bougent donc un peu en pixel : de 2 à 7 unités sur le
 **toujours vers l'intérieur**. Le contour à basse résolution tombe un pixel plus tôt,
 si bien que le mode pixel est marginalement plus indulgent, jamais plus dur.
 
-Ce qui reste vectoriel dans les deux styles : la typographie, la ronde d'étoiles du
-K.-O., la jauge de plumes, la poussière et le contour festonné du panneau de fin.
+### Ce qui est tracé en code, et la typographie
+
+Les planches converties ne suffisent pas : la ronde d'étoiles du K.-O., la jauge de
+plumes, la poussière, les traits de vitesse et le texte du HUD sont **tracés en code**,
+pas dessinés. Restés lisses au milieu des pixels, ce sont eux qui trahissent un décor
+pixelisé.
+
+La réponse est un **tampon**. En mode pixel, la scène entière est dessinée dans un
+canevas à la grille du jeu — un pixel de tampon pour un pixel d'art — puis agrandie
+d'un bloc. Tout ce qui passe par le canevas tombe alors sur la même grille, sans qu'il
+faille reprendre un seul tracé. Le reste de `draw()` raisonne en pixels CSS : il a
+suffi de changer le facteur de la matrice, densité d'écran en trait, grille du jeu en
+pixel. La poule du panneau de fin, qui a son propre canevas, suit la même règle.
+
+Pour le **texte du document**, un tampon ne sert à rien : il faut une fonte. `PouleP`
+est Fredoka ramenée sur une grille de vingt-quatre pixels par cadratin — pas un autre
+dessin de lettres, le même, quantifié. Chaque caractère est rastérisé dans un canevas,
+puis le **contour réel** des pixels allumés est suivi arête par arête et chaîné en
+boucles. Empiler des rectangles aurait été plus simple, mais deux rectangles qui se
+touchent sans se recouvrir laissent une rayure claire à chaque jointure : bien visible
+sur un grand titre, et c'est ce qu'a montré le premier essai. Les trous sortent
+naturellement dans le sens contraire des pleins, ce que le remplissage non-nul attend.
+
+Trois graisses, **11,6 Ko** en tout. Elle ne sert qu'en mode pixel et qu'au document :
+le texte du canevas passe déjà par le tampon.
+
+Reste vectoriel : les icônes SVG du carnet, le liseré pointillé du bouton *Jouer* et
+le contour festonné du panneau de fin.
 
 ## L'icône, et le jeu ajouté à l'écran d'accueil
 
