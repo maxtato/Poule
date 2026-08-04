@@ -63,15 +63,17 @@ percerait. L'ombre peinte, elle, part avec le fond, puisque le bouton a la sienn
 dessin est ramené à 320 pixels : c'est encore trois fois et demie la taille
 d'affichage sur un écran ordinaire.
 
-La pastille est **rouge**. Ce changement de couleur change aussi le seuil du
+La pastille est **rouge**, et porte une **flèche** blanche au-dessus du souffle de la
+poule : elle dit ce qu'elle fait, là où la silhouette de poule qu'elle portait avant
+redisait seulement de qui il s'agit. Ce changement de couleur change aussi le seuil du
 détourage : la pastille crème d'avant obligeait à ne prendre pour fond que ce qui
 était très clair — au-delà de 238 de luminance — et la queue de l'ombre peinte
 restait accrochée sous le disque. Un disque saturé se défend tout seul : c'est la
 **saturation** qui le protège, pas la clarté, et le seuil de luminance peut donc
 descendre à 130 pour emporter l'ombre entière. La silhouette blanche à l'intérieur
 ne risque rien — elle est enfermée, l'inondation partie du bord ne l'atteint pas.
-Mesuré sur la plaque : 0,56 % de matière hors du disque inscrit, contre 1,2 % pour
-l'ancienne.
+Mesuré sur la plaque : 0,4 % de matière hors du disque inscrit, contre 1,2 % pour
+la plaque crème.
 
 La jauge de plumes se vide en vol et se remplit au sol. Gober une mouche rend
 deux plumes. Gober plusieurs mouches sans laisser retomber la chaîne monte un
