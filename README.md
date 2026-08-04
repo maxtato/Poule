@@ -949,6 +949,45 @@ Les repères du code, dans l'ordre :
 | Particules | Poussière, plumes, traits de vitesse, pop du gobage |
 | Rendu | Trois plans, ombres portées, sprites, puis HUD calé sur le terrain |
 
+## Deux langues
+
+Le jeu se lit en **français ou en anglais**, et le choix vit dans les réglages, sous le
+choix du style. Au premier lancement il suit la langue du navigateur : le français pour
+qui parle français, l'anglais pour tout le monde d'autre. C'est ce qui laisse le moins
+de monde devant une langue qu'il ne lit pas.
+
+Les phrases ne sont pas cherchées dans le HTML. Chaque élément porte **sa clé** en
+`data-t` — `data-ta` pour un `aria-label`, `data-talt` pour un `alt` — et changer de
+langue revient à parcourir ces clés une fois. Rien n'est reconstruit : ce sont les mêmes
+éléments, seul leur texte change. Traduire une phrase de plus, c'est ajouter une ligne à
+la table, pas retrouver où elle est écrite.
+
+Le canevas, lui, ne stocke rien : il appelle `T()` **au moment de dessiner**. Ses textes
+changent donc de langue sans qu'on ait à redessiner ou à invalider quoi que ce soit.
+
+Deux détails qui ne vont pas de soi :
+
+- **Les nombres passent par la phrase, pas l'inverse.** `%1 mouches en tout · %2 parties`
+  contre `%1 flies in all · %2 games` : un bout de phrase collé à un nombre ne se traduit
+  pas, parce que l'ordre des mots change d'une langue à l'autre.
+- **Les trois phrases du panneau de fin dépendent de deux choses** — la partie qui vient
+  de finir et la langue. Elles vivent donc dans leur propre fonction, qu'on peut rejouer
+  quand la seconde change sans rejouer la première.
+
+Quatre textes restent identiques dans les deux langues, et c'est voulu : *Start*,
+*Game Over*, *Pixel*, et les deux langues nommées dans leur propre langue. Le voile de
+chargement, lui, est traduit **avant tout le reste** : c'est le premier texte à l'écran
+et il y reste le temps de décoder quatorze mégaoctets d'images.
+
+`fontePixel()` est rejoué après chaque bascule : les corps sont en `clamp()` et les
+phrases n'ont pas la même longueur d'une langue à l'autre, donc la grille de fonte qui
+convient à un texte peut changer avec lui. Mesuré en anglais, le pixel apparent tient
+entre 0,26 et 0,34 comme en français.
+
+La vérification ne porte pas sur la table mais sur **ce qui est réellement affiché** :
+on relève tout le texte du document dans les deux langues, couches ouvertes, et on
+cherche ce qui n'a pas bougé. Restent les quatre textes voulus et les nombres.
+
 ## L'écran d'accueil
 
 L'accueil n'est pas une page posée sur le jeu : le décor tourne derrière, la poule

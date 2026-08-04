@@ -302,6 +302,10 @@
     transition:border-color .12s,color .12s}
   #pref .opt.actif{border-color:#D6342B;color:#D6342B;border-width:2.5px;padding:11px 7px 9px}
   #pref .apercu{width:74px;height:auto;display:block}
+  /* Les deux langues n'ont pas de vignette a montrer : leur pastille se resserre
+     pour ne pas faire un grand vide la ou l'autre paire porte un dessin. */
+  #pref .opt.mot{padding:13px 8px;text-transform:none;letter-spacing:.06em;font-size:14px}
+  #pref .opt.mot.actif{padding:12px 7px}
   #pref .opt[data-px="1"] .apercu{image-rendering:pixelated}
   #mute.off{color:#B5AA9A;border-color:#B5AA9A}
   #mute.off .ondes{opacity:0}
@@ -342,8 +346,8 @@
 <body>
 <div id="rotate">
   <div class="ico"></div>
-  <p>Redresse ton téléphone</p>
-  <small>La poule a besoin de hauteur pour voler</small>
+  <p data-t="redresse">Redresse ton téléphone</p>
+  <small data-t="hauteur">La poule a besoin de hauteur pour voler</small>
 </div>
 
 <div id="stage">
@@ -359,18 +363,18 @@
             <path d="M7 5.5H3.5v1.8a4 4 0 0 0 3.3 3.9M19 5.5h3.5v1.8a4 4 0 0 1-3.3 3.9" stroke="#1A1614" stroke-width="1.2" fill="none" stroke-linecap="round"/>
             <path d="M13 16v3.5M8.5 22.5h9" stroke="#1A1614" stroke-width="1.2" stroke-linecap="round"/>
           </svg>
-          <span><b>Record</b><i id="sRec">0</i></span>
+          <span><b data-t="record">Record</b><i id="sRec">0</i></span>
         </div>
         <div class="stat">
           <img class="sico" id="sIco" alt="">
-          <span><b>Gobées</b><i id="sMou">0</i></span>
+          <span><b data-t="gobees">Gobées</b><i id="sMou">0</i></span>
         </div>
         <div class="stat">
           <svg class="sico" viewBox="0 0 26 26" aria-hidden="true">
             <path d="M13 2.5 16.4 9.4 24 10.5l-5.5 5.4 1.3 7.6L13 19.9l-6.8 3.6 1.3-7.6L2 10.5l7.6-1.1Z"
                   fill="#F5C765" stroke="#1A1614" stroke-width="1.2" stroke-linejoin="round"/>
           </svg>
-          <span><b>Parties</b><i id="sPar">0</i></span>
+          <span><b data-t="parties">Parties</b><i id="sPar">0</i></span>
         </div>
       </div>
       <hr class="filet">
@@ -379,15 +383,15 @@
       <svg class="vitesse gauche" viewBox="0 0 40 44" aria-hidden="true">
         <path d="M36 6 6 2M38 22H4M36 38 6 42" stroke="#D6342B" stroke-width="4" stroke-linecap="round"/>
       </svg>
-      <h1>La poule<br><em>qui vole</em></h1>
+      <h1><span data-t="t1">La poule</span><br><em data-t="t2">qui vole</em></h1>
       <svg class="vitesse droite" viewBox="0 0 40 44" aria-hidden="true">
         <path d="M4 6 34 2M2 22h34M4 38 34 42" stroke="#D6342B" stroke-width="4" stroke-linecap="round"/>
       </svg>
     </div>
-    <p class="sub">Elle court. Elle saute. Et si tu insistes, elle vole, tant qu'il lui reste des plumes. Gober des mouches lui en rend.</p>
+    <p class="sub" data-t="sub">Elle court. Elle saute. Et si tu insistes, elle vole, tant qu'il lui reste des plumes. Gober des mouches lui en rend.</p>
   </div>
   <div class="bas">
-    <button class="btn jouer" id="play">Start</button>
+    <button class="btn jouer" id="play" data-t="start">Start</button>
   </div>
 </div>
 
@@ -396,9 +400,9 @@
     <div class="blob" id="blob"></div>
     <canvas class="ko" id="fko" width="300" height="200" aria-hidden="true"></canvas>
     <div class="dedans">
-      <h2 class="fin">Game Over</h2>
+      <h2 class="fin" data-t="gameover">Game Over</h2>
       <p class="lg" id="fbravo">Bravo, tu as attrapé</p>
-      <div class="pastille score"><img class="ico" id="fico" alt="mouches"><span id="fscore">0</span></div>
+      <div class="pastille score"><img class="ico" id="fico" data-talt="mouches" alt="mouches"><span id="fscore">0</span></div>
       <p class="lg" id="frectitre">Ton record personnel</p>
       <div class="pastille record">
         <svg class="couronne" viewBox="0 0 32 26" fill="none" aria-hidden="true">
@@ -414,7 +418,7 @@
           <path d="M20 12a8 8 0 1 1-2.6-5.9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
           <path d="M20.4 2.6V8h-5.4" stroke="currentColor" stroke-width="2.6"
                 stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>Réessayer
+        </svg><span data-t="reessayer">Réessayer</span>
       </button>
     </div>
   </div>
@@ -422,16 +426,16 @@
 
 <div class="layer" id="pause">
   <div class="card">
-    <div class="kicker">Pause</div>
-    <button class="btn" id="resume">Reprendre</button>
-    <div class="tap">ou appuie n'importe où</div>
+    <div class="kicker" data-t="pause">Pause</div>
+    <button class="btn" id="resume" data-t="reprendre">Reprendre</button>
+    <div class="tap" data-t="partout">ou appuie n'importe où</div>
   </div>
 </div>
 
-<button id="fly" aria-label="Sauter, ou maintenir pour voler"></button>
-<div id="volmot">Maintenir pour voler</div>
+<button id="fly" data-ta="saut" aria-label="Sauter, ou maintenir pour voler"></button>
+<div id="volmot" data-t="volmot">Maintenir pour voler</div>
 
-<button id="reg" aria-label="Réglages" aria-expanded="false">
+<button id="reg" data-ta="reglages" aria-label="Réglages" aria-expanded="false">
   <svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true" focusable="false"
        fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
     <circle cx="12" cy="12" r="3.2"/>
@@ -439,14 +443,19 @@
   </svg>
 </button>
 
-<div class="layer" id="pref" role="dialog" aria-label="Réglages" aria-modal="true">
+<div class="layer" id="pref" role="dialog" data-ta="reglages" aria-label="Réglages" aria-modal="true">
   <div class="card">
-    <h3>Style des dessins</h3>
+    <h3 data-t="style">Style des dessins</h3>
     <div class="choix">
-      <button class="opt" data-px="0" data-spr="walk"><img class="apercu" data-px="0" data-spr="walk" alt="">Dessin</button>
-      <button class="opt" data-px="1" data-spr="walk"><img class="apercu" data-px="1" data-spr="walk" alt="">Pixel</button>
+      <button class="opt" data-px="0" data-spr="walk"><img class="apercu" data-px="0" data-spr="walk" alt=""><span data-t="trait">Dessin</span></button>
+      <button class="opt" data-px="1" data-spr="walk"><img class="apercu" data-px="1" data-spr="walk" alt=""><span data-t="pixel">Pixel</span></button>
     </div>
-    <button class="btn ferme">Fermer</button>
+    <h3 data-t="langue">Langue</h3>
+    <div class="choix">
+      <button class="opt mot" data-lang="fr">Français</button>
+      <button class="opt mot" data-lang="en">English</button>
+    </div>
+    <button class="btn ferme" data-t="fermer">Fermer</button>
   </div>
 </div>
 
@@ -461,7 +470,7 @@
   </svg>
 </button>
 
-<div id="load">Chargement</div>
+<div id="load" data-t="chargement">Chargement</div>
 </div>
 
 <script>
@@ -847,7 +856,7 @@ let FONT='Fredoka,"Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif';
    rattrapable : on change de cle, et on ne reprend de l'ancien que ce qui garde un
    sens — les totaux et le reglage du son. */
 const SAVE_KEY="poule.v2";
-const save={best:0, flies:0, runs:0, sound:true, pixel:false};
+const save={best:0, flies:0, runs:0, sound:true, pixel:false, lang:""};
 try{
   let o=JSON.parse(localStorage.getItem(SAVE_KEY)||"null");
   const ancien = o ? null : JSON.parse(localStorage.getItem("poule.v1")||"null");
@@ -856,9 +865,79 @@ try{
     save.best=Math.max(0,o.best|0); save.flies=Math.max(0,o.flies|0);
     save.runs=Math.max(0,o.runs|0); save.sound=o.sound!==false;
     save.pixel=o.pixel===true;
+    if(o.lang==="fr"||o.lang==="en") save.lang=o.lang;
   }
 }catch(e){}
+/* Rien de choisi : on suit la langue du navigateur. Le francais pour qui parle
+   francais, l'anglais pour tous les autres — c'est le choix qui laisse le moins de
+   monde devant une langue qu'il ne lit pas. */
+if(!save.lang) save.lang = /^fr/i.test(navigator.language||"") ? "fr" : "en";
 function storeSave(){ try{ localStorage.setItem(SAVE_KEY,JSON.stringify(save)); }catch(e){} }
+
+/* ---------- les deux langues ----------
+   Une seule table, deux colonnes. Les phrases du document ne sont pas cherchees
+   dans le HTML : chaque element porte sa cle en `data-t`, et traduire revient a
+   ajouter une ligne ici. `%1` et `%2` prennent les nombres, parce que l'ordre des
+   mots n'est pas le meme d'une langue a l'autre et qu'un bout de phrase colle a un
+   nombre ne se traduit pas.
+   Le canevas, lui, passe par T() au moment de dessiner : ses textes changent donc
+   de langue sans qu'il faille redessiner quoi que ce soit. */
+const TEXTES={
+  titre:      ["La Poule qui vole", "The Flying Hen"],
+  appnom:     ["La poule", "The Hen"],
+  t1:         ["La poule", "The hen"],
+  t2:         ["qui vole", "that flies"],
+  sub:        ["Elle court. Elle saute. Et si tu insistes, elle vole, tant qu'il lui reste des plumes. Gober des mouches lui en rend.",
+               "She runs. She jumps. And if you keep at it, she flies, as long as she has feathers left. Eating flies gives them back."],
+  record:     ["Record", "Best"],
+  gobees:     ["Gobées", "Eaten"],
+  parties:    ["Parties", "Games"],
+  start:      ["Start", "Start"],
+  gameover:   ["Game Over", "Game Over"],
+  bravo:      ["Bravo, tu as attrapé", "Nice, you caught"],
+  rien:       ["Tu n'as rien attrapé", "You caught nothing"],
+  recperso:   ["Ton record personnel", "Your personal best"],
+  nouveaurec: ["Nouveau record !", "New best!"],
+  totaux:     ["%1 mouches en tout · %2 parties", "%1 flies in all · %2 games"],
+  reessayer:  ["Réessayer", "Try again"],
+  pause:      ["Pause", "Paused"],
+  reprendre:  ["Reprendre", "Resume"],
+  partout:    ["ou appuie n'importe où", "or tap anywhere"],
+  volmot:     ["Maintenir pour voler", "Hold to fly"],
+  saut:       ["Sauter, ou maintenir pour voler", "Jump, or hold to fly"],
+  reglages:   ["Réglages", "Settings"],
+  style:      ["Style des dessins", "Drawing style"],
+  trait:      ["Dessin", "Line art"],
+  pixel:      ["Pixel", "Pixel"],
+  langue:     ["Langue", "Language"],
+  fermer:     ["Fermer", "Close"],
+  chargement: ["Chargement", "Loading"],
+  mouches:    ["mouches", "flies"],
+  sonoff:     ["Couper le son", "Mute"],
+  sonon:      ["Remettre le son", "Unmute"],
+  redresse:   ["Redresse ton téléphone", "Turn your phone upright"],
+  hauteur:    ["La poule a besoin de hauteur pour voler", "The hen needs headroom to fly"],
+  hudrecord:  ["RECORD %1", "BEST %1"],
+  hudbattu:   ["RECORD BATTU", "NEW BEST"],
+  hudpremier: ["PREMIER ESSAI", "FIRST TRY"],
+  flashrec:   ["Record battu", "New best"],
+  poprec:     ["RECORD", "BEST"],
+  flashtrav:  ["Traversée !", "Pass through!"],
+  poptrav:    ["TRAVERSÉE", "PASS"],
+  flashpalier:["%1 mouches", "%1 flies"]
+};
+function T(cle, ...n){
+  const e=TEXTES[cle];
+  if(!e) return cle;
+  let s=e[save.lang==="en"?1:0];
+  n.forEach((v,i)=>{ s=s.split("%"+(i+1)).join(v); });
+  return s;
+}
+/* Le voile de chargement est le premier texte a l'ecran, et il y reste le temps de
+   decoder quatorze megaoctets d'images. Il est donc traduit tout de suite, sans
+   attendre que le reste du jeu existe — poseLangue() lit des variables qui ne sont
+   pas encore declarees a ce point du fichier. */
+if($("load")) $("load").textContent=T("chargement");
 
 /* ---------- son ----------
    Tout est synthetise : le jeu reste un seul fichier, sans un octet a telecharger.
@@ -931,7 +1010,7 @@ function setMute(m, muetAuDemarrage){
   const b=$("mute");
   b.classList.toggle("off",m);
   b.setAttribute("aria-pressed", m?"true":"false");
-  b.setAttribute("aria-label", m?"Remettre le son":"Couper le son");
+  b.setAttribute("aria-label", m?T("sonon"):T("sonoff"));
   if(!m && !muetAuDemarrage) SFX.palier();     // un retour sonore pour confirmer
 }
 
@@ -1417,12 +1496,20 @@ function die(dessus){
   /* Les pastilles ne portent que des nombres : c'est la ligne au-dessus qui dit
      de quoi il s'agit, et c'est elle qui annonce le record battu. */
   $("frec").textContent=best;
-  $("frectitre").textContent = rec ? "Nouveau record !" : "Ton record personnel";
-  $("fbravo").textContent = eaten ? "Bravo, tu as attrapé" : "Tu n'as rien attrapé";
-  $("ftot").textContent = save.runs>1
-    ? save.flies+" mouches en tout · "+save.runs+" parties" : "";
+  finRec=rec;
+  textesFin();
   carnet();
   overShown=false;
+}
+/* Les trois phrases du panneau de fin vivent a part : elles dependent de la partie
+   qui vient de finir ET de la langue, et il faut pouvoir les reecrire quand la
+   seconde change sans rejouer la premiere. */
+let finRec=false;
+function textesFin(){
+  if(!$("frectitre")) return;
+  $("frectitre").textContent = finRec ? T("nouveaurec") : T("recperso");
+  $("fbravo").textContent = eaten ? T("bravo") : T("rien");
+  $("ftot").textContent = save.runs>1 ? T("totaux", save.flies, save.runs) : "";
 }
 /* Le carnet de l'accueil, en trois colonnes : record, mouches gobees, parties. Les
    zeros du premier essai s'affichent — dans un tableau ils se lisent comme un depart,
@@ -1436,6 +1523,31 @@ $("resume").onclick=unhalt;
 $("pause").addEventListener("pointerdown",e=>{ if(e.target.tagName!=="BUTTON") unhalt(); });
 /* Les reglages : une feuille par-dessus le jeu, qui ne relance rien en se fermant.
    L'appui y est arrete net, sinon il traverserait jusqu'a la couche du jeu. */
+/* Poser la langue, c'est parcourir les cles du document une fois. Rien n'est
+   reconstruit : les elements sont les memes, seul leur texte change. Le canevas
+   n'a rien a faire, il lit T() a chaque image.
+   fontePixel() est rejoue derriere : les corps sont en clamp() et les phrases
+   n'ont pas la meme longueur d'une langue a l'autre, donc la grille de fonte qui
+   convient a un texte peut changer avec lui. */
+function poseLangue(){
+  for(const e of document.querySelectorAll("[data-t]")) e.textContent=T(e.dataset.t);
+  for(const e of document.querySelectorAll("[data-ta]")) e.setAttribute("aria-label", T(e.dataset.ta));
+  for(const e of document.querySelectorAll("[data-talt]")) e.setAttribute("alt", T(e.dataset.talt));
+  document.documentElement.lang=save.lang;
+  document.title=T("titre");
+  const m=document.querySelector('meta[name="apple-mobile-web-app-title"]');
+  if(m) m.setAttribute("content", T("appnom"));
+  const b=$("mute");
+  if(b) b.setAttribute("aria-label", muted?T("sonon"):T("sonoff"));
+  for(const o of document.querySelectorAll("#pref .opt[data-lang]"))
+    o.classList.toggle("actif", o.dataset.lang===save.lang);
+  if(overShown||$("over").classList.contains("on")) textesFin();
+  if(typeof fontePixel==="function") fontePixel();
+}
+function choisitLangue(l){
+  if(l!=="fr"&&l!=="en") return;
+  save.lang=l; storeSave(); poseLangue();
+}
 function ouvrePref(){ $("pref").classList.add("on"); $("reg").setAttribute("aria-expanded","true"); }
 function fermePref(){ $("pref").classList.remove("on"); $("reg").setAttribute("aria-expanded","false"); }
 $("reg").addEventListener("click",()=>{
@@ -1444,7 +1556,8 @@ $("reg").addEventListener("click",()=>{
 $("pref").addEventListener("pointerdown",e=>e.stopPropagation());
 $("pref").addEventListener("click",e=>{
   const o=e.target.closest(".opt");
-  if(o){ styleJeu(o.dataset.px==="1"); return; }
+  if(o && o.dataset.px!==undefined){ styleJeu(o.dataset.px==="1"); return; }
+  if(o && o.dataset.lang){ choisitLangue(o.dataset.lang); return; }
   /* Fermer : le bouton, ou le fond autour de la carte. */
   if(e.target.closest(".ferme") || e.target===$("pref")) fermePref();
 });
@@ -1833,7 +1946,7 @@ function update(dt){
         /* Le pouvoir ne s'additionne pas indefiniment : une doree gobee pendant qu'il
            dure repart de la duree pleine, elle ne l'empile pas. */
         orJusqu=t+OR_DUREE;
-        SFX.pouvoir(); flash("Traversée !"); pop(f.x, f.y-30, "TRAVERSÉE", "#D9A520");
+        SFX.pouvoir(); flash(T("flashtrav")); pop(f.x, f.y-30, T("poptrav"), "#D9A520");
         eclat(f.x, f.y, 22);
       }else{
         SFX.gobe(combo-1);
@@ -1848,10 +1961,10 @@ function update(dt){
      tombe. Le record passe devant : un palier franchi dans la foulee n'efface pas la
      fanfare. */
   const borne=Math.floor(eaten/PALIER);
-  if(borne>palier){ palier=borne; SFX.palier(); if(t-flashT>1.4) flash(borne*PALIER+" mouches"); }
+  if(borne>palier){ palier=borne; SFX.palier(); if(t-flashT>1.4) flash(T("flashpalier", borne*PALIER)); }
   if(!recBeaten && best>0 && eaten>=best){
-    recBeaten=true; flash("Record battu"); SFX.record();
-    pop(hen.x+80, hen.y-150, "RECORD", "#D6342B");
+    recBeaten=true; flash(T("flashrec")); SFX.record();
+    pop(hen.x+80, hen.y-150, T("poprec"), "#D6342B");
   }
   for(const o of obs){
     /* Le cerf-volant fuit dans le meme sens que la poule mais moins vite : ce qui
@@ -2533,10 +2646,10 @@ function drawHUD(){
     }
     ctx.font="700 11px "+FONT;
     ctx.fillStyle = battu ? "#D6342B" : MUTE;
-    ctx.fillText(battu ? "RECORD BATTU" : "RECORD "+best, R-pad, by+bh+7);
+    ctx.fillText(battu ? T("hudbattu") : T("hudrecord", best), R-pad, by+bh+7);
   }else{
     ctx.font="700 11px "+FONT; ctx.fillStyle=MUTE;
-    ctx.fillText("PREMIER ESSAI", R-pad, top+fs+6);
+    ctx.fillText(T("hudpremier"), R-pad, top+fs+6);
   }
 
   /* jauge de vol : une plume, puis une barre qui se vide et se remplit */
@@ -2617,7 +2730,7 @@ function drawHUD(){
     ctx.textAlign="center"; ctx.textBaseline="middle";
     ctx.font="500 "+Math.round(Math.min(32,VW*0.064))+"px "+FONT;
     ctx.letterSpacing="0.13em";
-    ctx.fillStyle = flashTxt==="Record battu" ? "#D6342B" : YELL;
+    ctx.fillStyle = flashTxt===T("flashrec") ? "#D6342B" : YELL;
     ctx.fillText(flashTxt.toUpperCase(), 0, 0);
     ctx.restore();
   }
@@ -2685,7 +2798,10 @@ function styleJeu(px, init){
   $("fico").src=mouche; $("sIco").src=mouche;   // panneau de fin, puis carnet
   for(const im of document.querySelectorAll("#pref .apercu"))
     im.src="data:image/png;base64,"+(im.dataset.px==="1"?B64_PX:B64)[im.dataset.spr];
-  for(const b of document.querySelectorAll("#pref .opt"))
+  /* Seules les pastilles de style : depuis que la langue en a deux autres, un
+     selecteur sur .opt seul les allumait toutes les deux, `undefined==="1"` etant
+     faux comme `px` quand on est au trait. */
+  for(const b of document.querySelectorAll("#pref .opt[data-px]"))
     b.classList.toggle("actif", (b.dataset.px==="1")===!!px);
   SPR.or_a=dore("fly_a"); SPR.or_b=dore("fly_b");   // la doree suit le style
   mesurerObstacles();
@@ -2699,6 +2815,7 @@ function styleJeu(px, init){
 }
 function demarre(){
   const el=$("load"); if(el) el.remove();
+  poseLangue();
   FONT=getComputedStyle(document.body).fontFamily;
   styleJeu(save.pixel, true);
   montreVol(false);            // pose l'etat de depart des deux pastilles du bas
