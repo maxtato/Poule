@@ -1048,13 +1048,21 @@ dessin d'origine, sans un octet de plus. Le troisième en exprimant le chevauche
 en pixels du dessin plutôt qu'en unités de monde — `Math.max(1, o.w/nw)`, ce qui laisse
 le mode trait rigoureusement inchangé.
 
-Après réparation, quarante-cinq dessins sur cinquante tiennent la grille à **moins de
-4 %**. Les cinq restants sont les espèces d'arbres du second plan, tirées à une échelle
-aléatoire entre 1 et 1,32 : une planche unique ne peut pas suivre, l'écart y est
-structurel et vaut ±13 %. Il est invisible — ce sont des silhouettes d'une seule
-couleur, sans détail interne où comparer deux tailles de pixel. Le supprimer
-demanderait de figer la hauteur des arbres, ce qui appauvrirait la ligne d'horizon
-pour corriger un nombre que personne ne voit.
+Après réparation, **tous les dessins** tiennent la grille exactement, à l'unité de
+mesure près.
+
+Les cinq espèces d'arbres du second plan ont demandé un choix. Leur échelle est tirée
+au hasard entre 1 et 1,32 à chaque exemplaire, et une planche unique ne peut pas suivre
+une échelle continue : c'était le seul dessin du jeu hors grille, à ±13 %. En mode
+pixel, cette variation de hauteur est donc **figée**. Les espèces, l'écart entre elles
+et la parallaxe suffisent à varier la ligne d'horizon ; le mode au trait garde sa
+variation.
+
+Un piège en passant : les tailles d'affichage relevées pour ces arbres étaient fausses.
+Le relevé prend le minimum sur une partie, mais un arbre est redessiné des centaines de
+fois alors qu'il n'y en a qu'une poignée à l'écran : le minimum portait sur six tirages,
+pas six cents, et tombait 19 % au-dessus de la vraie taille de base. Une fois l'échelle
+figée, la taille est déterministe et se relève sans ambiguïté.
 
 Deux précautions dans la conversion : la **palette est relevée** sur chaque dessin,
 doublons fusionnés — il restait trois rouges de crête à deux unités d'écart — et le
