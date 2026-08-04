@@ -1083,9 +1083,16 @@ K.-O., la jauge de plumes, la poussière et le contour festonné du panneau de f
 
 ## L'icône, et le jeu ajouté à l'écran d'accueil
 
-`icone.png` : la poule en vol, bec grand ouvert, une mouche juste devant, sur la
-couleur de fond du jeu. Deux dessins du jeu, pas un dessin de plus — c'est la pose
-`gobe`, celle du vol bec ouvert, et la mouche ailes écartées.
+`icone.png` : une petite scène du jeu. Montagnes, colline, arbres et bande de terre
+dans les teintes du matin — celles du jeu, pas des couleurs choisies pour l'occasion —
+et la poule en vol qui gobe une mouche. Rien n'est redessiné : ce sont les planches du
+jeu, la pose `gobe` du vol bec ouvert, la mouche ailes écartées et les silhouettes du
+second plan, teintées comme le jeu les teinte.
+
+Le décor n'est pas une décoration : un sujet découpé sur un aplat n'a pas de
+profondeur, et à soixante pixels il ne reste qu'une tache. Les trois plans prennent
+donc des teintes de plus en plus soutenues, exactement comme en jeu — sans cet écart
+les silhouettes se confondent.
 
 Trois choses commandent la composition, et elles viennent toutes d'iOS :
 
@@ -1097,6 +1104,9 @@ Trois choses commandent la composition, et elles viennent toutes d'iOS :
 - Le dessin de la poule est **deux fois plus large que haut**. Posé à plat il laisse
   le carré vide en haut et en bas ; incliné de treize degrés il prend la diagonale, et
   la poule monte vers la mouche au lieu de passer devant.
+
+La mouche n'est pas placée à l'œil : le bout du bec est suivi **dans le repère
+tourné** de la poule, ce qui la pose juste devant quel que soit l'angle choisi.
 
 L'icône est **embarquée en base64** dans la page, comme tout le reste : le jeu ne
 demande rien au réseau, pas même pour son icône. Une version 180 pour l'écran
