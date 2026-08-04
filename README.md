@@ -1092,17 +1092,33 @@ faille reprendre un seul tracé. Le reste de `draw()` raisonne en pixels CSS : i
 suffi de changer le facteur de la matrice, densité d'écran en trait, grille du jeu en
 pixel. La poule du panneau de fin, qui a son propre canevas, suit la même règle.
 
-Pour le **texte du document**, un tampon ne sert à rien : il faut une fonte. `PouleP`
-est Fredoka ramenée sur une grille de vingt-quatre pixels par cadratin — pas un autre
-dessin de lettres, le même, quantifié. Chaque caractère est rastérisé dans un canevas,
-puis le **contour réel** des pixels allumés est suivi arête par arête et chaîné en
-boucles. Empiler des rectangles aurait été plus simple, mais deux rectangles qui se
-touchent sans se recouvrir laissent une rayure claire à chaque jointure : bien visible
-sur un grand titre, et c'est ce qu'a montré le premier essai. Les trous sortent
-naturellement dans le sens contraire des pleins, ce que le remplissage non-nul attend.
+Pour le **texte du document**, un tampon ne sert à rien : il faut une fonte. C'est une
+vraie fonte — un fichier woff2 avec ses glyphes, sa table de correspondance et de vrais
+contours, pas une image. Fredoka y est simplement ramenée sur une grille : chaque
+caractère est rastérisé dans un canevas, puis le **contour réel** des pixels allumés est
+suivi arête par arête et chaîné en boucles. Empiler des rectangles aurait été plus
+simple, mais deux rectangles qui se touchent sans se recouvrir laissent une rayure
+claire à chaque jointure : bien visible sur un grand titre, et c'est ce qu'a montré le
+premier essai. Les trous sortent naturellement dans le sens contraire des pleins, ce
+que le remplissage non-nul attend.
 
-Trois graisses, **11,6 Ko** en tout. Elle ne sert qu'en mode pixel et qu'au document :
-le texte du canevas passe déjà par le tampon.
+### Une grille de fonte ne suffit pas non plus
+
+Le pixel apparent d'un texte vaut **taille du texte / grille de la fonte**. Avec une
+grille unique, mesure faite : de 0,38 pixel CSS sur les petites capitales à **3,42** sur
+le titre — sept fois et demie d'écart, et huit fois la finesse des dessins sur le titre.
+Une fonte à pixels ne peut pas avoir un pixel constant si les corps varient.
+
+Il y a donc une **échelle de grilles** — 20, 26, 35, 46, 61, 80, 106, 140, 185 — et
+`fontePixel()` donne à chaque texte celle qui le rapproche le plus de `PX_JEU`. Le
+choix est refait à chaque redimensionnement : les corps sont en `clamp()`, ils changent
+avec la fenêtre. Les graisses légères ne sont fabriquées que pour les petits corps —
+au-delà, tout est en 800 ou 900.
+
+Résultat mesuré sur les vingt-neuf textes du document, à quatre gabarits : le pixel
+apparent tient entre **0,40 et 0,50** pour une cible de 0,45, soit 11 % d'écart au pire.
+Dix-sept faces, **93 Ko**. Elles ne servent qu'en mode pixel et qu'au document : le
+texte du canevas passe déjà par le tampon.
 
 Reste vectoriel : les icônes SVG du carnet, le liseré pointillé du bouton *Jouer* et
 le contour festonné du panneau de fin.
