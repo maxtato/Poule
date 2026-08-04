@@ -1194,16 +1194,23 @@ le contour festonné du panneau de fin.
 
 ## L'icône, et le jeu ajouté à l'écran d'accueil
 
-`icone.png` : une petite scène du jeu, **en pixel art**. Montagnes, colline, arbres et
-bande de terre dans les teintes du matin — celles du jeu, pas des couleurs choisies
-pour l'occasion — et la poule en vol qui gobe une mouche. Rien n'est redessiné : ce
-sont les planches du jeu, la pose `gobe` du vol bec ouvert, la mouche ailes écartées
-et les silhouettes du second plan, teintées comme le jeu les teinte.
+`icone.png` : un **gros plan**, en pixel art. La tête, le bec grand ouvert, la mouche
+juste devant. Rien n'est redessiné : c'est la pose `gobe` du jeu, recadrée.
 
-Le décor n'est pas une décoration : un sujet découpé sur un aplat n'a pas de
-profondeur, et à soixante pixels il ne reste qu'une tache. Les trois plans prennent
-donc des teintes de plus en plus soutenues, exactement comme en jeu — sans cet écart
-les silhouettes se confondent.
+Le premier essai montrait la scène entière — poule en vol, montagnes, arbres, bande de
+terre. Elle tenait à 1024 pixels et devenait une tache à soixante, ce qui est la seule
+taille qui compte sur un écran d'accueil. Une icône ne peut pas porter plus de **trois
+formes** : ici la crête, le bec ouvert et la mouche.
+
+Le cadrage n'est pas pris à l'œil. On relève les pixels **rouges** du dessin — la
+crête, le barbillon, la langue — dans sa moitié droite, et leur boîte donne la tête :
+elle tient entre 0,655 et 0,99 en largeur, et occupe presque toute la hauteur. Le
+cadrage est écrit en fractions de la boîte de matière, si bien que les deux planches,
+trait et pixel, donnent le même résultat sans réglage séparé.
+
+Le rouge seul, et seulement à droite : les pattes sont jaune-orange et à l'autre bout
+du dessin ; les compter élargissait la boîte à 2 %–96 % de la largeur, c'est-à-dire à
+tout le dessin.
 
 Trois choses commandent la composition, et elles viennent toutes d'iOS :
 
@@ -1212,14 +1219,8 @@ Trois choses commandent la composition, et elles viennent toutes d'iOS :
   La vérification se fait sous le vrai masque, à 180, 120, 80 et 60 pixels : c'est à
   60 que se juge une icône, pas à 1024.
 - **La transparence est composée sur du noir.** Le fond est donc opaque.
-- Le dessin de la poule est **deux fois plus large que haut**. Posé à plat il laisse
-  le carré vide en haut et en bas ; incliné de treize degrés il prend la diagonale, et
-  la poule monte vers la mouche au lieu de passer devant.
-
-La mouche n'est pas placée à l'œil : le bout du bec est suivi **dans le repère
-tourné** de la poule, puis décalée d'un écart nommé — un peu à droite, un peu plus bas
-— pour tomber en face de l'ouverture du bec plutôt que de la toucher. L'angle de la
-poule peut changer sans qu'il faille tout recaler.
+- La tête est **inclinée de neuf degrés**, bec levé vers la mouche : à plat, le
+  cadrage était statique et le regard n'allait nulle part.
 
 L'icône est **embarquée en base64** dans la page, comme tout le reste : le jeu ne
 demande rien au réseau, pas même pour son icône. Une version 180 pour l'écran
