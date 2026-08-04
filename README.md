@@ -188,11 +188,32 @@ la barre finir passe quand même. Rater le pouvoir d'un dixième de seconde se l
 un bug ; l'avoir une demi-seconde en rab ne se remarque pas. Le clignotement qui
 s'emballe, lui, court jusqu'à la vraie fin — c'est **lui** le vrai compte à rebours.
 
-La barre était dorée, juste sous une jauge de vol orange : deux barres de la même
-couleur l'une au-dessus de l'autre, on ne sait plus laquelle se vide. Elle est
-maintenant **violette**. Le violet n'existe nulle part ailleurs dans le jeu et il est à
-l'opposé de l'orange sur la roue — c'est ce qui le rend lisible du coin de l'œil. L'or
-reste sur la mouche et sur la poule, là où il sert à repérer, pas à compter.
+### Une barre qui apparaît, sous une jauge qui ne bouge pas
+
+Les deux barres du coin haut gauche se confondaient : une jauge de vol orange, et juste
+en dessous une barre de pouvoir dorée. On ne savait plus laquelle se vidait. Elles ont
+été refaites en bloc.
+
+**La jauge de vol est rouge** d'un bout à l'autre. Elle virait au rouge en fin de
+réserve, ce qui n'a plus de sens maintenant qu'elle l'est déjà : c'est un **battement**
+qui prend le relais. Sous un quart, le rouge s'éclaircit et s'assombrit six fois par
+seconde — même nature de signal, urgence croissante, sans emprunter une couleur à une
+autre jauge.
+
+**La barre de pouvoir est jaune**, comme la mouche qui la déclenche. Et elle
+**n'existe que pendant le pouvoir** : hors traversée il n'y a rien à cet endroit, pas
+même une barre vide. Une jauge toujours là se lit comme une ressource du jeu ; une
+jauge qui apparaît se lit comme un événement, et c'en est un. Vérifié en comptant les
+pixels de sa bande : zéro pixel qui ne soit du ciel quand le pouvoir est éteint.
+
+**Le mot a laissé la place à une étoile.** « TRAVERSÉE » prenait une ligne entière sous
+la barre pour dire ce qu'un pictogramme dit d'un coup d'œil. C'est la même étoile que
+celles qui tournent au-dessus de la poule assommée — le jeu n'en a qu'une. Elle se cale
+à gauche, là où la plume tient la jauge de vol, et la barre se raccourcit d'autant : les
+deux gardent ainsi le même bord droit.
+
+L'or reste donc sur la mouche, sur la poule et sur cette barre — là où il sert à
+repérer. Le rouge tient le compte de ce qui s'épuise.
 
 Ce n'est pas un autre dessin : c'est la même mouche passée dans une rampe d'or. On
 garde la **luminance** du dessin, donc son modelé, ses reflets et son trait, et on ne
@@ -252,7 +273,7 @@ Le pouvoir se lit à trois endroits, et il en faut trois :
 |---|---|
 | Sur la mouche | Un halo qui respire, un reflet qui la balaie par intermittence |
 | Sur la poule | Elle clignote en blanc et en or ; le rythme double dans la dernière seconde |
-| Dans le HUD | Une barre violette qui se vide sous la jauge de plumes |
+| Dans le HUD | Une barre jaune, sous une étoile, qui apparaît le temps du pouvoir |
 
 Deux règles de jeu, pour que ça reste lisible :
 

@@ -2459,31 +2459,42 @@ function drawHUD(){
   const f=Math.max(0,Math.min(1,hen.feathers));
   if(f>0.02){
     ctx.save(); rr(bx,by,bw,bh,r); ctx.clip();
-    ctx.fillStyle = f>0.25 ? "#F5A623" : "#D6342B";   // rouge quand la reserve s'epuise
+    /* La jauge est rouge d'un bout a l'autre. Elle virait au rouge en fin de reserve,
+       ce qui n'a plus de sens maintenant qu'elle l'est deja : c'est un battement qui
+       prend le relais. Sous un quart, le rouge s'eclaircit et s'assombrit six fois par
+       seconde — un signal de meme nature, urgence croissante, sans reprendre une
+       couleur a une autre jauge. */
+    ctx.fillStyle = f>0.25 ? "#D6342B"
+                  : mixHex("#D6342B","#FF9C8A", 0.5+0.5*Math.sin(t*13));
     ctx.fillRect(bx,by,bw*f,bh);
     ctx.restore();
     rr(bx,by,bw,bh,r); ctx.stroke();
   }
 
   /* Le pouvoir : une barre sous la jauge de plumes, qui se vide. Elle dit ce que le
-     clignotement de la poule ne dit pas — combien de temps il reste.
-     Elle etait doree, juste sous une jauge de vol orange : deux barres de la meme
-     couleur l'une au-dessus de l'autre, on ne sait plus laquelle se vide. Le violet
-     n'existe nulle part ailleurs dans le jeu, et il est a l'oppose de l'orange sur la
-     roue — c'est ce qui le rend lisible du coin de l'oeil. L'or reste sur la mouche et
-     sur la poule, la ou il sert a reperer, pas a compter. */
+     clignotement de la poule ne dit pas — combien de temps il reste. Elle n'existe
+     que pendant le pouvoir : hors traversee, il n'y a rien a cet endroit, pas meme
+     une barre vide. Une jauge toujours la se lit comme une ressource du jeu ; une
+     jauge qui apparait se lit comme un evenement, et c'en est un.
+     Jaune, comme la mouche qui la declenche et comme l'etoile qui la nomme. La jauge
+     de vol au-dessus est rouge : les deux ne se confondent plus. */
   if(traverse()){
     const reste=(orJusqu-t-OR_RAB)/OR_BARRE;   // le rab ne s'affiche pas : c'est une marge
     const py=by+bh+9, ph2=bh*0.82;
+    /* L'etoile tient lieu de nom — le mot TRAVERSÉE prenait une ligne entiere sous
+       la barre pour dire ce qu'un pictogramme dit d'un coup d'oeil. C'est la meme
+       etoile que celles qui tournent au-dessus de la poule assommee : le jeu n'en a
+       qu'une. Elle se cale a gauche, la ou la plume tient la jauge de vol, et la
+       barre se raccourcit d'autant — les deux gardent ainsi le meme bord droit. */
+    const er=ph2*0.95, ex=bx+er;
+    const px2=bx+er*2+6, pw2=bw-(er*2+6);
     ctx.lineWidth=Math.max(1.4,fh*0.075); ctx.strokeStyle=INK;
-    rr(bx,py,bw,ph2,ph2/2); ctx.fillStyle="#EFE6D6"; ctx.fill(); ctx.stroke();
-    ctx.save(); rr(bx,py,bw,ph2,ph2/2); ctx.clip();
-    ctx.fillStyle="#7C5CC4"; ctx.fillRect(bx,py,bw*Math.max(0,reste),ph2);
+    rr(px2,py,pw2,ph2,ph2/2); ctx.fillStyle="#EFE6D6"; ctx.fill(); ctx.stroke();
+    ctx.save(); rr(px2,py,pw2,ph2,ph2/2); ctx.clip();
+    ctx.fillStyle="#F5B93E"; ctx.fillRect(px2,py,pw2*Math.max(0,reste),ph2);
     ctx.restore();
-    rr(bx,py,bw,ph2,ph2/2); ctx.stroke();
-    ctx.textAlign="left"; ctx.textBaseline="top";
-    ctx.font="900 11px "+FONT; ctx.fillStyle="#5E3FA6";
-    ctx.fillText("TRAVERSÉE", bx, py+ph2+6);
+    rr(px2,py,pw2,ph2,ph2/2); ctx.stroke();
+    star(ctx, ex, py+ph2/2, er, 0, Math.max(1,fh*0.055));
   }
 
   /* Le combo ne s'affiche qu'a partir de deux mouches, avec le temps qu'il reste
