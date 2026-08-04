@@ -1081,6 +1081,34 @@ si bien que le mode pixel est marginalement plus indulgent, jamais plus dur.
 Ce qui reste vectoriel dans les deux styles : la typographie, la ronde d'étoiles du
 K.-O., la jauge de plumes, la poussière et le contour festonné du panneau de fin.
 
+## L'icône, et le jeu ajouté à l'écran d'accueil
+
+`icone.png` : la poule en vol, bec grand ouvert, une mouche juste devant, sur la
+couleur de fond du jeu. Deux dessins du jeu, pas un dessin de plus — c'est la pose
+`gobe`, celle du vol bec ouvert, et la mouche ailes écartées.
+
+Trois choses commandent la composition, et elles viennent toutes d'iOS :
+
+- **Le système arrondit lui-même les angles**, en superellipse et non en cercle. Le
+  carré est donc plein jusqu'aux bords, et le sujet tenu à l'écart des quatre coins.
+  La vérification se fait sous le vrai masque, à 180, 120, 80 et 60 pixels : c'est à
+  60 que se juge une icône, pas à 1024.
+- **La transparence est composée sur du noir.** Le fond est donc opaque.
+- Le dessin de la poule est **deux fois plus large que haut**. Posé à plat il laisse
+  le carré vide en haut et en bas ; incliné de treize degrés il prend la diagonale, et
+  la poule monte vers la mouche au lieu de passer devant.
+
+L'icône est **embarquée en base64** dans la page, comme tout le reste : le jeu ne
+demande rien au réseau, pas même pour son icône. Une version 180 pour l'écran
+d'accueil, une version 48 pour l'onglet.
+
+Ajouté à l'écran d'accueil, le jeu s'ouvre **en plein écran**, sans la barre de
+Safari, sous le nom court *La poule*. Le terrain se cale déjà sur `env(safe-area-inset-*)`,
+il n'y avait rien à reprendre pour ça.
+
+`icone-pixel.png` est la même composition avec les planches en pixel art, si le style
+pixel devient le style par défaut.
+
 ## Les outils du téléphone
 
 Sur iPhone, deux ou trois appuis rapides au même endroit réveillent la loupe du
