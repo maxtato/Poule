@@ -744,8 +744,15 @@ const MOUCHE = ["fly_b","fly_a"];
    elle suit le trait comme le pixel sans peser un octet de plus dans le fichier. */
 const OR_RAMPE=[[0,[38,26,6]],[.22,[122,80,14]],[.48,[214,150,32]],
                 [.72,[247,199,78]],[.90,[255,236,170]],[1,[255,252,235]]];
-const OR_ATTENTE=[19,32];     // secondes entre deux mouches dorees
-const OR_DUREE=6;             // duree du pouvoir
+const OR_ATTENTE=[38,60];     // secondes entre deux mouches dorees
+/* La barre du HUD se vide en OR_BARRE secondes, mais le pouvoir tient OR_RAB de plus.
+   C'est une marge, pas un mensonge : celui qui s'engage dans un obstacle en voyant la
+   barre finir passe quand meme. Rater le pouvoir d'un dixieme de seconde, ca se lit
+   comme un bug ; l'avoir une demi-seconde en rab ne se remarque pas. Le clignotement
+   qui s'emballe, lui, court jusqu'a la vraie fin — c'est lui le vrai compte a rebours. */
+const OR_BARRE=6;             // ce que la barre affiche
+const OR_RAB=0.55;            // le rab, apres que la barre est vide
+const OR_DUREE=OR_BARRE+OR_RAB;
 const OR_FIN=1.4;             // derniere seconde : le clignotement s'emballe
 const OR=["or_b","or_a"];     // les deux poses, memes indices que MOUCHE
 function dore(k){
@@ -1052,6 +1059,7 @@ document.addEventListener("visibilitychange",()=>{ if(document.hidden) halt(); }
 const HEN_X=150;
 const hen={x:HEN_X,y:0,vy:0,ground:true,feathers:1,anim:0,flap:0,dead:false};
 let speed=0, dist=0, tSpawn=0, t=0, shake=0, hold=false, holdT=0, eaten=0;
+let dernierObs="";   // le dernier obstacle lance : le cerf-volant ne se suit pas lui-meme
 let obs=[], flies=[], puffs=[], plumes=[], traits=[], clouds=[], sol=[], hills=[], pops=[], miettes=[], decor=[];
 let tFly=0;
 /* Combo : gober sans laisser retomber la chaine nourrit la chaine elle-meme —
@@ -1076,7 +1084,7 @@ function reset(){
   hen.x=HEN_X; hen.y=0; hen.vy=0; hen.ground=true; hen.feathers=1; hen.flap=0; hen.dead=false;
   flapNow=false; jumpBuf=-9; flapUntil=-9; enSaut=false; fingers.clear();
   speed=500; dist=0; tSpawn=1.1; shake=0; hold=false; eaten=0;
-  obs=[]; flies=[]; puffs=[]; plumes=[]; traits=[]; pops=[]; miettes=[];
+  obs=[]; flies=[]; puffs=[]; plumes=[]; traits=[]; pops=[]; miettes=[]; dernierObs="";
   combo=0; lastEat=-9; palier=0; recBeaten=false; flashT=-9; flashTxt="";
   deadLand=-9; chocVol=false; chocSur=false; deadVx=0; deadFrein=0;
   tFly=3; tOr=OR_ATTENTE[0]*0.55; orJusqu=-9;
@@ -1465,14 +1473,52 @@ function eclat(x,y,n){
 }
 function flash(txt){ flashT=t; flashTxt=txt; }
 
-/* ---------- obstacles ---------- */
+/* ---------- obstacles ----------
+   Ce qu'on croise dans un champ n'y est pas en parts egales. Il y a des ballots de
+   paille partout, une barriere par cloture, une fourche ou deux plantees quelque part,
+   et une seule brouette pour toute la ferme. Le poids ci-dessous, c'est ce rapport-la
+   et rien d'autre : la difficulte se regle par la cadence et la vitesse, pas en
+   inondant le champ de brouettes.
+   `des` est la distance a partir de laquelle l'objet entre dans le tirage — le debut
+   de la course reste volontairement pauvre, le temps d'apprendre a sauter. */
+const OBS_POIDS = [
+  {k:"bale",   p:26, des:0},     // il y en a partout, c'est l'objet du champ
+  {k:"bucket", p:14, des:0},     // un seau traîne toujours
+  {k:"tire",   p:10, des:0},     // quelques pneus, pour tenir les baches
+  {k:"fence",  p:12, des:250},   // une barriere par cloture
+  {k:"bale2",  p:9,  des:400},   // la pile de ballots, plus rare qu'un ballot seul
+  {k:"fork",   p:5,  des:250},   // une fourche plantee, on n'en croise pas dix
+  {k:"barrow", p:3,  des:170},   // une seule brouette pour toute la ferme
+  {k:"eagle",  p:16, des:170},   // le ciel, lui, en a toujours un qui tourne
+  {k:"kite",   p:6,  des:170},   // un cerf-volant, c'est un evenement
+];
+/* Deux regles d'espacement pour le ciel, parce que deux oiseaux cote a cote ne se
+   lisent plus comme deux obstacles mais comme un mur.
+   L'aigle : on n'en lance pas un tant que le precedent n'a pas quitte l'ecran par la
+   gauche. Il vole a contresens, donc il traverse vite, et l'attente est courte.
+   Le cerf-volant : jamais deux d'affilee. Il fuit dans le meme sens que la poule et
+   reste longtemps en vue ; deux de suite, c'est le meme obstacle deux fois. */
+const AIGLE_SORTI = -(EAGLE.w-EAGLE.bodyX) - 40;   // il est hors champ, plus une marge
+function cielLibre(k){
+  if(k==="eagle") return !obs.some(o=>o.k==="eagle" && o.x>AIGLE_SORTI);
+  if(k==="kite")  return dernierObs!=="kite" && !obs.some(o=>o.k==="kite");
+  return true;
+}
+function tirage(){
+  if(dist<170) return Math.random()<0.6?"bale":"bucket";
+  let tot=0;
+  for(const e of OBS_POIDS) if(dist>e.des && cielLibre(e.k)) tot+=e.p;
+  let r=Math.random()*tot;
+  for(const e of OBS_POIDS){
+    if(dist<=e.des || !cielLibre(e.k)) continue;
+    if((r-=e.p)<0) return e.k;
+  }
+  return "bale";
+}
 function spawn(){
   const hard=Math.min(dist/1000,1);
-  const pool=["bale","bale","bucket","tire"];
-  if(dist>170) pool.push("eagle","eagle","barrow","bale","kite");
-  if(dist>250) pool.push("fence","fork");
-  if(dist>400) pool.push("bale2","eagle","tire");
-  const k = dist<170 ? (Math.random()<0.6?"bale":"bucket") : pool[(Math.random()*pool.length)|0];
+  const k=tirage();
+  dernierObs=k;
 
   if(k==="kite"){
     /* Il entre par le bas du ciel et le traverse en montant. Sa bande de depart s'arrete
@@ -2419,19 +2465,24 @@ function drawHUD(){
     rr(bx,by,bw,bh,r); ctx.stroke();
   }
 
-  /* Le pouvoir : une barre doree sous la jauge de plumes, qui se vide. Elle dit ce
-     que le clignotement de la poule ne dit pas — combien de temps il reste. */
+  /* Le pouvoir : une barre sous la jauge de plumes, qui se vide. Elle dit ce que le
+     clignotement de la poule ne dit pas — combien de temps il reste.
+     Elle etait doree, juste sous une jauge de vol orange : deux barres de la meme
+     couleur l'une au-dessus de l'autre, on ne sait plus laquelle se vide. Le violet
+     n'existe nulle part ailleurs dans le jeu, et il est a l'oppose de l'orange sur la
+     roue — c'est ce qui le rend lisible du coin de l'oeil. L'or reste sur la mouche et
+     sur la poule, la ou il sert a reperer, pas a compter. */
   if(traverse()){
-    const reste=(orJusqu-t)/OR_DUREE;
+    const reste=(orJusqu-t-OR_RAB)/OR_BARRE;   // le rab ne s'affiche pas : c'est une marge
     const py=by+bh+9, ph2=bh*0.82;
     ctx.lineWidth=Math.max(1.4,fh*0.075); ctx.strokeStyle=INK;
     rr(bx,py,bw,ph2,ph2/2); ctx.fillStyle="#EFE6D6"; ctx.fill(); ctx.stroke();
     ctx.save(); rr(bx,py,bw,ph2,ph2/2); ctx.clip();
-    ctx.fillStyle="#EFA81C"; ctx.fillRect(bx,py,bw*Math.max(0,reste),ph2);
+    ctx.fillStyle="#7C5CC4"; ctx.fillRect(bx,py,bw*Math.max(0,reste),ph2);
     ctx.restore();
     rr(bx,py,bw,ph2,ph2/2); ctx.stroke();
     ctx.textAlign="left"; ctx.textBaseline="top";
-    ctx.font="900 11px "+FONT; ctx.fillStyle="#B8860B";
+    ctx.font="900 11px "+FONT; ctx.fillStyle="#5E3FA6";
     ctx.fillText("TRAVERSÉE", bx, py+ph2+6);
   }
 

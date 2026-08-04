@@ -130,11 +130,69 @@ moitié il reste réduit de 4,6 fois à l'écran, jamais étiré.
 Les autres obstacles sont au sol et arrivent d'autant plus vite que la course
 dure.
 
+### Ce qu'on croise, et à quelle fréquence
+
+Le tirage n'est pas uniforme, et il ne l'est pas pour une raison qui n'a rien à voir
+avec la difficulté : **un champ n'est pas rempli en parts égales**. Il y a des ballots
+de paille partout, une barrière par clôture, une fourche ou deux plantées quelque part,
+et une seule brouette pour toute la ferme. Les poids disent ce rapport-là et rien
+d'autre — la difficulté se règle par la cadence et la vitesse, pas en inondant le champ
+de brouettes.
+
+| Objet | Part | Pourquoi |
+|---|---|---|
+| Ballot de paille | 27 % | C'est *l'*objet du champ |
+| Seau | 14 % | Il en traîne toujours un |
+| Aigle | 14 % | Le ciel en a toujours un qui tourne |
+| Barrière | 12 % | Une par clôture |
+| Pneu | 10 % | Quelques-uns, pour tenir les bâches |
+| Pile de ballots | 9 % | Plus rare qu'un ballot seul |
+| Fourche | 5 % | On n'en croise pas dix |
+| Cerf-volant | 5 % | C'est un événement |
+| Brouette | 3 % | Une seule pour toute la ferme |
+
+Chaque objet entre dans le tirage à partir d'une certaine distance — le début de la
+course reste volontairement pauvre, le temps d'apprendre à sauter. Mesuré sur une heure
+de jeu simulée, 3 990 obstacles : les parts tombent à un dixième de point des poids.
+
+### Deux règles d'espacement pour le ciel
+
+Deux oiseaux côte à côte ne se lisent plus comme deux obstacles mais comme un mur.
+
+**L'aigle** : on n'en lance pas un tant que le précédent n'a pas quitté l'écran par la
+gauche, plus une marge. Il vole à contre-sens, donc il traverse vite et l'attente est
+courte — il garde 14 % du tirage malgré la règle.
+
+**Le cerf-volant** : jamais deux d'affilée, et jamais un second tant que le premier est
+en vue. Lui fuit dans le **même sens** que la poule et reste longtemps à l'écran ; deux
+de suite, c'est le même obstacle deux fois.
+
+Les deux règles ne rejettent pas le tirage pour le refaire : l'objet interdit est
+**retiré du chapeau** avant de tirer, et son poids est redistribué sur les autres. Une
+heure de jeu simulée, image par image : pas une seule image avec deux aigles à l'écran,
+pas une avec deux cerfs-volants, pas un cerf-volant suivi d'un cerf-volant.
+
 ## La mouche dorée
 
 De loin en loin, une mouche **dorée** traverse le ciel, seule, à hauteur de vol
-franche et sans dérive : on doit la voir venir et décider d'aller la chercher. La
-gober donne **six secondes de traversée** — les obstacles ne l'arrêtent plus.
+franche et sans dérive : on doit la voir venir et décider d'aller la chercher. Une
+toutes les **38 à 60 secondes**, soit environ soixante-dix sur une heure de jeu : assez
+rare pour rester un événement. La gober donne **six secondes de traversée** — les
+obstacles ne l'arrêtent plus.
+
+### La barre dit six secondes, le pouvoir en tient six et demie
+
+La barre du HUD se vide en six secondes, mais le pouvoir tient **une demi-seconde de
+plus**. C'est une marge, pas un mensonge : celui qui s'engage dans un obstacle en voyant
+la barre finir passe quand même. Rater le pouvoir d'un dixième de seconde se lit comme
+un bug ; l'avoir une demi-seconde en rab ne se remarque pas. Le clignotement qui
+s'emballe, lui, court jusqu'à la vraie fin — c'est **lui** le vrai compte à rebours.
+
+La barre était dorée, juste sous une jauge de vol orange : deux barres de la même
+couleur l'une au-dessus de l'autre, on ne sait plus laquelle se vide. Elle est
+maintenant **violette**. Le violet n'existe nulle part ailleurs dans le jeu et il est à
+l'opposé de l'orange sur la roue — c'est ce qui le rend lisible du coin de l'œil. L'or
+reste sur la mouche et sur la poule, là où il sert à repérer, pas à compter.
 
 Ce n'est pas un autre dessin : c'est la même mouche passée dans une rampe d'or. On
 garde la **luminance** du dessin, donc son modelé, ses reflets et son trait, et on ne
@@ -194,7 +252,7 @@ Le pouvoir se lit à trois endroits, et il en faut trois :
 |---|---|
 | Sur la mouche | Un halo qui respire, un reflet qui la balaie par intermittence |
 | Sur la poule | Elle clignote en blanc et en or ; le rythme double dans la dernière seconde |
-| Dans le HUD | Une barre dorée qui se vide sous la jauge de plumes |
+| Dans le HUD | Une barre violette qui se vide sous la jauge de plumes |
 
 Deux règles de jeu, pour que ça reste lisible :
 
