@@ -998,7 +998,7 @@ ouvre une feuille où l'on choisit — deux vignettes montrant la même poule de
 deux façons, parce que montrer la différence vaut mieux que la nommer. Le choix est
 gardé dans la sauvegarde et survit au rechargement.
 
-Ça ne coûte presque rien : les planches en pixel pèsent **87 Ko** contre 13 Mo pour
+Ça ne coûte presque rien : les planches en pixel pèsent **128 Ko** contre 13 Mo pour
 les originales. Les deux tiennent dans le même fichier sans discussion.
 
 ### Une seule grille pour tout le jeu
@@ -1006,9 +1006,15 @@ les originales. Les deux tiennent dans le même fichier sans discussion.
 Convertir chaque dessin à une largeur fixe — 64 pixels pour la poule, 64 pour la
 montagne — donnerait des pixels **gros comme une maison** sur la montagne et
 minuscules sur la mouche : cinquante-neuf grilles différentes, et un décor qui jure
-avec le personnage. Le pixel vaut donc **1,22 pixel CSS**, le même partout ; chaque
+avec le personnage. Le pixel vaut donc **0,85 pixel CSS**, le même partout ; chaque
 dessin est converti à sa taille d'affichage divisée par cette valeur. La poule fait
-63 pixels de large, la mouche 20, la montagne 394.
+90 pixels de large, la mouche 28, la montagne 566.
+
+C'est la grille la plus fine qui tienne encore debout. En dessous, le pixel d'art
+descend sous les deux pixels d'écran d'un téléphone ordinaire — 1,70 à `dpr` 2 avec
+cette valeur, 1,39 à 0,70 — et le navigateur se met à rendre les carrés inégaux :
+certains sur deux pixels, d'autres sur un. La finesse tient dans un seul nombre, et
+`1.00` donne le doublement propre si on préfère la régularité au détail.
 
 Cette taille d'affichage est **mesurée, pas devinée** : `drawImage` est emballé le
 temps d'une partie et relève, pour chaque dessin, la plus grande taille à laquelle il
