@@ -154,11 +154,10 @@
      dans la pastille, comme un ticket ; sur du rouge plein il n'y avait plus de fond
      clair pour le porter. */
   #menu .jouer{position:relative;display:flex;align-items:center;justify-content:center;
-    gap:clamp(9px,2.6vw,14px);width:min(84%,340px);
+    width:min(84%,340px);
     padding:clamp(15px,4.2vw,20px) 18px;font-size:clamp(15px,4.2vw,19px);
     letter-spacing:.14em;background:#D6342B;border:1.5px solid #D6342B;color:#fff}
   #menu .jouer:active{background:#B32A22;border-color:#B32A22;color:#fff}
-  #menu .plumule{width:clamp(19px,5.2vw,24px);height:auto;display:block}
   /* Le carnet en trois colonnes : une icone, l'intitule, le nombre. */
   #menu .stats{display:flex;align-items:center;justify-content:center;
     gap:clamp(10px,3.4vw,22px)}
@@ -388,13 +387,7 @@
     <p class="sub">Elle court. Elle saute. Et si tu insistes, elle vole, tant qu'il lui reste des plumes. Gober des mouches lui en rend.</p>
   </div>
   <div class="bas">
-    <button class="btn jouer" id="play">
-      <svg class="plumule" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M20.6 3c-1.2 8.2-6.4 13.1-13.8 14.4C8.1 9.7 12.8 4.3 20.6 3Z" fill="currentColor"/>
-        <path d="M20.6 3 3.6 20.8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-        <path d="M18.2 6.9 9.4 15.2" stroke="#D6342B" stroke-width="1.4" stroke-linecap="round"/>
-      </svg>Start
-    </button>
+    <button class="btn jouer" id="play">Start</button>
   </div>
 </div>
 

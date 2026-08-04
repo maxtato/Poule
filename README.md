@@ -993,12 +993,13 @@ mouches **rendent des plumes** : sans ça on les gobe pour le score sans compren
 qu'on rachète du vol. Cette seule chose a rejoint la phrase du haut, en une ligne :
 « Gober des mouches lui en rend. »
 
-Le **bouton** est maintenant rouge plein, écriture blanche : exactement le bouton
+Le **bouton** dit *Start*, en rouge plein et écriture blanche : exactement le bouton
 *Recommencer* du panneau de fin. Les deux boutons du jeu se ressemblent donc, et c'est
-la seule chose rouge et pleine de l'accueil. Il portait un liseré pointillé rentré de
-six pixels, comme un ticket ; sur du rouge plein il n'y avait plus de fond clair pour
-le porter. La nervure de la plume est passée du crème au rouge du bouton, sans quoi
-elle disparaissait sur la plume devenue blanche.
+la seule chose rouge et pleine de l'accueil. Il a perdu deux choses en chemin. Un liseré
+pointillé rentré de six pixels, comme un ticket, qui n'avait plus de fond clair pour le
+porter une fois le bouton rempli. Et la petite plume posée devant le mot : sur un bouton
+qui ne porte plus qu'un mot de cinq lettres, elle ne nommait rien que le mot ne dise
+déjà.
 
 Deux réglages tiennent à des voisins encombrants :
 
