@@ -4,6 +4,10 @@ Un jeu de course infinie tenant dans un seul fichier HTML. La poule court, saute
 et vole tant qu'il lui reste des plumes. Ouvre `index.html` : rien à installer,
 rien à télécharger, aucun réseau.
 
+Un essai en **pixel art** vit à côté, dans `pixel/` : le même jeu, toutes ses images
+converties sur une grille commune. Il ne touche pas à celui-ci. Voir
+[`pixel/README.md`](pixel/README.md).
+
 ## Jouer
 
 | Geste | Effet |
