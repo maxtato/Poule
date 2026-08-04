@@ -1384,9 +1384,15 @@ complet, trop chargée. Un **gros plan de la tête** en pixel art, bec ouvert et
 devant, qui tenait mieux à soixante pixels mais ne montrait plus de quoi parle le jeu.
 C'est celle-ci qui reste, **sans pixel** : les dessins d'origine, au trait, lissés.
 
-À soixante pixels — la seule taille qui compte sur un écran d'accueil — la poule
-devient petite. C'est le prix d'une scène plutôt que d'un sujet, et c'est assumé : on y
-reconnaît une poule qui vole vers une mouche, ce qui est le sujet du jeu.
+La poule occupe **64 % de la largeur** du carré. Elle en occupait la moitié, et à
+soixante pixels — la seule taille qui compte sur un écran d'accueil — elle devenait une
+tache. Au-delà de 64 % ses pattes viennent buter sur le coin arrondi du système ; c'est
+la limite, mesurée sous le vrai masque et non estimée.
+
+La mouche n'a pas bougé de sa place pour autant : elle est posée depuis le **bout du
+bec**, dans le repère tourné de la poule, et non à une position absolue. L'écart entre
+le bec et elle vaut 2,4 % du carré, avant comme après. Une poule plus grande, mais pas
+plus près de sa proie.
 
 Trois choses commandent la composition :
 
