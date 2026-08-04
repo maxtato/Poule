@@ -998,7 +998,7 @@ ouvre une feuille où l'on choisit — deux vignettes montrant la même poule de
 deux façons, parce que montrer la différence vaut mieux que la nommer. Le choix est
 gardé dans la sauvegarde et survit au rechargement.
 
-Ça coûte peu : les planches en pixel pèsent **519 Ko** contre 13 Mo pour les
+Ça coûte peu : les planches en pixel pèsent **392 Ko** contre 13 Mo pour les
 originales. Les deux tiennent dans le même fichier sans discussion.
 
 ### Une seule grille pour tout le jeu
@@ -1006,16 +1006,16 @@ originales. Les deux tiennent dans le même fichier sans discussion.
 Convertir chaque dessin à une largeur fixe — 64 pixels pour la poule, 64 pour la
 montagne — donnerait des pixels **gros comme une maison** sur la montagne et
 minuscules sur la mouche : cinquante-neuf grilles différentes, et un décor qui jure
-avec le personnage. Le pixel vaut donc **0,33 pixel CSS**, le même partout ; chaque
+avec le personnage. Le pixel vaut donc **0,40 pixel CSS**, le même partout ; chaque
 dessin est converti à sa taille d'affichage divisée par cette valeur. La poule fait
-232 pixels de large, la mouche 73, la montagne 1458.
+192 pixels de large, la mouche 60, la montagne 1203.
 
-Cette valeur n'est pas choisie au jugé : **un pixel d'art y vaut exactement un pixel
-d'écran** sur un téléphone à `dpr` 3. C'est la grille la plus fine qui garde un sens —
-en dessous, le navigateur doit jeter des pixels de la planche pour la faire tenir, et
-ce qu'il jette change d'une image à l'autre : le dessin grouille dès qu'il bouge. Un
-dessin immobile, lui, ne trahit rien, ce qui rend le défaut facile à ne pas voir sur
-une capture.
+Il y a un plancher, et il vaut la peine d'être connu : sous **0,33** le pixel d'art
+descend sous le pixel d'écran d'un téléphone à `dpr` 3, et le navigateur doit alors
+jeter des pixels de la planche pour la faire tenir. Ce qu'il jette change d'une image
+à l'autre : le dessin grouille dès qu'il bouge. Un dessin immobile, lui, ne trahit
+rien, ce qui rend le défaut facile à ne pas voir sur une capture. La valeur retenue
+garde une marge de vingt pour cent au-dessus de ce plancher.
 
 C'est d'ailleurs par là que la bonne finesse a été trouvée. La poule assommée était
 dessinée bien plus finement que le reste — non par choix, mais parce que sa planche
