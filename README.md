@@ -998,7 +998,7 @@ ouvre une feuille où l'on choisit — deux vignettes montrant la même poule de
 deux façons, parce que montrer la différence vaut mieux que la nommer. Le choix est
 gardé dans la sauvegarde et survit au rechargement.
 
-Ça ne coûte presque rien : les planches en pixel pèsent **128 Ko** contre 13 Mo pour
+Ça ne coûte presque rien : les planches en pixel pèsent **137 Ko** contre 13 Mo pour
 les originales. Les deux tiennent dans le même fichier sans discussion.
 
 ### Une seule grille pour tout le jeu
@@ -1017,13 +1017,37 @@ certains sur deux pixels, d'autres sur un. La finesse tient dans un seul nombre,
 `1.00` donne le doublement propre si on préfère la régularité au détail.
 
 Cette taille d'affichage est **mesurée, pas devinée** : `drawImage` est emballé le
-temps d'une partie et relève, pour chaque dessin, la plus grande taille à laquelle il
-est posé. La mesure se fait **à l'écran**, matrice courante appliquée : le terrain
-dessine en unités de monde et le HUD en pixels CSS, deux échelles qu'un relevé naïf
-mélange — et qui donnaient des grilles fausses d'un facteur deux. Deux dessins servent
-à deux tailles (la poule K.-O. au sol puis, plus grande, sur le panneau de fin ; la
-mouche dans le HUD, sur le panneau et dans le carnet) : c'est la plus grande qui
-commande, sinon le panneau agrandit une planche faite pour le sol.
+temps d'une partie et relève, pour chaque dessin, la taille à laquelle il est posé. La
+mesure se fait **à l'écran**, matrice courante appliquée : le terrain dessine en unités
+de monde et le HUD en pixels CSS, deux échelles qu'un relevé naïf mélange — et qui
+donnaient des grilles fausses d'un facteur deux.
+
+### Vérifier la grille au lieu de la supposer
+
+Fabriquer les planches sur une grille commune ne suffit pas : ce qui compte est la
+taille **apparente** du pixel, largeur affichée divisée par largeur de planche. Une
+seconde sonde la relève dessin par dessin, sur une partie entière. Elle a trouvé trois
+dérives qu'aucune lecture du code n'aurait données :
+
+| Dessin | Avant | Cause |
+|---|---|---|
+| La mouche du monde | **0,36** au lieu de 0,85 | Le même dessin sert de mouche et d'icône ; la planche était taillée pour l'icône, deux fois et demie plus grande |
+| La poule K.-O. au sol | **0,27** | Même chose : la planche était taillée pour le panneau de fin |
+| La queue du cerf-volant | 0,72 | Ses tranches se chevauchent d'un pixel du dessin, mais d'**une unité de monde** à l'écran — invisible sur un dessin de 1389 pixels, criant sur une planche de 163 |
+
+Les deux premiers sont réparés en **dédoublant la planche** : `fly_ico` et `ko_carte`
+n'existent que dans la version pixel ; en mode trait, les deux clés pointent sur le
+dessin d'origine, sans un octet de plus. Le troisième en exprimant le chevauchement
+en pixels du dessin plutôt qu'en unités de monde — `Math.max(1, o.w/nw)`, ce qui laisse
+le mode trait rigoureusement inchangé.
+
+Après réparation, quarante-cinq dessins sur cinquante tiennent la grille à **moins de
+4 %**. Les cinq restants sont les espèces d'arbres du second plan, tirées à une échelle
+aléatoire entre 1 et 1,32 : une planche unique ne peut pas suivre, l'écart y est
+structurel et vaut ±13 %. Il est invisible — ce sont des silhouettes d'une seule
+couleur, sans détail interne où comparer deux tailles de pixel. Le supprimer
+demanderait de figer la hauteur des arbres, ce qui appauvrirait la ligne d'horizon
+pour corriger un nombre que personne ne voit.
 
 Deux précautions dans la conversion : la **palette est relevée** sur chaque dessin,
 doublons fusionnés — il restait trois rouges de crête à deux unités d'écart — et le
