@@ -1279,38 +1279,90 @@ apparent tient entre **0,34 et 0,45** pour une cible de 0,40, soit 14 % d'écart
 Dix-sept faces, **93 Ko**. Elles ne servent qu'en mode pixel et qu'au document : le
 texte du canevas passe déjà par le tampon.
 
-Reste vectoriel : les icônes SVG du carnet, le liseré pointillé du bouton *Jouer* et
-le contour festonné du panneau de fin.
+### Le panneau de fin, qui restait lisse
+
+Le contour festonné du panneau de *Game Over* est le seul dessin de la page qui ne soit
+ni une planche ni un tracé du canevas : c'est un SVG posé en fond de bloc. Le navigateur
+le rastérise à la **résolution de l'écran**, pas à la grille du jeu — si bien qu'en mode
+pixel il était la seule chose de cet écran à garder des bords parfaitement nets, juste
+à côté d'une poule assommée en escalier.
+
+Le même chemin est maintenant peint dans un **canevas à la grille** — un pixel d'image
+pour 0,40 pixel CSS, exactement comme la poule posée dessus — puis agrandi en dur par
+`image-rendering`. Même géométrie, même nombre de bosses ; seule la trame change.
+Mesuré : cinq teintes distinctes sur une ligne qui traverse le bord, contre le dégradé
+continu d'avant.
+
+En le vérifiant, un second écart est apparu sur le même écran : la planche pixel de
+l'icône de mouche avait été taillée sur la mouche du HUD, large de 39,7 pixels CSS,
+alors que le panneau de fin la pose à 76 sur grand écran. Son pixel d'art y valait
+**0,56** au lieu de 0,40 — c'était le seul élément visiblement plus grossier que le
+reste. Elle est refaite sur la plus grande de ses trois utilisations ; les deux autres
+la réduisent, ce qui ne coûte rien.
+
+Reste vectoriel : les icônes SVG du carnet et le liseré pointillé du bouton *Jouer*.
 
 ## L'icône, et le jeu ajouté à l'écran d'accueil
 
 `icone.png` : un **gros plan**, en pixel art. La tête, le bec grand ouvert, la mouche
-juste devant. Rien n'est redessiné : c'est la pose `gobe` du jeu, recadrée.
+juste devant, un paysage derrière. Rien n'est redessiné : ce sont les dessins du jeu,
+recadrés et composés.
 
 Le premier essai montrait la scène entière — poule en vol, montagnes, arbres, bande de
 terre. Elle tenait à 1024 pixels et devenait une tache à soixante, ce qui est la seule
 taille qui compte sur un écran d'accueil. Une icône ne peut pas porter plus de **trois
 formes** : ici la crête, le bec ouvert et la mouche.
 
-Le cadrage n'est pas pris à l'œil. On relève les pixels **rouges** du dessin — la
-crête, le barbillon, la langue — dans sa moitié droite, et leur boîte donne la tête :
-elle tient entre 0,655 et 0,99 en largeur, et occupe presque toute la hauteur. Le
-cadrage est écrit en fractions de la boîte de matière, si bien que les deux planches,
-trait et pixel, donnent le même résultat sans réglage séparé.
+### Un cadrage de photo, pas une vignette
 
-Le rouge seul, et seulement à droite : les pattes sont jaune-orange et à l'autre bout
-du dessin ; les compter élargissait la boîte à 2 %–96 % de la largeur, c'est-à-dire à
-tout le dessin.
+Le sujet est `gobe_tete`, la tête seule, dont le cou file déjà vers le bas à gauche.
+Elle est posée **assez grande pour que la coupe du cou tombe hors du carré** : le cou
+sort par le bord gauche et par le bas, comme sur une photo cadrée serré. Une silhouette
+entière posée au milieu d'un fond se lit comme un autocollant ; un cadrage qui déborde
+se lit comme une image.
 
-Trois choses commandent la composition, et elles viennent toutes d'iOS :
+La tête est **inclinée de seize degrés**, bec levé vers la mouche. L'inclinaison sert
+deux fois : elle donne une direction au regard, et elle fait plonger le cou plus
+franchement hors du coin bas gauche.
+
+La mouche est calée sur **l'ouverture du bec**, relevée et non estimée : on cherche le
+brun de la gorge dans la moitié droite du dessin — aucune autre partie n'a cette
+couleur — et son centre donne la hauteur. Le repérage se fait sur la planche au trait :
+la réduction de palette du pixel fond ce brun dans l'encre, et il n'y aurait plus rien
+à mesurer. Tous les repères sont exprimés en fractions de la boîte de matière.
+
+### Le fond, celui du jeu
+
+Plus un aplat : le ciel en dégradé, des montagnes, des collines, deux arbres, la terre.
+Trois plans, chacun plus grand **et plus foncé** que le précédent — c'est l'écart de
+valeur qui fait la profondeur, pas le nombre d'objets. La palette du jeu est
+volontairement pâle ; telle quelle, à soixante pixels, les trois plans se confondaient
+en une seule bouillie beige. Ils sont donc étagés vers le foncé à partir des teintes du
+jeu.
+
+Deux pièges de grille, réglés en mesurant plutôt qu'en regardant : la ligne d'horizon
+faisait trois pixels sur 1024, moins d'un demi-carré de la grille, et le vote de bloc
+l'effaçait purement et simplement — elle en fait seize. Les arbres, eux, étaient assez
+petits pour se réduire à deux taches ; ils ont doublé.
+
+### La grille
+
+La composition est faite **avec les dessins au trait**, même pour l'icône en pixel,
+puis la scène entière est ramenée sur une grille. Faire tourner une planche déjà
+pixelisée produit des escaliers irréguliers qu'aucune grille ne rattrape ensuite. En
+prime, le ciel sort en bandes franches et les montagnes ont la même trame que la poule.
+
+La grille fait **128 carrés de côté**, seize nuances. C'est un compromis mesuré : à 64
+la mouche n'occupait plus que dix carrés et devenait une tache noire ; à 128 elle garde
+ses ailes et son œil rouge, et le contour de la tête reste franchement en escalier.
+
+Deux autres choses commandent la composition, et elles viennent d'iOS :
 
 - **Le système arrondit lui-même les angles**, en superellipse et non en cercle. Le
   carré est donc plein jusqu'aux bords, et le sujet tenu à l'écart des quatre coins.
-  La vérification se fait sous le vrai masque, à 180, 120, 80 et 60 pixels : c'est à
+  La vérification se fait sous le vrai masque, à 180, 120, 87 et 60 pixels : c'est à
   60 que se juge une icône, pas à 1024.
 - **La transparence est composée sur du noir.** Le fond est donc opaque.
-- La tête est **inclinée de neuf degrés**, bec levé vers la mouche : à plat, le
-  cadrage était statique et le regard n'allait nulle part.
 
 L'icône est **embarquée en base64** dans la page, comme tout le reste : le jeu ne
 demande rien au réseau, pas même pour son icône. Une version 180 pour l'écran
