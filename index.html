@@ -948,6 +948,9 @@ const TEXTES={
   sonon:      ["Remettre le son", "Unmute"],
   redresse:   ["Redresse ton téléphone", "Turn your phone upright"],
   hauteur:    ["La poule a besoin de hauteur pour voler", "The hen needs headroom to fly"],
+  /* Les mises en page qui écrivent l'écart au lieu du record. */
+  restent:    ["à faire", "to go"],
+  hudrec:     ["RECORD", "BEST"],
   /* Les trophées. L'intitulé ne dit plus que l'unité : le compte est gravé sur la
      coupe, et l'écrire deux fois prenait la moitié de la carte pour rien. */
   tm10:       ["mouches gobées", "flies eaten"],
@@ -2850,6 +2853,26 @@ function distEtat(){
           txt: chiffre(metres())+" m",
           rec: save.bestDist>0 ? chiffre(battu?metres():save.bestDist)+" m" : null};
 }
+/* ---------- l'approche du record ----------
+   Les dix mises en page suivantes ont toutes le meme parti : le record se tient
+   COLLE a la valeur, pas au bout d'une barre ni sur la ligne d'en dessous. Ce qu'on
+   veut lire n'est pas le compte, c'est le peu qui reste — et deux nombres separes par
+   trois centimetres d'ecran ne se soustraient pas d'un coup d'oeil.
+   `pres` donne l'avancement vers le record, `coulPres` la couleur qui va avec : rien
+   tant qu'on est loin, ambre au trois quarts, un battement ambre-rouge dans les dix
+   derniers pour cent, rouge une fois passe. Le signal est le meme partout, seule la
+   disposition change. */
+function pres(v, rec){ return rec>0 ? Math.min(1, v/rec) : 0; }
+function coulPres(v, rec){
+  if(!rec) return INK;
+  if(v>=rec) return "#D6342B";
+  const u=v/rec;
+  if(u>=0.90) return mixHex("#F5A623","#D6342B", 0.5+0.5*Math.sin(t*9));
+  if(u>=0.75) return "#F5A623";
+  return INK;
+}
+/* le gris du record voisin : il ne doit jamais se lire aussi fort que la valeur */
+const REC_GRIS="#A79A88";
 /* une jauge : fond sable, remplissage jaune, rouge une fois le record depasse */
 function jauge(x,y,w,h,prog,battu){
   ctx.fillStyle="#E4DACA"; rr(x,y,w,h,h/2); ctx.fill();
@@ -3053,6 +3076,263 @@ function hudInfos(L, R, pad, VW, top, fs){
     ctx.font="900 "+fm+"px "+FONT;
     pastille(d.rec ? d.txt+" / "+d.rec : d.txt, false, d.battu, top+hp+7);
     return top+hp*2+7;
+  }
+
+  /* ======== les dix suivantes : le record colle a la valeur ======== */
+
+  /* 10 — Barre oblique. Le plus direct : valeur, barre oblique, record, en un seul
+         mot. La valeur grossit, le record reste gris et fixe — on lit l'ecart comme
+         on lit une fraction. */
+  case 10: {
+    const fm=Math.round(fs*0.66), fr=Math.round(fm*0.62);
+    let y=top;
+    for(const [val,rec,ico] of [[String(eaten), save.bestMou, true],
+                                [d.txt, d.cible?chiffre(d.cible)+" m":0, false]]){
+      const v = ico?eaten:metres(), r = ico?save.bestMou:save.bestDist;
+      ctx.font="700 "+fr+"px "+FONT; ctx.fillStyle=REC_GRIS;
+      const lr = rec ? ctx.measureText(" / "+rec).width : 0;
+      if(rec) ctx.fillText(" / "+rec, R-pad, y+fm-fr);
+      ctx.font="900 "+fm+"px "+FONT; ctx.fillStyle=coulPres(v,r);
+      ctx.fillText(val, R-pad-lr, y);
+      if(ico) icoMou(R-pad-lr-ctx.measureText(val).width-9-larMou(fm*0.8), y+fm*0.16, fm*0.8);
+      y+=fm+7;
+    }
+    return y-3;
+  }
+
+  /* 11 — Ce qu'il reste. On n'ecrit pas le record, on ecrit la soustraction : le
+         joueur n'a plus a la faire. Une fois passe, le compte repart en positif. */
+  case 11: {
+    const fm=Math.round(fs*0.66), fr=Math.round(fm*0.48);
+    let y=top;
+    for(const [val,v,r,unite,ico] of [[String(eaten), eaten, save.bestMou, "", true],
+                                      [d.txt, metres(), save.bestDist, " m", false]]){
+      ctx.font="900 "+fm+"px "+FONT; ctx.fillStyle=coulPres(v,r);
+      ctx.fillText(val, R-pad, y);
+      const lv=ctx.measureText(val).width;
+      if(ico) icoMou(R-pad-lv-9-larMou(fm*0.8), y+fm*0.16, fm*0.8);
+      if(r){
+        const ecart=v>=r ? "+"+chiffre(v-r)+unite : chiffre(r-v)+unite+" "+T("restent");
+        ctx.font="700 "+fr+"px "+FONT;
+        ctx.fillStyle = v>=r ? "#D6342B" : REC_GRIS;
+        ctx.fillText(ecart, R-pad, y+fm+1);
+        y+=fr+4;
+      }
+      y+=fm+5;
+    }
+    return y-3;
+  }
+
+  /* 12 — Jauges jumelles. La valeur a gauche de la barre, le record a droite : la
+         barre EST l'ecart, et on voit le curseur monter vers le nombre gris. */
+  case 12: {
+    const fv=Math.round(fs*0.46), bw=Math.min(96,VW*0.22);
+    ctx.font="700 12px "+FONT;
+    const lg=Math.max(save.bestMou?ctx.measureText(String(save.bestMou)).width:0,
+                      d.cible?ctx.measureText(chiffre(d.cible)+" m").width:0);
+    const bx=R-pad-lg-9-bw;
+    let y=top+2;
+    for(const [val,v,r,rec,ico] of [
+        [String(eaten), eaten, save.bestMou, save.bestMou?String(save.bestMou):null, true],
+        [d.txt, metres(), save.bestDist, d.cible?chiffre(d.cible)+" m":null, false]]){
+      ctx.font="900 "+fv+"px "+FONT; ctx.fillStyle=coulPres(v,r);
+      ctx.fillText(val, bx-11, y);
+      if(ico) icoMou(bx-11-ctx.measureText(val).width-6-larMou(fv*0.78), y+fv*0.18, fv*0.78);
+      if(rec){
+        jauge(bx, y+fv*0.40, bw, h3, pres(v,r), v>=r);
+        ctx.font="700 12px "+FONT; ctx.textBaseline="middle";
+        ctx.fillStyle = v>=r ? "#D6342B" : REC_GRIS;
+        ctx.fillText(rec, R-pad, y+fv*0.40+h3/2); ctx.textBaseline="top";
+      }
+      y+=fv+9;
+    }
+    return y-5;
+  }
+
+  /* 13 — Chevron. Le record est annonce par un chevron plutot que par une barre
+         oblique : « 30 › 34 » se lit comme une cible a atteindre, pas comme un
+         rapport. Le chevron s'allume quand on approche. */
+  case 13: {
+    const fm=Math.round(fs*0.68), fr=Math.round(fm*0.66);
+    let y=top;
+    for(const [val,v,r,rec,ico] of [
+        [String(eaten), eaten, save.bestMou, save.bestMou?String(save.bestMou):null, true],
+        [d.txt, metres(), save.bestDist, d.cible?chiffre(d.cible)+" m":null, false]]){
+      let x=R-pad;
+      if(rec){
+        ctx.font="700 "+fr+"px "+FONT; ctx.fillStyle = v>=r ? "#D6342B" : REC_GRIS;
+        ctx.fillText(rec, x, y+fm-fr); x-=ctx.measureText(rec).width+8;
+        ctx.font="900 "+Math.round(fr*0.9)+"px "+FONT;
+        ctx.fillStyle=coulPres(v,r);
+        ctx.fillText("›", x, y+fm-fr); x-=ctx.measureText("›").width+8;
+      }
+      ctx.font="900 "+fm+"px "+FONT; ctx.fillStyle=coulPres(v,r);
+      ctx.fillText(val, x, y);
+      if(ico) icoMou(x-ctx.measureText(val).width-9-larMou(fm*0.8), y+fm*0.16, fm*0.8);
+      y+=fm+7;
+    }
+    return y-3;
+  }
+
+  /* 14 — Le record voyage. Une barre par mesure, et le record ecrit non pas au bout
+         mais SUR le bord du remplissage : les deux nombres se rejoignent a mesure
+         qu'on approche, et se touchent quand le record tombe. */
+  case 14: {
+    const bw=Math.min(150,VW*0.34), fv=Math.round(fs*0.40);
+    const bx=R-pad-bw;
+    let y=top+4;
+    for(const [val,v,r,ico] of [[String(eaten), eaten, save.bestMou, true],
+                                [d.txt, metres(), save.bestDist, false]]){
+      if(r){
+        jauge(bx, y, bw, h3+1, pres(v,r), v>=r);
+        ctx.font="900 "+fv+"px "+FONT;
+        const px2=bx+Math.max(0,Math.min(1,pres(v,r)))*bw;
+        ctx.textAlign="right"; ctx.fillStyle=coulPres(v,r);
+        ctx.fillText(val, Math.max(bx+ctx.measureText(val).width, px2), y-3);
+        if(ico) icoMou(Math.max(bx, px2-ctx.measureText(val).width)-7-larMou(fv*0.8),
+                       y-3-fv*0.84, fv*0.8);
+        ctx.font="700 12px "+FONT; ctx.fillStyle=REC_GRIS;
+        ctx.textAlign="right"; ctx.fillText(v>=r?"":String(r===save.bestMou?r:chiffre(r)+" m"),
+                                            R-pad, y+h3+7);
+      }else{
+        ctx.font="900 "+fv+"px "+FONT; ctx.textAlign="right"; ctx.fillStyle=INK;
+        ctx.fillText(val, R-pad, y-3);
+      }
+      y+=h3+26;
+    }
+    ctx.textAlign="right";
+    return y-14;
+  }
+
+  /* 15 — Pourcentage. Le rapport au record est ecrit tel quel, en petit a cote de la
+         valeur. Le nombre le plus lisible du monde pour dire « tu y es presque ». */
+  case 15: {
+    const fm=Math.round(fs*0.64), fr=Math.round(fm*0.46);
+    let y=top;
+    for(const [val,v,r,ico] of [[String(eaten), eaten, save.bestMou, true],
+                                [d.txt, metres(), save.bestDist, false]]){
+      let x=R-pad;
+      if(r){
+        const pc = v>=r ? T("hudrec") : Math.floor(v/r*100)+" %";
+        ctx.font="700 "+fr+"px "+FONT;
+        ctx.fillStyle = v>=r ? "#D6342B" : coulPres(v,r)===INK ? REC_GRIS : coulPres(v,r);
+        ctx.fillText(pc, x, y+fm-fr-1); x-=ctx.measureText(pc).width+10;
+      }
+      ctx.font="900 "+fm+"px "+FONT; ctx.fillStyle = r&&v>=r ? "#D6342B" : INK;
+      ctx.fillText(val, x, y);
+      if(ico) icoMou(x-ctx.measureText(val).width-9-larMou(fm*0.8), y+fm*0.16, fm*0.8);
+      y+=fm+7;
+    }
+    return y-3;
+  }
+
+  /* 16 — Une ligne, records compris. Tout sur un rang : mouches sur record, point
+         median, metres sur record. Le HUD n'occupe qu'une bande, et l'ecart reste
+         lisible aux deux endroits. */
+  case 16: {
+    const fm=Math.round(fs*0.56), fr=Math.round(fm*0.60);
+    let x=R-pad;
+    const bloc=(val,v,r,rec,ico)=>{
+      if(rec){
+        ctx.font="700 "+fr+"px "+FONT; ctx.fillStyle = v>=r ? "#D6342B" : REC_GRIS;
+        ctx.fillText("/"+rec, x, top+fm-fr); x-=ctx.measureText("/"+rec).width+5;
+      }
+      ctx.font="900 "+fm+"px "+FONT; ctx.fillStyle=coulPres(v,r);
+      ctx.fillText(val, x, top); x-=ctx.measureText(val).width;
+      if(ico){ x-=8+larMou(fm*0.78); icoMou(x, top+fm*0.17, fm*0.78); }
+    };
+    bloc(d.txt, metres(), save.bestDist, d.cible?chiffre(d.cible)+" m":null, false);
+    ctx.font="900 "+fm+"px "+FONT; ctx.fillStyle=MUTE;
+    x-=12; ctx.fillText("·", x, top); x-=ctx.measureText("·").width+12;
+    bloc(String(eaten), eaten, save.bestMou, save.bestMou?String(save.bestMou):null, true);
+    return top+fm+4;
+  }
+
+  /* 17 — Pastilles jumelles. Chaque mesure dans sa gelule, valeur et record dedans.
+         La gelule se teinte a l'approche : c'est tout le fond qui previent, pas
+         seulement le chiffre. */
+  case 17: {
+    const fm=Math.round(fs*0.46), hp=fm+15;
+    let y=top;
+    for(const [val,v,r,rec,ico] of [
+        [String(eaten), eaten, save.bestMou, save.bestMou?String(save.bestMou):null, true],
+        [d.txt, metres(), save.bestDist, d.cible?chiffre(d.cible)+" m":null, false]]){
+      ctx.font="900 "+fm+"px "+FONT;
+      const lv=ctx.measureText(val).width;
+      ctx.font="700 "+Math.round(fm*0.66)+"px "+FONT;
+      const lr=rec?ctx.measureText("/ "+rec).width+7:0;
+      const iw=ico?larMou(fm*0.78)+8:0;
+      const w=lv+lr+iw+30, x=R-pad-w;
+      const u=r?v/r:0;
+      ctx.fillStyle = r&&v>=r ? "rgba(214,52,43,.16)"
+                    : u>=0.75 ? "rgba(245,166,35,.20)" : "rgba(250,243,236,.82)";
+      rr(x,y,w,hp,hp/2); ctx.fill();
+      ctx.strokeStyle = r&&v>=r ? "#D6342B" : u>=0.75 ? "#E8A93C" : TROPH_BORD;
+      ctx.lineWidth=1.6; rr(x,y,w,hp,hp/2); ctx.stroke();
+      if(ico) icoMou(x+15, y+(hp-fm*0.78)/2, fm*0.78);
+      if(rec){
+        ctx.font="700 "+Math.round(fm*0.66)+"px "+FONT;
+        ctx.fillStyle = v>=r ? "#D6342B" : REC_GRIS;
+        ctx.fillText("/ "+rec, R-pad-15, y+(hp-fm*0.66)/2+1);
+      }
+      ctx.font="900 "+fm+"px "+FONT; ctx.fillStyle=coulPres(v,r);
+      ctx.fillText(val, R-pad-15-lr, y+(hp-fm)/2+1);
+      y+=hp+7;
+    }
+    return y-3;
+  }
+
+  /* 18 — Le record en exposant. La valeur en grand, le record juste au-dessus a
+         droite, en tout petit, comme une puissance. Rien n'est plus compact, et
+         l'oeil ne quitte pas le chiffre. */
+  case 18: {
+    const fm=Math.round(fs*0.80), fr=Math.round(fm*0.36);
+    let y=top;
+    for(const [val,v,r,rec,ico] of [
+        [String(eaten), eaten, save.bestMou, save.bestMou?String(save.bestMou):null, true],
+        [d.txt, metres(), save.bestDist, d.cible?chiffre(d.cible):null, false]]){
+      let x=R-pad;
+      if(rec){
+        ctx.font="900 "+fr+"px "+FONT; ctx.fillStyle = v>=r ? "#D6342B" : REC_GRIS;
+        ctx.fillText(rec, x, y+1); x-=ctx.measureText(rec).width+4;
+      }
+      ctx.font="900 "+fm+"px "+FONT; ctx.fillStyle=coulPres(v,r);
+      ctx.fillText(val, x, y);
+      if(ico) icoMou(x-ctx.measureText(val).width-9-larMou(fm*0.72), y+fm*0.22, fm*0.72);
+      y+=fm+6;
+    }
+    return y-2;
+  }
+
+  /* 19 — Le record barre l'echelle. Une seule barre par mesure, longue, avec un
+         TRAIT a l'endroit du record : on voit venir la marque au lieu de comparer
+         deux nombres. Le nombre du record est pose contre son trait. */
+  case 19: {
+    const bw=Math.min(168,VW*0.38), fv=Math.round(fs*0.42), bx=R-pad-bw;
+    let y=top+2;
+    for(const [val,v,r,rec,ico] of [
+        [String(eaten), eaten, save.bestMou, save.bestMou?String(save.bestMou):null, true],
+        [d.txt, metres(), save.bestDist, d.cible?chiffre(d.cible)+" m":null, false]]){
+      ctx.font="900 "+fv+"px "+FONT; ctx.fillStyle=coulPres(v,r);
+      ctx.textAlign="left"; ctx.fillText(val, bx, y);
+      if(ico) icoMou(bx-8-larMou(fv*0.78), y+fv*0.18, fv*0.78);
+      const yb=y+fv+4;
+      if(r){
+        /* l'echelle va au-dela du record : la marque n'est pas au bout, elle est
+           aux trois quarts, et il reste de la piste apres elle */
+        const ech=r*1.35;
+        jauge(bx, yb, bw, h3+1, Math.min(1,v/ech), v>=r);
+        const xr=bx+bw*(r/ech);
+        ctx.strokeStyle = v>=r ? "#D6342B" : "#8B7C69"; ctx.lineWidth=2;
+        ctx.beginPath(); ctx.moveTo(xr, yb-4); ctx.lineTo(xr, yb+h3+5); ctx.stroke();
+        ctx.font="700 11px "+FONT; ctx.fillStyle = v>=r ? "#D6342B" : REC_GRIS;
+        ctx.textAlign="center"; ctx.fillText(rec, Math.min(xr, R-pad-14), yb+h3+9);
+        y=yb+h3+24;
+      }else y=yb+4;
+      ctx.textAlign="right";
+    }
+    ctx.textAlign="right";
+    return y-6;
   }
 
   /* 9 — Sobre. Deux nombres moyens, pas de record, pas de jauge. Le minimum qui
