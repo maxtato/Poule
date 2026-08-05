@@ -299,6 +299,59 @@ Le petit compteur de mouches qui vivait sous la jauge de plumes a disparu : il
 répétait le grand chiffre. Il ne reste à gauche que le combo, qui n'apparaît qu'à
 partir de deux mouches enchaînées.
 
+## Les trophées
+
+Le record dit ce qu'on a fait de mieux, et rien d'autre. Les trophées disent ce
+qu'on a fait **une fois** : ils se gagnent une seule fois, restent acquis, et ne
+se reperdent pas au bout d'une mauvaise partie. C'est la seule chose du jeu qui
+s'accumule au lieu de recommencer à zéro.
+
+Il y en a treize, et ils tiennent en une table de treize lignes — un intitulé, le
+nombre gravé sur la coupe, un test. Ajouter ou retirer une ligne suffit, il n'y a
+pas de machinerie derrière : les tests portent sur des compteurs que la partie
+tient déjà.
+
+| Trophée | Condition |
+| --- | --- |
+| 10, 25, 50, 100 mouches | gobées dans **une** partie |
+| Une chaîne de 8 | huit mouches enchaînées sans casser le combo |
+| Première mouche dorée | la première de toutes |
+| 3 obstacles traversés | passés au travers pendant le pouvoir, dans une partie |
+| 12 secondes en l'air | d'un décollage à la pose suivante, pas en cumulé |
+| Le plafond du ciel | toucher la limite haute du vol |
+| Jusqu'au crépuscule | atteindre la dernière heure du jour |
+| 100 puis 250 mouches en tout | tous comptes faits, parties précédentes comprises |
+| 25 parties jouées | — |
+
+Les deux derniers comptent la partie en cours : sans cela le trophée tomberait
+sur l'écran de fin, au moment précis où plus personne ne regarde le jeu.
+
+Le temps passé en l'air se compte d'un décollage à la pose suivante. Le cumul
+d'une partie ne dirait rien : tenir douze secondes d'affilée est un exploit,
+sauter cinquante fois n'en est pas un.
+
+### Le bandeau
+
+Une carte crème à l'encre, la coupe à gauche avec son nombre gravé dessus, le
+titre et l'intitulé à droite. Elle entre par le bord droit, tient trois secondes
+et repart du même côté — jamais par le centre, où elle couvrirait la poule au
+moment où l'on a le plus besoin de la voir. Elle se pose sous la jauge de record,
+dans le même alignement à droite que tout ce coin-là, et rentre sous le bord de la
+bande de jeu : sur un écran large elle n'ira pas flotter dans les marges.
+
+La coupe tient tout entière dans la carte, socle, touffe d'herbe et caillou
+compris. Débordante, son ombre au sol passait par-dessus le trait d'encre et la
+carte n'avait plus de bord franc.
+
+Deux trophées peuvent tomber dans la même seconde — la dixième mouche et la
+centième au total. Ils font la queue et défilent l'un après l'autre : deux
+bandeaux superposés ne se liraient ni l'un ni l'autre. Et ils continuent d'être
+servis pendant la culbute, pour que celui qui tombe sur la dernière mouche ait le
+temps de s'afficher.
+
+L'intitulé se replie sur deux lignes s'il ne tient pas sur une : « Première mouche
+dorée » n'y tient pas, et le corps du texte ne doit pas dépendre de la langue.
+
 ## La course
 
 Deux poses en boucle : pattes écartées, pattes croisées. La pose croisée n'est pas
@@ -1559,8 +1612,10 @@ navigateur. Aucun site ne peut le désactiver.
 
 ## Sauvegarde
 
-Le record, le nombre total de mouches, le nombre de parties et la préférence de
-son sont conservés sous la clé `poule.v2`. Le passage de `poule.v1` est
+Le record, le nombre total de mouches, le nombre de parties, les trophées gagnés
+et la préférence de son sont conservés sous la clé `poule.v2`. Les trophées y
+sont une simple liste de clés : une sauvegarde plus ancienne, ou abîmée, repart
+d'une liste vide plutôt que d'une erreur. Le passage de `poule.v1` est
 automatique, mais le record ancien n'est pas repris : il était compté en mètres,
 et un record de 228 serait resté hors d'atteinte en mouches. Les totaux et la
 préférence de son, eux, suivent. Si `localStorage` est indisponible
