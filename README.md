@@ -283,20 +283,55 @@ Deux règles de jeu, pour que ça reste lisible :
 
 ## Le score
 
-Le score est le nombre de mouches gobées. Les mètres ne comptent plus : ils
-restent la mesure du temps passé — ce sont eux qui accélèrent la course, tirent
-les obstacles et font tourner l'heure du jour — mais on ne joue plus à courir
-loin, on joue à manger.
+**Le score est la distance multipliée par les mouches.** 500 mètres et 20 mouches
+font 10 000, et rien d'autre.
 
-Le grand chiffre en haut à droite n'a pas d'unité écrite : le dessin de la
-mouche, posé juste avant, en tient lieu — la pose **ailes écartées**, qui se lit bien
-mieux à cette taille que l'autre, dont les ailes se confondent avec le corps. Le
-record sert de cible : une jauge
-montre ce qu'il reste à gober et bascule au rouge dès qu'il tombe.
+Ce n'est ni l'un ni l'autre pris séparément, et c'est tout l'intérêt : courir loin
+sans rien gober ne vaut rien, gober beaucoup sans avancer ne vaut rien non plus. Il
+faut les deux à la fois, et un produit le dit d'un seul chiffre là où deux compteurs
+côte à côte laisseraient choisir.
+
+Le jeu a compté trois choses différentes au fil du temps — des mètres, puis des
+mouches, maintenant leur produit. Les deux premières formules avaient chacune leur
+angle mort ; la course pure récompensait celui qui esquive et ignore les mouches, le
+compte de mouches récompensait celui qui tourne en rond au même endroit.
+
+Les mètres affichés sont ceux de la barre, arrondis, pour que le compte se vérifie à
+l'œil.
+
+### Ce que montre le HUD
+
+Trois lignes en haut à droite, du plus gros au plus petit :
+
+| | |
+| --- | --- |
+| **14 880** | le score |
+| 🪰 12 / 34 | les mouches gobées, et le record de mouches |
+| ▓▓▓▓░░░ 2 100 m | la barre de distance : le remplissage est la distance parcourue, le nombre au bout est la plus grande jamais parcourue |
+
+Le score n'a **pas d'unité** — ce ne sont ni des mètres ni des mouches, c'est leur
+produit. Le dessin de mouche qui l'accompagnait est donc descendu d'une ligne, sur
+le compte de mouches, où il veut encore dire quelque chose.
+
+Les deux lignes du dessous sont les **facteurs**, et chacune porte son record. Ce sont
+elles qu'on peut encore faire monter, pas le produit : on ne décide pas d'un score,
+on décide d'aller chercher une mouche de plus.
+
+La barre de distance devient rouge et pleine quand le record tombe, et le nombre au
+bout bascule sur la distance en cours — c'est elle, désormais, qui est la plus
+grande. Au tout premier essai il n'y a rien à remplir : pas de barre, juste les
+mètres.
 
 Le petit compteur de mouches qui vivait sous la jauge de plumes a disparu : il
 répétait le grand chiffre. Il ne reste à gauche que le combo, qui n'apparaît qu'à
 partir de deux mouches enchaînées.
+
+### L'écran de fin dit la formule
+
+Le score en grand, et sous lui, en petit, **« 12 mouches × 1 240 m »**. C'est la seule
+façon de faire comprendre d'un coup d'œil qu'il ne sert à rien de courir sans gober
+— une règle expliquée nulle part se devine en une partie quand le résultat est écrit
+sous le chiffre.
 
 ### Plus rien ne s'annonce, sauf un trophée
 
@@ -1698,12 +1733,21 @@ navigateur. Aucun site ne peut le désactiver.
 
 ## Sauvegarde
 
-Le record, le nombre total de mouches, le nombre de parties, les trophées gagnés
-et la préférence de son sont conservés sous la clé `poule.v2`. Les trophées y
-sont une simple liste de clés : une sauvegarde plus ancienne, ou abîmée, repart
-d'une liste vide plutôt que d'une erreur. Le passage de `poule.v1` est
-automatique, mais le record ancien n'est pas repris : il était compté en mètres,
-et un record de 228 serait resté hors d'atteinte en mouches. Les totaux et la
-préférence de son, eux, suivent. Si `localStorage` est indisponible
+Les trois records — le score, les mouches, la distance —, le nombre total de
+mouches, le nombre de parties, les trophées gagnés et la préférence de son sont
+conservés sous la clé `poule.v3`. Les trophées y sont une simple liste de clés :
+une sauvegarde plus ancienne, ou abîmée, repart d'une liste vide plutôt que d'une
+erreur.
+
+Le record a changé deux fois de nature : des mètres, puis des mouches, maintenant un
+score. Chaque fois le nombre gardé n'a plus le même ordre de grandeur, et un carnet
+de la version précédente afficherait un record intenable ou ridicule. Chaque fois on
+change donc de clé, et on ne reprend de l'ancien que ce qui garde un sens.
+
+Ici, ce qui garde un sens est plus large qu'au passage précédent : les totaux, le
+son, la langue, le style, les trophées, **et l'ancien record de mouches** — qui n'était
+pas un score, mais qui est exactement ce que la nouvelle ligne « mouches » compte.
+Seul le score repart de zéro, faute de pouvoir être reconstitué : personne ne sait
+sur quelle distance ces mouches-là avaient été gobées. Si `localStorage` est indisponible
 (navigation privée, cadre cloisonné), le jeu tourne sans mémoire plutôt que de
 s'arrêter.

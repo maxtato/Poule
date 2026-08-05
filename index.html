@@ -241,6 +241,10 @@
     padding-right:clamp(28px,8vw,44px)}
   #over .record{background:#F8CE72}
   #over .record span{font-size:clamp(27px,7.4vw,37px)}
+  /* La formule sous le score, en petit : c'est une explication, pas un resultat. */
+  #over .detail{margin:clamp(4px,1.2vw,7px) 0 0;font-size:clamp(10px,2.7vw,13px);
+    font-weight:900;letter-spacing:.04em;color:#8B7C69;
+    font-variant-numeric:tabular-nums}
   #over .ico{height:clamp(26px,7.2vw,38px);width:auto;display:block}
   /* En pixel art, les dessins poses par le document sont agrandis eux aussi :
      sans image-rendering le navigateur les lisse et la pastille redevient floue. */
@@ -402,7 +406,8 @@
     <div class="dedans">
       <h2 class="fin" data-t="gameover">Game Over</h2>
       <p class="lg" id="fbravo">Bravo, tu as attrapé</p>
-      <div class="pastille score"><img class="ico" id="fico" data-talt="mouches" alt="mouches"><span id="fscore">0</span></div>
+      <div class="pastille score"><span id="fscore">0</span></div>
+      <p class="detail" id="fdetail"></p>
       <p class="lg" id="frectitre">Ton record personnel</p>
       <div class="pastille record">
         <svg class="couronne" viewBox="0 0 32 26" fill="none" aria-hidden="true">
@@ -856,18 +861,35 @@ let FONT='Fredoka,"Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif';
    un objectif quand le record est hors de portee.
    localStorage peut lever (navigation privee, iframe cloisonnee) : on retombe alors
    sur une partie sans memoire plutot que de casser le jeu. */
-/* Le record se comptait en metres, il se compte en mouches. Un carnet de la
-   version precedente contiendrait donc un record de plusieurs centaines, jamais
-   rattrapable : on change de cle, et on ne reprend de l'ancien que ce qui garde un
-   sens — les totaux et le reglage du son. */
-const SAVE_KEY="poule.v2";
-const save={best:0, flies:0, runs:0, sound:true, pixel:false, lang:"", trophees:[]};
+/* Le record a change deux fois de nature : des metres, puis des mouches, et
+   maintenant un score — la distance multipliee par les mouches. Chaque fois le
+   nombre garde n'a plus le meme ordre de grandeur, et un carnet de la version
+   precedente afficherait un record intenable ou ridicule. Chaque fois on change
+   donc de cle, et on ne reprend de l'ancien que ce qui garde un sens.
+   Ici, ce qui garde un sens est plus large qu'avant : les totaux, le son, la langue,
+   le style, les trophees, et l'ancien record de mouches — qui n'etait pas un score
+   mais qui reste exactement ce que la nouvelle ligne « mouches » compte. Seul le
+   score repart de zero, faute de pouvoir etre reconstitue : personne ne sait sur
+   quelle distance ces mouches-la avaient ete gobees. */
+const SAVE_KEY="poule.v3";
+const save={best:0, bestMou:0, bestDist:0, flies:0, runs:0,
+            sound:true, pixel:false, lang:"", trophees:[]};
 try{
   let o=JSON.parse(localStorage.getItem(SAVE_KEY)||"null");
+  let mou=0;
+  if(!o){
+    const v2=JSON.parse(localStorage.getItem("poule.v2")||"null");
+    if(v2 && typeof v2==="object"){ o=v2; mou=Math.max(0,v2.best|0); }
+  }
   const ancien = o ? null : JSON.parse(localStorage.getItem("poule.v1")||"null");
   if(ancien && typeof ancien==="object") o={flies:ancien.flies, runs:ancien.runs, sound:ancien.sound};
   if(o && typeof o==="object"){
-    save.best=Math.max(0,o.best|0); save.flies=Math.max(0,o.flies|0);
+    /* `mou` n'est renseigne que par la reprise d'un carnet v2 : c'est l'ancien
+       record de mouches, qui devient la ligne mouches sans devenir un score. */
+    save.best=mou ? 0 : Math.max(0,o.best|0);
+    save.bestMou=Math.max(mou, o.bestMou|0);
+    save.bestDist=Math.max(0,o.bestDist|0);
+    save.flies=Math.max(0,o.flies|0);
     save.runs=Math.max(0,o.runs|0); save.sound=o.sound!==false;
     save.pixel=o.pixel===true;
     if(o.lang==="fr"||o.lang==="en") save.lang=o.lang;
@@ -900,7 +922,10 @@ const TEXTES={
   parties:    ["Parties", "Games"],
   start:      ["Start", "Start"],
   gameover:   ["Game Over", "Game Over"],
-  bravo:      ["Bravo, tu as attrapé", "Nice, you caught"],
+  tonscore:   ["Ton score", "Your score"],
+  /* La formule, écrite en toutes lettres sous le score : c'est la seule façon de
+     faire comprendre d'un coup d'œil qu'il ne sert à rien de courir sans gober. */
+  findetail:  ["%1 mouches × %2 m", "%1 flies × %2 m"],
   rien:       ["Tu n'as rien attrapé", "You caught nothing"],
   recperso:   ["Ton record personnel", "Your personal best"],
   nouveaurec: ["Nouveau record !", "New best!"],
@@ -923,9 +948,6 @@ const TEXTES={
   sonon:      ["Remettre le son", "Unmute"],
   redresse:   ["Redresse ton téléphone", "Turn your phone upright"],
   hauteur:    ["La poule a besoin de hauteur pour voler", "The hen needs headroom to fly"],
-  hudrecord:  ["RECORD %1", "BEST %1"],
-  hudbattu:   ["RECORD BATTU", "NEW BEST"],
-  hudpremier: ["PREMIER ESSAI", "FIRST TRY"],
   /* Les trophées. L'intitulé ne dit plus que l'unité : le compte est gravé sur la
      coupe, et l'écrire deux fois prenait la moitié de la carte pour rien. */
   tm10:       ["mouches gobées", "flies eaten"],
@@ -1158,6 +1180,20 @@ document.addEventListener("visibilitychange",()=>{ if(document.hidden) halt(); }
 const HEN_X=150;
 const hen={x:HEN_X,y:0,vy:0,ground:true,feathers:1,anim:0,flap:0,dead:false};
 let speed=0, dist=0, tSpawn=0, t=0, shake=0, hold=false, holdT=0, eaten=0;
+/* ---------- le score ----------
+   Le score est la distance MULTIPLIEE par les mouches, pas l'une ou l'autre. Courir
+   loin sans rien gober ne vaut rien ; gober beaucoup sans avancer ne vaut rien non
+   plus. Il faut les deux, et c'est ce que le produit dit d'un seul chiffre.
+   Les metres sont ceux qu'affiche la barre — arrondis — pour que le compte se
+   verifie a l'oeil : 500 metres et 20 mouches font 10 000, et rien d'autre. */
+function metres(){ return Math.round(dist); }
+function score(){ return metres()*eaten; }
+/* Un nombre a cinq chiffres se lit mal d'un bloc. Le francais separe les milliers
+   par une espace fine insecable, l'anglais par une virgule. */
+function chiffre(n){
+  const s=String(Math.round(n)), sep = save.lang==="en" ? "," : " ";
+  return s.replace(/\B(?=(\d{3})+(?!\d))/g, sep);
+}
 let dernierObs="";   // le dernier obstacle lance : le cerf-volant ne se suit pas lui-meme
 let obs=[], flies=[], puffs=[], plumes=[], traits=[], clouds=[], sol=[], hills=[], miettes=[], decor=[];
 let tFly=0;
@@ -1514,15 +1550,20 @@ function die(dessus){
   hen.ground=false;
   for(let i=0;i<15;i++) plumes.push({x:hen.x+70,y:hen.y-60,vx:-40-Math.random()*170,
     vy:-130-Math.random()*230,r:Math.random()*6,vr:(Math.random()-.5)*8,l:1});
-  /* Le score, c'est le nombre de mouches gobees. La distance parcourue continue de
-     regler la difficulte et l'heure du jour, mais elle ne se compte plus. */
-  const rec=eaten>best;
-  if(rec) best=eaten;
-  save.best=best; save.flies+=eaten; save.runs++; storeSave();
-  $("fscore").textContent=eaten;
+  /* Trois records, et un seul fait titre. Le score commande l'ecran de fin et le
+     carnet ; les deux autres sont les ingredients, et ce sont eux que le HUD montre
+     pendant la course parce que ce sont eux qu'on peut encore faire monter. */
+  const rec=score()>best;
+  if(rec) best=score();
+  save.best=best;
+  save.bestMou=Math.max(save.bestMou, eaten);
+  save.bestDist=Math.max(save.bestDist, metres());
+  save.flies+=eaten; save.runs++; storeSave();
+  $("fscore").textContent=chiffre(score());
+  $("fdetail").textContent=T("findetail", eaten, chiffre(metres()));
   /* Les pastilles ne portent que des nombres : c'est la ligne au-dessus qui dit
      de quoi il s'agit, et c'est elle qui annonce le record battu. */
-  $("frec").textContent=best;
+  $("frec").textContent=chiffre(best);
   finRec=rec;
   textesFin();
   carnet();
@@ -1535,7 +1576,8 @@ let finRec=false;
 function textesFin(){
   if(!$("frectitre")) return;
   $("frectitre").textContent = finRec ? T("nouveaurec") : T("recperso");
-  $("fbravo").textContent = eaten ? T("bravo") : T("rien");
+  $("fbravo").textContent = eaten ? T("tonscore") : T("rien");
+  if($("fdetail")) $("fdetail").textContent = T("findetail", eaten, chiffre(metres()));
   $("ftot").textContent = save.runs>1 ? T("totaux", save.flies, save.runs) : "";
 }
 /* Le carnet de l'accueil, en trois colonnes : record, mouches gobees, parties. Les
@@ -1543,7 +1585,7 @@ function textesFin(){
    la ou une phrase disant "Record 0" sonnait comme une erreur. */
 function carnet(){
   const r=$("sRec"); if(!r) return;
-  r.textContent=save.best; $("sMou").textContent=save.flies; $("sPar").textContent=save.runs;
+  r.textContent=chiffre(save.best); $("sMou").textContent=save.flies; $("sPar").textContent=save.runs;
 }
 $("play").onclick=start; $("again").onclick=start;
 $("resume").onclick=unhalt;
@@ -2063,7 +2105,7 @@ function update(dt){
      flottante ont disparu — c'est la jauge de record qui porte l'information, elle
      bascule au rouge et le dit en toutes lettres, en permanence et sans rien couvrir.
      Le seul bandeau du jeu est desormais celui des trophees. */
-  if(!recBeaten && best>0 && eaten>=best){ recBeaten=true; SFX.record(); }
+  if(!recBeaten && best>0 && score()>=best){ recBeaten=true; SFX.record(); }
   for(const o of obs){
     /* Le cerf-volant fuit dans le meme sens que la poule mais moins vite : ce qui
        reste de l'ecart, c'est elle qui le comble. */
@@ -2792,34 +2834,56 @@ function drawHUD(){
      loin de l'action. */
   const L=bandX, VW=bandW, R=bandX+bandW;
   const pad=Math.max(16,VW*0.045), top=pad+6, fs=Math.round(Math.min(38,VW*0.082));
-  /* Le score est le nombre de mouches. Pas de mot pour l'unite : le dessin de la
-     mouche tient ce role, pose juste avant le chiffre. */
+  /* Le score en grand, puis ses deux facteurs sous lui. Le score n'a pas d'unite —
+     ce n'est ni des metres ni des mouches, c'est leur produit — donc pas de dessin
+     de mouche a cote comme avant : le dessin est descendu d'une ligne, sur le compte
+     de mouches, ou il veut encore dire quelque chose. */
   ctx.textAlign="right"; ctx.textBaseline="top"; ctx.fillStyle=INK;
   ctx.font="900 "+fs+"px "+FONT;
-  ctx.fillText(String(eaten), R-pad, top);
+  ctx.fillText(chiffre(score()), R-pad, top);
+
+  /* Les mouches gobees et le record de mouches, cote a cote : ce qu'on a et ce qu'il
+     faudrait. C'est le facteur sur lequel on peut agir tout de suite, alors que la
+     distance monte toute seule. */
+  const yl=top+fs+6, fsm=Math.max(11, Math.round(fs*0.36));
+  ctx.font="900 "+fsm+"px "+FONT;
+  /* Le record reste ecrit meme une fois depasse : c'est ce qui dit de combien. */
+  const ligne = save.bestMou>0 ? String(eaten)+" / "+save.bestMou : String(eaten);
+  ctx.fillStyle = save.bestMou>0 && eaten>=save.bestMou ? "#D6342B" : INK;
+  ctx.fillText(ligne, R-pad, yl);
   /* la pose ailes ecartees : elle se lit bien mieux en tout petit que l'autre, dont
      les ailes se confondent avec le corps */
-  const ih=fs*0.62, iw=ih*MOU_W/MOU_H;
-  ctx.drawImage(SPR.fly_ico, R-pad-ctx.measureText(String(eaten)).width-9-iw, top+fs*0.24, iw, ih);
+  const ih=fsm*0.86, iw=ih*MOU_W/MOU_H;
+  ctx.drawImage(SPR.fly_ico, R-pad-ctx.measureText(ligne).width-7-iw, yl+fsm*0.12, iw, ih);
 
-  /* Le record sert de cible : une jauge montre ce qu'il reste a gober, et bascule
-     au rouge des qu'il est depasse. */
-  if(best>0){
-    const bw=Math.min(126,VW*0.28), bh=Math.max(3,fs*0.11), by=top+fs+9, bx=R-pad-bw;
-    const prog=Math.min(1,eaten/best), battu=eaten>=best;
-    ctx.fillStyle="#E4DACA"; rr(bx,by,bw,bh,bh/2); ctx.fill();
+  /* La barre de distance. Le remplissage est la distance parcourue, le nombre au
+     bout de la barre est la plus grande jamais parcourue : la barre dit d'un coup
+     d'oeil ce qu'il reste avant de battre ce record-la. Depassee, elle est pleine et
+     rouge, et le nombre bascule sur la distance en cours — c'est elle, desormais,
+     qui est la plus grande.
+     Au tout premier essai il n'y a rien a remplir : pas de barre, juste les metres. */
+  const yb=yl+fsm+9, dbh=Math.max(3,fs*0.11);
+  ctx.font="700 11px "+FONT;
+  if(save.bestDist>0){
+    const battu=metres()>=save.bestDist;
+    const etiq=chiffre(battu?metres():save.bestDist)+" m";
+    const lg=ctx.measureText(etiq).width;
+    const bw=Math.min(126,VW*0.28), bx=R-pad-lg-8-bw;
+    ctx.fillStyle="#E4DACA"; rr(bx,yb,bw,dbh,dbh/2); ctx.fill();
+    const prog=Math.min(1,metres()/save.bestDist);
     if(prog>0.01){
       ctx.fillStyle = battu ? "#D6342B" : "#F5A623";
-      rr(bx,by,Math.max(bh,bw*prog),bh,bh/2); ctx.fill();
+      rr(bx,yb,Math.max(dbh,bw*prog),dbh,dbh/2); ctx.fill();
     }
-    ctx.font="700 11px "+FONT;
+    ctx.textBaseline="middle";
     ctx.fillStyle = battu ? "#D6342B" : MUTE;
-    ctx.fillText(battu ? T("hudbattu") : T("hudrecord", best), R-pad, by+bh+7);
+    ctx.fillText(etiq, R-pad, yb+dbh/2);
+    ctx.textBaseline="top";
   }else{
-    ctx.font="700 11px "+FONT; ctx.fillStyle=MUTE;
-    ctx.fillText(T("hudpremier"), R-pad, top+fs+6);
+    ctx.fillStyle=MUTE;
+    ctx.fillText(chiffre(metres())+" m", R-pad, yb-3);
   }
-  bandeauTrophee(R, pad, VW, top+fs+(best>0 ? Math.max(3,fs*0.11)+32 : 26));
+  bandeauTrophee(R, pad, VW, yb+dbh+16);
 
   /* jauge de vol : une plume, puis une barre qui se vide et se remplit */
   const fh=Math.min(26,VW*0.055), fw=fh*FEA_W/FEA_H, fy=top+2;
@@ -2946,8 +3010,9 @@ function styleJeu(px, init){
   document.body.classList.toggle("px", !!px);
   const T = px ? B64_PX : B64;
   $("fly").style.backgroundImage="url(data:image/png;base64,"+T.bouton+")";
-  const mouche="data:image/png;base64,"+(px?T.fly_ico:T.fly_b);
-  $("fico").src=mouche; $("sIco").src=mouche;   // panneau de fin, puis carnet
+  /* Le carnet garde sa mouche ; le panneau de fin l'a perdue avec la sienne — il
+     n'y affiche plus un compte de mouches mais un score, qui n'a pas d'unite. */
+  $("sIco").src="data:image/png;base64,"+(px?T.fly_ico:T.fly_b);
   for(const im of document.querySelectorAll("#pref .apercu"))
     im.src="data:image/png;base64,"+(im.dataset.px==="1"?B64_PX:B64)[im.dataset.spr];
   /* Seules les pastilles de style : depuis que la langue en a deux autres, un
