@@ -2833,15 +2833,17 @@ function bandeauTrophee(R, pad, VW, y){
    rien qu'on puisse utiliser, alors que ses deux facteurs disent chacun quoi faire —
    aller chercher une mouche, ou tenir encore un peu.
 
-   Les deux mesures se lisent de la meme facon : un nombre, une petite echelle, et un
-   TRAIT plante a l'endroit du record. L'echelle ne s'arrete pas au record — elle va
-   un tiers plus loin, si bien que la marque tombe aux trois quarts et qu'il reste de
-   la piste apres elle. C'est ce qui permet de voir arriver le record, puis de le voir
-   franchi, dans le meme dessin et sans que rien change de forme.
+   Les deux mesures se lisent de la meme facon : un nombre en gros, une petite
+   echelle dessous, et le RECORD ecrit a droite de l'echelle. L'echelle va d'un bout
+   a l'autre du record : pleine, le record est atteint, et il n'y a pas d'autre
+   convention a retenir.
+   Un trait plante sur l'echelle a l'endroit du record, avec de la piste apres lui,
+   a ete essaye — il disait en plus « depasse de combien », mais il ajoutait une
+   marque a lire et un nombre a placer sous elle pour un renseignement qu'on ne
+   consulte pas en pleine esquive.
    Vingt mises en page ont ete essayees avant celle-ci, dont neuf ou le record vivait
-   au bout d'une barre ou sur la ligne du dessous : deux nombres separes par trois
-   centimetres d'ecran ne se soustraient pas d'un coup d'oeil. Ici on ne soustrait
-   rien, on regarde une distance. */
+   sur la ligne du dessous : deux nombres separes par trois centimetres d'ecran ne se
+   soustraient pas d'un coup d'oeil. Ici le record touche sa propre barre. */
 /* L'avancement vers le record, et la couleur qui va avec : rien tant qu'on est loin,
    ambre aux trois quarts, un battement ambre-rouge dans les dix derniers pour cent,
    rouge une fois passe. */
@@ -2855,18 +2857,22 @@ function coulPres(v, rec){
 }
 /* le gris du record : il ne doit jamais se lire aussi fort que la valeur */
 const REC_GRIS="#A79A88";
-/* l'echelle porte au-dela du record : la marque tombe a 1/1,35, soit 74 % */
-const ECH_RAB=1.35;
 /* la mouche du HUD : la pose ailes ecartees, seule lisible en tout petit */
 function larMou(h){ return h*MOU_W/MOU_H; }
 function icoMou(x,y,h){ ctx.drawImage(SPR.fly_ico, x, y, larMou(h), h); }
 
 function hudInfos(L, R, pad, VW, top, fs){
   /* Des chiffres gros et des echelles courtes : c'est le nombre qu'on lit en jouant,
-     l'echelle ne fait que situer. Elle tenait 38 % de la largeur de jeu et le chiffre
-     42 % du corps du HUD ; c'est maintenant 25 % et 62 %. */
+     l'echelle ne fait que situer. */
   const bw=Math.min(112,VW*0.25), fv=Math.round(fs*0.62);
-  const hb=Math.max(2.5, fs*0.085), bx=R-pad-bw;
+  const hb=Math.max(2.5, fs*0.085);
+  /* Les deux echelles partagent un bord droit : le libelle du record est mesure sur
+     le plus large des deux, sans quoi les barres se decaleraient l'une de l'autre. */
+  ctx.font="700 12px "+FONT;
+  const lgRec=Math.max(
+    save.bestMou>0 ? ctx.measureText(String(save.bestMou)).width : 0,
+    save.bestDist>0 ? ctx.measureText(chiffre(save.bestDist)+" m").width : 0);
+  const bx=R-pad-lgRec-9-bw;
   let y=top+2;
   for(const [val, v, r, rec, ico] of [
       [String(eaten), eaten, save.bestMou,
@@ -2877,29 +2883,25 @@ function hudInfos(L, R, pad, VW, top, fs){
     ctx.font="900 "+fv+"px "+FONT; ctx.fillStyle=coulPres(v,r);
     ctx.fillText(val, R-pad, y);
     if(ico) icoMou(R-pad-ctx.measureText(val).width-9-larMou(fv*0.78), y+fv*0.18, fv*0.78);
-    const yb=y+fv+6;
+    const yb=y+fv+7;
     if(r){
-      const battu=v>=r, ech=r*ECH_RAB;
+      const battu=v>=r;
       ctx.fillStyle="#E4DACA"; rr(bx,yb,bw,hb,hb/2); ctx.fill();
-      const prog=Math.min(1, v/ech);
+      const prog=Math.min(1, v/r);
       if(prog>0.01){
         ctx.fillStyle = battu ? "#D6342B" : "#F5A623";
         rr(bx,yb,Math.max(hb,bw*prog),hb,hb/2); ctx.fill();
       }
-      const xr=bx+bw/ECH_RAB;
-      ctx.strokeStyle = battu ? "#D6342B" : "#8B7C69"; ctx.lineWidth=2;
-      ctx.beginPath(); ctx.moveTo(xr, yb-4); ctx.lineTo(xr, yb+hb+5); ctx.stroke();
-      /* le nombre du record se centre sous son trait, et se retient au bord droit :
-         a 74 % de l'echelle, « 2 100 m » depassait la bande de jeu */
       ctx.font="700 12px "+FONT;
       ctx.fillStyle = battu ? "#D6342B" : REC_GRIS;
-      ctx.textAlign="center";
-      ctx.fillText(rec, Math.min(xr, R-pad-ctx.measureText(rec).width/2), yb+hb+9);
-      y=yb+hb+26;
+      ctx.textBaseline="middle";
+      ctx.fillText(rec, R-pad, yb+hb/2);
+      ctx.textBaseline="top";
+      y=yb+hb+16;
     }else y=yb+2;
   }
   ctx.textAlign="right"; ctx.textBaseline="top";
-  return y-8;
+  return y-6;
 }
 
 function drawHUD(){

@@ -307,29 +307,31 @@ qu'on puisse utiliser, alors que ses deux facteurs disent chacun quoi faire — 
 chercher une mouche, ou tenir encore un peu. On ne décide pas d'un score ; on décide
 d'aller chercher une mouche de plus.
 
-Les deux mesures se lisent de la même façon : un nombre, une petite échelle, et un
-**trait planté à l'endroit du record**.
+Les deux mesures se lisent de la même façon : un nombre en gros, une petite échelle
+dessous, et le **record écrit à droite de l'échelle**.
 
 ```
    🪰  32
-       ▓▓▓▓▓▓▓▓|░░
-               34
+        ▓▓▓▓▓▓▓▓░░  34
 
-   1 993 m
-       ▓▓▓▓▓▓▓|░░
-               2 100 m
+   1 988 m
+        ▓▓▓▓▓▓▓░░░  2 100 m
 ```
 
-L'échelle **ne s'arrête pas au record** — elle va un tiers plus loin, si bien que la
-marque tombe aux trois quarts et qu'il reste de la piste après elle. C'est ce qui
-permet de voir arriver le record, puis de le voir franchi, dans le même dessin et
-sans que rien change de forme. Une jauge qui se remplit jusqu'au bord ne sait dire
-que « atteint » ; celle-ci dit aussi « dépassé de combien ».
+L'échelle va d'un bout à l'autre du record : pleine, le record est atteint, et il n'y
+a pas d'autre convention à retenir. Les deux échelles partagent un bord droit — le
+libellé du record est mesuré sur le plus large des deux, sans quoi les barres se
+décaleraient l'une de l'autre.
 
-Et le record se tient **contre** la valeur, pas au bout d'une barre ni sur la ligne du
-dessous. Vingt mises en page ont été essayées avant celle-ci, dont neuf où il vivait
-à distance : deux nombres séparés par trois centimètres d'écran ne se soustraient pas
-d'un coup d'œil. Ici on ne soustrait rien, on regarde une distance.
+Un trait planté sur l'échelle à l'endroit du record, avec de la piste après lui, a été
+essayé : il disait en plus « dépassé de combien », mais il ajoutait une marque à lire
+et un nombre à placer sous elle, pour un renseignement qu'on ne consulte pas en pleine
+esquive. Le compromis est assumé : une fois le record tombé, la barre est simplement
+pleine et rouge, et c'est le nombre du dessus qui dit l'écart.
+
+Le record se tient **contre** sa propre barre, pas sur la ligne du dessous. Vingt mises
+en page ont été essayées avant celle-ci, dont neuf où il vivait à distance : deux
+nombres séparés par trois centimètres d'écran ne se soustraient pas d'un coup d'œil.
 
 Un signal d'approche commun aux deux lignes : rien tant qu'on est loin, **ambre aux
 trois quarts**, un battement ambre-rouge dans les dix derniers pour cent, **rouge** une
