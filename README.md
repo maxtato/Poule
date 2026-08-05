@@ -1339,6 +1339,21 @@ doublons fusionnés — il restait trois rouges de crête à deux unités d'éca
 **trait d'encre est prioritaire** au vote de bloc. Une moyenne noie une ligne d'un
 pixel dans le blanc qui l'entoure, et la poule reviendrait en tache sans contour.
 
+### Dix teintes, et une couleur qui ne se fond jamais dans un gris
+
+Les deux réglages de la palette sont liés, et c'est ce qui rend le premier trompeur :
+**monter le nombre de teintes ne sert à rien si la fusion les avale ensuite**. La
+conversion a longtemps tourné à cinq teintes avec une fusion à 78 unités, ce qui est
+énorme — ce seuil n'existait que pour réunir trois rouges de crête à *deux* unités
+d'écart. Tout ressortait donc en aplats : la paille était un seul jaune, le pneu un seul
+gris, le moyeu de la brouette un rond plat.
+
+C'est maintenant **dix teintes, fondues en deçà de 30**. L'ombre et la lumière
+reviennent sans que les aplats se perdent. On est monté jusqu'à quatorze pour voir : la
+paille commençait à grésiller de bruit, et le dessin cessait de ressembler à du pixel
+art pour ressembler à une photo réduite. Les planches passent de 501 à 527 Ko — peu,
+parce que les silhouettes du décor n'ont qu'une seule couleur et ne bougent pas.
+
 ### Une couleur ne se fond jamais dans un gris
 
 Le seau versait une flaque **grise**. La fusion des quasi-doublons se faisait sur la
