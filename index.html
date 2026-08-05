@@ -948,9 +948,6 @@ const TEXTES={
   sonon:      ["Remettre le son", "Unmute"],
   redresse:   ["Redresse ton téléphone", "Turn your phone upright"],
   hauteur:    ["La poule a besoin de hauteur pour voler", "The hen needs headroom to fly"],
-  /* Les mises en page qui écrivent l'écart au lieu du record. */
-  restent:    ["à faire", "to go"],
-  hudrec:     ["RECORD", "BEST"],
   /* Les trophées. L'intitulé ne dit plus que l'unité : le compte est gravé sur la
      coupe, et l'écrire deux fois prenait la moitié de la carte pour rien. */
   tm10:       ["mouches gobées", "flies eaten"],
@@ -2835,34 +2832,19 @@ function bandeauTrophee(R, pad, VW, y){
    mouches et la distance. Le produit se lit a la fin ; pendant la course il n'apprend
    rien qu'on puisse utiliser, alors que ses deux facteurs disent chacun quoi faire —
    aller chercher une mouche, ou tenir encore un peu.
-   Dix mises en page, le temps de choisir. `HUD_VAR` designe celle qui sert ; les
-   autres partiront quand la decision sera prise. Chacune dessine son bloc et rend
-   l'ordonnee sous laquelle le bandeau des trophees peut se poser.
 
-   Trois briques communes a toutes, pour que les variantes ne different que par leur
-   mise en page et jamais par ce qu'elles disent. */
-let HUD_VAR=0;
-/* le compte de mouches, avec son record quand il y en a un */
-function mouTxt(){ return save.bestMou>0 ? eaten+" / "+save.bestMou : String(eaten); }
-function mouRouge(){ return save.bestMou>0 && eaten>=save.bestMou; }
-/* la distance, et l'etat de sa comparaison au record */
-function distEtat(){
-  const battu = save.bestDist>0 && metres()>=save.bestDist;
-  return {battu, cible:save.bestDist,
-          prog: save.bestDist>0 ? Math.min(1,metres()/save.bestDist) : 0,
-          txt: chiffre(metres())+" m",
-          rec: save.bestDist>0 ? chiffre(battu?metres():save.bestDist)+" m" : null};
-}
-/* ---------- l'approche du record ----------
-   Les dix mises en page suivantes ont toutes le meme parti : le record se tient
-   COLLE a la valeur, pas au bout d'une barre ni sur la ligne d'en dessous. Ce qu'on
-   veut lire n'est pas le compte, c'est le peu qui reste — et deux nombres separes par
-   trois centimetres d'ecran ne se soustraient pas d'un coup d'oeil.
-   `pres` donne l'avancement vers le record, `coulPres` la couleur qui va avec : rien
-   tant qu'on est loin, ambre au trois quarts, un battement ambre-rouge dans les dix
-   derniers pour cent, rouge une fois passe. Le signal est le meme partout, seule la
-   disposition change. */
-function pres(v, rec){ return rec>0 ? Math.min(1, v/rec) : 0; }
+   Les deux mesures se lisent de la meme facon : un nombre, une petite echelle, et un
+   TRAIT plante a l'endroit du record. L'echelle ne s'arrete pas au record — elle va
+   un tiers plus loin, si bien que la marque tombe aux trois quarts et qu'il reste de
+   la piste apres elle. C'est ce qui permet de voir arriver le record, puis de le voir
+   franchi, dans le meme dessin et sans que rien change de forme.
+   Vingt mises en page ont ete essayees avant celle-ci, dont neuf ou le record vivait
+   au bout d'une barre ou sur la ligne du dessous : deux nombres separes par trois
+   centimetres d'ecran ne se soustraient pas d'un coup d'oeil. Ici on ne soustrait
+   rien, on regarde une distance. */
+/* L'avancement vers le record, et la couleur qui va avec : rien tant qu'on est loin,
+   ambre aux trois quarts, un battement ambre-rouge dans les dix derniers pour cent,
+   rouge une fois passe. */
 function coulPres(v, rec){
   if(!rec) return INK;
   if(v>=rec) return "#D6342B";
@@ -2871,483 +2853,53 @@ function coulPres(v, rec){
   if(u>=0.75) return "#F5A623";
   return INK;
 }
-/* le gris du record voisin : il ne doit jamais se lire aussi fort que la valeur */
+/* le gris du record : il ne doit jamais se lire aussi fort que la valeur */
 const REC_GRIS="#A79A88";
-/* une jauge : fond sable, remplissage jaune, rouge une fois le record depasse */
-function jauge(x,y,w,h,prog,battu){
-  ctx.fillStyle="#E4DACA"; rr(x,y,w,h,h/2); ctx.fill();
-  if(prog>0.01){
-    ctx.fillStyle = battu ? "#D6342B" : "#F5A623";
-    rr(x,y,Math.max(h,w*prog),h,h/2); ctx.fill();
-  }
-}
+/* l'echelle porte au-dela du record : la marque tombe a 1/1,35, soit 74 % */
+const ECH_RAB=1.35;
 /* la mouche du HUD : la pose ailes ecartees, seule lisible en tout petit */
-function icoMou(x,y,h){ ctx.drawImage(SPR.fly_ico, x, y, h*MOU_W/MOU_H, h); }
 function larMou(h){ return h*MOU_W/MOU_H; }
+function icoMou(x,y,h){ ctx.drawImage(SPR.fly_ico, x, y, larMou(h), h); }
 
 function hudInfos(L, R, pad, VW, top, fs){
-  const d=distEtat(), mou=mouTxt(), rouge=mouRouge();
-  const h3=Math.max(3,fs*0.11);          // l'epaisseur des jauges
+  /* Des chiffres gros et des echelles courtes : c'est le nombre qu'on lit en jouant,
+     l'echelle ne fait que situer. Elle tenait 38 % de la largeur de jeu et le chiffre
+     42 % du corps du HUD ; c'est maintenant 25 % et 62 %. */
+  const bw=Math.min(112,VW*0.25), fv=Math.round(fs*0.62);
+  const hb=Math.max(2.5, fs*0.085), bx=R-pad-bw;
+  let y=top+2;
+  for(const [val, v, r, rec, ico] of [
+      [String(eaten), eaten, save.bestMou,
+       save.bestMou>0 ? String(save.bestMou) : null, true],
+      [chiffre(metres())+" m", metres(), save.bestDist,
+       save.bestDist>0 ? chiffre(save.bestDist)+" m" : null, false]]){
+    ctx.textAlign="right"; ctx.textBaseline="top";
+    ctx.font="900 "+fv+"px "+FONT; ctx.fillStyle=coulPres(v,r);
+    ctx.fillText(val, R-pad, y);
+    if(ico) icoMou(R-pad-ctx.measureText(val).width-9-larMou(fv*0.78), y+fv*0.18, fv*0.78);
+    const yb=y+fv+6;
+    if(r){
+      const battu=v>=r, ech=r*ECH_RAB;
+      ctx.fillStyle="#E4DACA"; rr(bx,yb,bw,hb,hb/2); ctx.fill();
+      const prog=Math.min(1, v/ech);
+      if(prog>0.01){
+        ctx.fillStyle = battu ? "#D6342B" : "#F5A623";
+        rr(bx,yb,Math.max(hb,bw*prog),hb,hb/2); ctx.fill();
+      }
+      const xr=bx+bw/ECH_RAB;
+      ctx.strokeStyle = battu ? "#D6342B" : "#8B7C69"; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(xr, yb-4); ctx.lineTo(xr, yb+hb+5); ctx.stroke();
+      /* le nombre du record se centre sous son trait, et se retient au bord droit :
+         a 74 % de l'echelle, « 2 100 m » depassait la bande de jeu */
+      ctx.font="700 12px "+FONT;
+      ctx.fillStyle = battu ? "#D6342B" : REC_GRIS;
+      ctx.textAlign="center";
+      ctx.fillText(rec, Math.min(xr, R-pad-ctx.measureText(rec).width/2), yb+hb+9);
+      y=yb+hb+26;
+    }else y=yb+2;
+  }
   ctx.textAlign="right"; ctx.textBaseline="top";
-
-  switch(HUD_VAR){
-
-  /* 0 — Pile. Ce qu'il y avait sous le score, sans le score : une ligne de mouches,
-        une barre de distance dont le nombre au bout est le record. */
-  case 0: {
-    const fm=Math.round(fs*0.62);
-    ctx.font="900 "+fm+"px "+FONT;
-    ctx.fillStyle = rouge ? "#D6342B" : INK;
-    ctx.fillText(mou, R-pad, top);
-    icoMou(R-pad-ctx.measureText(mou).width-9-larMou(fm*0.86), top+fm*0.14, fm*0.86);
-    const yb=top+fm+11;
-    ctx.font="700 12px "+FONT;
-    if(d.rec){
-      const lg=ctx.measureText(d.rec).width, bw=Math.min(126,VW*0.28);
-      jauge(R-pad-lg-8-bw, yb, bw, h3, d.prog, d.battu);
-      ctx.textBaseline="middle"; ctx.fillStyle = d.battu ? "#D6342B" : MUTE;
-      ctx.fillText(d.rec, R-pad, yb+h3/2); ctx.textBaseline="top";
-    }else{ ctx.fillStyle=MUTE; ctx.fillText(d.txt, R-pad, yb-3); }
-    return yb+h3;
-  }
-
-  /* 1 — Deux gros. Les deux nombres au meme corps, l'un sous l'autre, chacun avec
-        son record en petit dessous. Rien a interpreter, tout est ecrit. */
-  case 1: {
-    const fm=Math.round(fs*0.78);
-    ctx.font="900 "+fm+"px "+FONT;
-    ctx.fillStyle = rouge ? "#D6342B" : INK;
-    ctx.fillText(String(eaten), R-pad, top);
-    icoMou(R-pad-ctx.measureText(String(eaten)).width-9-larMou(fm*0.8), top+fm*0.16, fm*0.8);
-    ctx.font="700 11px "+FONT; ctx.fillStyle=MUTE;
-    if(save.bestMou>0) ctx.fillText(String(save.bestMou), R-pad, top+fm+2);
-    const y2=top+fm+(save.bestMou>0?17:6);
-    ctx.font="900 "+fm+"px "+FONT;
-    ctx.fillStyle = d.battu ? "#D6342B" : INK;
-    ctx.fillText(d.txt, R-pad, y2);
-    ctx.font="700 11px "+FONT; ctx.fillStyle=MUTE;
-    if(d.cible) ctx.fillText(chiffre(d.cible)+" m", R-pad, y2+fm+2);
-    return y2+fm+(d.cible?15:2);
-  }
-
-  /* 2 — Mouches en tete. Le compte de mouches prend la place que tenait le score ;
-        la distance passe en jauge dessous. Ce qu'on regarde, c'est ce qu'on mange. */
-  case 2: {
-    ctx.font="900 "+fs+"px "+FONT;
-    ctx.fillStyle = rouge ? "#D6342B" : INK;
-    ctx.fillText(String(eaten), R-pad, top);
-    icoMou(R-pad-ctx.measureText(String(eaten)).width-9-larMou(fs*0.62), top+fs*0.24, fs*0.62);
-    const yb=top+fs+9;
-    ctx.font="700 12px "+FONT;
-    if(d.rec){
-      const lg=ctx.measureText(d.rec).width, bw=Math.min(126,VW*0.28);
-      jauge(R-pad-lg-8-bw, yb, bw, h3, d.prog, d.battu);
-      ctx.textBaseline="middle"; ctx.fillStyle = d.battu ? "#D6342B" : MUTE;
-      ctx.fillText(d.rec, R-pad, yb+h3/2); ctx.textBaseline="top";
-    }else{ ctx.fillStyle=MUTE; ctx.fillText(d.txt, R-pad, yb-3); }
-    return yb+h3;
-  }
-
-  /* 3 — Distance en tete. L'inverse : les metres en grand, les mouches en jauge.
-        Le jeu redevient une course, ou la mouche est un moyen. */
-  case 3: {
-    ctx.font="900 "+fs+"px "+FONT;
-    ctx.fillStyle = d.battu ? "#D6342B" : INK;
-    ctx.fillText(d.txt, R-pad, top);
-    const yb=top+fs+9;
-    ctx.font="700 12px "+FONT;
-    if(save.bestMou>0){
-      const et=String(eaten)+" / "+save.bestMou, lg=ctx.measureText(et).width;
-      const bw=Math.min(126,VW*0.28);
-      jauge(R-pad-lg-8-bw, yb, bw, h3, Math.min(1,eaten/save.bestMou), rouge);
-      ctx.textBaseline="middle"; ctx.fillStyle = rouge ? "#D6342B" : MUTE;
-      ctx.fillText(et, R-pad, yb+h3/2); ctx.textBaseline="top";
-      icoMou(R-pad-lg-8-bw-larMou(11)-7, yb-3, 11);
-    }else{
-      ctx.fillStyle=MUTE; ctx.fillText(String(eaten)+" ×", R-pad, yb-3);
-    }
-    return yb+h3;
-  }
-
-  /* 4 — Deux jauges. Aucun nombre en grand : deux barres de meme longueur, valeur a
-        gauche, record au bout. La progression prime sur le compte. */
-  case 4: {
-    const fv=Math.round(fs*0.42), bw=Math.min(112,VW*0.25);
-    ctx.font="700 12px "+FONT;
-    const lgM = save.bestMou>0 ? ctx.measureText(String(save.bestMou)).width : 0;
-    const lgD = d.rec ? ctx.measureText(d.rec).width : 0;
-    const lg=Math.max(lgM,lgD);
-    const bx=R-pad-lg-8-bw;
-    let y=top+2;
-    for(const [val,prog,battu,rec,ico] of [
-        [String(eaten), save.bestMou>0?Math.min(1,eaten/save.bestMou):0, rouge,
-         save.bestMou>0?String(save.bestMou):null, true],
-        [d.txt, d.prog, d.battu, d.rec, false]]){
-      ctx.font="900 "+fv+"px "+FONT;
-      ctx.fillStyle = battu ? "#D6342B" : INK;
-      ctx.textAlign="right"; ctx.fillText(val, bx-10, y);
-      if(ico) icoMou(bx-10-ctx.measureText(val).width-6-larMou(fv*0.8), y+fv*0.16, fv*0.8);
-      if(rec){
-        jauge(bx, y+fv*0.42, bw, h3, prog, battu);
-        ctx.font="700 12px "+FONT; ctx.textBaseline="middle";
-        ctx.fillStyle = battu ? "#D6342B" : MUTE;
-        ctx.fillText(rec, R-pad, y+fv*0.42+h3/2); ctx.textBaseline="top";
-      }
-      y+=fv+10;
-    }
-    return y-6;
-  }
-
-  /* 5 — Une ligne. Tout tient sur un rang, separe d'un point median. Le HUD
-        n'occupe plus qu'une bande, et les records passent en dessous en petit. */
-  case 5: {
-    const fm=Math.round(fs*0.66);
-    ctx.font="900 "+fm+"px "+FONT;
-    const lgD=ctx.measureText(d.txt).width;
-    ctx.fillStyle = d.battu ? "#D6342B" : INK;
-    ctx.fillText(d.txt, R-pad, top);
-    ctx.fillStyle=MUTE; ctx.fillText("·", R-pad-lgD-10, top);
-    const xm=R-pad-lgD-10-ctx.measureText("·").width-10;
-    ctx.fillStyle = rouge ? "#D6342B" : INK;
-    ctx.fillText(String(eaten), xm, top);
-    icoMou(xm-ctx.measureText(String(eaten)).width-8-larMou(fm*0.8), top+fm*0.16, fm*0.8);
-    ctx.font="700 11px "+FONT; ctx.fillStyle=MUTE;
-    const bas=(save.bestMou>0?save.bestMou+" ":"")+(d.cible?"· "+chiffre(d.cible)+" m":"");
-    if(bas.trim()) ctx.fillText(bas.trim(), R-pad, top+fm+3);
-    return top+fm+(bas.trim()?16:3);
-  }
-
-  /* 6 — Deux colonnes. Les mouches a gauche, la distance a droite, separees d'un
-        filet vertical. Deux mesures de meme rang, presentees comme telles. */
-  case 6: {
-    const fm=Math.round(fs*0.62), col=Math.max(84,VW*0.19);
-    const xa=R-pad-col-14, xb=R-pad;
-    ctx.font="900 "+fm+"px "+FONT;
-    ctx.fillStyle = rouge ? "#D6342B" : INK;
-    ctx.fillText(String(eaten), xa, top);
-    icoMou(xa-ctx.measureText(String(eaten)).width-8-larMou(fm*0.8), top+fm*0.16, fm*0.8);
-    ctx.fillStyle = d.battu ? "#D6342B" : INK;
-    ctx.fillText(d.txt, xb, top);
-    ctx.strokeStyle="#DCD0BC"; ctx.lineWidth=1.5;
-    ctx.beginPath(); ctx.moveTo(xa+9, top+2); ctx.lineTo(xa+9, top+fm+12); ctx.stroke();
-    ctx.font="700 11px "+FONT; ctx.fillStyle=MUTE;
-    if(save.bestMou>0) ctx.fillText(String(save.bestMou), xa, top+fm+3);
-    if(d.cible) ctx.fillText(chiffre(d.cible)+" m", xb, top+fm+3);
-    return top+fm+((save.bestMou||d.cible)?17:3);
-  }
-
-  /* 7 — Partage. Les mouches restent a droite, la distance passe a gauche sous la
-        jauge de vol. Le coin droit se degage, mais l'oeil doit faire deux arrets. */
-  case 7: {
-    const fm=Math.round(fs*0.70);
-    ctx.font="900 "+fm+"px "+FONT;
-    ctx.fillStyle = rouge ? "#D6342B" : INK;
-    ctx.fillText(mou, R-pad, top);
-    icoMou(R-pad-ctx.measureText(mou).width-9-larMou(fm*0.82), top+fm*0.14, fm*0.82);
-    /* a gauche, sous la plume et sa jauge */
-    const fh=Math.min(26,VW*0.055), yg=top+2+fh+13;
-    ctx.textAlign="left";
-    ctx.font="900 "+Math.round(fs*0.46)+"px "+FONT;
-    ctx.fillStyle = d.battu ? "#D6342B" : INK;
-    ctx.fillText(d.txt, L+pad, yg);
-    if(d.cible){
-      ctx.font="700 11px "+FONT; ctx.fillStyle=MUTE;
-      ctx.fillText(chiffre(d.cible)+" m", L+pad, yg+Math.round(fs*0.46)+3);
-    }
-    ctx.textAlign="right";
-    return top+fm+4;
-  }
-
-  /* 8 — Pastilles. Deux gelules creme, comme celles du panneau de fin : le HUD
-        s'affirme comme une interface au lieu de flotter sur le ciel. */
-  case 8: {
-    const fm=Math.round(fs*0.52), hp=fm+14;
-    ctx.font="900 "+fm+"px "+FONT;
-    const pastille=(txt, ico, battu, y)=>{
-      const lg=ctx.measureText(txt).width, iw=ico?larMou(fm*0.8)+7:0;
-      const w=lg+iw+30, x=R-pad-w;
-      ctx.fillStyle="rgba(250,243,236,.82)"; rr(x,y,w,hp,hp/2); ctx.fill();
-      ctx.strokeStyle=TROPH_BORD; ctx.lineWidth=1.6; rr(x,y,w,hp,hp/2); ctx.stroke();
-      if(ico) icoMou(x+15, y+(hp-fm*0.8)/2, fm*0.8);
-      ctx.fillStyle = battu ? "#D6342B" : INK;
-      ctx.fillText(txt, R-pad-15, y+(hp-fm)/2+1);
-    };
-    pastille(mou, true, rouge, top);
-    ctx.font="900 "+fm+"px "+FONT;
-    pastille(d.rec ? d.txt+" / "+d.rec : d.txt, false, d.battu, top+hp+7);
-    return top+hp*2+7;
-  }
-
-  /* ======== les dix suivantes : le record colle a la valeur ======== */
-
-  /* 10 — Barre oblique. Le plus direct : valeur, barre oblique, record, en un seul
-         mot. La valeur grossit, le record reste gris et fixe — on lit l'ecart comme
-         on lit une fraction. */
-  case 10: {
-    const fm=Math.round(fs*0.66), fr=Math.round(fm*0.62);
-    let y=top;
-    for(const [val,rec,ico] of [[String(eaten), save.bestMou, true],
-                                [d.txt, d.cible?chiffre(d.cible)+" m":0, false]]){
-      const v = ico?eaten:metres(), r = ico?save.bestMou:save.bestDist;
-      ctx.font="700 "+fr+"px "+FONT; ctx.fillStyle=REC_GRIS;
-      const lr = rec ? ctx.measureText(" / "+rec).width : 0;
-      if(rec) ctx.fillText(" / "+rec, R-pad, y+fm-fr);
-      ctx.font="900 "+fm+"px "+FONT; ctx.fillStyle=coulPres(v,r);
-      ctx.fillText(val, R-pad-lr, y);
-      if(ico) icoMou(R-pad-lr-ctx.measureText(val).width-9-larMou(fm*0.8), y+fm*0.16, fm*0.8);
-      y+=fm+7;
-    }
-    return y-3;
-  }
-
-  /* 11 — Ce qu'il reste. On n'ecrit pas le record, on ecrit la soustraction : le
-         joueur n'a plus a la faire. Une fois passe, le compte repart en positif. */
-  case 11: {
-    const fm=Math.round(fs*0.66), fr=Math.round(fm*0.48);
-    let y=top;
-    for(const [val,v,r,unite,ico] of [[String(eaten), eaten, save.bestMou, "", true],
-                                      [d.txt, metres(), save.bestDist, " m", false]]){
-      ctx.font="900 "+fm+"px "+FONT; ctx.fillStyle=coulPres(v,r);
-      ctx.fillText(val, R-pad, y);
-      const lv=ctx.measureText(val).width;
-      if(ico) icoMou(R-pad-lv-9-larMou(fm*0.8), y+fm*0.16, fm*0.8);
-      if(r){
-        const ecart=v>=r ? "+"+chiffre(v-r)+unite : chiffre(r-v)+unite+" "+T("restent");
-        ctx.font="700 "+fr+"px "+FONT;
-        ctx.fillStyle = v>=r ? "#D6342B" : REC_GRIS;
-        ctx.fillText(ecart, R-pad, y+fm+1);
-        y+=fr+4;
-      }
-      y+=fm+5;
-    }
-    return y-3;
-  }
-
-  /* 12 — Jauges jumelles. La valeur a gauche de la barre, le record a droite : la
-         barre EST l'ecart, et on voit le curseur monter vers le nombre gris. */
-  case 12: {
-    const fv=Math.round(fs*0.46), bw=Math.min(96,VW*0.22);
-    ctx.font="700 12px "+FONT;
-    const lg=Math.max(save.bestMou?ctx.measureText(String(save.bestMou)).width:0,
-                      d.cible?ctx.measureText(chiffre(d.cible)+" m").width:0);
-    const bx=R-pad-lg-9-bw;
-    let y=top+2;
-    for(const [val,v,r,rec,ico] of [
-        [String(eaten), eaten, save.bestMou, save.bestMou?String(save.bestMou):null, true],
-        [d.txt, metres(), save.bestDist, d.cible?chiffre(d.cible)+" m":null, false]]){
-      ctx.font="900 "+fv+"px "+FONT; ctx.fillStyle=coulPres(v,r);
-      ctx.fillText(val, bx-11, y);
-      if(ico) icoMou(bx-11-ctx.measureText(val).width-6-larMou(fv*0.78), y+fv*0.18, fv*0.78);
-      if(rec){
-        jauge(bx, y+fv*0.40, bw, h3, pres(v,r), v>=r);
-        ctx.font="700 12px "+FONT; ctx.textBaseline="middle";
-        ctx.fillStyle = v>=r ? "#D6342B" : REC_GRIS;
-        ctx.fillText(rec, R-pad, y+fv*0.40+h3/2); ctx.textBaseline="top";
-      }
-      y+=fv+9;
-    }
-    return y-5;
-  }
-
-  /* 13 — Chevron. Le record est annonce par un chevron plutot que par une barre
-         oblique : « 30 › 34 » se lit comme une cible a atteindre, pas comme un
-         rapport. Le chevron s'allume quand on approche. */
-  case 13: {
-    const fm=Math.round(fs*0.68), fr=Math.round(fm*0.66);
-    let y=top;
-    for(const [val,v,r,rec,ico] of [
-        [String(eaten), eaten, save.bestMou, save.bestMou?String(save.bestMou):null, true],
-        [d.txt, metres(), save.bestDist, d.cible?chiffre(d.cible)+" m":null, false]]){
-      let x=R-pad;
-      if(rec){
-        ctx.font="700 "+fr+"px "+FONT; ctx.fillStyle = v>=r ? "#D6342B" : REC_GRIS;
-        ctx.fillText(rec, x, y+fm-fr); x-=ctx.measureText(rec).width+8;
-        ctx.font="900 "+Math.round(fr*0.9)+"px "+FONT;
-        ctx.fillStyle=coulPres(v,r);
-        ctx.fillText("›", x, y+fm-fr); x-=ctx.measureText("›").width+8;
-      }
-      ctx.font="900 "+fm+"px "+FONT; ctx.fillStyle=coulPres(v,r);
-      ctx.fillText(val, x, y);
-      if(ico) icoMou(x-ctx.measureText(val).width-9-larMou(fm*0.8), y+fm*0.16, fm*0.8);
-      y+=fm+7;
-    }
-    return y-3;
-  }
-
-  /* 14 — Le record voyage. Une barre par mesure, et le record ecrit non pas au bout
-         mais SUR le bord du remplissage : les deux nombres se rejoignent a mesure
-         qu'on approche, et se touchent quand le record tombe. */
-  case 14: {
-    const bw=Math.min(150,VW*0.34), fv=Math.round(fs*0.40);
-    const bx=R-pad-bw;
-    let y=top+4;
-    for(const [val,v,r,ico] of [[String(eaten), eaten, save.bestMou, true],
-                                [d.txt, metres(), save.bestDist, false]]){
-      if(r){
-        jauge(bx, y, bw, h3+1, pres(v,r), v>=r);
-        ctx.font="900 "+fv+"px "+FONT;
-        const px2=bx+Math.max(0,Math.min(1,pres(v,r)))*bw;
-        ctx.textAlign="right"; ctx.fillStyle=coulPres(v,r);
-        ctx.fillText(val, Math.max(bx+ctx.measureText(val).width, px2), y-3);
-        if(ico) icoMou(Math.max(bx, px2-ctx.measureText(val).width)-7-larMou(fv*0.8),
-                       y-3-fv*0.84, fv*0.8);
-        ctx.font="700 12px "+FONT; ctx.fillStyle=REC_GRIS;
-        ctx.textAlign="right"; ctx.fillText(v>=r?"":String(r===save.bestMou?r:chiffre(r)+" m"),
-                                            R-pad, y+h3+7);
-      }else{
-        ctx.font="900 "+fv+"px "+FONT; ctx.textAlign="right"; ctx.fillStyle=INK;
-        ctx.fillText(val, R-pad, y-3);
-      }
-      y+=h3+26;
-    }
-    ctx.textAlign="right";
-    return y-14;
-  }
-
-  /* 15 — Pourcentage. Le rapport au record est ecrit tel quel, en petit a cote de la
-         valeur. Le nombre le plus lisible du monde pour dire « tu y es presque ». */
-  case 15: {
-    const fm=Math.round(fs*0.64), fr=Math.round(fm*0.46);
-    let y=top;
-    for(const [val,v,r,ico] of [[String(eaten), eaten, save.bestMou, true],
-                                [d.txt, metres(), save.bestDist, false]]){
-      let x=R-pad;
-      if(r){
-        const pc = v>=r ? T("hudrec") : Math.floor(v/r*100)+" %";
-        ctx.font="700 "+fr+"px "+FONT;
-        ctx.fillStyle = v>=r ? "#D6342B" : coulPres(v,r)===INK ? REC_GRIS : coulPres(v,r);
-        ctx.fillText(pc, x, y+fm-fr-1); x-=ctx.measureText(pc).width+10;
-      }
-      ctx.font="900 "+fm+"px "+FONT; ctx.fillStyle = r&&v>=r ? "#D6342B" : INK;
-      ctx.fillText(val, x, y);
-      if(ico) icoMou(x-ctx.measureText(val).width-9-larMou(fm*0.8), y+fm*0.16, fm*0.8);
-      y+=fm+7;
-    }
-    return y-3;
-  }
-
-  /* 16 — Une ligne, records compris. Tout sur un rang : mouches sur record, point
-         median, metres sur record. Le HUD n'occupe qu'une bande, et l'ecart reste
-         lisible aux deux endroits. */
-  case 16: {
-    const fm=Math.round(fs*0.56), fr=Math.round(fm*0.60);
-    let x=R-pad;
-    const bloc=(val,v,r,rec,ico)=>{
-      if(rec){
-        ctx.font="700 "+fr+"px "+FONT; ctx.fillStyle = v>=r ? "#D6342B" : REC_GRIS;
-        ctx.fillText("/"+rec, x, top+fm-fr); x-=ctx.measureText("/"+rec).width+5;
-      }
-      ctx.font="900 "+fm+"px "+FONT; ctx.fillStyle=coulPres(v,r);
-      ctx.fillText(val, x, top); x-=ctx.measureText(val).width;
-      if(ico){ x-=8+larMou(fm*0.78); icoMou(x, top+fm*0.17, fm*0.78); }
-    };
-    bloc(d.txt, metres(), save.bestDist, d.cible?chiffre(d.cible)+" m":null, false);
-    ctx.font="900 "+fm+"px "+FONT; ctx.fillStyle=MUTE;
-    x-=12; ctx.fillText("·", x, top); x-=ctx.measureText("·").width+12;
-    bloc(String(eaten), eaten, save.bestMou, save.bestMou?String(save.bestMou):null, true);
-    return top+fm+4;
-  }
-
-  /* 17 — Pastilles jumelles. Chaque mesure dans sa gelule, valeur et record dedans.
-         La gelule se teinte a l'approche : c'est tout le fond qui previent, pas
-         seulement le chiffre. */
-  case 17: {
-    const fm=Math.round(fs*0.46), hp=fm+15;
-    let y=top;
-    for(const [val,v,r,rec,ico] of [
-        [String(eaten), eaten, save.bestMou, save.bestMou?String(save.bestMou):null, true],
-        [d.txt, metres(), save.bestDist, d.cible?chiffre(d.cible)+" m":null, false]]){
-      ctx.font="900 "+fm+"px "+FONT;
-      const lv=ctx.measureText(val).width;
-      ctx.font="700 "+Math.round(fm*0.66)+"px "+FONT;
-      const lr=rec?ctx.measureText("/ "+rec).width+7:0;
-      const iw=ico?larMou(fm*0.78)+8:0;
-      const w=lv+lr+iw+30, x=R-pad-w;
-      const u=r?v/r:0;
-      ctx.fillStyle = r&&v>=r ? "rgba(214,52,43,.16)"
-                    : u>=0.75 ? "rgba(245,166,35,.20)" : "rgba(250,243,236,.82)";
-      rr(x,y,w,hp,hp/2); ctx.fill();
-      ctx.strokeStyle = r&&v>=r ? "#D6342B" : u>=0.75 ? "#E8A93C" : TROPH_BORD;
-      ctx.lineWidth=1.6; rr(x,y,w,hp,hp/2); ctx.stroke();
-      if(ico) icoMou(x+15, y+(hp-fm*0.78)/2, fm*0.78);
-      if(rec){
-        ctx.font="700 "+Math.round(fm*0.66)+"px "+FONT;
-        ctx.fillStyle = v>=r ? "#D6342B" : REC_GRIS;
-        ctx.fillText("/ "+rec, R-pad-15, y+(hp-fm*0.66)/2+1);
-      }
-      ctx.font="900 "+fm+"px "+FONT; ctx.fillStyle=coulPres(v,r);
-      ctx.fillText(val, R-pad-15-lr, y+(hp-fm)/2+1);
-      y+=hp+7;
-    }
-    return y-3;
-  }
-
-  /* 18 — Le record en exposant. La valeur en grand, le record juste au-dessus a
-         droite, en tout petit, comme une puissance. Rien n'est plus compact, et
-         l'oeil ne quitte pas le chiffre. */
-  case 18: {
-    const fm=Math.round(fs*0.80), fr=Math.round(fm*0.36);
-    let y=top;
-    for(const [val,v,r,rec,ico] of [
-        [String(eaten), eaten, save.bestMou, save.bestMou?String(save.bestMou):null, true],
-        [d.txt, metres(), save.bestDist, d.cible?chiffre(d.cible):null, false]]){
-      let x=R-pad;
-      if(rec){
-        ctx.font="900 "+fr+"px "+FONT; ctx.fillStyle = v>=r ? "#D6342B" : REC_GRIS;
-        ctx.fillText(rec, x, y+1); x-=ctx.measureText(rec).width+4;
-      }
-      ctx.font="900 "+fm+"px "+FONT; ctx.fillStyle=coulPres(v,r);
-      ctx.fillText(val, x, y);
-      if(ico) icoMou(x-ctx.measureText(val).width-9-larMou(fm*0.72), y+fm*0.22, fm*0.72);
-      y+=fm+6;
-    }
-    return y-2;
-  }
-
-  /* 19 — Le record barre l'echelle. Une seule barre par mesure, longue, avec un
-         TRAIT a l'endroit du record : on voit venir la marque au lieu de comparer
-         deux nombres. Le nombre du record est pose contre son trait. */
-  case 19: {
-    const bw=Math.min(168,VW*0.38), fv=Math.round(fs*0.42), bx=R-pad-bw;
-    let y=top+2;
-    for(const [val,v,r,rec,ico] of [
-        [String(eaten), eaten, save.bestMou, save.bestMou?String(save.bestMou):null, true],
-        [d.txt, metres(), save.bestDist, d.cible?chiffre(d.cible)+" m":null, false]]){
-      ctx.font="900 "+fv+"px "+FONT; ctx.fillStyle=coulPres(v,r);
-      ctx.textAlign="left"; ctx.fillText(val, bx, y);
-      if(ico) icoMou(bx-8-larMou(fv*0.78), y+fv*0.18, fv*0.78);
-      const yb=y+fv+4;
-      if(r){
-        /* l'echelle va au-dela du record : la marque n'est pas au bout, elle est
-           aux trois quarts, et il reste de la piste apres elle */
-        const ech=r*1.35;
-        jauge(bx, yb, bw, h3+1, Math.min(1,v/ech), v>=r);
-        const xr=bx+bw*(r/ech);
-        ctx.strokeStyle = v>=r ? "#D6342B" : "#8B7C69"; ctx.lineWidth=2;
-        ctx.beginPath(); ctx.moveTo(xr, yb-4); ctx.lineTo(xr, yb+h3+5); ctx.stroke();
-        ctx.font="700 11px "+FONT; ctx.fillStyle = v>=r ? "#D6342B" : REC_GRIS;
-        ctx.textAlign="center"; ctx.fillText(rec, Math.min(xr, R-pad-14), yb+h3+9);
-        y=yb+h3+24;
-      }else y=yb+4;
-      ctx.textAlign="right";
-    }
-    ctx.textAlign="right";
-    return y-6;
-  }
-
-  /* 9 — Sobre. Deux nombres moyens, pas de record, pas de jauge. Le minimum qui
-        permette encore de jouer — et rien pour se comparer. */
-  default: {
-    const fm=Math.round(fs*0.58);
-    ctx.font="900 "+fm+"px "+FONT;
-    ctx.fillStyle=INK;
-    ctx.fillText(String(eaten), R-pad, top);
-    icoMou(R-pad-ctx.measureText(String(eaten)).width-8-larMou(fm*0.8), top+fm*0.16, fm*0.8);
-    ctx.font="700 "+Math.round(fm*0.62)+"px "+FONT; ctx.fillStyle=MUTE;
-    ctx.fillText(d.txt, R-pad, top+fm+5);
-    return top+fm+5+Math.round(fm*0.62);
-  }
-  }
+  return y-8;
 }
 
 function drawHUD(){

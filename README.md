@@ -299,28 +299,44 @@ compte de mouches récompensait celui qui tourne en rond au même endroit.
 Les mètres affichés sont ceux de la barre, arrondis, pour que le compte se vérifie à
 l'œil.
 
-### Ce que montre le HUD
+### Le score ne s'affiche pas pendant la course
 
-Trois lignes en haut à droite, du plus gros au plus petit :
+Le HUD ne montre que les deux **facteurs** : les mouches et la distance. Le produit se
+lit à la fin, dans le carnet et dans le record. Pendant la course il n'apprend rien
+qu'on puisse utiliser, alors que ses deux facteurs disent chacun quoi faire — aller
+chercher une mouche, ou tenir encore un peu. On ne décide pas d'un score ; on décide
+d'aller chercher une mouche de plus.
 
-| | |
-| --- | --- |
-| **14 880** | le score |
-| 🪰 12 / 34 | les mouches gobées, et le record de mouches |
-| ▓▓▓▓░░░ 2 100 m | la barre de distance : le remplissage est la distance parcourue, le nombre au bout est la plus grande jamais parcourue |
+Les deux mesures se lisent de la même façon : un nombre, une petite échelle, et un
+**trait planté à l'endroit du record**.
 
-Le score n'a **pas d'unité** — ce ne sont ni des mètres ni des mouches, c'est leur
-produit. Le dessin de mouche qui l'accompagnait est donc descendu d'une ligne, sur
-le compte de mouches, où il veut encore dire quelque chose.
+```
+   🪰  32
+       ▓▓▓▓▓▓▓▓|░░
+               34
 
-Les deux lignes du dessous sont les **facteurs**, et chacune porte son record. Ce sont
-elles qu'on peut encore faire monter, pas le produit : on ne décide pas d'un score,
-on décide d'aller chercher une mouche de plus.
+   1 993 m
+       ▓▓▓▓▓▓▓|░░
+               2 100 m
+```
 
-La barre de distance devient rouge et pleine quand le record tombe, et le nombre au
-bout bascule sur la distance en cours — c'est elle, désormais, qui est la plus
-grande. Au tout premier essai il n'y a rien à remplir : pas de barre, juste les
-mètres.
+L'échelle **ne s'arrête pas au record** — elle va un tiers plus loin, si bien que la
+marque tombe aux trois quarts et qu'il reste de la piste après elle. C'est ce qui
+permet de voir arriver le record, puis de le voir franchi, dans le même dessin et
+sans que rien change de forme. Une jauge qui se remplit jusqu'au bord ne sait dire
+que « atteint » ; celle-ci dit aussi « dépassé de combien ».
+
+Et le record se tient **contre** la valeur, pas au bout d'une barre ni sur la ligne du
+dessous. Vingt mises en page ont été essayées avant celle-ci, dont neuf où il vivait
+à distance : deux nombres séparés par trois centimètres d'écran ne se soustraient pas
+d'un coup d'œil. Ici on ne soustrait rien, on regarde une distance.
+
+Un signal d'approche commun aux deux lignes : rien tant qu'on est loin, **ambre aux
+trois quarts**, un battement ambre-rouge dans les dix derniers pour cent, **rouge** une
+fois passé. Les chiffres sont gros et les échelles courtes — c'est le nombre qu'on
+lit en jouant, l'échelle ne fait que situer.
+
+Au tout premier essai il n'y a rien à situer : pas d'échelle, juste les deux nombres.
 
 Le petit compteur de mouches qui vivait sous la jauge de plumes a disparu : il
 répétait le grand chiffre. Il ne reste à gauche que le combo, qui n'apparaît qu'à
