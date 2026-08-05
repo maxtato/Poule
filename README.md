@@ -1254,9 +1254,9 @@ originales. Les deux tiennent dans le même fichier sans discussion.
 Convertir chaque dessin à une largeur fixe — 64 pixels pour la poule, 64 pour la
 montagne — donnerait des pixels **gros comme une maison** sur la montagne et
 minuscules sur la mouche : cinquante-neuf grilles différentes, et un décor qui jure
-avec le personnage. Le pixel vaut donc **un tiers de pixel CSS**, le même partout ;
-chaque dessin est converti à sa taille d'affichage divisée par cette valeur. La poule
-fait 230 pixels de large, la mouche 72, la montagne 1559.
+avec le personnage. Le pixel vaut donc **0,40 pixel CSS**, le même partout ; chaque
+dessin est converti à sa taille d'affichage divisée par cette valeur. La poule fait
+192 pixels de large, la mouche 60, la montagne 1299.
 
 ### Pourquoi un tiers, et pas un chiffre rond
 
@@ -1265,21 +1265,25 @@ large de `largeur × dpr`. Si ces deux nombres sont égaux, la pose est un repor
 pour pixel : rien n'est agrandi, rien n'est réduit, rien n'est perdu. **La finesse de la
 grille n'est donc pas libre : elle vaut l'inverse du plafond de résolution.**
 
-Le jeu a d'abord tourné à 0,40 avec un plafond de 2,5 — égaux, par construction. Puis
-la grille est passée à 0,30 : le tampon faisait un tiers de plus que la toile, le lissage
-étant coupé le navigateur **jetait** ce qui ne rentrait pas, et comme ce qu'il jette
-dépend de la position, les dessins **grouillaient en défilant**. Mesuré sur le ballot de
-paille : 281 colonnes de planche pour 211 pixels d'écran, soit un quart de jetées. Rien
-de tout cela ne se voit sur une capture immobile.
+Le jeu a essayé 0,30, une fois le plafond laissé à 2,5 : le tampon faisait un tiers de
+plus que la toile, le lissage étant coupé le navigateur **jetait** ce qui ne rentrait
+pas, et comme ce qu'il jette dépend de la position, les dessins **grouillaient en
+défilant**. Mesuré sur le ballot de paille : 281 colonnes de planche pour 211 pixels
+d'écran, soit un quart de jetées. Rien de tout cela ne se voit sur une capture immobile.
 
-La sortie garde des pixels fins et rétablit le report exact : le plafond monte à 3 **en
-mode pixel seulement**, et la grille vaut son inverse. Vérifié : tampon et toile à
-1170 × 2532 tous les deux, 253 colonnes de planche pour 253 pixels d'écran, zéro jetée.
+Le plafond du mode pixel vaut donc maintenant **exactement `1 / PX_JEU`**, quelle que
+soit la grille choisie : le report est exact par construction, et changer de finesse ne
+peut plus réintroduire le défaut. Vérifié à 0,40 : tampon et toile à 975 × 2110 tous les
+deux, 211 colonnes de planche pour 211 pixels d'écran, zéro jetée.
 
 Le plafond dépend du style, et ce n'est pas un caprice. Le trait dessine des planches
 pleine résolution avec lissage, bien plus coûteuses au pixel : monter son plafond à 3
 lui coûtait un tiers de sa cadence, mesuré, pour un gain nul — il n'a aucune grille à
 respecter. Il garde donc 2,5. `resize()` est rejoué à chaque bascule de style.
+
+Des trois finesses essayées, **0,40 est aussi la plus stable en mouvement** : en recalant
+deux images d'un nombre entier de pixels d'écran, 31 % des pixels du ballot bougent
+encore, contre 47 % à 0,30 comme à un tiers.
 
 Il reste un résidu, inhérent et présent à n'importe quelle grille : une planche posée à
 une position qui n'est pas ronde est rééchantillonnée avec une phase qui glisse. C'est
@@ -1358,8 +1362,8 @@ dessin s'éloigne de l'aplat franc du pixel art pour se rapprocher d'une photo r
 La paille grésille un peu. La nuance a été jugée plus importante que la rigueur de la
 trame — c'est un choix de goût, et il se change en deux nombres.
 
-Les planches passent de 501 à 539 Ko, peu, parce que les silhouettes du décor n'ont
-qu'une seule couleur et ne bougent pas d'un octet.
+Les planches pèsent **410 Ko**. Le nombre de teintes y compte moins que la finesse de
+la grille : les silhouettes du décor n'ont qu'une seule couleur quoi qu'il arrive.
 
 ### Une couleur ne se fond jamais dans un gris
 
@@ -1430,16 +1434,16 @@ grille unique, mesure faite : de 0,38 pixel CSS sur les petites capitales à **3
 le titre — sept fois et demie d'écart, et huit fois la finesse des dessins sur le titre.
 Une fonte à pixels ne peut pas avoir un pixel constant si les corps varient.
 
-Il y a donc une **échelle de grilles** — 24, 32, 42, 55, 73, 96, 127, 168, 222 — et
+Il y a donc une **échelle de grilles** — 20, 27, 35, 46, 61, 80, 106, 140, 185 — et
 `fontePixel()` donne à chaque texte celle qui le rapproche le plus de `PX_JEU`. Le
 choix est refait à chaque redimensionnement : les corps sont en `clamp()`, ils changent
 avec la fenêtre. Les graisses légères ne sont fabriquées que pour les petits corps —
 au-delà, tout est en 800 ou 900.
 
 Résultat mesuré sur les textes du document, à quatre gabarits : le pixel apparent tient
-entre **0,29 et 0,38** pour une cible d'un tiers, soit 14 % d'écart au pire. L'échelle
-est refaite à chaque changement de finesse : les grilles valent `taille / PX_JEU`.
-Dix-sept faces, **138 Ko**. Elles ne servent qu'en mode pixel et qu'au document : le
+entre **0,34 et 0,45** pour une cible de 0,40, soit 14 % d'écart au pire. L'échelle est
+refaite à chaque changement de finesse : les grilles valent `taille / PX_JEU`.
+Dix-sept faces, **126 Ko**. Elles ne servent qu'en mode pixel et qu'au document : le
 texte du canevas passe déjà par le tampon.
 
 ### Le panneau de fin, qui restait lisse
