@@ -332,7 +332,7 @@ sauter cinquante fois n'en est pas un.
 
 ### Le bandeau
 
-Une carte crème à l'encre, la coupe à gauche avec son nombre gravé dessus, le
+Une carte crème, la coupe à gauche avec son nombre gravé dessus, le
 titre et l'intitulé à droite. Elle entre par le bord droit, tient trois secondes
 et repart du même côté — jamais par le centre, où elle couvrirait la poule au
 moment où l'on a le plus besoin de la voir. Elle se pose sous la jauge de record,
@@ -340,8 +340,28 @@ dans le même alignement à droite que tout ce coin-là, et rentre sous le bord 
 bande de jeu : sur un écran large elle n'ira pas flotter dans les marges.
 
 La coupe tient tout entière dans la carte, socle, touffe d'herbe et caillou
-compris. Débordante, son ombre au sol passait par-dessus le trait d'encre et la
-carte n'avait plus de bord franc.
+compris. Débordante, son ombre au sol passait par-dessus le bord et la carte
+n'avait plus de contour franc.
+
+#### Un bord de sable, pas un trait d'encre
+
+Le trait noir du reste du jeu cerne des **objets**. Ici il cernait un **panneau**, et
+un panneau cerclé de noir en plein ciel se lit comme une fenêtre de système posée
+par-dessus le jeu. Le bord est donc un sable de la même famille que le crème qu'il
+entoure, juste plus sombre.
+
+Combien plus sombre, c'est le ciel qui le dit — et il change d'heure en heure. La
+clarté derrière la carte tombe de 235 le matin à **214 au crépuscule**. Six valeurs
+ont été posées sur le vrai ciel, aux quatre heures :
+
+| Bord | Écart au ciel le plus sombre | Écart au crème de la carte |
+| --- | --- | --- |
+| `#DFD1B8` | 4 — disparaît le soir | 34 |
+| `#D2C2A4` | 19 | 49 |
+| **`#C9B896`** | **29** | **59** |
+| `#B9A481` | 48 — redevient un trait | 78 |
+
+`#C9B896` est le plus clair qui tienne encore au crépuscule.
 
 Elle arrive sur du blanc, comme les obstacles, et son détourage suit la même
 méthode — est fond ce qui est à la fois très clair et gris, inondé depuis le bord.

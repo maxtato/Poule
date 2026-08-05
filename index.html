@@ -1666,6 +1666,16 @@ let comboMax=0, orGobees=0, travObs=0, airDepuis=-9, airMax=0, plafondTouche=fal
    deux bandeaux superposes ne se liraient ni l'un ni l'autre. */
 let trophFile=[], trophT=-9, trophCur=null;
 const TROPH_DUREE=3.4;
+/* Le bord de la carte n'est plus a l'encre. Le trait noir du reste du jeu cerne des
+   objets ; ici il cernait un panneau, et un panneau cercle de noir en plein ciel se
+   lit comme une fenetre de systeme posee par-dessus le jeu. Le bord est donc un sable
+   de la meme famille que le creme qu'il entoure, juste plus sombre.
+   Combien plus sombre, c'est le ciel qui le dit, et il change d'heure en heure : la
+   clarte derriere la carte tombe de 235 le matin a 214 au crepuscule. Six valeurs ont
+   ete posees sur le vrai ciel aux quatre heures. #DFD1B8 disparaissait le soir — quatre
+   points d'ecart. Celle-ci en garde 29 a l'heure la plus sombre et 59 contre le creme
+   de la carte : visible partout, et jamais un trait d'encre. */
+const TROPH_BORD="#C9B896";
 function verifieTrophees(){
   for(const tr of TROPHEES)
     if(save.trophees.indexOf(tr.k)<0 && tr.ok()){
@@ -2749,7 +2759,7 @@ function bandeauTrophee(R, pad, VW, y){
   ctx.globalAlpha=Math.min(1, gliss*1.6);
   rr(x,y,cw,ch,r);
   ctx.fillStyle=CREAM; ctx.fill();
-  ctx.lineWidth=Math.max(1.6,ch*0.055); ctx.strokeStyle=INK; ctx.lineJoin="round";
+  ctx.lineWidth=Math.max(1.6,ch*0.055); ctx.strokeStyle=TROPH_BORD; ctx.lineJoin="round";
   ctx.stroke();
 
   /* La coupe tient tout entiere dans la carte, socle, touffe d'herbe et caillou
