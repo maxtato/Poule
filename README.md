@@ -1339,6 +1339,27 @@ doublons fusionnés — il restait trois rouges de crête à deux unités d'éca
 **trait d'encre est prioritaire** au vote de bloc. Une moyenne noie une ligne d'un
 pixel dans le blanc qui l'entoure, et la poule reviendrait en tache sans contour.
 
+### Une couleur ne se fond jamais dans un gris
+
+Le seau versait une flaque **grise**. La fusion des quasi-doublons se faisait sur la
+distance en RVB seule, et un bleu pâle est *géométriquement* proche d'un gris clair sans
+avoir rien à voir avec lui : l'eau, `rgb(210,230,242)` et 43 000 pixels, tombait à
+**23 unités** du blanc du seau et se faisait absorber par lui. Elle ne concourait même
+pas pour une place dans la palette. Dans l'autre sens, un gris neutre s'était fait
+absorber par le vert de l'herbe, ce qui n'a pas plus de sens.
+
+La correction est une interdiction, et une seule : **on ne fond pas une teinte colorée
+avec une teinte neutre**. La frontière est l'écart entre le canal le plus fort et le plus
+faible ; en deçà de 18, on appelle ça un gris. Tout le reste fusionne exactement comme
+avant — les trois rouges de crête, les deux jaunes de bec, les nuances de gris entre
+elles.
+
+C'est volontairement la règle la plus étroite qui répare le défaut. Deux plus ambitieuses
+ont été essayées et jetées, mesure à l'appui : peser la couleur plus lourd que la clarté
+dans la distance, et classer les candidates par fréquence *pondérée par la saturation*.
+Les deux réparaient l'eau et cassaient le reste — le ballot de paille ressortait avec
+cinq jaunes et sans encre, l'herbe avec cinq verts et sans blanc.
+
 ### Ce que la bascule doit reprendre
 
 Tout ce qui **dérive** des dessins, et pas seulement les dessins :
