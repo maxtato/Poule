@@ -343,6 +343,18 @@ La coupe tient tout entière dans la carte, socle, touffe d'herbe et caillou
 compris. Débordante, son ombre au sol passait par-dessus le trait d'encre et la
 carte n'avait plus de bord franc.
 
+Elle arrive sur du blanc, comme les obstacles, et son détourage suit la même
+méthode — est fond ce qui est à la fois très clair et gris, inondé depuis le bord.
+Inondé depuis le bord **seulement**, le blanc enfermé dans les anses restait plein :
+la coupe avait deux plaques blanches à la place de ses trous, et elles se voyaient
+sur le crème de la carte comme sur le ciel. C'est la **règle des trous**, celle que
+le bouton de saut interdit justement parce qu'il est une silhouette blanche
+enfermée : toute tache de fond que l'inondation n'atteint pas est percée elle
+aussi, à condition d'être assez grande. Le seuil ne se devine pas, il se mesure —
+trois taches enfermées sur la source, les deux anses à 9 281 et 8 732 pixels, et
+une poussière de 6 pixels dans l'herbe. Cent pixels séparent les deux cas d'un
+facteur cent.
+
 Deux trophées peuvent tomber dans la même seconde — la dixième mouche et la
 centième au total. Ils font la queue et défilent l'un après l'autre : deux
 bandeaux superposés ne se liraient ni l'un ni l'autre. Et ils continuent d'être
