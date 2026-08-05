@@ -926,26 +926,20 @@ const TEXTES={
   hudrecord:  ["RECORD %1", "BEST %1"],
   hudbattu:   ["RECORD BATTU", "NEW BEST"],
   hudpremier: ["PREMIER ESSAI", "FIRST TRY"],
-  flashrec:   ["Record battu", "New best"],
-  poprec:     ["RECORD", "BEST"],
-  flashtrav:  ["Traversée !", "Pass through!"],
-  poptrav:    ["TRAVERSÉE", "PASS"],
-  flashpalier:["%1 mouches", "%1 flies"],
-  /* Les trophées. Le titre du bandeau, puis un intitulé par trophée. */
-  trophee:    ["Trophée !", "Trophy!"],
-  tm10:       ["10 mouches gobées", "10 flies eaten"],
-  tm25:       ["25 mouches gobées", "25 flies eaten"],
-  tm50:       ["50 mouches gobées", "50 flies eaten"],
-  tm100:      ["100 mouches gobées", "100 flies eaten"],
-  tchaine:    ["Une chaîne de 8", "A chain of 8"],
-  tor:        ["Première mouche dorée", "First golden fly"],
-  ttrav:      ["3 obstacles traversés", "3 obstacles crossed"],
-  tvol:       ["12 secondes en l'air", "12 seconds airborne"],
-  tplafond:   ["Le plafond du ciel", "The top of the sky"],
-  ttotal:     ["250 mouches en tout", "250 flies in all"],
-  tparties:   ["25 parties jouées", "25 games played"],
-  tsoir:      ["Jusqu'au crépuscule", "All the way to dusk"],
-  tcent:      ["100 mouches en tout", "100 flies in all"]
+  /* Les trophées. L'intitulé ne dit plus que l'unité : le compte est gravé sur la
+     coupe, et l'écrire deux fois prenait la moitié de la carte pour rien. */
+  tm10:       ["mouches gobées", "flies eaten"],
+  tm50:       ["mouches gobées", "flies eaten"],
+  tm100:      ["mouches gobées", "flies eaten"],
+  tor:        ["mouche dorée", "golden fly"],
+  tchaine:    ["à la chaîne", "in a chain"],
+  ttrav:      ["obstacles traversés", "obstacles crossed"],
+  tvol:       ["secondes en l'air", "seconds airborne"],
+  tsoir:      ["Le crépuscule", "Dusk"],
+  tcent:      ["mouches en tout", "flies in all"],
+  ttotal:     ["mouches en tout", "flies in all"],
+  tmille:     ["mouches en tout", "flies in all"],
+  tparties:   ["parties jouées", "games played"]
 };
 function T(cle, ...n){
   const e=TEXTES[cle];
@@ -1165,19 +1159,14 @@ const HEN_X=150;
 const hen={x:HEN_X,y:0,vy:0,ground:true,feathers:1,anim:0,flap:0,dead:false};
 let speed=0, dist=0, tSpawn=0, t=0, shake=0, hold=false, holdT=0, eaten=0;
 let dernierObs="";   // le dernier obstacle lance : le cerf-volant ne se suit pas lui-meme
-let obs=[], flies=[], puffs=[], plumes=[], traits=[], clouds=[], sol=[], hills=[], pops=[], miettes=[], decor=[];
+let obs=[], flies=[], puffs=[], plumes=[], traits=[], clouds=[], sol=[], hills=[], miettes=[], decor=[];
 let tFly=0;
 /* Combo : gober sans laisser retomber la chaine nourrit la chaine elle-meme —
    plus elle est longue, plus l'eclat est fourni. Le compteur retombe a zero
    passe COMBO_T sans mouche. */
 const COMBO_T=2.6;
-/* Le score est le nombre de mouches, pas les metres : un palier tous les dix
-   gobages tombe assez rarement pour rester une recompense. */
-const PALIER=10;
 let combo=0, lastEat=-9;
-let palier=0, recBeaten=false;
-/* Un seul bandeau de felicitations a la fois : le dernier evenement gagne. */
-let flashT=-9, flashTxt="";
+let recBeaten=false;
 
 /* La hauteur de jeu de la poule suit la hauteur du cadre : elargir l'un sans
    l'autre l'aurait dessinee plus petite, puisque sc() est leur rapport. */
@@ -1189,8 +1178,8 @@ function reset(){
   hen.x=HEN_X; hen.y=0; hen.vy=0; hen.ground=true; hen.feathers=1; hen.flap=0; hen.dead=false;
   flapNow=false; jumpBuf=-9; flapUntil=-9; enSaut=false; fingers.clear();
   speed=500; dist=0; tSpawn=1.1; shake=0; hold=false; eaten=0;
-  obs=[]; flies=[]; puffs=[]; plumes=[]; traits=[]; pops=[]; miettes=[]; dernierObs="";
-  combo=0; lastEat=-9; palier=0; recBeaten=false; flashT=-9; flashTxt="";
+  obs=[]; flies=[]; puffs=[]; plumes=[]; traits=[]; miettes=[]; dernierObs="";
+  combo=0; lastEat=-9; recBeaten=false;
   comboMax=0; orGobees=0; travObs=0; airDepuis=t; airMax=0; plafondTouche=false;
   trophFile=[]; trophCur=null; trophT=-9;
   deadLand=-9; chocVol=false; chocSur=false; deadVx=0; deadFrein=0;
@@ -1610,9 +1599,7 @@ function dust(x,y){
 function feather(x,y){
   plumes.push({x,y,vx:-50-Math.random()*80,vy:-30+Math.random()*40,r:Math.random()*6,vr:(Math.random()-.5)*6,l:1});
 }
-/* Etiquettes flottantes : elles vivent dans le monde et defilent avec lui. */
-function pop(x,y,txt,tint){ pops.push({x,y,txt,tint:tint||INK,l:1}); }
-/* Gober une mouche : un pop, pas un chiffre. De fins traits partent en etoile,
+/* Gober une mouche : ni chiffre ni etiquette. De fins traits partent en etoile,
    filent d'un coup puis s'arretent net et s'effacent en un tiers de seconde.
    Les angles sont repartis regulierement, avec juste ce qu'il faut de hasard :
    tires librement, la gerbe se lisait comme une poussiere et plus comme un choc. */
@@ -1629,7 +1616,6 @@ function eclat(x,y,n){
     miettes.push({x, y, a, vx:Math.cos(a)*v, vy:Math.sin(a)*v, len:5+Math.random()*7, l:1});
   }
 }
-function flash(txt){ flashT=t; flashTxt=txt; }
 
 /* ---------- trophees ----------
    Un trophee se gagne une fois pour toutes et reste acquis : c'est une liste de cles
@@ -1638,34 +1624,46 @@ function flash(txt){ flashT=t; flashTxt=txt; }
    retirer une ligne suffit, rien d'autre n'est a toucher.
    Les tests sont volontairement lisibles a chaque image : ce sont des comparaisons
    sur des compteurs deja tenus par la partie, il n'y a pas de machinerie derriere.
-   `n` est ce qui s'ecrit sur la coupe. Quand le trophee ne se compte pas — toucher
-   le plafond du ciel, voir tomber le jour — la coupe reste nue. */
+   `n` est ce qui s'ecrit sur la coupe. Quand le trophee ne se compte pas — voir
+   tomber le jour — la coupe reste nue.
+
+   L'ECHELLE COMPTE AUTANT QUE LA LISTE. Un trophee n'est une recompense que s'il est
+   rare : sur la premiere echelle, la dixieme et la vingt-cinquieme mouche tombaient
+   coup sur coup, et toucher le plafond du ciel — ce qui arrive au premier vol de la
+   premiere partie — valait autant que cent mouches. Deux lignes sont donc parties
+   (les 25 mouches, le plafond) et les exploits ont ete remontes.
+   Ce que donne une partie ordinaire : la dixieme mouche, puis le crepuscule vers la
+   quarantieme seconde. Rien d'autre avant la cinquantieme mouche. */
 const TROPHEES=[
-  {k:"m10",     n:10,  ok:()=>eaten>=10},
-  {k:"m25",     n:25,  ok:()=>eaten>=25},
-  {k:"m50",     n:50,  ok:()=>eaten>=50},
-  {k:"m100",    n:100, ok:()=>eaten>=100},
-  {k:"chaine",  n:8,   ok:()=>comboMax>=8},
-  {k:"or",      n:1,   ok:()=>orGobees>=1},
-  {k:"trav",    n:3,   ok:()=>travObs>=3},
-  {k:"vol",     n:12,  ok:()=>airMax>=12},
-  {k:"plafond", n:0,   ok:()=>plafondTouche},
-  {k:"soir",    n:0,   ok:()=>dist>=DAY_LEN*0.75},
-  /* Les deux suivants comptent par-dela la partie : la course en cours y est
-     comprise, sinon le trophee tomberait sur l'ecran de fin, quand plus personne
-     ne regarde le jeu. */
-  {k:"cent",    n:100, ok:()=>save.flies+eaten>=100},
-  {k:"total",   n:250, ok:()=>save.flies+eaten>=250},
-  {k:"parties", n:25,  ok:()=>save.runs+1>=25}
+  {k:"m10",     n:10,   ok:()=>eaten>=10},
+  {k:"m50",     n:50,   ok:()=>eaten>=50},
+  {k:"m100",    n:100,  ok:()=>eaten>=100},
+  {k:"or",      n:1,    ok:()=>orGobees>=1},
+  {k:"chaine",  n:12,   ok:()=>comboMax>=12},
+  {k:"trav",    n:6,    ok:()=>travObs>=6},
+  {k:"vol",     n:18,   ok:()=>airMax>=18},
+  {k:"soir",    n:0,    ok:()=>dist>=DAY_LEN*0.75},
+  /* Les suivants comptent par-dela la partie : la course en cours y est comprise,
+     sinon le trophee tomberait sur l'ecran de fin, quand plus personne ne regarde
+     le jeu. Ils sont la pour tenir la duree — le dernier est hors de portee d'une
+     bonne soiree. */
+  {k:"cent",    n:100,  ok:()=>save.flies+eaten>=100},
+  {k:"total",   n:250,  ok:()=>save.flies+eaten>=250},
+  {k:"mille",   n:1000, ok:()=>save.flies+eaten>=1000},
+  {k:"parties", n:50,   ok:()=>save.runs+1>=50}
 ];
 /* Ce que la partie en cours doit retenir pour les tests ci-dessus. Tout est remis a
    zero par reset(). */
 let comboMax=0, orGobees=0, travObs=0, airDepuis=-9, airMax=0, plafondTouche=false;
 /* Deux trophees peuvent tomber dans la meme seconde — la dixieme mouche et le
    centieme total, par exemple. Ils font la queue et defilent l'un apres l'autre :
-   deux bandeaux superposes ne se liraient ni l'un ni l'autre. */
+   deux bandeaux superposes ne se liraient ni l'un ni l'autre.
+   Et ils ne se suivent pas non plus : une carte tient 3,4 secondes, puis le ciel
+   reste vide 4 secondes avant la suivante. Enchainees, deux recompenses n'en font
+   plus qu'une, et une carte qui revient sans arret cesse d'etre une recompense pour
+   devenir un decor. */
 let trophFile=[], trophT=-9, trophCur=null;
-const TROPH_DUREE=3.4;
+const TROPH_DUREE=3.4, TROPH_ECART=4.0;
 /* Le bord de la carte n'est plus a l'encre. Le trait noir du reste du jeu cerne des
    objets ; ici il cernait un panneau, et un panneau cercle de noir en plein ciel se
    lit comme une fenetre de systeme posee par-dessus le jeu. Le bord est donc un sable
@@ -1683,7 +1681,7 @@ function verifieTrophees(){
       storeSave();
     }
   if(trophCur && t-trophT>TROPH_DUREE) trophCur=null;
-  if(!trophCur && trophFile.length){
+  if(!trophCur && trophFile.length && t-trophT>TROPH_DUREE+TROPH_ECART){
     trophCur=trophFile.shift(); trophT=t; SFX.trophee();
   }
 }
@@ -1914,8 +1912,6 @@ function update(dt){
     }
     for(const p of plumes){ p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=520*dt; p.r+=p.vr*dt; p.l-=dt*.5; }
     plumes=plumes.filter(p=>p.l>0);
-    for(const p of pops){ p.y-=42*dt; p.l-=dt*1.05; }
-    pops=pops.filter(p=>p.l>0);
     for(const p of miettes){
       p.x+=p.vx*dt; p.y+=p.vy*dt;
       const frein=1-Math.min(1,7.5*dt); p.vx*=frein; p.vy*=frein;
@@ -2052,7 +2048,7 @@ function update(dt){
         /* Le pouvoir ne s'additionne pas indefiniment : une doree gobee pendant qu'il
            dure repart de la duree pleine, elle ne l'empile pas. */
         orJusqu=t+OR_DUREE;
-        SFX.pouvoir(); flash(T("flashtrav")); pop(f.x, f.y-30, T("poptrav"), "#D9A520");
+        SFX.pouvoir();
         eclat(f.x, f.y, 22);
       }else{
         SFX.gobe(combo-1);
@@ -2063,15 +2059,11 @@ function update(dt){
     }
   }
 
-  /* Un repere toutes les dix mouches, et une fanfare a l'instant precis ou le record
-     tombe. Le record passe devant : un palier franchi dans la foulee n'efface pas la
-     fanfare. */
-  const borne=Math.floor(eaten/PALIER);
-  if(borne>palier){ palier=borne; SFX.palier(); if(t-flashT>1.4) flash(T("flashpalier", borne*PALIER)); }
-  if(!recBeaten && best>0 && eaten>=best){
-    recBeaten=true; flash(T("flashrec")); SFX.record();
-    pop(hen.x+80, hen.y-150, T("poprec"), "#D6342B");
-  }
+  /* Le record tombe : une fanfare, et rien de plus. Le bandeau central et l'etiquette
+     flottante ont disparu — c'est la jauge de record qui porte l'information, elle
+     bascule au rouge et le dit en toutes lettres, en permanence et sans rien couvrir.
+     Le seul bandeau du jeu est desormais celui des trophees. */
+  if(!recBeaten && best>0 && eaten>=best){ recBeaten=true; SFX.record(); }
   for(const o of obs){
     /* Le cerf-volant fuit dans le meme sens que la poule mais moins vite : ce qui
        reste de l'ecart, c'est elle qui le comble. */
@@ -2094,8 +2086,6 @@ function update(dt){
   /* Les traits portent deja leur propre vitesse : rien a ajouter du defilement. */
   for(const p of traits){ p.x+=p.vx*dt; p.y+=p.vy*dt; p.l-=dt*p.f; }
   traits=traits.filter(p=>p.l>0);
-  for(const p of pops){ p.x-=speed*dt*.55; p.y-=42*dt; p.l-=dt*1.05; }
-  pops=pops.filter(p=>p.l>0);
   /* Le trait file puis freine net — c'est ce coup d'arret qui fait le pop. Pas de
      gravite : le temps qu'il vive, la chute ne se verrait pas. Le tout reste en
      arriere comme la mouche l'aurait fait. */
@@ -2709,22 +2699,6 @@ function draw(){
     ctx.globalAlpha=1;
   }
 
-  /* Les gains montent au-dessus de la mouche gobee. Trait fin et jaune, comme le
-     compteur de mouches : en gras et a l'encre ils ecrasaient le dessin. Le halo
-     reprend la couleur du ciel, seul moyen de rester lisible par-dessus une botte
-     de paille ou une colline. */
-  for(const p of pops){
-    ctx.save();
-    ctx.globalAlpha=Math.max(0,Math.min(1,p.l*1.5));
-    /* Graisse 500 et pas 600 : au-dela de 500, la selection CSS arrondit vers le
-       haut et retombe sur le gras des que la famille n'a que deux graisses. */
-    ctx.font="500 25px "+FONT; ctx.textAlign="center"; ctx.textBaseline="middle";
-    ctx.lineWidth=4; ctx.lineJoin="round"; ctx.strokeStyle=jour.bas;
-    ctx.strokeText(p.txt,p.x,p.y);
-    ctx.fillStyle=p.tint; ctx.fillText(p.txt,p.x,p.y);
-    ctx.restore();
-  }
-
   ctx.restore();                    // fin du premier plan translate
   ctx.restore();
   drawHUD();
@@ -2753,7 +2727,11 @@ function bandeauTrophee(R, pad, VW, y){
   const gliss = li(age/0.30) - li((age-(TROPH_DUREE-0.40))/0.40);
   if(gliss<=0.001) return;
 
-  const cw=Math.min(300, VW*0.68), ch=Math.round(cw*0.315), r=ch*0.26;
+  /* Moitie moins large qu'avant : 19 % de la largeur de jeu au lieu de 37. A cette
+     taille la carte ne peut plus porter un titre ET un intitule ; c'est le titre qui
+     part. La coupe doree et la fanfare disent deja qu'il s'agit d'un trophee, et le
+     texte n'a plus qu'a dire lequel. */
+  const cw=Math.min(150, VW*0.34), ch=Math.round(cw*0.315), r=ch*0.26;
   const x=R-pad-cw + (1-gliss)*(cw+pad+14);
   ctx.save();
   ctx.globalAlpha=Math.min(1, gliss*1.6);
@@ -2780,27 +2758,30 @@ function bandeauTrophee(R, pad, VW, y){
     ctx.fillText(String(tr.n), cx+chW*CUP_CX, cy+chH*CUP_CY);
   }
 
-  const tx=cx+chW+ch*MARGE, tw=x+cw-ch*(MARGE+0.05)-tx;
+  /* L'intitule ne dit plus que l'unite — « mouches gobées », « à la chaîne », «
+     secondes en l'air ». Le compte, lui, est grave sur la coupe : ecrit deux fois il
+     prenait la moitie de la carte pour ne rien ajouter.
+     Il se replie sur deux lignes si besoin, et le corps se reduit tant qu'il deborde :
+     l'anglais et le francais n'ont pas la meme longueur, et la carte ne doit pas
+     dependre de la langue. */
+  const tx=cx+chW+ch*MARGE, tw=x+cw-ch*(MARGE+0.04)-tx;
   ctx.textAlign="left"; ctx.textBaseline="alphabetic";
-  ctx.letterSpacing="0.10em";
-  ctx.font="700 "+Math.round(ch*0.215)+"px "+FONT;
-  ctx.fillStyle=INK;
-  ctx.fillText(T("trophee").toUpperCase(), tx, y+ch*0.40);
-  ctx.letterSpacing="0px";
-  /* L'intitule se replie sur deux lignes si besoin : « Première mouche dorée » ne
-     tient pas sur une, et le corps ne doit pas dependre de la langue. */
-  let fs2=Math.round(ch*0.205);
-  ctx.font="700 "+fs2+"px "+FONT;
-  const mots=T("t"+tr.k).split(" "), lignes=[];
-  for(const m of mots){
-    const essai = lignes.length ? lignes[lignes.length-1]+" "+m : m;
-    if(lignes.length && ctx.measureText(essai).width<=tw) lignes[lignes.length-1]=essai;
-    else lignes.push(m);
+  const mots=T("t"+tr.k).split(" ");
+  let fs2=Math.round(ch*0.27), lignes=[];
+  for(let essai2=0; essai2<6; essai2++){
+    ctx.font="700 "+fs2+"px "+FONT;
+    lignes=[];
+    for(const m of mots){
+      const essai = lignes.length ? lignes[lignes.length-1]+" "+m : m;
+      if(lignes.length && ctx.measureText(essai).width<=tw) lignes[lignes.length-1]=essai;
+      else lignes.push(m);
+    }
+    if(lignes.length<=2 && lignes.every(l=>ctx.measureText(l).width<=tw)) break;
+    fs2=Math.round(fs2*0.9);
   }
   ctx.fillStyle="#D6342B";
-  if(lignes.length>2){ lignes.length=2; }
-  const y0=y+ch*(lignes.length>1?0.62:0.72);
-  lignes.forEach((l,i)=>ctx.fillText(l, tx, y0+i*fs2*1.12));
+  const y0=y+ch*0.5 + fs2*(lignes.length>1 ? -0.12 : 0.34);
+  lignes.forEach((l,i)=>ctx.fillText(l, tx, y0+i*fs2*1.10));
   ctx.restore();
 }
 
@@ -2904,24 +2885,6 @@ function drawHUD(){
   }
   ctx.textAlign="right"; ctx.textBaseline="top";
 
-  /* Bandeau des paliers : il pousse, tient, puis s'efface sans bloquer la vue.
-     Meme parti que les gains : trait fin et jaune plutot qu'un pave noir en gras.
-     L'interlettrage le rapproche des intitules de l'accueil ; les navigateurs qui
-     ignorent la propriete se contentent de l'espacement normal. */
-  const age=t-flashT;
-  if(age>=0 && age<1.5){
-    const grow=Math.min(1,age/0.20);
-    ctx.save();
-    ctx.globalAlpha=Math.max(0,Math.min(1,1-(age-0.85)/0.6));
-    ctx.translate(L+VW/2, H*0.13);
-    ctx.scale(0.82+grow*0.18, 0.82+grow*0.18);
-    ctx.textAlign="center"; ctx.textBaseline="middle";
-    ctx.font="500 "+Math.round(Math.min(32,VW*0.064))+"px "+FONT;
-    ctx.letterSpacing="0.13em";
-    ctx.fillStyle = flashTxt===T("flashrec") ? "#D6342B" : YELL;
-    ctx.fillText(flashTxt.toUpperCase(), 0, 0);
-    ctx.restore();
-  }
 }
 
 /* ---------- boucle ---------- */

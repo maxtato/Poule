@@ -292,12 +292,27 @@ Le grand chiffre en haut à droite n'a pas d'unité écrite : le dessin de la
 mouche, posé juste avant, en tient lieu — la pose **ailes écartées**, qui se lit bien
 mieux à cette taille que l'autre, dont les ailes se confondent avec le corps. Le
 record sert de cible : une jauge
-montre ce qu'il reste à gober et bascule au rouge dès qu'il tombe. Un palier
-toutes les dix mouches déclenche le bandeau.
+montre ce qu'il reste à gober et bascule au rouge dès qu'il tombe.
 
 Le petit compteur de mouches qui vivait sous la jauge de plumes a disparu : il
 répétait le grand chiffre. Il ne reste à gauche que le combo, qui n'apparaît qu'à
 partir de deux mouches enchaînées.
+
+### Plus rien ne s'annonce, sauf un trophée
+
+Le jeu avait trois façons de féliciter en même temps : un bandeau au milieu de
+l'écran tous les dix gobages et à chaque record battu, une étiquette flottante qui
+montait au-dessus de la poule, et une fanfare pour chacun. Toutes ont disparu.
+
+Ce n'était pas de la générosité, c'était du bruit. Un palier toutes les dix mouches
+tombe toutes les dix ou quinze secondes ; une récompense à cette cadence n'est plus
+une récompense, c'est un décor qui clignote. Et l'information était déjà à l'écran
+en permanence, sans rien couvrir : le grand chiffre dit les mouches, la jauge de
+record dit où l'on en est et bascule au rouge en écrivant **RECORD BATTU** dès qu'il
+tombe.
+
+Il ne reste donc qu'une seule chose qui s'annonce dans ce jeu, et c'est le bandeau
+d'un trophée. Le record garde sa fanfare — un son ne couvre rien.
 
 ## Les trophées
 
@@ -306,34 +321,53 @@ qu'on a fait **une fois** : ils se gagnent une seule fois, restent acquis, et ne
 se reperdent pas au bout d'une mauvaise partie. C'est la seule chose du jeu qui
 s'accumule au lieu de recommencer à zéro.
 
-Il y en a treize, et ils tiennent en une table de treize lignes — un intitulé, le
+Il y en a douze, et ils tiennent en une table de douze lignes — un intitulé, le
 nombre gravé sur la coupe, un test. Ajouter ou retirer une ligne suffit, il n'y a
 pas de machinerie derrière : les tests portent sur des compteurs que la partie
 tient déjà.
 
 | Trophée | Condition |
 | --- | --- |
-| 10, 25, 50, 100 mouches | gobées dans **une** partie |
-| Une chaîne de 8 | huit mouches enchaînées sans casser le combo |
-| Première mouche dorée | la première de toutes |
-| 3 obstacles traversés | passés au travers pendant le pouvoir, dans une partie |
-| 12 secondes en l'air | d'un décollage à la pose suivante, pas en cumulé |
-| Le plafond du ciel | toucher la limite haute du vol |
-| Jusqu'au crépuscule | atteindre la dernière heure du jour |
-| 100 puis 250 mouches en tout | tous comptes faits, parties précédentes comprises |
-| 25 parties jouées | — |
+| 10, 50, 100 mouches | gobées dans **une** partie |
+| Une mouche dorée | la première de toutes |
+| 12 à la chaîne | douze mouches enchaînées sans casser le combo |
+| 6 obstacles traversés | passés au travers pendant le pouvoir, dans une partie |
+| 18 secondes en l'air | d'un décollage à la pose suivante, pas en cumulé |
+| Le crépuscule | atteindre la dernière heure du jour |
+| 100, 250, 1000 mouches en tout | tous comptes faits, parties précédentes comprises |
+| 50 parties jouées | — |
 
-Les deux derniers comptent la partie en cours : sans cela le trophée tomberait
-sur l'écran de fin, au moment précis où plus personne ne regarde le jeu.
+Les cumuls comptent la partie en cours : sans cela le trophée tomberait sur
+l'écran de fin, au moment précis où plus personne ne regarde le jeu.
 
 Le temps passé en l'air se compte d'un décollage à la pose suivante. Le cumul
-d'une partie ne dirait rien : tenir douze secondes d'affilée est un exploit,
+d'une partie ne dirait rien : tenir dix-huit secondes d'affilée est un exploit,
 sauter cinquante fois n'en est pas un.
+
+### L'échelle compte autant que la liste
+
+Un trophée n'est une récompense que s'il est **rare**. La première échelle ne l'était
+pas : la dixième et la vingt-cinquième mouche tombaient coup sur coup, et toucher le
+plafond du ciel — ce qui arrive au premier vol de la première partie — valait autant
+que cent mouches. Deux lignes sont donc parties, les 25 mouches et le plafond, et les
+exploits ont été remontés : la chaîne de 8 à 12, les 3 traversées à 6, les 12 secondes
+en l'air à 18, les 25 parties à 50.
+
+Le premier repère reste la dixième mouche. Après quoi il ne se passe plus rien avant
+la cinquantième.
+
+Et deux cartes ne se suivent jamais. Une carte tient **3,4 secondes**, puis le ciel
+reste vide **4 secondes** avant la suivante — jamais moins de 7,4 secondes entre deux.
+Enchaînées, deux récompenses n'en font plus qu'une.
+
+Mesuré en jouant une première partie sans rien forcer : deux ou trois bandeaux sur
+soixante-dix secondes, espacés de 7,5 et 7,4 secondes. Et rien n'est avalé en
+silence — chaque trophée gagné a bien eu sa carte.
 
 ### Le bandeau
 
-Une carte crème, la coupe à gauche avec son nombre gravé dessus, le
-titre et l'intitulé à droite. Elle entre par le bord droit, tient trois secondes
+Une carte crème, la coupe à gauche avec son nombre gravé dessus, l'intitulé à
+droite. Elle entre par le bord droit, tient trois secondes
 et repart du même côté — jamais par le centre, où elle couvrirait la poule au
 moment où l'on a le plus besoin de la voir. Elle se pose sous la jauge de record,
 dans le même alignement à droite que tout ce coin-là, et rentre sous le bord de la
@@ -349,6 +383,19 @@ de l'image — si bien qu'une coupe posée à la hauteur de la carte venait frot
 trait du haut. Mesuré sur la capture, dans une colonne au milieu du bol : 18 pixels
 d'écran de crème au-dessus de la coupe, soit 10 % de la carte. Le nombre gravé
 suit, il se dimensionne sur elle.
+
+#### Moitié moins large, et le titre en moins
+
+La carte occupait 37 % de la largeur de jeu. Elle en occupe **19 %**. À cette taille
+elle ne peut plus porter un titre *et* un intitulé, et c'est le titre qui part : la
+coupe dorée et la fanfare disent déjà qu'il s'agit d'un trophée, le texte n'a plus
+qu'à dire lequel.
+
+L'intitulé lui-même a maigri. Il ne dit plus que l'**unité** — « mouches gobées », « à
+la chaîne », « secondes en l'air » — parce que le compte est déjà gravé sur la coupe
+et que l'écrire deux fois prenait la moitié de la carte pour rien. Il se replie sur
+deux lignes si besoin, et le corps se réduit tant qu'il déborde : l'anglais et le
+français n'ont pas la même longueur, et la carte ne doit pas dépendre de la langue.
 
 #### Un bord de sable, pas un trait d'encre
 
