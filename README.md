@@ -343,6 +343,13 @@ La coupe tient tout entière dans la carte, socle, touffe d'herbe et caillou
 compris. Débordante, son ombre au sol passait par-dessus le bord et la carte
 n'avait plus de contour franc.
 
+Elle garde de surcroît la **même marge sur les quatre côtés**, 13 % de la hauteur de
+la carte. Sa planche est détourée au plus juste — le dessin touche les quatre côtés
+de l'image — si bien qu'une coupe posée à la hauteur de la carte venait frotter le
+trait du haut. Mesuré sur la capture, dans une colonne au milieu du bol : 18 pixels
+d'écran de crème au-dessus de la coupe, soit 10 % de la carte. Le nombre gravé
+suit, il se dimensionne sur elle.
+
 #### Un bord de sable, pas un trait d'encre
 
 Le trait noir du reste du jeu cerne des **objets**. Ici il cernait un **panneau**, et

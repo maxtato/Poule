@@ -2763,10 +2763,15 @@ function bandeauTrophee(R, pad, VW, y){
   ctx.stroke();
 
   /* La coupe tient tout entiere dans la carte, socle, touffe d'herbe et caillou
-     compris : debordante, son ombre au sol passait par-dessus le trait d'encre et la
-     carte n'avait plus de bord franc. */
-  const chH=ch*0.94, chW=chH*CUP_W/CUP_H;
-  const cx=x+ch*0.12, cy=y+(ch-chH)/2;
+     compris : debordante, son ombre au sol passait par-dessus le bord et la carte
+     n'avait plus de contour franc.
+     Elle garde de surcroit la MEME marge sur les quatre cotes. Sa planche est
+     detouree au plus juste — le bord de la coupe touche les quatre cotes de l'image —
+     donc une coupe posee a la hauteur de la carte venait frotter le trait du haut. Le
+     nombre grave suit, il se dimensionne sur elle. */
+  const MARGE=0.13;
+  const chH=ch*(1-2*MARGE), chW=chH*CUP_W/CUP_H;
+  const cx=x+ch*MARGE, cy=y+ch*MARGE;
   ctx.drawImage(SPR.coupe, cx, cy, chW, chH);
   if(tr.n){
     ctx.textAlign="center"; ctx.textBaseline="middle";
@@ -2775,7 +2780,7 @@ function bandeauTrophee(R, pad, VW, y){
     ctx.fillText(String(tr.n), cx+chW*CUP_CX, cy+chH*CUP_CY);
   }
 
-  const tx=cx+chW+ch*0.12, tw=x+cw-ch*0.18-tx;
+  const tx=cx+chW+ch*MARGE, tw=x+cw-ch*(MARGE+0.05)-tx;
   ctx.textAlign="left"; ctx.textBaseline="alphabetic";
   ctx.letterSpacing="0.10em";
   ctx.font="700 "+Math.round(ch*0.215)+"px "+FONT;
