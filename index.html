@@ -2849,16 +2849,24 @@ function bandeauTrophee(R, pad, VW, y){
 /* L'avancement vers le record, et la couleur qui va avec : rien tant qu'on est loin,
    ambre aux trois quarts, un battement ambre-rouge dans les dix derniers pour cent,
    rouge une fois passe. */
-/* Trois paliers francs, et rien qui bouge. Le dernier palier battait entre l'ambre et
-   le rouge neuf fois par seconde : sur un chiffre qu'on surveille en esquivant, un
-   clignotement se lit comme un defaut d'affichage, pas comme une alerte. La couleur
-   seule suffit a dire l'approche. */
+/* Quatre paliers francs, et rien qui bouge. Le dernier battait entre l'ambre et le
+   rouge neuf fois par seconde : sur un chiffre qu'on surveille en esquivant, un
+   clignotement se lit comme un defaut d'affichage, pas comme une alerte.
+   L'histoire que racontent les couleurs : encre tant qu'il n'y a rien a dire, ambre
+   quand le record approche, rouge dans les dix derniers pour cent — la tension — puis
+   JAUNE une fois passe. Le rouge disait « attention » a un moment ou il n'y a plus
+   rien a craindre : battre son record est une bonne nouvelle, elle se peint en or.
+   Le jaune est mesure, pas choisi a l'oeil. Il est pose sur le ciel, qui monte a 233
+   de clarte le matin, et il doit rester distinct de l'ambre de l'approche : #F5B93E
+   n'avait que 44 d'ecart avec le ciel, #E0A21C que 19 avec l'ambre. Celui-ci garde
+   58 et 29. */
+const OR_BATTU="#EFAA20";
 function coulPres(v, rec){
   if(!rec) return INK;
-  if(v>=rec) return "#D6342B";
+  if(v>=rec) return OR_BATTU;
   const u=v/rec;
-  if(u>=0.90) return "#E2801F";
-  if(u>=0.75) return "#F5A623";
+  if(u>=0.90) return "#D6342B";
+  if(u>=0.75) return "#E2801F";
   return INK;
 }
 const REC_GRIS="#A79A88";
@@ -2962,11 +2970,11 @@ function drawHUD(){
       ctx.fillStyle="#E4DACA"; rr(bx2,by2,bw2,hb,hb/2); ctx.fill();
       const prog=Math.min(1, m.v/m.r);
       if(prog>0.01){
-        ctx.fillStyle = battu ? "#D6342B" : "#F5A623";
+        ctx.fillStyle = battu ? OR_BATTU : "#F5A623";
         rr(bx2,by2,Math.max(hb,bw2*prog),hb,hb/2); ctx.fill();
       }
       ctx.font="700 "+REC_FONTE+"px "+FONT;
-      ctx.fillStyle = battu ? "#D6342B" : REC_GRIS;
+      ctx.fillStyle = battu ? OR_BATTU : REC_GRIS;
       ctx.textAlign="right"; ctx.textBaseline="middle";
       ctx.fillText(m.rec, xd, by2+hb/2);
       ctx.textBaseline="top";
