@@ -1373,8 +1373,37 @@ Deux dessins, pas quatre :
 | ~0,45 s | Le sol : poussière, secousse |
 | ~1,2 s | Le panneau de fin |
 
-Ce déroulé est celui du **dernier** choc. Tant qu'il lui reste une vie, la chute est la
-même mais elle ne mène pas au panneau : la poule se relève et la course repart.
+Tant qu'il lui reste une vie, la chute est la même mais elle ne mène pas au panneau : la
+poule se relève et la course repart. Au dernier choc, en revanche, elle ne se relève
+pas — un nuage l'emporte et une pierre tombale se plante à sa place.
+
+### Le nuage et la pierre
+
+| Instant | Ce qui se passe |
+|---|---|
+| ~0,45 s | Le sol : poussière, secousse, étoiles |
+| ~1,00 s | Le nuage. La poule disparaît, la pierre pousse dedans |
+| ~1,10 s | Le nuage se disperse, la pierre est plantée |
+| ~1,90 s | Le panneau de fin |
+
+L'explosion n'est pas un effet de plus : **c'est elle qui autorise la substitution.**
+Sans elle, la poule se changerait en pierre sous les yeux du joueur, ce qui se lirait
+comme un défaut d'affichage. Le nuage a donc un dixième de seconde d'avance sur la
+pierre, le temps d'être à son plus épais.
+
+Le nuage est fait de la même matière que la poussière des appuis — des ronds pâles sans
+contour — mais lancés en **deux couronnes**, une dense et lente qui fait le corps, une
+plus large et plus vive qui l'ébrèche. Une seule couronne donnait un rond trop régulier.
+
+Deux détails de peinture le sauvent. Il est peint **après** la poule et la pierre, alors
+que la poussière ordinaire est peinte avant les obstacles : dessous, il aurait laissé
+voir la pierre apparaître par-dessus lui. Et ses ronds sont peints **en un seul tracé** :
+peints un à un, leurs transparences s'additionnent aux recouvrements et le nuage tourne
+au pâté brun ; en une seule silhouette il garde une teinte unie, et ce sont ses bosses
+qui le disent.
+
+Le panneau de fin arrive une seconde plus tard qu'avant — 1,45 s après la pose au sol
+au lieu de 0,75. C'est le prix de la scène.
 
 ## La vie de rattrapage
 
@@ -1542,11 +1571,23 @@ La fin de partie était une fenêtre au premier plan, posée au milieu de l'écr
 un flou : la poule morte disparaissait derrière au moment même où elle finissait de
 tomber. C'est maintenant un **panneau** posé dans la moitié haute de l'écran. Ni flou,
 ni voile : le bas du terrain, là où la poule s'écrase, reste entièrement découvert, et
-elle y reste en plan, étoiles comprises, aussi longtemps qu'on veut.
+la pierre tombale y reste plantée aussi longtemps qu'on veut.
 
-Il **annonce la fin de la manche** : un grand *Game Over* rouge, la poule KO assise sur
-son bord haut avec ses étoiles, puis le décompte, le record couronné, les totaux et le
-bouton. Le panneau se borne à la largeur du **cadre de jeu** et non à celle de la
+Il **annonce la fin de la manche** : un grand *Game Over* rouge, la **pierre tombale**
+plantée sur son bord haut — celle-ci porte le portrait encadré de la poule — puis le
+décompte, le record couronné, les totaux et le bouton.
+
+La pierre a remplacé la poule K.-O. et sa ronde d'étoiles. Elle le devait : sur le
+terrain la poule a déjà disparu dans le nuage, le panneau ne pouvait pas la remontrer.
+Son canevas épouse la planche — plus haut que large — là où la poule tenait dans un
+canevas plus large qu'elle, pour loger sa ronde. La largeur d'affichage est donc plus
+courte de moitié, et la hauteur y gagne : la pierre monte à 1,13 fois `--ko` contre 0,98
+pour la poule. Mesuré sur six tailles d'écran : elle dépasse du panneau de 34 à 47 px,
+ne sort jamais de l'écran, ne touche pas le bouton du son et laisse 15 à 24 px au-dessus
+du *Game Over*.
+
+Rien ne tourne plus dessus : le canevas n'est donc redessiné qu'à l'ouverture du panneau
+et aux changements de style, au lieu d'être repeint soixante fois par seconde. Le panneau se borne à la largeur du **cadre de jeu** et non à celle de la
 fenêtre, plus large sur un bureau — `resize()` publie cette largeur en variable CSS,
 comme il publiait déjà la hauteur de la bande de terre.
 
@@ -1649,7 +1690,7 @@ avance pendant le rebond, et la partie suivante la retrouvait décalée.
 
 Ensuite, une seule image jusqu'au bout : la poule KO, à plat, pattes en l'air.
 Elle tombe avec des traits de vitesse — les mêmes que pendant la panique, la mort
-n'a pas son propre vocabulaire — puis reste au sol. Les poses de chute tête la
+n'a pas son propre vocabulaire — puis reste au sol, le temps du nuage. Les poses de chute tête la
 première, d'assise et de bascule ont été retirées : elles décomposaient un
 mouvement que le choc et la chute racontent déjà.
 
