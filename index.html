@@ -2849,17 +2849,21 @@ function bandeauTrophee(R, pad, VW, y){
 /* L'avancement vers le record, et la couleur qui va avec : rien tant qu'on est loin,
    ambre aux trois quarts, un battement ambre-rouge dans les dix derniers pour cent,
    rouge une fois passe. */
+/* Trois paliers francs, et rien qui bouge. Le dernier palier battait entre l'ambre et
+   le rouge neuf fois par seconde : sur un chiffre qu'on surveille en esquivant, un
+   clignotement se lit comme un defaut d'affichage, pas comme une alerte. La couleur
+   seule suffit a dire l'approche. */
 function coulPres(v, rec){
   if(!rec) return INK;
   if(v>=rec) return "#D6342B";
   const u=v/rec;
-  if(u>=0.90) return mixHex("#F5A623","#D6342B", 0.5+0.5*Math.sin(t*9));
+  if(u>=0.90) return "#E2801F";
   if(u>=0.75) return "#F5A623";
   return INK;
 }
 const REC_GRIS="#A79A88";
 /* longueur des echelles de record, et corps de leur nombre */
-let REC_BARRE=38, REC_FONTE=11;
+let REC_BARRE=38, REC_FONTE=10;
 function larMou(h){ return h*MOU_W/MOU_H; }
 function icoMou(x,y,h){ ctx.drawImage(SPR.fly_ico, x, y, larMou(h), h); }
 
@@ -2871,10 +2875,9 @@ function drawHUD(){
   const L=bandX, VW=bandW, R=bandX+bandW;
   const pad=Math.max(16,VW*0.045), top=pad+6, fs=Math.round(Math.min(38,VW*0.082));
   const cx=L+pad, cw=VW-2*pad;
-  /* Le nombre de la partie porte tout : c'est lui qu'on lit en jouant. L'echelle du
-     record ne fait que situer, elle peut donc maigrir d'autant. Les deux se
-     compensent — le bloc de droite occupe la meme largeur qu'avant. */
-  const fv=Math.round(fs*0.80);
+  /* Tout le bloc a maigri : le HUD n'est pas le jeu, il n'a qu'a se laisser
+     consulter. */
+  const fv=Math.round(fs*0.58);
   const fh=Math.min(26,VW*0.055), fw=fh*FEA_W/FEA_H;
   const jh=fh*0.40, ph=jh*0.82, mh=Math.min(22,VW*0.046);
   const hb=Math.max(3, REC_FONTE*0.30);
@@ -2917,10 +2920,17 @@ function drawHUD(){
      ferait un chiffre enorme pour une seule mouche.
      Sous chaque chiffre, la barre ET son nombre de record occupent ensemble la meme
      largeur que lui : l'ensemble forme un rectangle plein au lieu d'un escalier. */
+  /* LA MESURE SE FAIT SUR UN GABARIT, PAS SUR LE TEXTE. La fonte n'a pas des chiffres
+     de largeur egale : « 1 » est plus etroit que « 8 ». En mesurant le texte reel, la
+     largeur changeait a chaque metre parcouru, donc le rapport, donc le corps — et les
+     deux nombres tremblaient en permanence. On mesure donc une chaine de meme longueur
+     ou tous les chiffres sont des zeros : le corps ne bouge plus qu'au passage d'un
+     ordre de grandeur, quelques fois par partie. */
   const CAP=1.8;
   for(const m of MES){
+    m.gab=m.val.replace(/[0-9]/g,"0");
     ctx.font="900 "+fv+"px "+FONT;
-    m.nat=ctx.measureText(m.val).width+(m.ico?larMou(fv*0.78)+9:0);
+    m.nat=ctx.measureText(m.gab).width+(m.ico?larMou(fv*0.78)+9:0);
   }
   const W=Math.max(...MES.map(m=>m.nat));
   for(const m of MES){
@@ -2928,7 +2938,9 @@ function drawHUD(){
     m.fs=Math.round(fv*m.k);
     ctx.font="900 "+m.fs+"px "+FONT;
     m.lgc=ctx.measureText(m.val).width;
-    m.large=m.lgc+(m.ico?larMou(m.fs*0.78)+9*m.k:0);
+    /* la largeur de la ligne se prend elle aussi sur le gabarit : sans cela le bloc
+       se retrecissait sur « 111 m » et s'elargissait sur « 888 m » */
+    m.large=ctx.measureText(m.gab).width+(m.ico?larMou(m.fs*0.78)+9*m.k:0);
   }
   const lgVal=Math.max(...MES.map(m=>m.large));
   /* Les deux colonnes se bornent l'une l'autre : sans cela la barre de pouvoir, qui
@@ -2945,7 +2957,7 @@ function drawHUD(){
       /* la barre prend ce que le nombre du record laisse : ensemble ils font la
          largeur du chiffre du dessus, ni plus ni moins */
       ctx.font="700 "+REC_FONTE+"px "+FONT;
-      const lr=ctx.measureText(m.rec).width;
+      const lr=ctx.measureText(m.rec.replace(/[0-9]/g,"0")).width;
       const bw2=Math.max(10, m.large-lr-6), bx2=xd-m.large, by2=y+m.fs+4, battu=m.v>=m.r;
       ctx.fillStyle="#E4DACA"; rr(bx2,by2,bw2,hb,hb/2); ctx.fill();
       const prog=Math.min(1, m.v/m.r);

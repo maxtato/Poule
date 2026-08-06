@@ -352,9 +352,16 @@ au dixième près sur la largeur du chiffre. Le rapport est borné à 1,8 pour q
 mouche en face de dix mille mètres ne donne pas un chiffre énorme ; sur les cas
 mesurés, cette borne ne mord jamais.
 
-Un effet de bord assumé : le corps d'une ligne change quand l'autre passe un ordre de
-grandeur — à 999 m qui devient 1 000 m, le chiffre des mouches rapetisse d'un cran.
-C'est le prix du rectangle, et cela arrive quelques fois par partie.
+#### La mesure se fait sur un gabarit, pas sur le texte
+
+La fonte n'a pas des chiffres de largeur égale : « 1 » est plus étroit que « 8 ». En
+mesurant le texte réel à chaque image, la largeur changeait à chaque mètre parcouru,
+donc le rapport, donc le corps — et **les deux nombres tremblaient en permanence**.
+
+Mesuré sur huit secondes de course : **17,3 changements de corps par seconde**. On
+mesure donc une chaîne de même longueur où tous les chiffres sont des zéros ; le corps
+ne bouge plus qu'au passage d'un ordre de grandeur — **0,1 par seconde**, soit une fois
+en huit secondes, au passage à trois chiffres.
 
 Les deux colonnes **se bornent l'une l'autre** : le plus large des deux nombres est
 mesuré, icône comprise, et la colonne de gauche s'arrête là. Sans cela la barre de
@@ -363,9 +370,11 @@ nombre des mètres.
 
 Au tout premier essai il n'y a rien à situer : pas d'échelle, juste les deux nombres.
 
-Un signal d'approche commun aux deux lignes : rien tant qu'on est loin, **ambre aux
-trois quarts**, un battement ambre-rouge dans les dix derniers pour cent, **rouge** une
-fois passé. Les chiffres sont gros et les échelles courtes — c'est le nombre qu'on
+Un signal d'approche commun aux deux lignes, en **trois paliers francs** : rien tant
+qu'on est loin, ambre aux trois quarts, ambre foncé dans les dix derniers pour cent,
+**rouge** une fois passé. Le dernier palier battait entre l'ambre et le rouge neuf fois
+par seconde ; sur un chiffre qu'on surveille en esquivant, un clignotement se lit
+comme un défaut d'affichage et non comme une alerte. La couleur seule suffit. Les chiffres sont gros et les échelles courtes — c'est le nombre qu'on
 lit en jouant, l'échelle ne fait que situer.
 
 Au tout premier essai il n'y a rien à situer : pas d'échelle, juste les deux nombres.
