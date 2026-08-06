@@ -338,11 +338,27 @@ bandeau n'aurait plus de bord.
 
 #### Toutes les tailles descendent d'une seule
 
-`u`, la hauteur du bandeau, vaut 16,3 % de la largeur du terrain, plafonnée à 66. Tout
+`u`, la hauteur du bandeau, vaut 15,5 % de la largeur du terrain, plafonnée à 64. Tout
 le reste en découle : plume 0,37 u, jauge de vol 0,175 u, cœur 0,21 u, grands nombres
-0,32 u, records 0,135 u, pastille 0,86 × 0,60 u. Les fractions sont relevées **sur le
-visuel de référence**, si bien que le bandeau garde ses proportions du téléphone de 360
-au bureau.
+0,27 u, records 0,147 u, pastille 0,84 × 0,60 u. Les fractions sont relevées **au compas
+sur le visuel de référence** — une bande de 1 840 sur 285 — si bien que le bandeau garde
+ses proportions du téléphone de 360 au bureau.
+
+Vérifié en rejouant le calcul dans le jeu et en comparant, en pourcentage de la largeur
+du bandeau :
+
+| | Visuel | Jeu | Écart |
+| --- | --- | --- | --- |
+| hauteur de la bande | 15,5 % | 15,5 % | 0,0 pt |
+| plume, bord gauche | 3,5 % | 3,4 % | −0,1 pt |
+| jauge, fin | 39,1 % | 40,1 % | +0,9 pt |
+| **pastille, centre** | **51,1 %** | **50,0 %** | −1,1 pt |
+| pastille, largeur | 13,0 % | 13,0 % | 0,0 pt |
+| premier filet | 63,3 % | 61,5 % | −1,8 pt |
+| bloc de droite, largeur | 36,7 % | 38,5 % | +1,8 pt |
+
+L'écart le plus grand est de **1,8 point**. La pastille tombe au milieu exact du
+bandeau ; celle du visuel est elle-même un point à droite du milieu.
 
 #### Ce qui se compte, à droite
 
@@ -360,17 +376,24 @@ une demi-ligne, et la couleur du grand chiffre dit le reste.
 
 #### La chaîne de mouches : une pastille, et un mot
 
-Au milieu du bandeau, une pastille rouge cerclée d'encre : le multiplicateur en blanc,
-le mot **FESTIN** dessous, et le temps qu'il reste dans une barre au bas de la pastille.
-Autour, dix traits rouges — ceux du gobage, posés une fois pour toutes : tirés au hasard
-à chaque image, ils grouilleraient. La pastille rebondit à chaque mouche gobée.
+Au milieu du bandeau, une pastille rouge : le multiplicateur en blanc, le mot **FESTIN**
+dessous, et le temps qu'il reste dans une barre au bas de la pastille. Autour, six traits
+rouges — ceux du gobage — trois de chaque côté et aucun en haut ni en bas, ce qui laisse
+le mot respirer. Ils sont posés une fois pour toutes : tirés au hasard à chaque image,
+ils grouilleraient. La pastille rebondit à chaque mouche gobée.
 
 Le mot plutôt qu'un chiffre seul : la chaîne ne compte pas de points — le score se fait
 aux mouches et aux mètres — elle dit qu'on est en train d'en enchaîner. C'est un moment,
 pas une mesure.
 
-Ses quatre coins ont des rayons légèrement inégaux, fixés une fois pour toutes. C'est
-ce qui lui donne l'air tracée à la main comme le reste des dessins, sans rien qui bouge.
+**Ce n'est pas un rectangle, c'est un nuage.** Un rectangle arrondi, plus dix bosses
+rondes posées sur son bord et à peine rentrées : elles ne dépassent que de six centièmes
+de la hauteur. Le tout est tracé d'un seul trait et rempli en une fois — le remplissage
+non nul en fait l'union, comme le nuage de la pierre tombale. Plus saillantes, les bosses
+faisaient tourner la pastille à la fleur.
+
+**Pas de contour d'encre** : le rouge plein porte le blanc tout seul, et un cerne
+l'aurait rendue à la famille des jauges alors que c'est un événement.
 
 **Sa place lui est gardée même éteinte.** Une jauge de vol qui se raccourcirait au
 démarrage d'une chaîne ferait bouger tout le bandeau au pire moment.

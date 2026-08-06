@@ -3347,8 +3347,13 @@ function drawHUD(){
      grands nombres 0,32 u, et ainsi de suite — si bien que le bandeau garde ses
      proportions du telephone au bureau. */
   const L=bandX, VW=bandW, R=bandX+bandW;
-  const u=Math.min(66, VW*0.163);
-  const pad=Math.max(10, u*0.24);
+  /* `u` est la hauteur du bandeau, et TOUT en descend. Les fractions sont relevees au
+     compas sur le visuel de reference : la bande y fait 285 de haut pour 1 840 de large,
+     soit 6,46 fois sa hauteur, et chaque element y occupe la part notee en commentaire.
+     Le bandeau garde donc ses proportions du telephone de 360 au bureau. */
+  const u=Math.min(64, VW*0.155);
+  const pad=Math.max(9, u*0.22);             // marge de gauche
+  const padD=Math.max(7, u*0.16);            // marge de droite, plus serree
   const top=Math.max(4, u*0.10);
 
   const fh=u*0.37, fw=fh*FEA_W/FEA_H;        // la plume
@@ -3356,8 +3361,8 @@ function drawHUD(){
   const ph=u*0.155;                          // la barre de pouvoir
   const cvh=u*0.21;                          // le coeur
   const y2=top+u*0.65;                       // le milieu de la seconde ligne
-  const fbig=Math.round(u*0.32);             // les grands nombres
-  const fpet=Math.round(u*0.135);            // les records, en gris
+  const fbig=Math.round(u*0.27);             // les grands nombres
+  const fpet=Math.round(u*0.147);            // les records, en gris
   const pouvoir=traverse(), chaine=(state===S.PLAY && combo>=2);
 
   /* ---- ce qui se compte, a droite : mesure d'abord, dessin ensuite ----
@@ -3371,8 +3376,8 @@ function drawHUD(){
      v:metres(), r:save.bestDist,
      rec:save.bestDist>0?chiffre(save.bestDist)+" m":null, ico:false},
   ];
-  const mh=u*0.185, mw=mh*MOU_W/MOU_H;       // l'icone de mouche
-  const cw=u*0.15;                           // la couronne des records
+  const mh=u*0.21, mw=mh*MOU_W/MOU_H;        // l'icone de mouche
+  const cw=u*0.17;                           // la couronne des records
   for(const m of MES){
     ctx.font="900 "+fbig+"px "+FONT;
     const g1=ctx.measureText(m.gab).width+(m.ico?mw+u*0.09:0);
@@ -3380,15 +3385,20 @@ function drawHUD(){
     const g2=m.rec ? cw*1.25+u*0.07+ctx.measureText(m.rec.replace(/\\d/g,"0")).width : 0;
     m.w=Math.max(g1,g2);
   }
-  const ecart=u*0.19;                        // entre une mesure et son filet
+  const ecart=u*0.18;                        // entre une mesure et son filet
   const largeD=MES.reduce((a,m)=>a+m.w,0)+ecart*2*MES.length;
-  const xD=R-pad-largeD;                     // bord gauche du bloc de droite
+  const xD=R-padD-largeD;                    // bord gauche du bloc de droite
 
   /* ---- la chaine, au milieu : sa place lui est gardee meme eteinte ----
      Une jauge qui se raccourcirait au demarrage d'une chaine ferait bouger tout le
      bandeau au pire moment. */
-  const bw=u*0.86, bh=u*0.60;                // la pastille
-  const bcx=Math.min(L+VW*0.52, xD-bw/2-u*0.24);
+  const bw=u*0.84, bh=u*0.60;                // la pastille
+  /* Au MILIEU du bandeau, et pas ailleurs. Le bloc de droite est taille pour que la
+     place existe : sur le visuel il occupe 2,37 fois la hauteur, la pastille en fait
+     0,84, et le milieu tombe donc naturellement dans le vide qui reste. Le rabattement
+     n'est la que pour les cas extremes — un ecran tres etroit, un record a cinq
+     chiffres — ou il vaut mieux decaler que chevaucher. */
+  const bcx=Math.min(L+VW*0.5, xD-bw/2-u*0.20);
   const bcy=top+u*0.44;
 
   /* ---- la jauge de vol : elle prend ce qui reste ---- */
@@ -3489,33 +3499,42 @@ function drawHUD(){
     const pop=1+0.14*Math.max(0, 1-(t-lastEat)/0.18);
     const w=bw*pop, h=bh*pop, bx0=bcx-w/2, by0=bcy-h/2;
     ctx.save();
+    /* Six traits, trois de chaque cote et aucun en haut ni en bas : c'est ainsi qu'ils
+       sont poses sur le visuel, et c'est ce qui laisse le mot respirer. */
     ctx.strokeStyle="#D6342B"; ctx.lineCap="round";
     ctx.lineWidth=Math.max(1.2,u*0.030);
-    for(let i=0;i<10;i++){
-      const a=(i/10)*Math.PI*2+0.31, lg=u*(i%2?0.10:0.075);
-      const rx=w/2+u*0.07, ry=h/2+u*0.07;
+    for(const a of [-0.42,0,0.42, Math.PI-0.42, Math.PI, Math.PI+0.42]){
+      const lg=u*(Math.abs(Math.sin(a))>0.1?0.075:0.105);
+      const rx=w/2+u*0.13, ry=h/2+u*0.13;
       const x0=bcx+Math.cos(a)*rx, y0=bcy+Math.sin(a)*ry;
       ctx.beginPath();
       ctx.moveTo(x0,y0);
       ctx.lineTo(x0+Math.cos(a)*lg, y0+Math.sin(a)*lg);
       ctx.stroke();
     }
-    /* la pastille : un rectangle arrondi aux quatre coins legerement inegaux, pour
-       qu'elle ait l'air tracee a la main comme le reste des dessins */
-    const rr4=(X,Y,W,H,a1,a2,a3,a4)=>{
-      ctx.beginPath();
-      ctx.moveTo(X+a1,Y);
-      ctx.lineTo(X+W-a2,Y); ctx.quadraticCurveTo(X+W,Y,X+W,Y+a2);
-      ctx.lineTo(X+W,Y+H-a3); ctx.quadraticCurveTo(X+W,Y+H,X+W-a3,Y+H);
-      ctx.lineTo(X+a4,Y+H); ctx.quadraticCurveTo(X,Y+H,X,Y+H-a4);
-      ctx.lineTo(X,Y+a1); ctx.quadraticCurveTo(X,Y,X+a1,Y);
-      ctx.closePath();
-    };
-    const k=h*0.30;
-    rr4(bx0,by0,w,h, k, k*1.22, k*0.86, k*1.10);
+    /* La pastille est un NUAGE, pas un rectangle : une croix de deux rectangles et huit
+       ronds poses le long du pourtour, le tout en un seul trace. Le remplissage non nul
+       en fait l'union — c'est le meme procede que le nuage de la pierre tombale. Les
+       rayons sont legerement inegaux, fixes une fois pour toutes : c'est ce qui lui
+       donne l'air tracee a la main, sans rien qui bouge d'une image a l'autre.
+       Pas de contour d'encre : le rouge plein porte le blanc tout seul, et un cerne
+       l'aurait rendue a la famille des jauges alors que c'est un evenement. */
+    const rN=h*0.30, rb=h*0.15, ren=h*0.09;
+    ctx.beginPath();
+    rr(bx0,by0,w,h,rN);
+    /* Les bosses sont posees SUR le bord, a peine rentrees : elles ne depassent que de
+       six centiemes de la hauteur. Plus saillantes, la pastille tournait a la fleur. */
+    const BOSSES=[[-0.26,-0.5,1.00],[0.02,-0.5,0.86],[0.28,-0.5,0.94],
+                  [0.5,-0.16,0.90],[0.5,0.18,1.02],
+                  [0.26,0.5,0.92],[-0.04,0.5,1.00],[-0.28,0.5,0.86],
+                  [-0.5,0.16,0.96],[-0.5,-0.18,0.88]];
+    for(const [ux,uy,kk] of BOSSES){
+      const cxb=bcx+ux*(w-(uy?0:ren*2))-(ux>0?ren:ux<0?-ren:0);
+      const cyb=bcy+uy*(h-(ux?0:ren*2))-(uy>0?ren:uy<0?-ren:0);
+      ctx.moveTo(cxb+rb*kk, cyb);
+      ctx.arc(cxb, cyb, rb*kk, 0, 7);
+    }
     ctx.fillStyle="#D6342B"; ctx.fill();
-    ctx.lineWidth=Math.max(1.4,u*0.036); ctx.strokeStyle=INK; ctx.lineJoin="round";
-    ctx.stroke();
     txtP("×"+combo, bcx, by0+h*0.36, Math.round(u*0.29*pop), "#FFFFFF", "center", "middle");
     txtP(T("festin").toUpperCase(), bcx, by0+h*0.68, Math.round(u*0.105*pop),
          "#FFFFFF", "center", "middle");
@@ -3530,7 +3549,7 @@ function drawHUD(){
   }
 
   ctx.textAlign="right"; ctx.textBaseline="top";
-  bandeauTrophee(R, pad, VW, BH+u*0.22);
+  bandeauTrophee(R, padD, VW, BH+u*0.22);
 }
 
 /* ---------- boucle ---------- */
