@@ -803,6 +803,9 @@ const MOUCHE = ["fly_b","fly_a"];
 const OR_RAMPE=[[0,[38,26,6]],[.22,[122,80,14]],[.48,[214,150,32]],
                 [.72,[247,199,78]],[.90,[255,236,170]],[1,[255,252,235]]];
 const OR_ATTENTE=[38,60];     // secondes entre deux mouches dorees
+/* La premiere de la partie arrive plus tot que les suivantes, mais jamais deux fois au
+   meme moment : quatorze a trente-quatre secondes. */
+const OR_PREM=[14,34];
 /* La barre du HUD se vide en OR_BARRE secondes, mais le pouvoir tient OR_RAB de plus.
    C'est une marge, pas un mensonge : celui qui s'engage dans un obstacle en voyant la
    barre finir passe quand meme. Rater le pouvoir d'un dixieme de seconde, ca se lit
@@ -1356,11 +1359,16 @@ let speed=0, dist=0, tSpawn=0, t=0, shake=0, hold=false, holdT=0, eaten=0;
    verifie a l'oeil : 500 metres et 20 mouches font 10 000, et rien d'autre. */
 function metres(){ return Math.round(dist); }
 function score(){ return metres()*eaten; }
-/* Un nombre a cinq chiffres se lit mal d'un bloc. Le francais separe les milliers
-   par une espace fine insecable, l'anglais par une virgule. */
+/* Un nombre a cinq chiffres se lit mal d'un bloc, mais une virgule ou une espace le
+   coupe en deux mots. Ce qu'il faut, c'est un simple RESPIRE : l'espace ultrafine, qui
+   vaut six centiemes de cadratin dans la fonte du jeu — un pixel a la taille du
+   bandeau, deux au panneau de fin — la ou l'espace fine insecable en valait deux fois
+   plus et la virgule quatre fois. Le liant qui la suit interdit le retour a la ligne au
+   milieu du nombre : l'ultrafine, elle, est secable.
+   Les deux langues la partagent : un nombre se lit de la meme facon partout. */
+const CHIFFRE_SEP = "\u200a\u2060";     // espace ultrafine + liant de mots
 function chiffre(n){
-  const s=String(Math.round(n)), sep = save.lang==="en" ? "," : " ";
-  return s.replace(/\B(?=(\d{3})+(?!\d))/g, sep);
+  return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, CHIFFRE_SEP);
 }
 let dernierObs="";   // le dernier obstacle lance : le cerf-volant ne se suit pas lui-meme
 let obs=[], flies=[], puffs=[], plumes=[], traits=[], clouds=[], sol=[], hills=[], miettes=[], decor=[];
@@ -1381,7 +1389,10 @@ const footOff=()=>FOOT_Y*sc();
 function reset(){
   hen.x=HEN_X; hen.y=0; hen.vy=0; hen.ground=true; hen.feathers=1; hen.flap=0; hen.dead=false;
   flapNow=false; jumpBuf=-9; flapUntil=-9; enSaut=false; fingers.clear();
-  speed=500; dist=0; tSpawn=1.1; shake=0; hold=false; eaten=0;
+  /* Rien ne doit tomber au meme endroit d'une partie a l'autre : le premier obstacle
+     etait toujours a 1,1 s, donc toujours au meme metre. Le plancher garde de quoi le
+     voir venir. */
+  speed=500; dist=0; tSpawn=1.0+Math.random()*0.9; shake=0; hold=false; eaten=0;
   obs=[]; flies=[]; puffs=[]; plumes=[]; traits=[]; miettes=[]; dernierObs="";
   combo=0; lastEat=-9; recBeaten=false;
   comboMax=0; orGobees=0; travObs=0; airDepuis=t; airMax=0; plafondTouche=false;
@@ -1391,7 +1402,11 @@ function reset(){
   coeurs=[]; fumee=[]; terre=[]; tombeAt=-9; tombeGicle=false;
   bonus=[];
   distCoeur=COEUR_PREM[0]+Math.random()*(COEUR_PREM[1]-COEUR_PREM[0]);
-  tFly=3; tOr=OR_ATTENTE[0]*0.55; orJusqu=-9;
+  /* La premiere nuee et la premiere doree ne se tiraient pas au sort du tout : 3 s et
+     20,9 s, a la seconde pres, a chaque partie. Elles se tirent maintenant comme les
+     suivantes, et leur hauteur avec. */
+  tFly=1.2+Math.random()*2.6;
+  tOr=OR_PREM[0]+Math.random()*(OR_PREM[1]-OR_PREM[0]); orJusqu=-9;
   clouds=[]; for(let i=0;i<5;i++) clouds.push({x:Math.random()*VIEW_W*1.5, f:.15+Math.random()*.6, s:.55+Math.random()*.6, v:.5+Math.random()*.7});
   /* Les massifs debordent largement du cadre : on seme au-dela des deux bords pour
      qu'aucun n'entre ni ne sorte a vue. */
@@ -2324,14 +2339,19 @@ function update(dt){
   if(tFly<=0){
     const roll=Math.random();
     const HAUT=-52-MOU_H/2;                     // jamais sous la ligne d'horizon
-    const y0=-150-Math.random()*(skyH-230);
-    const add=(x,y,calme)=>flies.push({x, y:Math.min(y,HAUT), ph:Math.random()*7,
+    /* Les mouches se semaient jusqu'a skyH, c'est-a-dire jusqu'au bord de l'ecran :
+       depuis que le plafond de vol s'arrete sous le bandeau, les plus hautes etaient
+       a la fois cachees par lui et hors d'atteinte. Elles s'arretent ou la poule
+       s'arrete. */
+    const CIME=flyCeil+60;
+    const y0=-150-Math.random()*(-CIME-150);
+    const add=(x,y,calme)=>flies.push({x, y:Math.max(CIME, Math.min(y,HAUT)), ph:Math.random()*7,
       amp:calme?5+Math.random()*5:14+Math.random()*16,
       sp:2.2+Math.random()*1.8, drift:-30+Math.random()*60});
     const bas=()=>-62-Math.random()*66;
     if(roll<0.36){                              // une ou deux mouches isolees
       add(VIEW_W+60, Math.random()<0.34 ? bas() : y0, false);
-      if(Math.random()<0.35) add(VIEW_W+120+Math.random()*90, -120-Math.random()*(skyH-200), false);
+      if(Math.random()<0.35) add(VIEW_W+120+Math.random()*90, -120-Math.random()*(-CIME-120), false);
       tFly=0.55+Math.random()*0.75;
     }else if(roll<0.70){                        // petite nuee
       const n=2+((Math.random()*3)|0);
@@ -2340,7 +2360,7 @@ function update(dt){
     }else{                                      // chapelet en arc, a suivre en volant
       const n=4+((Math.random()*3)|0), dir=Math.random()<0.5?1:-1;
       const amp=70+Math.random()*70;
-      const base=Math.max(y0, -skyH+amp+120);
+      const base=Math.max(y0, CIME+amp);
       for(let i=0;i<n;i++){
         const u=i/(n-1);
         add(VIEW_W+60+i*74, base+Math.sin(u*Math.PI)*amp*dir, true);

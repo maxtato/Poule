@@ -305,6 +305,35 @@ compte de mouches récompensait celui qui tourne en rond au même endroit.
 Les mètres affichés sont ceux de la barre, arrondis, pour que le compte se vérifie à
 l'œil.
 
+### Un respire entre les milliers, pas une coupure
+
+Un nombre à cinq chiffres se lit mal d'un bloc, mais une virgule ou une espace le coupe
+en **deux mots** : `1,924,736` et `1 924 736` se lisent comme trois nombres posés côte à
+côte. Ce qu'il faut est plus petit que ça — un simple **respire**.
+
+Mesuré dans la fonte du jeu, sur `1924736`, en comptant les colonnes de blanc entre les
+chiffres :
+
+| séparateur | creux à 17 px | à 26 px | à 34 px |
+| --- | --- | --- | --- |
+| aucun | 0 | 1 | 1 |
+| espace ultrafine (U+200A) | **1** | **3** | **3** |
+| espace fine insécable (U+202F) | 2 | 4 | 5 |
+| espace fine (U+2009) | 3 | 6 | 8 |
+| virgule | 4 + l'encre | 6 + l'encre | 8 + l'encre |
+
+Les chiffres de Fredoka se touchent déjà presque : le creux ordinaire entre deux
+chiffres vaut zéro ou un pixel. L'**ultrafine** double ce creux et s'arrête là. C'est le
+plus petit écart qui se voit, et il ne casse pas le nombre en morceaux.
+
+Elle est suivie d'un **liant de mots** (U+2060). L'ultrafine est une espace comme une
+autre pour le navigateur : sans lui, `9 876 792 m` pourrait se couper en fin de ligne au
+milieu du nombre. Vérifié sur trois écrans jusqu'à 300 pixels de large, avec un score à
+dix chiffres : toujours une seule ligne.
+
+Les deux langues la partagent. L'anglais avait sa virgule, le français son espace fine
+insécable ; un nombre se lit maintenant de la même façon partout.
+
 ### Le score ne s'affiche pas pendant la course
 
 Le HUD ne montre que les deux **facteurs** : les mouches et la distance. Le produit se
@@ -1709,6 +1738,33 @@ sait déjà remonter au-dessus d'un obstacle — c'est une règle qu'elle avait 
 Vérifié sur dix mille tirages : dix tranches égales entre 949 et 1 057 apparitions, la
 loi est plate. Et sur le jeu réel, les cœurs naissent de -211 à -960, les dorées de -223
 à -938 — tout le ciel jouable, du dessus des obstacles au plafond.
+
+Les **mouches ordinaires**, elles, se semaient jusqu'à `skyH`, c'est-à-dire jusqu'au bord
+de l'écran. Depuis que le plafond de vol s'arrête sous le bandeau, les plus hautes
+étaient à la fois cachées par lui et hors d'atteinte. Elles s'arrêtent maintenant où la
+poule s'arrête.
+
+### Deux parties ne commencent plus pareil
+
+Trois réglages du départ ne se tiraient au sort **jamais** : le premier obstacle à 1,1 s,
+la première nuée de mouches à 3 s, la première dorée à 20,9 s — à la seconde près, à
+chaque partie. On finissait par les connaître par cœur.
+
+Ils se tirent maintenant comme tous les suivants : l'obstacle entre 1,0 et 1,9 s (le
+plancher garde de quoi le voir venir), la nuée entre 1,2 et 3,8 s, la dorée entre 14 et
+34 s — plus tôt que les 38 à 60 s de croisière, mais jamais deux fois au même moment.
+
+Mesuré sur quarante départs :
+
+| | étendue | valeurs différentes |
+| --- | --- | --- |
+| premier obstacle | 57 à 107 m | 25 sur 40 |
+| première mouche | 72 à 214 m, hauteur -962 à -64 | 38 et 40 sur 40 |
+| première dorée | 1 003 à 2 933 m, hauteur -961 à -223 | 40 et 40 sur 40 |
+| premier cœur | 1 528 à 2 566 m, hauteur -958 à -213 | 40 et 39 sur 40 |
+
+Le premier obstacle ne prend que 25 valeurs sur 40 parce que les mètres sont arrondis,
+pas parce qu'il se répète : sa fenêtre fait 50 mètres de large.
 
 ### Le répit, et pourquoi il est nécessaire
 
