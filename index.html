@@ -531,16 +531,25 @@ const COURSE = ["walk", "cross"];
    Le dessin KO portait ses etoiles et son tourbillon ; ils ont ete retires au
    decoupage pour laisser tourner ceux du jeu, qui sont animes. KO_TETE repere la
    crete dans le dessin, en fraction : c'est la qu'ils tournent. */
-const CHOCV_W = 155, CHOCV_H =  85;   // choc en vol : elle file encore a l'horizontale
-const CHOCS_W = 134, CHOCS_H =  99;   // choc en course : elle est encore sur ses pattes
-const KO_W    = 105, KO_H    =  76;   // KO : a plat, pattes en l'air
+/* Ces quatre-la sont ecrites a la main, quand toutes les autres poses descendent
+   d'un facteur commun. Elles avaient donc derive : mesuree sur la CRETE — la seule
+   tache de couleur franche qui existe dans toutes les poses et qui ne change pas de
+   taille avec la posture — la poule K.-O. sortait a 0,961 de celle qui court, les
+   deux chocs a 0,969 et 0,974, et le rebond a 1,031. Sept pour cent d'ecart entre la
+   plus petite et la plus grande, et la K.-O. la plus petite de toutes : c'est elle
+   qu'on voit le plus longtemps, immobile, juste apres avoir vu courir la poule.
+   Chaque paire est donc corrigee du facteur qui ramene sa crete a celle de la course.
+   Le rapport largeur/hauteur ne bouge pas, seule la taille. */
+const CHOCV_W = 160, CHOCV_H =  88;   // choc en vol : elle file encore a l'horizontale
+const CHOCS_W = 138, CHOCS_H = 102;   // choc en course : elle est encore sur ses pattes
+const KO_W    = 110, KO_H    =  80;   // KO : a plat, pattes en l'air
 const KO_TETE = [0.772, 0.416];
 /* Rebond : touchee par le dessus, elle repart en l'air avant de s'ecraser au-dela
    de l'objet. Le dessin porte son propre eclat de choc ; REB_ECLAT le repere en
    fraction, c'est par lui que la pose est calee — l'eclat tombe pile sur le point
    ou ses pattes ont mordu le dessus. Taille mesuree sur la crete, comme les
    autres poses. */
-const REB_W = 160, REB_H =  96, REB_ECLAT = [0.316, 0.623];
+const REB_W = 155, REB_H =  93, REB_ECLAT = [0.316, 0.623];   // ramene a la crete de la course
 const FEA_W = 74, FEA_H = 72;                           // plume de la jauge de vol
 /* Les plumes qui tombent ont leur propre dessin, plus net que celui de la jauge, et
    un peu plus grand. La taille ne se regle pas sur le cadre — la plume est posee en

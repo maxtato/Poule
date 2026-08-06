@@ -1322,6 +1322,38 @@ Deux réglages tiennent à des voisins encombrants :
   est faite sur les boîtes, sur cinq gabarits : on compare celle du bouton à celles du
   son et des réglages, plutôt que de juger à l'œil sur une capture.
 
+
+### Toutes les poses à la même taille
+
+Quatre tailles de pose sont écrites à la main — les deux chocs, le rebond et la poule
+K.-O. — quand toutes les autres descendent d'un facteur commun. Elles avaient donc
+dérivé.
+
+La mesure ne peut pas porter sur la boîte : une poule couchée est forcément plus large
+et plus basse qu'une poule debout. Elle porte sur la **crête**, la seule tache de
+couleur franche présente dans toutes les poses et dont la taille ne dépend pas de la
+posture. C'est une aire, donc elle varie comme le carré de la taille ; la racine du
+rapport donne l'échelle.
+
+| Pose | Avant | Après |
+| --- | --- | --- |
+| course, saut, vol | 1,000 à 1,013 | inchangé |
+| choc en course | 0,974 | 1,006 |
+| choc en vol | 0,969 | 1,006 |
+| rebond | 1,031 | 0,997 |
+| **K.-O. au sol** | **0,961** | **1,009** |
+
+Sept pour cent d'écart entre la plus petite et la plus grande, et la K.-O. la plus
+petite de toutes — celle qu'on voit le plus longtemps, immobile, juste après avoir vu
+courir la poule. L'écart tient maintenant dans **1,3 %**.
+
+Deux réserves. Les tailles sont des entiers, donc la correction se fait par pas d'un
+pour cent environ : la K.-O. tombe à 1,009 et non à 1,000 pile. Et la crête d'une
+poule couchée est vue légèrement de biais, ce qui rabote son aire ; une part des 4 %
+mesurés venait peut-être de là, auquel cas la correction est très légèrement
+généreuse. Les poses de vol restent à 1,013, mais cela vient du dessin d'origine et
+non d'une constante — on n'y touche pas.
+
 ## La chute
 
 Deux dessins, pas quatre :
