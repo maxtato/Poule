@@ -3255,6 +3255,14 @@ function coulPres(v, rec){
   return INK;
 }
 const REC_GRIS="#A79A88";
+/* L'epaisseur du trait de TOUT ce que le bandeau trace en code — coeur, etoile,
+   couronnes, contour des jauges. Elle n'est pas choisie : c'est celle du trait des
+   DESSINS poses a cote, mesuree a la taille ou le bandeau les pose. La plume donne
+   0,833 px pour une hauteur de bandeau de 60,5, soit 0,0138 u ; la mouche donne 0,0110.
+   On prend la plume, la plus grosse des deux et la voisine immediate du coeur.
+   Avant cette mise au meme trait, le bandeau portait quatre epaisseurs differentes :
+   coeur 2,8 fois la plume, jauges 2,2, couronne 2,0, etoile 1,7. */
+const TRAIT_HUD = 0.0138;
 /* Le coeur des vies : deux bosses et une pointe, cerne d'encre comme tout le reste du
    jeu. Plein, il est rouge ; vide, il garde le creme des jauges — la forme reste, et
    c'est la forme qui dit qu'il en manque un.
@@ -3266,7 +3274,7 @@ const REC_GRIS="#A79A88";
 /* Une petite couronne, comme celle du panneau de fin : trois pointes et une base. Elle
    marque le record sous chaque mesure — le mot « record » aurait demande une traduction
    et deux fois la place. */
-function couronne(x, y, h){
+function couronne(x, y, h, trait){
   const w=h*1.25;
   ctx.beginPath();
   ctx.moveTo(x, y+h);
@@ -3278,7 +3286,7 @@ function couronne(x, y, h){
   ctx.lineTo(x+w, y+h);
   ctx.closePath();
   ctx.fillStyle=YELL; ctx.fill();
-  ctx.lineWidth=Math.max(0.7, h*0.16); ctx.strokeStyle=INK; ctx.lineJoin="round";
+  ctx.lineWidth=trait; ctx.strokeStyle=INK; ctx.lineJoin="round";
   ctx.stroke();
 }
 function coeur(x, y, h, plein, trait){
@@ -3363,6 +3371,7 @@ function drawHUD(){
   const y2=top+u*0.65;                       // le milieu de la seconde ligne
   const fbig=Math.round(u*0.27);             // les grands nombres
   const fpet=Math.round(u*0.147);            // les records, en gris
+  const trait=Math.max(0.6, u*TRAIT_HUD);    // le meme pour tout ce qui est trace ici
   const pouvoir=traverse(), chaine=(state===S.PLAY && combo>=2);
 
   /* ---- ce qui se compte, a droite : mesure d'abord, dessin ensuite ----
@@ -3419,7 +3428,7 @@ function drawHUD(){
   /* ---- la plume et la jauge de vol ---- */
   ctx.drawImage(SPR.feather, gx, top+u*0.32-fh/2, fw, fh);
   const r2=jh/2;
-  ctx.lineWidth=Math.max(1.2,u*0.030); ctx.strokeStyle=INK; ctx.lineJoin="round";
+  ctx.lineWidth=trait; ctx.strokeStyle=INK; ctx.lineJoin="round";
   rr(bx,jy,gw,jh,r2); ctx.fillStyle="#FFFFFF"; ctx.fill(); ctx.stroke();
   const f=Math.max(0,Math.min(1,hen.feathers));
   if(f>0.02){
@@ -3437,7 +3446,7 @@ function drawHUD(){
      A zero, le coeur reste, vide, et le nombre disparait : la forme dit qu'il en manque
      une, et il n'y a plus rien a compter. */
   const cvw=cvh*1.08, cvx=gx+fw/2-cvw/2;
-  coeur(cvx, y2-cvh/2, cvh, vies>0, Math.max(0.7,u*0.039));
+  coeur(cvx, y2-cvh/2, cvh, vies>0, trait);
   let coeurFin=cvx+cvw;
   if(vies>0){
     const corps=Math.round(cvh*0.80), tx=coeurFin+cvh*0.26;
@@ -3454,14 +3463,14 @@ function drawHUD(){
     const er=u*0.115, ex=Math.max(bx+er, coeurFin+u*0.10+er);
     const px2=ex+er+u*0.10, pw2=bx+gw-px2, py=y2-ph/2;
     if(pw2>u*0.3){
-      ctx.lineWidth=Math.max(1.2,u*0.030); ctx.strokeStyle=INK;
+      ctx.lineWidth=trait; ctx.strokeStyle=INK;
       rr(px2,py,pw2,ph,ph/2); ctx.fillStyle="#FFFFFF"; ctx.fill(); ctx.stroke();
       ctx.save(); rr(px2,py,pw2,ph,ph/2); ctx.clip();
       ctx.fillStyle="#F5B93E"; ctx.fillRect(px2,py,pw2*Math.max(0,reste),ph);
       ctx.restore();
       rr(px2,py,pw2,ph,ph/2); ctx.stroke();
     }
-    star(ctx, ex, y2, er, 0, Math.max(1,u*0.024));
+    star(ctx, ex, y2, er, 0, trait);
   }
 
   /* ---- ce qui se compte, a droite ---- */
@@ -3483,7 +3492,7 @@ function drawHUD(){
       ctx.font="700 "+fpet+"px "+FONT;
       const lr=ctx.measureText(m.rec).width;
       txtP(m.rec, xg, top+u*0.60, fpet, REC_GRIS, "right", "middle");
-      couronne(xg-lr-u*0.07-cw*1.25, top+u*0.60-cw/2, cw);
+      couronne(xg-lr-u*0.07-cw*1.25, top+u*0.60-cw/2, cw, trait);
     }
     x+=m.w+ecart;
   }

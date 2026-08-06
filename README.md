@@ -360,6 +360,33 @@ du bandeau :
 L'écart le plus grand est de **1,8 point**. La pastille tombe au milieu exact du
 bandeau ; celle du visuel est elle-même un point à droite du milieu.
 
+#### Un seul trait pour tout le bandeau
+
+Le cœur, l'étoile, les couronnes et le contour des jauges sont **tracés en code**, la
+plume et la mouche sont des **dessins**. Rien n'obligeait les uns à ressembler aux
+autres, et ils n'y ressemblaient pas : quatre épaisseurs différentes sur un même
+bandeau.
+
+| | Épaisseur | En parts de la plume |
+| --- | --- | --- |
+| la plume, mesurée | 0,833 px | 1,0 |
+| la mouche, mesurée | 0,667 px | 0,8 |
+| le cœur | 2,36 px | **2,8** |
+| les jauges | 1,81 px | 2,2 |
+| la couronne | 1,64 px | 2,0 |
+| l'étoile | 1,45 px | 1,7 |
+
+L'épaisseur commune n'est donc pas choisie : c'est celle du trait des dessins posés à
+côté, **mesurée à la taille où le bandeau les pose**. La plume donne 0,833 px pour une
+hauteur de bandeau de 60,5, soit **0,0138 u** ; on prend celle-là, la plus grosse des
+deux et la voisine immédiate du cœur.
+
+La mesure se fait à six fois la taille réelle puis se divise : à la taille réelle le
+trait fait un pixel et une médiane de 1 ne dit plus rien. Vérifié sur quatre largeurs
+d'écran, l'écart entre le trait appliqué et la plume mesurée va de 0 à −12 % — c'est le
+bruit de quantification de la mesure elle-même, dont la médiane saute de 0,833 à 1,0
+entre deux tailles.
+
 #### Ce qui se compte, à droite
 
 Deux cellules, séparées par un filet vertical, chacune avec son grand nombre et, juste
