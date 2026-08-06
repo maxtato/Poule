@@ -2887,7 +2887,7 @@ function drawHUD(){
   let hg=fh;
   if(pouvoir) hg+=9+ph;
   if(chaine)  hg+=8+mh+5+Math.max(2.5,mh*0.14);
-  const hd=(fv+4+hb+10)*2-10;
+  const hd=(fv*1.35+4+hb+10)*2-10;   // les corps s'ajustent, on majore
   const ch=Math.max(hg,hd), cy=top+2;
 
   /* ---- colonne de droite : ce qui se compte ----
@@ -2908,9 +2908,29 @@ function drawHUD(){
   const lgRec=Math.max(...MES.map(m=>m.rec?ctx.measureText(m.rec).width:0));
   const xd=cx+cw;
   const xNum = aRec ? xd-lgRec-8 : xd;
-  ctx.font="900 "+fv+"px "+FONT;
-  const lgVal=Math.max(...MES.map(m=>ctx.measureText(m.val).width
-                                     +(m.ico?larMou(fv*0.78)+9:0)));
+
+  /* LES DEUX LIGNES SE METTENT A LA MEME LARGEUR. A corps egal elles ne l'ont pas :
+     « 8 » avec sa mouche fait quarante-sept unites quand « 626 m » en fait soixante-
+     dix, et le bloc part en escalier. On mesure donc chaque ligne a son corps de base,
+     on prend la plus large, et on grossit l'autre jusqu'a la rejoindre. Le rapport est
+     borne : entre une mouche et dix mille metres l'ecart devient tel que suivre
+     ferait un chiffre enorme pour une seule mouche.
+     Comme la barre du record fait ensuite la largeur de sa ligne, l'ensemble forme un
+     rectangle plein au lieu d'un escalier. */
+  const CAP=1.8;
+  for(const m of MES){
+    ctx.font="900 "+fv+"px "+FONT;
+    m.nat=ctx.measureText(m.val).width+(m.ico?larMou(fv*0.78)+9:0);
+  }
+  const W=Math.max(...MES.map(m=>m.nat));
+  for(const m of MES){
+    m.k=Math.min(CAP, W/m.nat);
+    m.fs=Math.round(fv*m.k);
+    ctx.font="900 "+m.fs+"px "+FONT;
+    m.lgc=ctx.measureText(m.val).width;
+    m.large=m.lgc+(m.ico?larMou(m.fs*0.78)+9*m.k:0);
+  }
+  const lgVal=Math.max(...MES.map(m=>m.large));
   /* Les deux colonnes se bornent l'une l'autre : sans cela la barre de pouvoir, qui
      tombe a la hauteur de la deuxieme ligne de droite, passait par-dessus le nombre
      des metres. */
@@ -2918,14 +2938,12 @@ function drawHUD(){
   let y=cy;
   for(const m of MES){
     ctx.textAlign="right"; ctx.textBaseline="top";
-    ctx.font="900 "+fv+"px "+FONT; ctx.fillStyle=coulPres(m.v,m.r);
+    ctx.font="900 "+m.fs+"px "+FONT; ctx.fillStyle=coulPres(m.v,m.r);
     ctx.fillText(m.val, xNum, y);
-    const lgc=ctx.measureText(m.val).width;
-    if(m.ico) icoMou(xNum-lgc-9-larMou(fv*0.78), y+fv*0.18, fv*0.78);
+    if(m.ico) icoMou(xNum-m.lgc-9*m.k-larMou(m.fs*0.78), y+m.fs*0.18, m.fs*0.78);
     if(m.rec){
-      /* pas plus large que le chiffre qu'elle souligne */
-      const bw2=Math.min(REC_BARRE, lgc);
-      const bx2=xNum-bw2, by2=y+fv+4, battu=m.v>=m.r;
+      /* aussi large que la ligne qu'elle souligne, jamais davantage */
+      const bw2=m.large, bx2=xNum-bw2, by2=y+m.fs+4, battu=m.v>=m.r;
       ctx.fillStyle="#E4DACA"; rr(bx2,by2,bw2,hb,hb/2); ctx.fill();
       const prog=Math.min(1, m.v/m.r);
       if(prog>0.01){
@@ -2937,8 +2955,8 @@ function drawHUD(){
       ctx.textAlign="right"; ctx.textBaseline="middle";
       ctx.fillText(m.rec, xd, by2+hb/2);
       ctx.textBaseline="top";
-      y+=fv+4+hb+10;
-    }else y+=fv+6;
+      y+=m.fs+4+hb+10;
+    }else y+=m.fs+6;
   }
 
   /* ---- colonne de gauche : ce qui se depense ---- */
