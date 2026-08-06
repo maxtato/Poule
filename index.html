@@ -2887,10 +2887,16 @@ function drawHUD(){
   let hg=fh;
   if(pouvoir) hg+=9+ph;
   if(chaine)  hg+=8+mh+5+Math.max(2.5,mh*0.14);
-  const hd=fv*2+8;
+  const hd=(fv+4+hb+10)*2-10;
   const ch=Math.max(hg,hd), cy=top+2;
 
-  /* ---- colonne de droite : ce qui se compte ---- */
+  /* ---- colonne de droite : ce qui se compte ----
+     Le chiffre de la partie en gros, et JUSTE EN DESSOUS sa barre de record. La
+     barre partage le bord droit du chiffre et ne depasse jamais sa largeur : elle se
+     lit comme un soulignement, pas comme une deuxieme mesure. C'est une indication
+     discrete, elle n'a pas a peser autant que ce qu'elle situe.
+     Le nombre du record vit dans une colonne reservee a droite, la meme pour les deux
+     lignes, sinon les barres ne partiraient pas du meme bord. */
   const MES=[
     {val:String(eaten), v:eaten, r:save.bestMou,
      rec: save.bestMou>0 ? String(save.bestMou) : null, ico:true},
@@ -2901,38 +2907,38 @@ function drawHUD(){
   ctx.font="700 "+REC_FONTE+"px "+FONT;
   const lgRec=Math.max(...MES.map(m=>m.rec?ctx.measureText(m.rec).width:0));
   const xd=cx+cw;
-  const xbR = aRec ? xd-lgRec-6 : xd;      // bord droit des echelles
-  const xNum = aRec ? xbR-REC_BARRE-12 : xd;
-  /* Les deux colonnes se bornent l'une l'autre. Sans cela la barre de pouvoir, qui
-     tombe a la hauteur de la deuxieme ligne de droite, passait par-dessus le nombre
-     des metres. On mesure donc le plus large des deux nombres, icone comprise, et la
-     colonne de gauche s'arrete la. */
+  const xNum = aRec ? xd-lgRec-8 : xd;
   ctx.font="900 "+fv+"px "+FONT;
   const lgVal=Math.max(...MES.map(m=>ctx.measureText(m.val).width
                                      +(m.ico?larMou(fv*0.78)+9:0)));
+  /* Les deux colonnes se bornent l'une l'autre : sans cela la barre de pouvoir, qui
+     tombe a la hauteur de la deuxieme ligne de droite, passait par-dessus le nombre
+     des metres. */
   const xGauche=xNum-lgVal-16;
   let y=cy;
   for(const m of MES){
     ctx.textAlign="right"; ctx.textBaseline="top";
     ctx.font="900 "+fv+"px "+FONT; ctx.fillStyle=coulPres(m.v,m.r);
     ctx.fillText(m.val, xNum, y);
-    if(m.ico) icoMou(xNum-ctx.measureText(m.val).width-9-larMou(fv*0.78),
-                     y+fv*0.18, fv*0.78);
+    const lgc=ctx.measureText(m.val).width;
+    if(m.ico) icoMou(xNum-lgc-9-larMou(fv*0.78), y+fv*0.18, fv*0.78);
     if(m.rec){
-      const bx2=xbR-REC_BARRE, by2=y+fv*0.42, battu=m.v>=m.r;
-      ctx.fillStyle="#E4DACA"; rr(bx2,by2,REC_BARRE,hb,hb/2); ctx.fill();
+      /* pas plus large que le chiffre qu'elle souligne */
+      const bw2=Math.min(REC_BARRE, lgc);
+      const bx2=xNum-bw2, by2=y+fv+4, battu=m.v>=m.r;
+      ctx.fillStyle="#E4DACA"; rr(bx2,by2,bw2,hb,hb/2); ctx.fill();
       const prog=Math.min(1, m.v/m.r);
       if(prog>0.01){
         ctx.fillStyle = battu ? "#D6342B" : "#F5A623";
-        rr(bx2,by2,Math.max(hb,REC_BARRE*prog),hb,hb/2); ctx.fill();
+        rr(bx2,by2,Math.max(hb,bw2*prog),hb,hb/2); ctx.fill();
       }
       ctx.font="700 "+REC_FONTE+"px "+FONT;
       ctx.fillStyle = battu ? "#D6342B" : REC_GRIS;
       ctx.textAlign="right"; ctx.textBaseline="middle";
       ctx.fillText(m.rec, xd, by2+hb/2);
       ctx.textBaseline="top";
-    }
-    y+=fv+8;
+      y+=fv+4+hb+10;
+    }else y+=fv+6;
   }
 
   /* ---- colonne de gauche : ce qui se depense ---- */

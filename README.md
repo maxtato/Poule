@@ -325,11 +325,22 @@ décor. Mais il tirait un bandeau opaque d'un bord à l'autre de la bande de jeu
 porter deux nombres. Le rythme des deux colonnes suffit à dire que c'est une
 interface ; le ciel reste au ciel.
 
-Pour chaque mesure, le nombre de la partie en cours **en gros**, et à côté une échelle
-courte portant le record. Le nombre porte tout : c'est lui qu'on lit en jouant.
-L'échelle ne fait que situer, elle peut donc maigrir d'autant — et les deux se
-compensent exactement. Mesuré sur le même état de partie, le bloc de droite passe de
-**179 à 176 unités** de large pendant que le chiffre passe de 21 à 27 pixels.
+Pour chaque mesure : le chiffre de la partie en cours **en gros**, et **juste en dessous**
+sa barre de record. La barre partage le bord droit du chiffre et **ne dépasse jamais sa
+largeur** — elle se lit comme un soulignement, pas comme une deuxième mesure. C'est une
+indication discrète : elle n'a pas à peser autant que ce qu'elle situe.
+
+Le nombre du record vit dans une colonne réservée à droite, la même pour les deux
+lignes, sinon les barres ne partiraient pas du même bord.
+
+Mesuré sur le jeu, à 32 mouches et 1 988 m : le chiffre des mouches fait 30 unités et
+sa barre 30 ; celui des mètres fait 84 et sa barre 38, plafonnée. Le bloc entier
+occupe **128 unités**, contre 176 quand la barre était posée à côté du chiffre.
+
+Les deux barres n'ont donc pas la même longueur — celle des mouches est plus courte,
+parce que « 32 » est plus étroit que « 1 988 m ». C'est la conséquence directe de la
+règle, et elle passe avant la régularité : une barre plus large que son chiffre
+cesserait d'être une indication pour devenir une ligne à lire.
 
 Les deux colonnes **se bornent l'une l'autre** : le plus large des deux nombres est
 mesuré, icône comprise, et la colonne de gauche s'arrête là. Sans cela la barre de
