@@ -844,6 +844,17 @@ const cv=document.getElementById("cv"), vue=cv.getContext("2d");
 /* Un pixel d'art, en pixels CSS. C'est la grille sur laquelle les planches ont ete
    fabriquees ; tout le reste doit s'y ranger. */
 const PX_JEU = 0.40;
+/* ---------- une seule grille ----------
+   Z_PIXEL est le nombre de pixels d'ecran que vaut UN pixel d'art. La scene est
+   peinte dans un tampon de taille toile/Z, puis agrandie exactement Z fois, sans
+   lissage. Tout ce qui est peint la-dedans partage donc le meme pixel : les planches,
+   les jauges tracees au vecteur, les particules, le texte. C'est la regle d'une
+   console, qui n'a qu'un pixel et le meme partout.
+   La toile est arrondie au multiple de Z superieur — au plus un pixel d'art de plus
+   que le viewport — sinon le dernier rang serait a cheval et la grille se casserait
+   sur un bord. */
+const Z_PIXEL = 3;
+let kPix = 1;                        // facteur pixels CSS -> tampon, en mode pixel
 /* En pixel art, la scene entiere est dessinee dans un tampon a cette grille, puis
    agrandie d'un bloc. Sans ce detour, tout ce qui est trace en code — la ronde
    d'etoiles du K.-O., la jauge de plumes, la poussiere, les traits de vitesse, le
@@ -1108,15 +1119,26 @@ function resize(){
      Le trait, lui, garde 2,5. Il dessine des planches pleine résolution avec lissage,
      bien plus coûteuses au pixel : monter son plafond à 3 lui coûtait un tiers de sa
      cadence, mesuré, pour un gain nul — il n'a pas de grille à respecter. */
-  dpr=Math.min(window.devicePixelRatio||1, save.pixel ? 1/PX_JEU : 2.5);
+  dpr=Math.min(window.devicePixelRatio||1, 3);
   const vw=innerWidth, vh=innerHeight;
   scale=Math.min(vw/VIEW_W, vh/MIN_H);
   W=vw; H=vh;
   bandW=Math.min(vw, VIEW_W*scale); bandX=Math.round((vw-bandW)/2);
   VIEW_H=worldH=H/scale;
-  cv.style.width=W+"px"; cv.style.height=H+"px";
-  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
-  tampon.width=Math.max(1,Math.round(W/PX_JEU)); tampon.height=Math.max(1,Math.round(H/PX_JEU));
+  if(save.pixel){
+    /* le tampon commande : la toile en est un multiple exact de Z */
+    const bw=Math.max(1,Math.ceil(W*dpr/Z_PIXEL)), bh=Math.max(1,Math.ceil(H*dpr/Z_PIXEL));
+    tampon.width=bw; tampon.height=bh;
+    cv.width=bw*Z_PIXEL; cv.height=bh*Z_PIXEL;
+    /* la toile deborde d'au plus un pixel d'art ; l'etirer en CSS a la taille exacte
+       du viewport casserait la grille, on la laisse donc deborder */
+    cv.style.width=(cv.width/dpr)+"px"; cv.style.height=(cv.height/dpr)+"px";
+    kPix=bw/W;
+  }else{
+    cv.style.width=W+"px"; cv.style.height=H+"px";
+    cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+    tampon.width=1; tampon.height=1; kPix=1;
+  }
   tctx.imageSmoothingEnabled=false;      // redimensionner un canvas remet ce reglage
   document.documentElement.style.setProperty("--ground", (GROUND_GAP*scale)+"px");
   /* Largeur du cadre de jeu : le panneau de fin s'y borne au lieu de se caler sur
@@ -2488,7 +2510,7 @@ function draw(){
   ctx = px ? tctx : vue;
   /* Le reste de draw() raisonne en pixels CSS : il suffit de changer le facteur.
      En trait c'est la densite de l'ecran, en pixel c'est la grille du jeu. */
-  ctx.setTransform(px?1/PX_JEU:dpr, 0,0, px?1/PX_JEU:dpr, 0,0);
+  ctx.setTransform(px?kPix:dpr, 0,0, px?kPix:dpr, 0,0);
   /* Hors du terrain : la teinte du plateau, pour que les bandes se lisent comme un
      cadre et non comme du decor qui manque. */
   ctx.fillStyle="#EFE6D9"; ctx.fillRect(0,0,W,H);
@@ -2893,19 +2915,24 @@ function txtP(txt, x, y, taille, coul, align, base){
   ctx.font="900 "+taille+"px "+FONT;
   ctx.textAlign=align; ctx.textBaseline=base;
   if(!save.pixel){ ctx.fillStyle=coul; ctx.fillText(txt, x, y); return; }
-  const w=Math.ceil(ctx.measureText(txt).width)+2, h=Math.ceil(taille*1.42)+2;
-  if(w<1||h<1) return;
+  /* Le tampon d'ecriture est a la resolution de la GRILLE : un pixel ici, un pixel
+     d'art la-bas. Ecrit a la taille du monde il aurait un grain trois fois trop gros,
+     ecrit a la taille de l'ecran il echapperait a la grille. */
+  const k=kPix, tp=Math.max(4, Math.round(taille*k));
+  const w=Math.max(2, Math.ceil(ctx.measureText(txt).width*k)+2);
+  const h=Math.ceil(tp*1.42)+2;
   tampTxt.width=w; tampTxt.height=h;
-  ttx.font=ctx.font; ttx.textAlign="left"; ttx.textBaseline="top";
+  ttx.font="900 "+tp+"px "+FONT; ttx.textAlign="left"; ttx.textBaseline="top";
   ttx.fillStyle=coul; ttx.fillText(txt, 1, 1);
   /* le seuil supprime le degrade : un pixel est peint ou il ne l'est pas */
   const d=ttx.getImageData(0,0,w,h);
   for(let i=3;i<d.data.length;i+=4) d.data[i]=d.data[i]>=110?255:0;
   ttx.putImageData(d,0,0);
-  const dx = align==="right" ? x-w+1 : align==="center" ? x-w/2 : x-1;
-  const dy = base==="middle" ? y-taille*0.72 : base==="alphabetic" ? y-taille*1.05 : y-1;
+  const wc=w/k, hc=h/k;                       // le tampon, ramene en pixels CSS
+  const dx = align==="right" ? x-wc+1/k : align==="center" ? x-wc/2 : x-1/k;
+  const dy = base==="middle" ? y-taille*0.72 : base==="alphabetic" ? y-taille*1.05 : y-1/k;
   ctx.imageSmoothingEnabled=false;
-  ctx.drawImage(tampTxt, dx, dy, w, h);
+  ctx.drawImage(tampTxt, dx, dy, wc, hc);
   ctx.imageSmoothingEnabled=!save.pixel;
 }
 
