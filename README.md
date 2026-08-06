@@ -307,40 +307,34 @@ qu'on puisse utiliser, alors que ses deux facteurs disent chacun quoi faire — 
 chercher une mouche, ou tenir encore un peu. On ne décide pas d'un score ; on décide
 d'aller chercher une mouche de plus.
 
-### Un seul cartouche, et tout dedans
+### Deux colonnes, sans cadre
 
-Le HUD était fait de morceaux qui ne se ressemblaient pas : une plume et sa jauge
-posées à nu en haut à gauche, un cadre à droite pour les compteurs, une barre de
-pouvoir et un combo flottant ailleurs. Mélanger l'encadré et le libre fait bizarre —
-on ne sait plus ce qui est une interface et ce qui est du décor.
-
-Tout est donc dans le même cadre, en deux colonnes : **à gauche ce qui se dépense**
-(les plumes, le pouvoir, la chaîne), **à droite ce qui se compte** (les mouches, les
-mètres) avec son record.
+**À gauche ce qui se dépense** — les plumes, le pouvoir, la chaîne. **À droite ce qui se
+compte** — les mouches, les mètres, chacun avec son record.
 
 ```
- ╭──────────────────────────────────────────────╮
- │  🪶 ▬▬▬▬▬▬▬▬     🪰  32   ▬▬▬▭      34       │
- │  ⭐ ▬▬▬▬▭      1 988 m    ▬▬▬▭  2 100 m      │
- │  ×7 ▬▬▭                                      │
- ╰──────────────────────────────────────────────╯
+   🪶 ▬▬▬▬▬▬▬▬          🪰  32   ▬▬▭      34
+   ⭐ ▬▬▬▬▭          1 988 m    ▬▬▭  2 100 m
+   ×7 ▬▬▭
 ```
+
+Un cadre autour du tout a été essayé. Il réglait bien un vrai défaut — la plume et sa
+jauge étaient posées à nu pendant que les compteurs étaient encadrés, et mélanger
+l'encadré et le libre fait qu'on ne sait plus ce qui est interface et ce qui est
+décor. Mais il tirait un bandeau opaque d'un bord à l'autre de la bande de jeu pour
+porter deux nombres. Le rythme des deux colonnes suffit à dire que c'est une
+interface ; le ciel reste au ciel.
 
 Pour chaque mesure, le nombre de la partie en cours **en gros**, et à côté une échelle
-courte portant le record. On lit d'abord où l'on en est, ensuite d'où l'on vient — et
-les deux ne se disputent plus l'attention puisque le corps du texte les départage.
+courte portant le record. Le nombre porte tout : c'est lui qu'on lit en jouant.
+L'échelle ne fait que situer, elle peut donc maigrir d'autant — et les deux se
+compensent exactement. Mesuré sur le même état de partie, le bloc de droite passe de
+**179 à 176 unités** de large pendant que le chiffre passe de 21 à 27 pixels.
 
 Les deux colonnes **se bornent l'une l'autre** : le plus large des deux nombres est
 mesuré, icône comprise, et la colonne de gauche s'arrête là. Sans cela la barre de
 pouvoir, qui tombe à la hauteur de la deuxième ligne de droite, passait par-dessus le
 nombre des mètres.
-
-Le cadre grandit quand le pouvoir ou la chaîne s'allument. C'est voulu : ce sont des
-événements, et un emplacement vide réservé en permanence les ferait passer pour des
-ressources du jeu.
-
-Les échelles de record sont volontairement **brèves** — un demi-pouce. Une barre longue
-invite à la lire dans le détail ; celle-ci n'a qu'un travail, dire où l'on en est.
 
 Au tout premier essai il n'y a rien à situer : pas d'échelle, juste les deux nombres.
 

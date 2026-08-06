@@ -2835,13 +2835,12 @@ function bandeauTrophee(R, pad, VW, y){
    rien qu'on puisse utiliser, alors que ses deux facteurs disent chacun quoi faire —
    aller chercher une mouche, ou tenir encore un peu.
 
-   UN SEUL CARTOUCHE, ET TOUT DEDANS. Le HUD etait fait de morceaux qui ne se
-   ressemblaient pas : une plume et sa jauge posees a nu en haut a gauche, un cadre a
-   droite pour les compteurs, une barre de pouvoir et un combo flottant ailleurs.
-   Melanger l'encadre et le libre fait bizarre — on ne sait plus ce qui est une
-   interface et ce qui est du decor. Tout est donc dans le meme cadre, en deux
-   colonnes : a gauche ce qui se depense (les plumes, le pouvoir, la chaine), a droite
-   ce qui se compte (les mouches, les metres) avec son record.
+   DEUX COLONNES, SANS CADRE. A gauche ce qui se depense — les plumes, le pouvoir, la
+   chaine ; a droite ce qui se compte — les mouches, les metres, chacun avec son
+   record. Un cadre a ete essaye autour du tout : il reglait bien le melange de
+   l'encadre et du libre, mais il tirait un bandeau opaque d'un bord a l'autre de la
+   bande de jeu pour porter deux nombres. Le rythme des deux colonnes suffit a dire
+   que c'est une interface ; le ciel reste au ciel.
 
    Pour chaque mesure, le nombre de la partie en cours EN GROS, et a cote une echelle
    courte portant le record. On lit d'abord ou l'on en est, ensuite d'ou l'on vient —
@@ -2860,7 +2859,7 @@ function coulPres(v, rec){
 }
 const REC_GRIS="#A79A88";
 /* longueur des echelles de record, et corps de leur nombre */
-let REC_BARRE=54, REC_FONTE=12;
+let REC_BARRE=38, REC_FONTE=11;
 function larMou(h){ return h*MOU_W/MOU_H; }
 function icoMou(x,y,h){ ctx.drawImage(SPR.fly_ico, x, y, larMou(h), h); }
 
@@ -2871,8 +2870,11 @@ function drawHUD(){
      loin de l'action. */
   const L=bandX, VW=bandW, R=bandX+bandW;
   const pad=Math.max(16,VW*0.045), top=pad+6, fs=Math.round(Math.min(38,VW*0.082));
-  const M=13, cx=L+pad, cw=VW-2*pad;
-  const fv=Math.round(fs*0.62);
+  const cx=L+pad, cw=VW-2*pad;
+  /* Le nombre de la partie porte tout : c'est lui qu'on lit en jouant. L'echelle du
+     record ne fait que situer, elle peut donc maigrir d'autant. Les deux se
+     compensent — le bloc de droite occupe la meme largeur qu'avant. */
+  const fv=Math.round(fs*0.80);
   const fh=Math.min(26,VW*0.055), fw=fh*FEA_W/FEA_H;
   const jh=fh*0.40, ph=jh*0.82, mh=Math.min(22,VW*0.046);
   const hb=Math.max(3, REC_FONTE*0.30);
@@ -2886,11 +2888,7 @@ function drawHUD(){
   if(pouvoir) hg+=9+ph;
   if(chaine)  hg+=8+mh+5+Math.max(2.5,mh*0.14);
   const hd=fv*2+8;
-  const ch=M*2+Math.max(hg,hd), cy=top;
-
-  rr(cx,cy,cw,ch,10);
-  ctx.fillStyle="rgba(250,243,236,.62)"; ctx.fill();
-  ctx.strokeStyle=TROPH_BORD; ctx.lineWidth=1.4; ctx.lineJoin="round"; ctx.stroke();
+  const ch=Math.max(hg,hd), cy=top+2;
 
   /* ---- colonne de droite : ce qui se compte ---- */
   const MES=[
@@ -2902,9 +2900,9 @@ function drawHUD(){
   const aRec=MES.some(m=>m.rec);
   ctx.font="700 "+REC_FONTE+"px "+FONT;
   const lgRec=Math.max(...MES.map(m=>m.rec?ctx.measureText(m.rec).width:0));
-  const xd=cx+cw-M;
-  const xbR = aRec ? xd-lgRec-7 : xd;      // bord droit des echelles
-  const xNum = aRec ? xbR-REC_BARRE-14 : xd;
+  const xd=cx+cw;
+  const xbR = aRec ? xd-lgRec-6 : xd;      // bord droit des echelles
+  const xNum = aRec ? xbR-REC_BARRE-12 : xd;
   /* Les deux colonnes se bornent l'une l'autre. Sans cela la barre de pouvoir, qui
      tombe a la hauteur de la deuxieme ligne de droite, passait par-dessus le nombre
      des metres. On mesure donc le plus large des deux nombres, icone comprise, et la
@@ -2913,7 +2911,7 @@ function drawHUD(){
   const lgVal=Math.max(...MES.map(m=>ctx.measureText(m.val).width
                                      +(m.ico?larMou(fv*0.78)+9:0)));
   const xGauche=xNum-lgVal-16;
-  let y=cy+M;
+  let y=cy;
   for(const m of MES){
     ctx.textAlign="right"; ctx.textBaseline="top";
     ctx.font="900 "+fv+"px "+FONT; ctx.fillStyle=coulPres(m.v,m.r);
@@ -2938,7 +2936,7 @@ function drawHUD(){
   }
 
   /* ---- colonne de gauche : ce qui se depense ---- */
-  const gx=cx+M, fy=cy+M;
+  const gx=cx, fy=cy;
   ctx.drawImage(SPR.feather, gx, fy, fw, fh);
   const bx=gx+fw+8, by=fy+fh*0.30;
   const bw=Math.max(60, Math.min(150, xGauche-bx)), r2=jh/2;
@@ -2993,7 +2991,7 @@ function drawHUD(){
   }
   ctx.textAlign="right"; ctx.textBaseline="top";
 
-  bandeauTrophee(R, pad, VW, cy+ch+12);
+  bandeauTrophee(R, pad, VW, cy+ch+14);
 }
 
 /* ---------- boucle ---------- */
