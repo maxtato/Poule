@@ -1386,9 +1386,10 @@ suivant, c'est fini.
 |---|---|
 | 0 s | Le choc, puis la culbute |
 | ~0,45 s | Le sol : poussière, secousse, étoiles |
-| ~0,95 s | Elle bouge : les étoiles s'éteignent, le relevage commence |
-| ~1,50 s | Debout. La course repart, la poule clignote |
-| ~2,50 s | Le répit s'achève, les obstacles peuvent de nouveau la toucher |
+| ~0,95 s | Elle rouvre les yeux : les étoiles s'éteignent |
+| ~1,35 s | Elle se lève, en trois images |
+| ~1,75 s | Debout. La course repart, la poule clignote |
+| ~2,75 s | Le répit s'achève, les obstacles peuvent de nouveau la toucher |
 
 **Rien n'est enregistré au premier choc.** Ni le record, ni les mouches gobées, ni la
 partie jouée : `die()` sort avant d'y toucher. Une partie reste une partie, quel que
@@ -1412,10 +1413,15 @@ la même règle que les poses de choc, mesurée de la même façon.
 
 | Pose | Crête sur la planche (420 de large) | Largeur posée | Durée |
 | --- | --- | --- | --- |
-| 1 · allongée, patte levée | 4 818 px | 113,0 | 0,15 s |
+| 1 · allongée, patte levée | 4 818 px | 113,0 | 0,40 s |
 | 2 · sur les genoux | 5 154 px | 109,3 | 0,15 s |
 | 3 · courbée, elle se lève | 5 902 px | 102,1 | 0,13 s |
 | 4 · debout | 7 001 px | 93,8 | 0,12 s |
+
+La première tient bien plus longtemps que les trois autres : c'est celle où elle rouvre
+les yeux, et c'est elle qui raconte le coup. Les trois suivantes sont le geste de se
+lever, qui doit être vif — une poule qui se relève au ralenti n'a pas l'air sonnée,
+elle a l'air molle.
 
 Les deux poses debout ressortent 2,7 % et 7,1 % plus courtes que la poule qui court :
 c'est la posture, elles sont voûtées, ce n'est pas l'échelle.
@@ -1425,14 +1431,37 @@ le premier dessin porte sa spirale d'étourdissement loin sur la droite, et cal�
 cadre le corps aurait sauté d'une image à l'autre. La mesure est faite sur la planche
 finie — la plus grosse tache d'encre est la poule, tout le reste est décor.
 
-Le détourage est celui des autres dessins, à une exception près : **pas de règle des
-trous**. Le corps de la poule est blanc, donc « fond » au sens du test de clarté, et
-percé il la rendrait creuse ; ces dessins n'ont aucun trou à ouvrir. Ce qu'ils ont en
-plus, c'est une ligne de sol en pointillés dont le jeu ne veut pas — il pose sa propre
-ombre. Les pointillés sont les seules taches d'encre à la fois **plates** (moins d'un
-tiers de haut que de large) et **minces** (moins de quinze pixels) ; les traits de
-mouvement et la spirale, eux, sont hauts ou ronds. Neuf pointillés jetés sur les quatre
-dessins, aucun trait de mouvement.
+Le détourage est celui des autres dessins, avec la **règle des trous retournée**. Le
+corps de la poule est blanc, donc « fond » au sens du test de clarté, et enfermé par son
+propre contour : percé, il la rendrait creuse. Mais il y a bien un trou à ouvrir, le
+**vide entre les pattes**, fermé en bas par les doigts qui se touchent — laissé plein,
+la poule debout arrive avec une plaque blanche sous le ventre, qui se voit sur le ciel
+comme sur la terre.
+
+Ce qui sépare les deux, mesuré sur les quatre dessins, c'est la place :
+
+| Tache de fond enfermée | Bas, en % de la hauteur d'encre |
+| --- | --- |
+| le corps (toujours la plus grosse) | — |
+| les blancs de l'œil | 45 % à 78 % |
+| les vides entre les pattes | 84 % à 98 % |
+
+On perce donc toute tache enfermée qui n'est pas la plus grosse et dont le bas passe le
+**quatre-vingt-unième centième**, le milieu des deux populations. Vingt-huit trous
+percés sur les quatre dessins, aucun œil crevé, aucun corps vidé.
+
+La couleur, elle, ne sépare rien : les pointillés du sol sont tracés à la même encre
+que la poule — clarté moyenne 51 à 107 contre 60 à 68 pour le dessin. Il reste donc un
+pointillé soudé à un doigt de patte, que ni le tri par taches ni un seuil de clarté ne
+peut attraper. À la taille où le jeu pose la planche il fait moins d'un pixel d'art, et
+il tombe pile là où le jeu peint sa propre ombre : vérifié à l'écran, dans les deux
+styles, on ne le voit pas.
+
+Ces dessins portent aussi une ligne de sol en pointillés dont le jeu ne veut pas — il
+pose sa propre ombre. Les pointillés sont les seules taches d'encre à la fois **plates**
+(moins d'un tiers de haut que de large) et **minces** (moins de quinze pixels) ; les
+traits de mouvement et la spirale, eux, sont hauts ou ronds. Ils partent avec ce tri,
+aucun trait de mouvement avec eux.
 
 ### Le répit, et pourquoi il est nécessaire
 
