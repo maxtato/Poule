@@ -2875,6 +2875,40 @@ let REC_BARRE=38, REC_FONTE=10;
 function larMou(h){ return h*MOU_W/MOU_H; }
 function icoMou(x,y,h){ ctx.drawImage(SPR.fly_ico, x, y, larMou(h), h); }
 
+/* ---------- le texte du HUD, sur la grille ----------
+   En mode pixel, tout le jeu est peint dans un tampon puis agrandi, et le texte
+   passait par la meme route — mais il en ressortait bien plus fin que le reste.
+   Mesure sur le chiffre des mouches et sur l'icone de mouche posee juste a cote,
+   meme taille et meme endroit : 123 teintes et des marches d'un pixel pour le
+   chiffre, 15 teintes et des marches de deux pour la planche. La difference n'est
+   pas la grille, c'est le LISSAGE : fillText peint des bords en degrade a la
+   resolution du tampon, quand une planche pixel n'a que ses quatorze teintes et des
+   bords francs.
+   On ecrit donc le texte dans un petit tampon a l'echelle du monde — une unite de
+   monde, un pixel — on coupe net son alpha pour supprimer le degrade, et on
+   l'agrandit sans lissage. Le chiffre a des lors exactement le grain du reste. */
+const tampTxt=document.createElement("canvas");
+const ttx=tampTxt.getContext("2d",{willReadFrequently:true});
+function txtP(txt, x, y, taille, coul, align, base){
+  ctx.font="900 "+taille+"px "+FONT;
+  ctx.textAlign=align; ctx.textBaseline=base;
+  if(!save.pixel){ ctx.fillStyle=coul; ctx.fillText(txt, x, y); return; }
+  const w=Math.ceil(ctx.measureText(txt).width)+2, h=Math.ceil(taille*1.42)+2;
+  if(w<1||h<1) return;
+  tampTxt.width=w; tampTxt.height=h;
+  ttx.font=ctx.font; ttx.textAlign="left"; ttx.textBaseline="top";
+  ttx.fillStyle=coul; ttx.fillText(txt, 1, 1);
+  /* le seuil supprime le degrade : un pixel est peint ou il ne l'est pas */
+  const d=ttx.getImageData(0,0,w,h);
+  for(let i=3;i<d.data.length;i+=4) d.data[i]=d.data[i]>=110?255:0;
+  ttx.putImageData(d,0,0);
+  const dx = align==="right" ? x-w+1 : align==="center" ? x-w/2 : x-1;
+  const dy = base==="middle" ? y-taille*0.72 : base==="alphabetic" ? y-taille*1.05 : y-1;
+  ctx.imageSmoothingEnabled=false;
+  ctx.drawImage(tampTxt, dx, dy, w, h);
+  ctx.imageSmoothingEnabled=!save.pixel;
+}
+
 function drawHUD(){
   if(state!==S.PLAY && state!==S.DEAD) return;
   /* Le HUD se cale sur le terrain, pas sur la fenetre : sur un ecran large les
@@ -2957,9 +2991,7 @@ function drawHUD(){
   const xGauche=xd-lgVal-16;
   let y=cy;
   for(const m of MES){
-    ctx.textAlign="right"; ctx.textBaseline="top";
-    ctx.font="900 "+m.fs+"px "+FONT; ctx.fillStyle=coulPres(m.v,m.r);
-    ctx.fillText(m.val, xd, y);
+    txtP(m.val, xd, y, m.fs, coulPres(m.v,m.r), "right", "top");
     if(m.ico) icoMou(xd-m.lgc-9*m.k-larMou(m.fs*0.78), y+m.fs*0.18, m.fs*0.78);
     if(m.rec){
       /* la barre prend ce que le nombre du record laisse : ensemble ils font la
@@ -2973,10 +3005,8 @@ function drawHUD(){
         ctx.fillStyle = battu ? OR_BATTU : "#F5A623";
         rr(bx2,by2,Math.max(hb,bw2*prog),hb,hb/2); ctx.fill();
       }
-      ctx.font="700 "+REC_FONTE+"px "+FONT;
-      ctx.fillStyle = battu ? OR_BATTU : REC_GRIS;
-      ctx.textAlign="right"; ctx.textBaseline="middle";
-      ctx.fillText(m.rec, xd, by2+hb/2);
+      txtP(m.rec, xd, by2+hb/2, REC_FONTE, battu ? OR_BATTU : REC_GRIS,
+           "right", "middle");
       ctx.textBaseline="top";
       y+=m.fs+4+hb+10;
     }else y+=m.fs+6;
@@ -3026,10 +3056,8 @@ function drawHUD(){
      pour l'entretenir : sans cette barre, la chaine casse sans prevenir. */
   if(chaine){
     const my=yg+8, chaud=combo>=5;
-    ctx.textAlign="left"; ctx.textBaseline="middle";
-    ctx.font="900 "+Math.round(mh*0.92)+"px "+FONT;
-    ctx.fillStyle = chaud ? "#D6342B" : YELL;
-    ctx.fillText("×"+combo, gx, my+mh*0.52);
+    txtP("×"+combo, gx, my+mh*0.52, Math.round(mh*0.92),
+         chaud ? "#D6342B" : YELL, "left", "middle");
     const cbw=Math.min(70,VW*0.15), cbh=Math.max(2.5,mh*0.14), cby=my+mh+5;
     const rest=Math.max(0,1-(t-lastEat)/COMBO_T);
     ctx.fillStyle="#E4DACA"; rr(gx,cby,cbw,cbh,cbh/2); ctx.fill();

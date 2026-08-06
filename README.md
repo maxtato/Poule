@@ -392,13 +392,31 @@ Le dernier palier battait entre l'ambre et le rouge neuf fois par seconde ; sur 
 chiffre qu'on surveille en esquivant, un clignotement se lit comme un défaut
 d'affichage et non comme une alerte. La couleur seule suffit.
 
-#### En mode pixel
+#### En mode pixel, le texte passe par la grille
 
-Le HUD est peint **dans le tampon**, avant l'agrandissement : son texte subit donc la
-grille comme le reste du jeu, ce qui est voulu — un compteur lisse par-dessus un
-décor en pixels trahirait les deux. Vérifié à l'agrandissement trois fois, dans les
-trois états : les glyphes ont des bords en escalier et chaque chiffre se lit sans
-effort, y compris le nombre du record à dix pixels de corps.
+Le HUD est peint **dans le tampon**, avant l'agrandissement, donc son texte suivait
+déjà la même route que le reste du jeu. Il en ressortait pourtant bien plus fin, et
+ce n'était pas une illusion. Mesuré sur le chiffre des mouches et sur l'icône de
+mouche posée juste à côté — même taille, même endroit, tout ce qui les sépare est la
+façon dont chacun est peint :
+
+| | Teintes | Marche médiane |
+| --- | --- | --- |
+| le chiffre, avant | **123** | 1 px |
+| la planche pixel | 15 | 2 px |
+| le chiffre, après | **11** | 2 px |
+
+La différence n'était pas la grille, c'était le **lissage**. `fillText` peint des bords
+en dégradé à la résolution du tampon, quand une planche pixel n'a que ses quatorze
+teintes et des bords francs.
+
+Le texte s'écrit donc maintenant dans un petit tampon à l'échelle du monde — une
+unité de monde, un pixel — dont l'alpha est coupé net pour supprimer le dégradé, puis
+agrandi sans lissage. Le chiffre a dès lors exactement le grain du reste. Le coût est
+nul à la mesure : 59,5 images par seconde en pixel, contre 59,7 en trait.
+
+Une conséquence à assumer : à dix unités de corps, le nombre du record devient un
+vrai texte en pixel art, lisible mais rugueux. C'est le prix de la cohérence.
 
 Au tout premier essai il n'y a rien à situer : pas d'échelle, juste les deux nombres.
 
