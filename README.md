@@ -1388,7 +1388,7 @@ suivant, c'est fini.
 | ~0,45 s | Le sol : poussière, secousse, étoiles |
 | ~0,95 s | Elle bouge : les étoiles s'éteignent, le relevage commence |
 | ~1,50 s | Debout. La course repart, la poule clignote |
-| ~2,70 s | Le répit s'achève, les obstacles peuvent de nouveau la toucher |
+| ~2,50 s | Le répit s'achève, les obstacles peuvent de nouveau la toucher |
 
 **Rien n'est enregistré au premier choc.** Ni le record, ni les mouches gobées, ni la
 partie jouée : `die()` sort avant d'y toucher. Une partie reste une partie, quel que
@@ -1400,16 +1400,22 @@ vie coûte le temps de se relever, pas la partie.
 
 ### Quatre dessins pour se relever
 
-À plat sonnée, ramassée sur elle-même, debout chancelante, debout. Chacune est posée à
-la largeur qui ramène sa **crête** à celle de la pose de course — la même règle que les
-poses de choc, mesurée de la même façon.
+L'ordre, à partir de la pose K.-O. — à plat, pattes en l'air, étoiles :
+
+1. **allongée, une patte levée**, les yeux ouverts : elle revient à elle
+2. **sur les genoux**, ramassée sur elle-même
+3. **courbée**, elle se lève
+4. **debout**, prête à repartir
+
+Chacune est posée à la largeur qui ramène sa **crête** à celle de la pose de course —
+la même règle que les poses de choc, mesurée de la même façon.
 
 | Pose | Crête sur la planche (420 de large) | Largeur posée | Durée |
 | --- | --- | --- | --- |
-| à plat, sonnée | 4 818 px | 113,0 | 0,15 s |
-| elle se ramasse | 5 154 px | 109,3 | 0,15 s |
-| debout, chancelante | 5 902 px | 102,1 | 0,13 s |
-| debout | 7 001 px | 93,8 | 0,12 s |
+| 1 · allongée, patte levée | 4 818 px | 113,0 | 0,15 s |
+| 2 · sur les genoux | 5 154 px | 109,3 | 0,15 s |
+| 3 · courbée, elle se lève | 5 902 px | 102,1 | 0,13 s |
+| 4 · debout | 7 001 px | 93,8 | 0,12 s |
 
 Les deux poses debout ressortent 2,7 % et 7,1 % plus courtes que la poule qui court :
 c'est la posture, elles sont voûtées, ce n'est pas l'échelle.
@@ -1432,10 +1438,27 @@ dessins, aucun trait de mouvement.
 
 Le monde étant resté figé, **l'obstacle qu'elle vient de percuter est toujours sur
 elle** au moment où elle se relève. Sans répit elle mourrait dans la seconde. Il dure
-1,2 s — à la vitesse la plus lente, un ballot posé sur la poule met un tiers de seconde
-à la dégager — et il se voit : elle bat entre plein et effacé huit fois par seconde.
-Elle ne disparaît jamais tout à fait, contrairement au clignotement d'arcade : c'est en
-se relevant qu'on a le plus besoin de savoir où elle est.
+**une petite seconde** et il se voit : elle bat entre plein et effacé huit fois par
+seconde. Elle ne disparaît jamais tout à fait, contrairement au clignotement d'arcade :
+c'est en se relevant qu'on a le plus besoin de savoir où elle est.
+
+Une seconde, est-ce assez ? Mesuré en jeu, à la vitesse la plus lente — celle du début
+de partie, la pire — sur les sept obstacles de sol, l'objet posé sur la poule au moment
+du relevage :
+
+| Obstacle | Largeur | Dégagé après | Marge |
+| --- | --- | --- | --- |
+| barrière | 240 | 0,48 s | 0,52 s |
+| brouette | 237 | 0,47 s | 0,53 s |
+| pneu | 215 | 0,43 s | 0,57 s |
+| ballot rond | 194 | 0,40 s | 0,60 s |
+| ballot | 173 | 0,37 s | 0,63 s |
+| seau | 154 | jamais touchée | 1,00 s |
+| fourche | 132 | 0,27 s | 0,73 s |
+
+Le pire cas garde une demi-seconde de marge, et dans aucun des sept elle ne remeurt.
+La mesure se fait en jeu et non au crayon : la poule rattrape sa place en sens inverse
+pendant que l'objet s'en va, ce qui retarde un peu le dégagement.
 
 Ce répit ne compte pas les traversées d'obstacle du carnet de trophées. Ce n'est pas un
 exploit de passer au travers de celui qui vient de vous mettre à terre.
@@ -1453,9 +1476,16 @@ le sol sans lever une patte.
 
 ### Le cœur
 
-Un cœur sous la jauge de plumes, plein tant que la vie est en réserve, **vide** une
-fois dépensée. Il ne disparaît pas quand il est vide : c'est justement à ce moment-là
-qu'il faut le voir, puisque le prochain choc sera le dernier.
+Un cœur par vie, plein tant qu'elle est en réserve, **vide** une fois dépensée. Il ne
+disparaît pas quand il est vide : c'est justement à ce moment-là qu'il faut le voir,
+puisque le prochain choc sera le dernier.
+
+Il vit sur la **deuxième ligne de la colonne de gauche**, celle que partage la barre de
+pouvoir avec son étoile — cœur à gauche sous la plume, étoile et barre à sa suite. Les
+deux se centrent sur la ligne : le cœur est plus court que la barre, et empilés ils
+faisaient un escalier. Cette ligne est remontée contre la jauge de plumes, trois unités
+sous le bas de l'icône au lieu de neuf, pour que les trois choses se lisent comme un
+seul bloc plutôt que comme trois étages.
 
 ### Le panneau de fin
 

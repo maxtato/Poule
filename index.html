@@ -1213,12 +1213,13 @@ let chocSur=false, deadVx=0, deadFrein=0;
    rien n'est perdu que ces quelques secondes. Au choc suivant, c'est fini.
    Le repit qui suit le relevage n'est pas une faveur : le monde est reste fige
    pendant la culbute, l'obstacle qu'elle vient de percuter est toujours sur elle. Il
-   faut le temps qu'il sorte du champ — a la vitesse la plus lente, un ballot pose sur
-   la poule met un tiers de seconde a la degager — et il faut que ca se voie, d'ou le
-   clignotement.
+   faut le temps qu'il sorte du champ, et il faut que ca se voie, d'ou le clignotement.
+   Une petite seconde suffit, et la mesure le confirme : a la vitesse la plus lente, le
+   plus large des obstacles pose sur la poule met 0,43 s a la degager, elle-meme
+   rattrapant sa place en sens inverse. Le double, donc, en marge.
    Le plancher de plumes est du meme ordre : un choc en vol la laisse souvent a zero,
    et sans lui elle se releve sans rien pour voler, donc pour rien. */
-const VIES_DEPART = 1, KO_SONNEE = 0.5, RELEVE_INVU = 1.2, RELEVE_PLUMES = 0.35;
+const VIES_DEPART = 1, KO_SONNEE = 0.5, RELEVE_INVU = 1.0, RELEVE_PLUMES = 0.35;
 let vies=VIES_DEPART, vaSeRelever=false, releveAt=-9, invuJusqu=-9;
 function invu(){ return t<invuJusqu; }
 /* La pose du relevage en cours, ou rien si ce n'est pas le moment. */
@@ -3021,6 +3022,10 @@ function coulPres(v, rec){
 const REC_GRIS="#A79A88";
 /* longueur des echelles de record, et corps de leur nombre */
 let REC_BARRE=38, REC_FONTE=10;
+/* L'ecart entre la jauge de plumes et la ligne du dessous — le coeur et le pouvoir.
+   Il se compte sous le BAS DE L'ICONE de plume, qui descend plus bas que la barre
+   elle-meme : trois unites ici en laissent une dizaine sous la barre. */
+const VIE_ECART=3;
 function larMou(h){ return h*MOU_W/MOU_H; }
 function icoMou(x,y,h){ ctx.drawImage(SPR.fly_ico, x, y, larMou(h), h); }
 /* Le coeur des vies : deux bosses et une pointe, cerne d'encre comme tout le reste du
@@ -3093,14 +3098,17 @@ function drawHUD(){
   const jh=fh*0.40, ph=jh*0.82, mh=Math.min(22,VW*0.046);
   const hb=Math.max(3, REC_FONTE*0.30);
   const pouvoir=traverse(), chaine=(state===S.PLAY && combo>=2);
+  /* La deuxieme ligne de la colonne de gauche porte le coeur des vies et, quand il est
+     allume, le pouvoir. Les deux partagent la meme ligne et se centrent dessus : le
+     coeur est plus court que la barre, et empiles ils faisaient un escalier. */
+  const cvh=Math.max(7, fh*0.42);
+  const lgh=Math.max(cvh, pouvoir?ph:0);
 
   /* La hauteur du cadre se mesure sur la plus haute des deux colonnes. Il grandit
      donc quand le pouvoir ou la chaine s'allument : c'est voulu, ce sont des
      evenements, et un emplacement vide reserve en permanence les ferait passer pour
      des ressources du jeu. */
-  let hg=fh;
-  if(VIES_DEPART>0) hg+=7+Math.max(7, fh*0.42);
-  if(pouvoir) hg+=9+ph;
+  let hg=fh+VIE_ECART+lgh;
   if(chaine)  hg+=8+mh+5+Math.max(2.5,mh*0.14);
   const hd=(fv*1.35+4+hb+10)*2-10;   // les corps s'ajustent, on majore
   const ch=Math.max(hg,hd), cy=top+2;
@@ -3201,24 +3209,25 @@ function drawHUD(){
     ctx.restore();
     rr(bx,by,bw,jh,r2); ctx.stroke();
   }
-  let yg=fy+fh;
+  /* La ligne du dessous : le coeur des vies a gauche, sous la plume, et le pouvoir a
+     sa suite quand il est allume. Elle est remontee contre la jauge de plumes — c'est
+     un seul bloc de trois choses, pas trois lignes qui se suivent. */
+  const ly=fy+fh+VIE_ECART;
 
-  /* La vie de rattrapage : un coeur sous la jauge, plein tant qu'elle est en reserve,
-     vide une fois depensee. Il ne disparait pas quand il est vide — c'est justement a
-     ce moment-la qu'il faut le voir, puisque le prochain choc sera le dernier. */
-  if(VIES_DEPART>0){
-    const ch2=Math.max(7, fh*0.42), cy2=yg+7;
-    for(let i=0;i<VIES_DEPART;i++) coeur(gx+i*(ch2*1.35), cy2, ch2, i<vies);
-    yg=cy2+ch2;
-  }
+  /* La vie de rattrapage : un coeur par vie, plein tant qu'elle est en reserve, vide
+     une fois depensee. Il ne disparait pas quand il est vide — c'est justement a ce
+     moment-la qu'il faut le voir, puisque le prochain choc sera le dernier. */
+  for(let i=0;i<VIES_DEPART;i++)
+    coeur(gx+i*(cvh*1.35), ly+(lgh-cvh)/2, cvh, i<vies);
 
-  /* Le pouvoir : une barre sous la jauge de plumes, qui se vide. Elle dit ce que le
-     clignotement de la poule ne dit pas — combien de temps il reste. Jaune, comme la
+  /* Le pouvoir : une barre sur la meme ligne que le coeur, qui se vide. Elle dit ce que
+     le clignotement de la poule ne dit pas — combien de temps il reste. Jaune, comme la
      mouche qui la declenche et comme l'etoile qui la nomme ; la jauge de vol
      au-dessus est rouge, les deux ne se confondent pas. */
+  let yg=ly+lgh;
   if(pouvoir){
     const reste=(orJusqu-t-OR_RAB)/OR_BARRE;   // le rab ne s'affiche pas : c'est une marge
-    const py=yg+9;
+    const py=ly+(lgh-ph)/2;
     const er=ph*0.95, ex=bx+er;
     const px2=bx+er*2+6, pw2=bw-(er*2+6);
     ctx.lineWidth=Math.max(1.4,fh*0.075); ctx.strokeStyle=INK;
