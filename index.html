@@ -564,12 +564,15 @@ const REB_W = 155, REB_H =  93, REB_ECLAT = [0.316, 0.623];   // ramene a la cre
    `d` est la duree de chaque pose. La premiere tient bien plus longtemps que les
    trois autres : c'est celle ou elle rouvre les yeux, et c'est elle qui raconte le
    coup. Les trois suivantes sont le geste de se lever, qui doit etre vif — une poule
-   qui se releve au ralenti n'a pas l'air sonnee, elle a l'air molle. */
+   qui se releve au ralenti n'a pas l'air sonnee, elle a l'air molle.
+   Les quatre ont ete raccourcies d'un cinquieme d'un bloc, proportions gardees : 0,64
+   seconde au lieu de 0,80. La demi-seconde et des poussieres ou elle reste K.-O. avant
+   de bouger, elle, ne bouge pas — c'est le temps du coup, pas celui du geste. */
 const RELEVE=[
-  {k:"rel1", w:113.0, h: 81.5, cx:0.481, d:0.40, plat:true},   // a plat, une patte levee, les yeux ouverts
-  {k:"rel2", w:109.3, h: 79.4, cx:0.500, d:0.15, plat:true},   // sur les genoux
-  {k:"rel3", w:102.1, h:105.3, cx:0.525, d:0.13},   // courbee, elle se leve
-  {k:"rel4", w: 93.8, h:109.8, cx:0.500, d:0.12},   // debout, prete a repartir
+  {k:"rel1", w:113.0, h: 81.5, cx:0.481, d:0.32, plat:true},   // a plat, une patte levee, les yeux ouverts
+  {k:"rel2", w:109.3, h: 79.4, cx:0.500, d:0.12, plat:true},   // sur les genoux
+  {k:"rel3", w:102.1, h:105.3, cx:0.525, d:0.10},   // courbee, elle se leve
+  {k:"rel4", w: 93.8, h:109.8, cx:0.500, d:0.10},   // debout, prete a repartir
 ];
 const RELEVE_DUREE = RELEVE.reduce((s,p)=>s+p.d, 0);
 const FEA_W = 74, FEA_H = 72;                           // plume de la jauge de vol
@@ -1249,7 +1252,9 @@ const COEUR_TRAIT = 0.039;
 const TOMBE_BOUM = 0.55;      // apres la pose au sol, le nuage
 const TOMBE_POP  = 0.22;      // le temps que la pierre prenne sa taille
 const TOMBE_RETARD = 0.10;    // le nuage a ce temps d'avance sur elle
-const TOMBE_PANNEAU = 1.45;   // apres la pose au sol, l'ecran de fin
+const TOMBE_PANNEAU = 2.10;   /* apres la pose au sol, l'ecran de fin. La pierre est
+                                 plantee vers 0,75 s : elle reste donc seule a l'ecran
+                                 une bonne seconde avant que le panneau la coiffe. */
 const TOMBE_W = 124, TOMBE_H = 128, TOMBE_DROP = 8;
 let tombeAt = -9, tombeGicle = false;
 /* Le nuage a sa propre liste, separee de la poussiere des appuis, pour une seule

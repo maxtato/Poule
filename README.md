@@ -1385,7 +1385,7 @@ pas — un nuage l'emporte et une pierre tombale se plante à sa place.
 | ~1,00 s | Le nuage. La poule disparaît, la pierre pousse dedans |
 | ~1,10 s | La pierre s'enfonce : la terre gicle |
 | ~1,20 s | Le nuage se disperse, la pierre est plantée |
-| ~1,90 s | Le panneau de fin |
+| ~2,55 s | Le panneau de fin |
 
 L'explosion n'est pas un effet de plus : **c'est elle qui autorise la substitution.**
 Sans elle, la poule se changerait en pierre sous les yeux du joueur, ce qui se lirait
@@ -1409,8 +1409,9 @@ pas. Les teintes sont relevées sur le dessin lui-même, la butte de terre et le
 du décor, pour que la giclée ait l'air d'en venir. Ils sont peints par-dessus la pierre,
 donc ils passent devant son pied.
 
-Le panneau de fin arrive une seconde plus tard qu'avant — 1,45 s après la pose au sol
-au lieu de 0,75. C'est le prix de la scène.
+Le panneau de fin arrive bien plus tard qu'avant — **2,10 s** après la pose au sol au
+lieu de 0,75. La pierre est plantée vers 0,75 s : elle reste donc seule à l'écran une
+bonne seconde, le temps qu'on la lise, avant que le panneau vienne la coiffer.
 
 ## La vie de rattrapage
 
@@ -1423,9 +1424,9 @@ suivant, c'est fini.
 | 0 s | Le choc, la culbute, et le cœur qui s'échappe |
 | ~0,45 s | Le sol : poussière, secousse, étoiles |
 | ~1,30 s | Elle rouvre les yeux : les étoiles s'éteignent |
-| ~1,70 s | Elle se lève, en trois images |
-| ~2,10 s | Debout. La course repart, la poule clignote |
-| ~3,10 s | Le répit s'achève, les obstacles peuvent de nouveau la toucher |
+| ~1,62 s | Elle se lève, en trois images |
+| ~1,95 s | Debout. La course repart, la poule clignote |
+| ~2,95 s | Le répit s'achève, les obstacles peuvent de nouveau la toucher |
 
 La pose K.-O. — à plat, les deux pattes en l'air, la ronde d'étoiles — tient **0,85 s**
 avant que le relevage commence. C'est elle qui dit le coup ; une demi-seconde passait
@@ -1453,15 +1454,19 @@ la même règle que les poses de choc, mesurée de la même façon.
 
 | Pose | Crête sur la planche (420 de large) | Largeur posée | Durée |
 | --- | --- | --- | --- |
-| 1 · allongée, patte levée | 4 818 px | 113,0 | 0,40 s |
-| 2 · sur les genoux | 5 154 px | 109,3 | 0,15 s |
-| 3 · courbée, elle se lève | 5 902 px | 102,1 | 0,13 s |
-| 4 · debout | 7 001 px | 93,8 | 0,12 s |
+| 1 · allongée, patte levée | 4 818 px | 113,0 | 0,32 s |
+| 2 · sur les genoux | 5 154 px | 109,3 | 0,12 s |
+| 3 · courbée, elle se lève | 5 902 px | 102,1 | 0,10 s |
+| 4 · debout | 7 001 px | 93,8 | 0,10 s |
 
 La première tient bien plus longtemps que les trois autres : c'est celle où elle rouvre
 les yeux, et c'est elle qui raconte le coup. Les trois suivantes sont le geste de se
 lever, qui doit être vif — une poule qui se relève au ralenti n'a pas l'air sonnée,
 elle a l'air molle.
+
+Les quatre ont été raccourcies **d'un cinquième d'un bloc**, proportions gardées : 0,64
+seconde au lieu de 0,80. La demi-seconde et des poussières où elle reste K.-O. avant de
+bouger, elle, ne bouge pas — c'est le temps du coup, pas celui du geste.
 
 Les deux poses debout ressortent 2,7 % et 7,1 % plus courtes que la poule qui court :
 c'est la posture, elles sont voûtées, ce n'est pas l'échelle.
