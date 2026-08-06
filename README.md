@@ -1383,7 +1383,8 @@ pas — un nuage l'emporte et une pierre tombale se plante à sa place.
 |---|---|
 | ~0,45 s | Le sol : poussière, secousse, étoiles |
 | ~1,00 s | Le nuage. La poule disparaît, la pierre pousse dedans |
-| ~1,10 s | Le nuage se disperse, la pierre est plantée |
+| ~1,10 s | La pierre s'enfonce : la terre gicle |
+| ~1,20 s | Le nuage se disperse, la pierre est plantée |
 | ~1,90 s | Le panneau de fin |
 
 L'explosion n'est pas un effet de plus : **c'est elle qui autorise la substitution.**
@@ -1402,6 +1403,12 @@ peints un à un, leurs transparences s'additionnent aux recouvrements et le nuag
 au pâté brun ; en une seule silhouette il garde une teinte unie, et ce sont ses bosses
 qui le disent.
 
+**La pierre ne se pose pas, elle s'enfonce.** Vingt-quatre mottes brunes et cailloux gris
+partent de son pied en éventail, retombent et s'éteignent au sol — ils ne rebondissent
+pas. Les teintes sont relevées sur le dessin lui-même, la butte de terre et les cailloux
+du décor, pour que la giclée ait l'air d'en venir. Ils sont peints par-dessus la pierre,
+donc ils passent devant son pied.
+
 Le panneau de fin arrive une seconde plus tard qu'avant — 1,45 s après la pose au sol
 au lieu de 0,75. C'est le prix de la scène.
 
@@ -1415,10 +1422,14 @@ suivant, c'est fini.
 |---|---|
 | 0 s | Le choc, la culbute, et le cœur qui s'échappe |
 | ~0,45 s | Le sol : poussière, secousse, étoiles |
-| ~0,95 s | Elle rouvre les yeux : les étoiles s'éteignent |
-| ~1,35 s | Elle se lève, en trois images |
-| ~1,75 s | Debout. La course repart, la poule clignote |
-| ~2,75 s | Le répit s'achève, les obstacles peuvent de nouveau la toucher |
+| ~1,30 s | Elle rouvre les yeux : les étoiles s'éteignent |
+| ~1,70 s | Elle se lève, en trois images |
+| ~2,10 s | Debout. La course repart, la poule clignote |
+| ~3,10 s | Le répit s'achève, les obstacles peuvent de nouveau la toucher |
+
+La pose K.-O. — à plat, les deux pattes en l'air, la ronde d'étoiles — tient **0,85 s**
+avant que le relevage commence. C'est elle qui dit le coup ; une demi-seconde passait
+trop vite pour qu'on la voie.
 
 **Rien n'est enregistré au premier choc.** Ni le record, ni les mouches gobées, ni la
 partie jouée : `die()` sort avant d'y toucher. Une partie reste une partie, quel que
@@ -1550,6 +1561,13 @@ penchée et son dessin est plus large que son trait, un alignement à gauche les
 de travers sous elle. Le calcul porte sur le groupe entier, pour que deux cœurs ou
 trois restent centrés de la même façon.
 
+L'épaisseur de son trait est **donnée, pas déduite de sa taille**. Elle doit valoir celle
+de sa voisine, et celle-là se mesure : la plume du HUD, posée à 21,4 px CSS de haut, a un
+trait dont la médiane fait **0,83 px** — soit 0,039 fois sa hauteur. Déduite de la
+hauteur du cœur, comme au départ, la ligne faisait deux fois et demie celle de la plume.
+La mesure se fait à six fois la taille réelle puis se divise : à la taille réelle le
+trait fait un pixel et la médiane ne sait plus rien dire.
+
 ### Le cœur qui s'échappe
 
 La vie se dépense **à l'instant du choc**, et c'est le seul moment où l'on ne regarde
@@ -1558,7 +1576,8 @@ même dessin que celui du HUD, c'est bien celui-là qu'elle vient de perdre — 
 au-dessus d'elle et s'évapore, là où l'œil est déjà.
 
 Il monte de 46 unités par seconde, ondule doucement, grossit d'un tiers et s'efface sur
-1,3 seconde. Il est peint **après** la poule : c'est lui qu'on doit suivre à cet
+1,3 seconde. Son trait fait 1,55 unité, c'est-à-dire exactement celui des dessins du
+monde — la valeur que `STROKE` déclare déjà. Il est peint **après** la poule : c'est lui qu'on doit suivre à cet
 instant-là. Comme le monde est figé pendant la culbute, il monte sur un décor immobile,
 ce qui le rend d'autant plus lisible.
 

@@ -1227,7 +1227,7 @@ let chocSur=false, deadVx=0, deadFrein=0;
    rattrapant sa place en sens inverse. Le double, donc, en marge.
    Le plancher de plumes est du meme ordre : un choc en vol la laisse souvent a zero,
    et sans lui elle se releve sans rien pour voler, donc pour rien. */
-const VIES_DEPART = 1, KO_SONNEE = 0.5, RELEVE_INVU = 1.0, RELEVE_PLUMES = 0.35;
+const VIES_DEPART = 1, KO_SONNEE = 0.85, RELEVE_INVU = 1.0, RELEVE_PLUMES = 0.35;
 let vies=VIES_DEPART, vaSeRelever=false, releveAt=-9, invuJusqu=-9;
 function invu(){ return t<invuJusqu; }
 /* Le coeur qui s'echappe. La vie se depense a l'instant du choc, et c'est le seul
@@ -1236,6 +1236,9 @@ function invu(){ return t<invuJusqu; }
    deja. Meme dessin que celui du HUD — c'est bien celui-la qu'elle vient de perdre. */
 let coeurs=[];
 const COEUR_VOL = 1.3, COEUR_MONTE = 46, COEUR_H = 22;
+/* L'epaisseur du trait du coeur du HUD, en fraction de la hauteur de la plume posee a
+   cote : 0,83 px de trait pour 21,4 px de plume, mesure sur la planche. */
+const COEUR_TRAIT = 0.039;
 /* ---------- la fin, quand il n'y a plus de vie ----------
    Elle reste K.-O. le temps qu'on lise le coup, puis un nuage l'emporte et la pierre
    tombale se plante a sa place. L'explosion n'est pas un effet de plus : c'est elle
@@ -1248,13 +1251,20 @@ const TOMBE_POP  = 0.22;      // le temps que la pierre prenne sa taille
 const TOMBE_RETARD = 0.10;    // le nuage a ce temps d'avance sur elle
 const TOMBE_PANNEAU = 1.45;   // apres la pose au sol, l'ecran de fin
 const TOMBE_W = 124, TOMBE_H = 128, TOMBE_DROP = 8;
-let tombeAt = -9;
+let tombeAt = -9, tombeGicle = false;
 /* Le nuage a sa propre liste, separee de la poussiere des appuis, pour une seule
    raison : il est peint APRES la poule et la pierre, quand la poussiere est peinte
    avant les obstacles. C'est ce qui lui permet de couvrir la substitution — peint
    dessous, il laissait voir la pierre apparaitre par-dessus lui. */
 let fumee=[];
 const FUMEE_VIE = 0.95;
+/* La giclee de terre : la pierre ne se pose pas, elle s'enfonce. Des mottes brunes et
+   quelques cailloux gris partent de son pied, retombent et s'eteignent au sol. Les
+   teintes sont relevees sur le dessin lui-meme — la butte de terre et les cailloux du
+   decor — pour que la giclee ait l'air d'en venir. */
+let terre=[];
+const TERRE_VIE = 0.95;
+const TERRE_COUL = ["#8A5A33","#A0703F","#6F4726","#9A948C"];
 /* La pose du relevage en cours, ou rien si ce n'est pas le moment. */
 function relevePose(){
   if(releveAt<0) return null;
@@ -1341,7 +1351,7 @@ function reset(){
   trophFile=[]; trophCur=null; trophT=-9;
   deadLand=-9; chocVol=false; chocSur=false; deadVx=0; deadFrein=0;
   vies=VIES_DEPART; vaSeRelever=false; releveAt=-9; invuJusqu=-9;
-  coeurs=[]; fumee=[]; tombeAt=-9;
+  coeurs=[]; fumee=[]; terre=[]; tombeAt=-9; tombeGicle=false;
   tFly=3; tOr=OR_ATTENTE[0]*0.55; orJusqu=-9;
   clouds=[]; for(let i=0;i<5;i++) clouds.push({x:Math.random()*VIEW_W*1.5, f:.15+Math.random()*.6, s:.55+Math.random()*.6, v:.5+Math.random()*.7});
   /* Les massifs debordent largement du cadre : on seme au-dela des deux bords pour
@@ -1830,6 +1840,21 @@ function explose(x,y){
   eclat(x, y, 14);
   dust(x-30, TOMBE_DROP); dust(x+30, TOMBE_DROP);
 }
+/* La terre qui gicle, au moment ou la pierre s'enfonce. Elle part du pied de la pierre,
+   en eventail vers le haut et sur les cotes, et retombe. Les mottes tournent, les
+   cailloux roulent — c'est la meme chose, seule la teinte les separe. */
+function giclee(x, y){
+  for(let i=0;i<24;i++){
+    const cote=i%2?1:-1;
+    const a=-Math.PI/2 + cote*(0.22+Math.random()*0.9);
+    const v=150+Math.random()*270;
+    terre.push({x:x+cote*(6+Math.random()*26), y,
+                vx:Math.cos(a)*v, vy:Math.sin(a)*v,
+                r:1.6+Math.random()*3.4, rot:Math.random()*6.3,
+                vr:(Math.random()-.5)*16,
+                c:TERRE_COUL[(Math.random()*TERRE_COUL.length)|0], l:1});
+  }
+}
 function eclat(x,y,n){
   const base=Math.random()*Math.PI*2;
   for(let i=0;i<n;i++){
@@ -2095,6 +2120,18 @@ function update(dt){
     f.r+=f.dr*dt; f.l-=dt/FUMEE_VIE;
   }
   fumee=fumee.filter(f=>f.l>0);
+  /* La giclee part a l'instant ou la pierre commence a s'enfoncer, une seule fois. */
+  if(tombeAt>=0 && !tombeGicle && t-tombeAt>=TOMBE_RETARD){
+    tombeGicle=true; giclee(hen.x+80, TOMBE_DROP-2);
+  }
+  /* La terre : elle retombe et s'arrete net au sol, elle ne rebondit pas. */
+  for(const p of terre){
+    if(p.pose){ p.l-=dt/TERRE_VIE; continue; }
+    p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=1250*dt; p.rot+=p.vr*dt;
+    p.l-=dt/TERRE_VIE;
+    if(p.y>=TOMBE_DROP){ p.y=TOMBE_DROP; p.pose=true; }
+  }
+  terre=terre.filter(p=>p.l>0);
   /* Les trophees continuent d'etre servis pendant la culbute : celui qui tombe sur
      la derniere mouche doit avoir le temps de s'afficher. Aucun ne peut plus se
      gagner a ce moment-la, les compteurs sont figes. */
@@ -2993,6 +3030,21 @@ function draw(){
      contre la pierre. Un gris un peu plus soutenu que la poussiere des appuis — il
      doit se lire aussi bien sur le ciel que sur la terre, qui sont de la meme famille
      de teintes. */
+  /* La terre giclee, par-dessus la pierre : elle passe devant son pied. Des galets
+     d'encre, comme les cailloux du decor, tournes chacun a sa facon. */
+  if(terre.length){
+    ctx.lineWidth=STROKE*0.6; ctx.strokeStyle=INK; ctx.lineJoin="round";
+    for(const p of terre){
+      ctx.globalAlpha=Math.min(1, p.l*2.6);
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      ctx.beginPath(); ctx.ellipse(0,0,p.r,p.r*0.78,0,0,7);
+      ctx.fillStyle=p.c; ctx.fill();
+      if(p.r>2.4) ctx.stroke();
+      ctx.restore();
+    }
+    ctx.globalAlpha=1;
+  }
+
   if(fumee.length){
     /* Les ronds sont peints en UN SEUL trace. Peints un a un, leurs transparences
        s'additionnent aux recouvrements et le nuage tourne au pate brun ; en une seule
@@ -3011,7 +3063,7 @@ function draw(){
   for(const c of coeurs){
     const u=1-c.l, h=COEUR_H*(1+u*0.3);
     ctx.globalAlpha=Math.min(1, c.l*2.4);
-    coeur(c.x+Math.sin(c.ph)*6-h*0.54, c.y, h, true);
+    coeur(c.x+Math.sin(c.ph)*6-h*0.54, c.y, h, true, STROKE);
   }
   ctx.globalAlpha=1;
 
@@ -3152,8 +3204,13 @@ function larMou(h){ return h*MOU_W/MOU_H; }
 function icoMou(x,y,h){ ctx.drawImage(SPR.fly_ico, x, y, larMou(h), h); }
 /* Le coeur des vies : deux bosses et une pointe, cerne d'encre comme tout le reste du
    jeu. Plein, il est rouge ; vide, il garde le creme des jauges — la forme reste, et
-   c'est la forme qui dit qu'il en manque un. */
-function coeur(x, y, h, plein){
+   c'est la forme qui dit qu'il en manque un.
+   L'epaisseur du trait est DONNEE, pas deduite de la taille du coeur : elle doit valoir
+   celle de son voisin, et celle-la est mesuree. La plume du HUD, posee a 21,4 px CSS de
+   haut, a un trait de 0,83 px — soit 0,039 fois sa hauteur ; la poule du monde, a sa
+   taille de jeu, a un trait de 1,5 unite, ce que STROKE declare deja. Deduite de la
+   hauteur du coeur, la ligne faisait deux fois et demie celle de la plume. */
+function coeur(x, y, h, plein, trait){
   const w=h*1.08;
   ctx.beginPath();
   ctx.moveTo(x+w/2, y+h);
@@ -3162,7 +3219,7 @@ function coeur(x, y, h, plein){
   ctx.closePath();
   ctx.fillStyle = plein ? "#D6342B" : "#EFE6D6";
   ctx.fill();
-  ctx.lineWidth=Math.max(1.2, h*0.13); ctx.strokeStyle=INK; ctx.lineJoin="round";
+  ctx.lineWidth=trait; ctx.strokeStyle=INK; ctx.lineJoin="round";
   ctx.stroke();
 }
 
@@ -3344,7 +3401,7 @@ function drawHUD(){
      laissait de travers sous elle. */
   const cvl=VIES_DEPART*cvh*1.08+(VIES_DEPART-1)*cvh*0.27;
   for(let i=0;i<VIES_DEPART;i++)
-    coeur(gx+fw/2-cvl/2+i*(cvh*1.35), ly+(lgh-cvh)/2, cvh, i<vies);
+    coeur(gx+fw/2-cvl/2+i*(cvh*1.35), ly+(lgh-cvh)/2, cvh, i<vies, fh*COEUR_TRAIT);
 
   /* Le pouvoir : une barre sur la meme ligne que le coeur, qui se vide. Elle dit ce que
      le clignotement de la poule ne dit pas — combien de temps il reste. Jaune, comme la
