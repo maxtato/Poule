@@ -3365,8 +3365,11 @@ function drawHUD(){
   const top=Math.max(4, u*0.10);
 
   const fh=u*0.315, fw=fh*FEA_W/FEA_H;       // la plume
-  const jh=u*0.175, jy=top+u*0.32-jh/2;      // la jauge de vol
-  const ph=u*0.155;                          // la barre de pouvoir
+  /* Les deux jauges ont maigri d'un septieme par rapport au visuel de reference, qui
+     les donnait a 0,175 et 0,155 : a l'ecran elles pesaient plus que ce qu'elles
+     disent. Elles gardent leur ligne, seule l'epaisseur change. */
+  const jh=u*0.150, jy=top+u*0.32-jh/2;      // la jauge de vol
+  const ph=u*0.133;                          // la barre de pouvoir
   const cvh=u*0.21;                          // le coeur
   const y2=top+u*0.65;                       // le milieu de la seconde ligne
   const fbig=Math.round(u*0.27);             // les grands nombres

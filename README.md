@@ -339,8 +339,13 @@ bandeau n'aurait plus de bord.
 #### Toutes les tailles descendent d'une seule
 
 `u`, la hauteur du bandeau, vaut 15,5 % de la largeur du terrain, plafonnée à 64. Tout
-le reste en découle : plume 0,315 u, jauge de vol 0,175 u, cœur 0,21 u, grands nombres
-0,27 u, records 0,147 u, couronne 0,13 u, pastille 0,84 × 0,60 u. Les fractions sont relevées **au compas
+le reste en découle : plume 0,315 u, jauge de vol 0,150 u, barre de pouvoir 0,133 u,
+cœur 0,21 u, grands nombres 0,27 u, records 0,147 u, couronne 0,13 u, pastille
+0,84 × 0,60 u.
+
+Les deux jauges ont maigri d'un septième par rapport au visuel, qui les donnait à 0,175
+et 0,155 : à l'écran elles pesaient plus que ce qu'elles disent. Elles gardent leur
+ligne et leur longueur, seule l'épaisseur change. Les fractions sont relevées **au compas
 sur le visuel de référence** — une bande de 1 840 sur 285 — si bien que le bandeau garde
 ses proportions du téléphone de 360 au bureau.
 
