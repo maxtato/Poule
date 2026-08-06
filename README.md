@@ -326,8 +326,10 @@ porter deux nombres. Le rythme des deux colonnes suffit à dire que c'est une
 interface ; le ciel reste au ciel.
 
 Pour chaque mesure : le chiffre de la partie en cours **en gros**, et **juste en dessous**
-sa barre de record, aussi large que lui — elle se lit comme un soulignement, pas comme
-une deuxième mesure.
+la barre du record avec son nombre. Les deux ensemble occupent exactement la largeur
+du chiffre au-dessus — le nombre du record n'a pas de colonne à lui, il tient dans la
+ligne et c'est la barre qui se raccourcit d'autant. La barre se lit comme un
+soulignement, pas comme une deuxième mesure.
 
 **Les deux lignes se mettent à la même largeur.** À corps égal elles ne l'ont pas :
 « 8 » avec sa mouche fait 47 unités quand « 626 m » en fait 70, et le bloc part en
@@ -345,16 +347,14 @@ mouches et des centaines aux milliers de mètres :
 | 3 | 9 400 m | 88,4 (36 px) | 89 (27 px) | 0,7 % |
 | 248 | 980 m | 96,2 (27 px) | 98 (37 px) | 1,8 % |
 
-L'écart le plus grand est de **1,8 %**. Le rapport est borné à 1,8 pour qu'une seule
+L'écart le plus grand est de **1,8 %**, et sur chaque ligne « barre + record » retombe
+au dixième près sur la largeur du chiffre. Le rapport est borné à 1,8 pour qu'une seule
 mouche en face de dix mille mètres ne donne pas un chiffre énorme ; sur les cas
 mesurés, cette borne ne mord jamais.
 
 Un effet de bord assumé : le corps d'une ligne change quand l'autre passe un ordre de
 grandeur — à 999 m qui devient 1 000 m, le chiffre des mouches rapetisse d'un cran.
 C'est le prix du rectangle, et cela arrive quelques fois par partie.
-
-Le nombre du record vit dans une colonne réservée à droite, la même pour les deux
-lignes, sinon les barres ne partiraient pas du même bord.
 
 Les deux colonnes **se bornent l'une l'autre** : le plus large des deux nombres est
 mesuré, icône comprise, et la colonne de gauche s'arrête là. Sans cela la barre de

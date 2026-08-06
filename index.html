@@ -2904,10 +2904,10 @@ function drawHUD(){
      rec: save.bestDist>0 ? chiffre(save.bestDist)+" m" : null, ico:false},
   ];
   const aRec=MES.some(m=>m.rec);
-  ctx.font="700 "+REC_FONTE+"px "+FONT;
-  const lgRec=Math.max(...MES.map(m=>m.rec?ctx.measureText(m.rec).width:0));
+  /* Le bord droit est le meme pour tout : le gros chiffre, la barre et le nombre du
+     record. Ce dernier n'a plus de colonne a lui — il tient DANS la largeur de la
+     ligne, et c'est la barre qui se raccourcit d'autant. */
   const xd=cx+cw;
-  const xNum = aRec ? xd-lgRec-8 : xd;
 
   /* LES DEUX LIGNES SE METTENT A LA MEME LARGEUR. A corps egal elles ne l'ont pas :
      « 8 » avec sa mouche fait quarante-sept unites quand « 626 m » en fait soixante-
@@ -2915,8 +2915,8 @@ function drawHUD(){
      on prend la plus large, et on grossit l'autre jusqu'a la rejoindre. Le rapport est
      borne : entre une mouche et dix mille metres l'ecart devient tel que suivre
      ferait un chiffre enorme pour une seule mouche.
-     Comme la barre du record fait ensuite la largeur de sa ligne, l'ensemble forme un
-     rectangle plein au lieu d'un escalier. */
+     Sous chaque chiffre, la barre ET son nombre de record occupent ensemble la meme
+     largeur que lui : l'ensemble forme un rectangle plein au lieu d'un escalier. */
   const CAP=1.8;
   for(const m of MES){
     ctx.font="900 "+fv+"px "+FONT;
@@ -2934,16 +2934,19 @@ function drawHUD(){
   /* Les deux colonnes se bornent l'une l'autre : sans cela la barre de pouvoir, qui
      tombe a la hauteur de la deuxieme ligne de droite, passait par-dessus le nombre
      des metres. */
-  const xGauche=xNum-lgVal-16;
+  const xGauche=xd-lgVal-16;
   let y=cy;
   for(const m of MES){
     ctx.textAlign="right"; ctx.textBaseline="top";
     ctx.font="900 "+m.fs+"px "+FONT; ctx.fillStyle=coulPres(m.v,m.r);
-    ctx.fillText(m.val, xNum, y);
-    if(m.ico) icoMou(xNum-m.lgc-9*m.k-larMou(m.fs*0.78), y+m.fs*0.18, m.fs*0.78);
+    ctx.fillText(m.val, xd, y);
+    if(m.ico) icoMou(xd-m.lgc-9*m.k-larMou(m.fs*0.78), y+m.fs*0.18, m.fs*0.78);
     if(m.rec){
-      /* aussi large que la ligne qu'elle souligne, jamais davantage */
-      const bw2=m.large, bx2=xNum-bw2, by2=y+m.fs+4, battu=m.v>=m.r;
+      /* la barre prend ce que le nombre du record laisse : ensemble ils font la
+         largeur du chiffre du dessus, ni plus ni moins */
+      ctx.font="700 "+REC_FONTE+"px "+FONT;
+      const lr=ctx.measureText(m.rec).width;
+      const bw2=Math.max(10, m.large-lr-6), bx2=xd-m.large, by2=y+m.fs+4, battu=m.v>=m.r;
       ctx.fillStyle="#E4DACA"; rr(bx2,by2,bw2,hb,hb/2); ctx.fill();
       const prog=Math.min(1, m.v/m.r);
       if(prog>0.01){
