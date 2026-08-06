@@ -17,6 +17,11 @@ d'engrenage, à côté du bouton de son, bascule de l'un à l'autre.
 | `Espace`, `↑`, `W` | Idem au clavier |
 | `M` | Couper ou remettre le son |
 
+La poule a **une vie de rattrapage** : au premier choc elle tombe, se relève au bout
+d'une demi-seconde et la course repart où elle en était ; au choc suivant, la partie
+s'arrête. Un cœur sous la jauge de plumes dit si elle est encore en réserve — voir
+[La vie de rattrapage](#la-vie-de-rattrapage).
+
 Le saut part toujours à pleine impulsion et se **coupe net au relâchement** : la
 hauteur suit donc la durée de l'appui, sans qu'il faille attendre de savoir combien
 de temps le doigt va rester. Passé le moment où la pesanteur a ramené la vitesse
@@ -1354,6 +1359,9 @@ mesurés venait peut-être de là, auquel cas la correction est très légèreme
 généreuse. Les poses de vol restent à 1,013, mais cela vient du dessin d'origine et
 non d'une constante — on n'y touche pas.
 
+Les quatre poses du relevage, arrivées ensuite, sont dimensionnées par la même mesure
+et dès l'origine : voir [Quatre dessins pour se relever](#quatre-dessins-pour-se-relever).
+
 ## La chute
 
 Deux dessins, pas quatre :
@@ -1364,6 +1372,90 @@ Deux dessins, pas quatre :
 | 0,16 s | La poule KO, qui tombe |
 | ~0,45 s | Le sol : poussière, secousse |
 | ~1,2 s | Le panneau de fin |
+
+Ce déroulé est celui du **dernier** choc. Tant qu'il lui reste une vie, la chute est la
+même mais elle ne mène pas au panneau : la poule se relève et la course repart.
+
+## La vie de rattrapage
+
+La poule a **une vie** en réserve. Au premier choc elle tombe, reste sonnée une
+demi-seconde, se relève et la course reprend là où elle s'était arrêtée. Au choc
+suivant, c'est fini.
+
+| Instant | Ce qui se passe |
+|---|---|
+| 0 s | Le choc, puis la culbute |
+| ~0,45 s | Le sol : poussière, secousse, étoiles |
+| ~0,95 s | Elle bouge : les étoiles s'éteignent, le relevage commence |
+| ~1,50 s | Debout. La course repart, la poule clignote |
+| ~2,70 s | Le répit s'achève, les obstacles peuvent de nouveau la toucher |
+
+**Rien n'est enregistré au premier choc.** Ni le record, ni les mouches gobées, ni la
+partie jouée : `die()` sort avant d'y toucher. Une partie reste une partie, quel que
+soit le nombre de chutes.
+
+**Le monde reste figé pendant tout ce temps** — c'est déjà le cas de la chute, et ça le
+reste du relevage. La distance, la vitesse et les obstacles ne bougent pas : perdre une
+vie coûte le temps de se relever, pas la partie.
+
+### Quatre dessins pour se relever
+
+À plat sonnée, ramassée sur elle-même, debout chancelante, debout. Chacune est posée à
+la largeur qui ramène sa **crête** à celle de la pose de course — la même règle que les
+poses de choc, mesurée de la même façon.
+
+| Pose | Crête sur la planche (420 de large) | Largeur posée | Durée |
+| --- | --- | --- | --- |
+| à plat, sonnée | 4 818 px | 113,0 | 0,15 s |
+| elle se ramasse | 5 154 px | 109,3 | 0,15 s |
+| debout, chancelante | 5 902 px | 102,1 | 0,13 s |
+| debout | 7 001 px | 93,8 | 0,12 s |
+
+Les deux poses debout ressortent 2,7 % et 7,1 % plus courtes que la poule qui court :
+c'est la posture, elles sont voûtées, ce n'est pas l'échelle.
+
+Chaque pose est calée par le **milieu de son corps**, pas par le milieu de sa planche :
+le premier dessin porte sa spirale d'étourdissement loin sur la droite, et calé sur son
+cadre le corps aurait sauté d'une image à l'autre. La mesure est faite sur la planche
+finie — la plus grosse tache d'encre est la poule, tout le reste est décor.
+
+Le détourage est celui des autres dessins, à une exception près : **pas de règle des
+trous**. Le corps de la poule est blanc, donc « fond » au sens du test de clarté, et
+percé il la rendrait creuse ; ces dessins n'ont aucun trou à ouvrir. Ce qu'ils ont en
+plus, c'est une ligne de sol en pointillés dont le jeu ne veut pas — il pose sa propre
+ombre. Les pointillés sont les seules taches d'encre à la fois **plates** (moins d'un
+tiers de haut que de large) et **minces** (moins de quinze pixels) ; les traits de
+mouvement et la spirale, eux, sont hauts ou ronds. Neuf pointillés jetés sur les quatre
+dessins, aucun trait de mouvement.
+
+### Le répit, et pourquoi il est nécessaire
+
+Le monde étant resté figé, **l'obstacle qu'elle vient de percuter est toujours sur
+elle** au moment où elle se relève. Sans répit elle mourrait dans la seconde. Il dure
+1,2 s — à la vitesse la plus lente, un ballot posé sur la poule met un tiers de seconde
+à la dégager — et il se voit : elle bat entre plein et effacé huit fois par seconde.
+Elle ne disparaît jamais tout à fait, contrairement au clignotement d'arcade : c'est en
+se relevant qu'on a le plus besoin de savoir où elle est.
+
+Ce répit ne compte pas les traversées d'obstacle du carnet de trophées. Ce n'est pas un
+exploit de passer au travers de celui qui vient de vous mettre à terre.
+
+### Ce qu'elle récupère, et ce qu'elle perd
+
+Elle repart avec **au moins 35 % de plumes**. Un choc en vol la laisse souvent à zéro,
+et sans ce plancher elle se relèverait sans rien pour voler, donc pour rien. La chaîne
+de mouches, elle, est bel et bien cassée : on ne gobe pas en étant à terre.
+
+Elle ne se rend pas non plus à sa place de course. Le choc l'a reculée d'une
+cinquantaine d'unités, et elle rattrape ce retard **une fois le monde reparti**, en
+courant plus vite que le décor. Ramenée de force pendant le relevage, elle glissait sur
+le sol sans lever une patte.
+
+### Le cœur
+
+Un cœur sous la jauge de plumes, plein tant que la vie est en réserve, **vide** une
+fois dépensée. Il ne disparaît pas quand il est vide : c'est justement à ce moment-là
+qu'il faut le voir, puisque le prochain choc sera le dernier.
 
 ### Le panneau de fin
 
@@ -1577,6 +1669,24 @@ Un essai à **trois pixels d'écran par pixel d'art** a été fait, et mesuré :
 était parfaite — la plus courte plage de couleur valait 3 partout, et 100 % des
 longueurs étaient des multiples de 3, contre 1 px et 11 à 35 % avant. Mais le bloc
 devenait gros et le détail partait avec. On a gardé la finesse.
+
+#### La table des tailles est en pixels CSS, pas en unités de monde
+
+Le piège s'est refermé une fois, en ajoutant les quatre poses du relevage. Les tailles
+d'affichage qui commandent la conversion (`tailles.json`) ne sont pas relevées en
+unités de monde mais en **pixels CSS sur un écran de référence** de 390 de large, où
+une unité de monde vaut 0,4875 pixel CSS. Inscrites en unités de monde, les quatre
+planches sortaient à 339, 328, 306 et 281 colonnes là où il en fallait 165, 160, 149 et
+137 : **deux fois trop fines**, donc hors de la grille commune.
+
+La vérification tient en une ligne et vaut pour n'importe quelle planche : le nombre de
+colonnes doit égaler la largeur posée × 0,4875 ÷ 0,333. Après correction, les quatre
+nouvelles poses tombent à 0,2 % près, exactement comme la pose de course.
+
+Au passage, quatre planches anciennes étaient restées calées sur des tailles périmées —
+la poule K.-O., les deux chocs et le rebond, dont les constantes avaient changé lors de
+la mise à l'échelle des poses sans que la table suive. Elles sont refaites à la bonne
+taille.
 
 #### Les boutons y passent aussi
 
