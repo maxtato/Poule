@@ -1972,6 +1972,29 @@ dans la distance, et classer les candidates par fréquence *pondérée par la sa
 Les deux réparaient l'eau et cassaient le reste — le ballot de paille ressortait avec
 cinq jaunes et sans encre, l'herbe avec cinq verts et sans blanc.
 
+### Et une couleur ne disparaît pas non plus faute de place
+
+La règle du dessus interdit qu'une couleur se **fonde** dans un gris. Il en manquait une
+seconde : qu'elle disparaisse **faute de place**, ce qui revient au même une fois les
+pixels ramenés à la teinte la plus proche.
+
+Le portrait de la pierre tombale l'a montré. Son bec orange, `rgb(245,148,5)`, ne pèse
+que **170 pixels sur 122 000** — un dessin presque entièrement gris — et il arrivait au
+vingt-septième rang de fréquence, bien après les quatorze places disponibles. Les pixels
+tombaient alors sur la teinte la plus proche de la palette : le brun du cadre en bois, à
+**112 unités**. Le bec ressortait brun-gris. Le défaut n'existait qu'en mode pixel ; la
+planche au trait a toujours eu son bec orange.
+
+Une couleur obtient donc une place supplémentaire — trois au maximum par dessin — à deux
+conditions : peser au moins **huit dix-millièmes** du dessin, et voir la teinte qui la
+recueillerait à plus de **quatre fois la distance de fusion**, soit 88 unités.
+
+Le seuil n'est pas choisi, il est mesuré. Sur les soixante-six dessins, une seule couleur
+assez lourde tombe au-delà de 88 unités de sa remplaçante : ce bec. La suivante est à 75,
+et il s'agit partout de **nuances d'ombre** — un orange plus sombre, un rouge plus sombre
+— que la règle n'a aucune raison de séparer. À deux fois la distance de fusion, elle
+touchait trente-trois planches sur soixante-six ; à quatre fois, une seule.
+
 ### Ce que la bascule doit reprendre
 
 Tout ce qui **dérive** des dessins, et pas seulement les dessins :
