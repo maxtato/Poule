@@ -307,31 +307,30 @@ qu'on puisse utiliser, alors que ses deux facteurs disent chacun quoi faire — 
 chercher une mouche, ou tenir encore un peu. On ne décide pas d'un score ; on décide
 d'aller chercher une mouche de plus.
 
-Les deux mesures se lisent de la même façon : un nombre en gros, une petite échelle
-dessous, et le **record écrit à droite de l'échelle**.
+Ce qui se passe **maintenant** est en haut, en gros : les mouches et les mètres. Ce
+qui s'est passé **avant** est en dessous, dans un petit cartouche marqué **RECORD** — deux
+échelles courtes, chacune avec son nombre à droite.
 
 ```
-   🪰  32
-        ▓▓▓▓▓▓▓▓░░  34
-
-   1 988 m
-        ▓▓▓▓▓▓▓░░░  2 100 m
+             🪰 32
+          1 988 m
+   ╭──────────────────╮
+   │ RECORD           │
+   │ 🪰 ▬▬▬▬▭      34 │
+   │    ▬▬▬▬▭  2 100 m│
+   ╰──────────────────╯
 ```
 
-L'échelle va d'un bout à l'autre du record : pleine, le record est atteint, et il n'y
-a pas d'autre convention à retenir. Les deux échelles partagent un bord droit — le
-libellé du record est mesuré sur le plus large des deux, sans quoi les barres se
-décaleraient l'une de l'autre.
+Les deux registres ne se mélangent plus : un cadre suffit à dire « ceci n'est pas ta
+partie ». Avant, la valeur et son record se touchaient sur la même ligne, et l'œil
+devait faire le tri à chaque coup d'œil.
 
-Un trait planté sur l'échelle à l'endroit du record, avec de la piste après lui, a été
-essayé : il disait en plus « dépassé de combien », mais il ajoutait une marque à lire
-et un nombre à placer sous elle, pour un renseignement qu'on ne consulte pas en pleine
-esquive. Le compromis est assumé : une fois le record tombé, la barre est simplement
-pleine et rouge, et c'est le nombre du dessus qui dit l'écart.
+Les échelles sont volontairement **brèves** — un demi-pouce. Une barre longue invite à
+la lire dans le détail ; celle-ci n'a qu'un travail, dire où l'on en est du record.
+Serrées l'une contre l'autre, elles se lisent aussi comme un bloc, ce qui est le but
+du cadre. Trois longueurs ont été comparées à l'écran, de 40 à 70.
 
-Le record se tient **contre** sa propre barre, pas sur la ligne du dessous. Vingt mises
-en page ont été essayées avant celle-ci, dont neuf où il vivait à distance : deux
-nombres séparés par trois centimètres d'écran ne se soustraient pas d'un coup d'œil.
+Au tout premier essai il n'y a rien à mettre dans le cartouche : il n'apparaît pas.
 
 Un signal d'approche commun aux deux lignes : rien tant qu'on est loin, **ambre aux
 trois quarts**, un battement ambre-rouge dans les dix derniers pour cent, **rouge** une
