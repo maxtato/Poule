@@ -339,8 +339,8 @@ bandeau n'aurait plus de bord.
 #### Toutes les tailles descendent d'une seule
 
 `u`, la hauteur du bandeau, vaut 15,5 % de la largeur du terrain, plafonnée à 64. Tout
-le reste en découle : plume 0,37 u, jauge de vol 0,175 u, cœur 0,21 u, grands nombres
-0,27 u, records 0,147 u, pastille 0,84 × 0,60 u. Les fractions sont relevées **au compas
+le reste en découle : plume 0,315 u, jauge de vol 0,175 u, cœur 0,21 u, grands nombres
+0,27 u, records 0,147 u, couronne 0,13 u, pastille 0,84 × 0,60 u. Les fractions sont relevées **au compas
 sur le visuel de référence** — une bande de 1 840 sur 285 — si bien que le bandeau garde
 ses proportions du téléphone de 360 au bureau.
 
@@ -461,6 +461,32 @@ d'affichage et non comme une alerte. La couleur seule suffit.
 
 Au tout premier essai il n'y a rien à situer : pas de couronne, pas de record, juste les
 deux nombres.
+
+#### En mode pixel, le bandeau est au grain du jeu
+
+Tout ce que le bandeau **trace** — le fond, le cœur, l'étoile, les couronnes, les jauges,
+la pastille, le texte — est peint dans le tampon, donc à la grille par construction. Ce
+qu'il **pose** vient d'une planche, et une planche n'est au grain que si son nombre de
+colonnes égale sa largeur d'affichage divisée par le pas de la grille.
+
+Vérifié, et deux planches ne l'étaient pas :
+
+| Dessin posé | Grain avant | Grain après |
+| --- | --- | --- |
+| la plume | ×1,12 | ×1,06 |
+| **la mouche du bandeau** | **×2,99** | ×1,09 |
+| la coupe du trophée | ×1,31 | ×1,13 |
+
+Le cas de la mouche est le plus net : **une seule planche servait au bandeau et au
+panneau de fin**, qui la pose à 76 px quand le bandeau ne lui en donne que 27. Taillée
+pour le panneau, elle sortait dans le bandeau à trois fois le grain du jeu — la seule
+chose de l'écran à avoir des pixels plus fins que ses voisins. Elle a désormais sa propre
+planche, `fly_hud`, comme la poule K.-O. a la sienne pour le panneau. En mode trait les
+deux clés pointent sur le même dessin, sans un octet de plus.
+
+Le résidu de 6 à 13 % n'est pas un défaut : chaque planche est taillée pour la **plus
+grande** de ses utilisations — l'écran le plus large — et se retrouve donc un peu fine
+sur un écran plus étroit. C'est la règle du jeu depuis le début.
 
 #### En mode pixel, le texte passe par la grille
 
