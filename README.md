@@ -370,12 +370,35 @@ nombre des mètres.
 
 Au tout premier essai il n'y a rien à situer : pas d'échelle, juste les deux nombres.
 
-Un signal d'approche commun aux deux lignes, en **trois paliers francs** : rien tant
-qu'on est loin, ambre aux trois quarts, ambre foncé dans les dix derniers pour cent,
-**rouge** une fois passé. Le dernier palier battait entre l'ambre et le rouge neuf fois
-par seconde ; sur un chiffre qu'on surveille en esquivant, un clignotement se lit
-comme un défaut d'affichage et non comme une alerte. La couleur seule suffit. Les chiffres sont gros et les échelles courtes — c'est le nombre qu'on
-lit en jouant, l'échelle ne fait que situer.
+Un signal d'approche commun aux deux lignes, en **quatre paliers francs** :
+
+| | |
+| --- | --- |
+| encre | rien à dire |
+| ambre `#E2801F` | le record approche, aux trois quarts |
+| rouge `#D6342B` | les dix derniers pour cent, la tension |
+| **jaune `#EFAA20`** | **le record est tombé** |
+
+Le rouge marquait autrefois le dépassement, mais il disait « attention » à un moment
+où il n'y a plus rien à craindre : battre son record est une bonne nouvelle, elle se
+peint en or. Le chiffre, sa barre et le nombre du record virent ensemble.
+
+Le jaune est mesuré, pas choisi à l'œil. Il est posé sur le ciel, qui monte à 233 de
+clarté le matin, et il doit rester distinct de l'ambre de l'approche. `#F5B93E`
+n'avait que 44 d'écart avec le ciel, `#E0A21C` que 19 avec l'ambre ; celui-ci garde
+**58 et 29**.
+
+Le dernier palier battait entre l'ambre et le rouge neuf fois par seconde ; sur un
+chiffre qu'on surveille en esquivant, un clignotement se lit comme un défaut
+d'affichage et non comme une alerte. La couleur seule suffit.
+
+#### En mode pixel
+
+Le HUD est peint **dans le tampon**, avant l'agrandissement : son texte subit donc la
+grille comme le reste du jeu, ce qui est voulu — un compteur lisse par-dessus un
+décor en pixels trahirait les deux. Vérifié à l'agrandissement trois fois, dans les
+trois états : les glyphes ont des bords en escalier et chaque chiffre se lit sans
+effort, y compris le nombre du record à dix pixels de corps.
 
 Au tout premier essai il n'y a rien à situer : pas d'échelle, juste les deux nombres.
 
