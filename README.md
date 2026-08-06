@@ -19,7 +19,7 @@ d'engrenage, à côté du bouton de son, bascule de l'un à l'autre.
 
 La poule a **une vie de rattrapage** : au premier choc elle tombe, se relève au bout
 d'une demi-seconde et la course repart où elle en était ; au choc suivant, la partie
-s'arrête. Un cœur sous la jauge de plumes dit combien il lui en reste, et on peut en
+s'arrête. Un cœur dans le bandeau du haut dit combien il lui en reste, et on peut en
 **ramasser d'autres** en vol — voir [La vie de rattrapage](#la-vie-de-rattrapage).
 
 Le saut part toujours à pleine impulsion et se **coupe net au relâchement** : la
@@ -312,71 +312,83 @@ qu'on puisse utiliser, alors que ses deux facteurs disent chacun quoi faire — 
 chercher une mouche, ou tenir encore un peu. On ne décide pas d'un score ; on décide
 d'aller chercher une mouche de plus.
 
-### Deux colonnes, sans cadre
+### Un bandeau, et tout dedans
 
-**À gauche ce qui se dépense** — les plumes, les vies, le pouvoir. **En haut au milieu**
-la chaîne de mouches. **À droite ce qui se compte** — les mouches, les mètres, chacun
-avec son record.
+Un seul **bandeau crème** d'un bord à l'autre du terrain. **À gauche ce qui se dépense**
+— les plumes, les vies, le pouvoir. **Au milieu** la chaîne de mouches, quand elle est
+allumée. **À droite ce qui se compte** — les mouches, les mètres, chacun avec son record
+dessous, marqué d'une couronne.
 
 ```
-   🪶 ▬▬▬▬▬▬  ×7        🪰  32   ▬▬▭      34
-   ♥ ×2 ⭐ ▬▬▭       1 988 m    ▬▬▭  2 100 m
-   ×7 ▬▬▭
+  🪶 ▬▬▬▬▬▬▬▬▬▬        ╭────╮   │  🪰 12   │   953 m
+  ♥ ×2  ⭐ ▬▬▬▭        │ ×12│   │  👑 34   │  👑 2 100 m
+                       │FESTIN│
+                       ╰────╯
 ```
 
-Un cadre autour du tout a été essayé. Il réglait bien un vrai défaut — la plume et sa
-jauge étaient posées à nu pendant que les compteurs étaient encadrés, et mélanger
-l'encadré et le libre fait qu'on ne sait plus ce qui est interface et ce qui est
-décor. Mais il tirait un bandeau opaque d'un bord à l'autre de la bande de jeu pour
-porter deux nombres. Le rythme des deux colonnes suffit à dire que c'est une
-interface ; le ciel reste au ciel.
+Le bandeau a remplacé deux colonnes posées à même le ciel. Il coûte une bande de ciel
+en haut ; il rend une lisibilité qu'aucune couleur de texte n'obtenait, parce que **le
+fond ne change plus sous les chiffres** au fil de l'heure du jour. Le ciel passe du bleu
+au crème puis au mauve, et un chiffre d'encre qui se lisait très bien à midi se battait
+contre le décor au crépuscule.
 
-Pour chaque mesure : le chiffre de la partie en cours **en gros**, et **juste en dessous**
-la barre du record avec son nombre. Les deux ensemble occupent exactement la largeur
-du chiffre au-dessus — le nombre du record n'a pas de colonne à lui, il tient dans la
-ligne et c'est la barre qui se raccourcit d'autant. La barre se lit comme un
-soulignement, pas comme une deuxième mesure.
+Un filet plus sombre ferme le bandeau en bas. Il n'est pas décoratif : vers le
+crépuscule le ciel prend exactement la teinte du bandeau, et sans cette ligne le
+bandeau n'aurait plus de bord.
 
-**Les deux lignes se mettent à la même largeur.** À corps égal elles ne l'ont pas :
-« 8 » avec sa mouche fait 47 unités quand « 626 m » en fait 70, et le bloc part en
-escalier. On mesure donc chaque ligne à son corps de base, on prend la plus large, et
-on grossit l'autre jusqu'à la rejoindre. Comme la barre fait ensuite la largeur de sa
-ligne, l'ensemble forme un **rectangle plein**.
+#### Toutes les tailles descendent d'une seule
 
-Mesuré sur neuf combinaisons de nombres de chiffres, des unités aux centaines de
-mouches et des centaines aux milliers de mètres :
+`u`, la hauteur du bandeau, vaut 16,3 % de la largeur du terrain, plafonnée à 66. Tout
+le reste en découle : plume 0,37 u, jauge de vol 0,175 u, cœur 0,21 u, grands nombres
+0,32 u, records 0,135 u, pastille 0,86 × 0,60 u. Les fractions sont relevées **sur le
+visuel de référence**, si bien que le bandeau garde ses proportions du téléphone de 360
+au bureau.
 
-| Mouches | Distance | Ligne mouches | Ligne distance | Écart |
-| --- | --- | --- | --- | --- |
-| 8 | 626 m | 70,8 (29 px) | 70 (27 px) | 1,1 % |
-| 32 | 1 988 m | 85,1 (28 px) | 84 (27 px) | 1,3 % |
-| 3 | 9 400 m | 88,4 (36 px) | 89 (27 px) | 0,7 % |
-| 248 | 980 m | 96,2 (27 px) | 98 (37 px) | 1,8 % |
+#### Ce qui se compte, à droite
 
-L'écart le plus grand est de **1,8 %**, et sur chaque ligne « barre + record » retombe
-au dixième près sur la largeur du chiffre. Le rapport est borné à 1,8 pour qu'une seule
-mouche en face de dix mille mètres ne donne pas un chiffre énorme ; sur les cas
-mesurés, cette borne ne mord jamais.
+Deux cellules, séparées par un filet vertical, chacune avec son grand nombre et, juste
+dessous, une **couronne** et le record en gris.
+
+La couronne remplace le mot « record » : elle ne demande pas de traduction, elle tient
+en un sixième de `u` là où le mot prenait le double, et c'est déjà le symbole du record
+sur le panneau de fin. Les deux lignes sont **calées à droite** l'une sur l'autre, ce
+qui donne au bloc son alignement quel que soit le nombre de chiffres.
+
+Les barres de progression vers le record ont disparu avec les colonnes. Elles disaient
+« où en es-tu » en occupant une ligne entière ; la couronne et le nombre le disent en
+une demi-ligne, et la couleur du grand chiffre dit le reste.
+
+#### La chaîne de mouches : une pastille, et un mot
+
+Au milieu du bandeau, une pastille rouge cerclée d'encre : le multiplicateur en blanc,
+le mot **FESTIN** dessous, et le temps qu'il reste dans une barre au bas de la pastille.
+Autour, dix traits rouges — ceux du gobage, posés une fois pour toutes : tirés au hasard
+à chaque image, ils grouilleraient. La pastille rebondit à chaque mouche gobée.
+
+Le mot plutôt qu'un chiffre seul : la chaîne ne compte pas de points — le score se fait
+aux mouches et aux mètres — elle dit qu'on est en train d'en enchaîner. C'est un moment,
+pas une mesure.
+
+Ses quatre coins ont des rayons légèrement inégaux, fixés une fois pour toutes. C'est
+ce qui lui donne l'air tracée à la main comme le reste des dessins, sans rien qui bouge.
+
+**Sa place lui est gardée même éteinte.** Une jauge de vol qui se raccourcirait au
+démarrage d'une chaîne ferait bouger tout le bandeau au pire moment.
 
 #### La mesure se fait sur un gabarit, pas sur le texte
 
 La fonte n'a pas des chiffres de largeur égale : « 1 » est plus étroit que « 8 ». En
-mesurant le texte réel à chaque image, la largeur changeait à chaque mètre parcouru,
-donc le rapport, donc le corps — et **les deux nombres tremblaient en permanence**.
+mesurant le texte réel à chaque image, la largeur des cellules changeait à chaque mètre
+parcouru — et tout le bandeau respirait.
 
-Mesuré sur huit secondes de course : **17,3 changements de corps par seconde**. On
-mesure donc une chaîne de même longueur où tous les chiffres sont des zéros ; le corps
-ne bouge plus qu'au passage d'un ordre de grandeur — **0,1 par seconde**, soit une fois
-en huit secondes, au passage à trois chiffres.
+Mesuré à l'époque des colonnes, sur huit secondes de course : **17,3 changements de
+corps par seconde**. On mesure donc une chaîne de même longueur où tous les chiffres
+sont des zéros ; la largeur ne bouge plus qu'au passage d'un ordre de grandeur — **0,1
+par seconde**, soit une fois en huit secondes.
 
-Les deux colonnes **se bornent l'une l'autre** : le plus large des deux nombres est
-mesuré, icône comprise, et la colonne de gauche s'arrête là. Sans cela la barre de
-pouvoir, qui tombe à la hauteur de la deuxième ligne de droite, passait par-dessus le
-nombre des mètres.
+#### La couleur dit l'approche du record
 
-Au tout premier essai il n'y a rien à situer : pas d'échelle, juste les deux nombres.
-
-Un signal d'approche commun aux deux lignes, en **quatre paliers francs** :
+Un signal commun aux deux mesures, en **quatre paliers francs** :
 
 | | |
 | --- | --- |
@@ -387,7 +399,7 @@ Un signal d'approche commun aux deux lignes, en **quatre paliers francs** :
 
 Le rouge marquait autrefois le dépassement, mais il disait « attention » à un moment
 où il n'y a plus rien à craindre : battre son record est une bonne nouvelle, elle se
-peint en or. Le chiffre, sa barre et le nombre du record virent ensemble.
+peint en or.
 
 Le jaune est mesuré, pas choisi à l'œil. Il est posé sur le ciel, qui monte à 233 de
 clarté le matin, et il doit rester distinct de l'ambre de l'approche. `#F5B93E`
@@ -397,6 +409,9 @@ n'avait que 44 d'écart avec le ciel, `#E0A21C` que 19 avec l'ambre ; celui-ci g
 Le dernier palier battait entre l'ambre et le rouge neuf fois par seconde ; sur un
 chiffre qu'on surveille en esquivant, un clignotement se lit comme un défaut
 d'affichage et non comme une alerte. La couleur seule suffit.
+
+Au tout premier essai il n'y a rien à situer : pas de couronne, pas de record, juste les
+deux nombres.
 
 #### En mode pixel, le texte passe par la grille
 
@@ -421,20 +436,9 @@ unité de monde, un pixel — dont l'alpha est coupé net pour supprimer le dég
 agrandi sans lissage. Le chiffre a dès lors exactement le grain du reste. Le coût est
 nul à la mesure : 59,5 images par seconde en pixel, contre 59,7 en trait.
 
-Une conséquence à assumer : à dix unités de corps, le nombre du record devient un
-vrai texte en pixel art, lisible mais rugueux. C'est le prix de la cohérence.
+Une conséquence à assumer : à cette taille, le mot FESTIN et les records deviennent de
+vrais textes en pixel art, lisibles mais rugueux. C'est le prix de la cohérence.
 
-Au tout premier essai il n'y a rien à situer : pas d'échelle, juste les deux nombres.
-
-Le petit compteur de mouches qui vivait sous la jauge de plumes a disparu : il
-répétait le grand chiffre.
-
-La **chaîne de mouches** a quitté la colonne de gauche pour se poser en haut, à la suite
-de la jauge de vol, vers le milieu de l'écran : c'est un événement, il se lit mieux là où
-l'œil passe déjà. La jauge est raccourcie d'autant, et la place de la chaîne lui reste
-réservée même éteinte — une jauge qui se raccourcirait au démarrage d'une chaîne ferait
-bouger tout le coin au pire moment. Le multiplicateur garde sa barre de temps juste
-dessous, à sa largeur : la même grammaire que les records de la colonne de droite.
 
 ### L'écran de fin dit la formule
 
@@ -1599,17 +1603,12 @@ toute la largeur de la colonne pour dire ce qu'un « ×3 » dit en deux caractè
 et il n'y a plus rien à compter. Il ne disparaît pas : c'est justement à ce moment-là
 qu'il faut le voir, puisque le prochain choc sera le dernier.
 
-Il vit sur la **deuxième ligne de la colonne de gauche**, celle que partage la barre de
-pouvoir avec son étoile — cœur à gauche sous la plume, étoile et barre à sa suite. Les
-deux se centrent sur la ligne : le cœur est plus court que la barre, et empilés ils
-faisaient un escalier. Cette ligne est remontée contre la jauge de plumes, trois unités
-sous le bas de l'icône au lieu de neuf, pour que les trois choses se lisent comme un
-seul bloc plutôt que comme trois étages.
-
-Les cœurs sont **centrés sur la plume**, pas calés sur son bord gauche : la plume est
-penchée et son dessin est plus large que son trait, un alignement à gauche les laissait
-de travers sous elle. Le calcul porte sur le groupe entier, pour que deux cœurs ou
-trois restent centrés de la même façon.
+Il vit sur la **seconde ligne du bandeau**, celle que partage la barre de pouvoir avec
+son étoile — cœur à gauche sous la plume, étoile et barre à sa suite. Le cœur est
+**centré sur la plume**, pas calé sur son bord gauche : la plume est penchée et son
+dessin est plus large que son trait, un alignement à gauche le laissait de travers sous
+elle. Et la barre de pouvoir démarre après le nombre de vies, jamais dessus : à trois
+vies, le « ×3 » mordait sur l'étoile.
 
 L'épaisseur de son trait est **donnée, pas déduite de sa taille**. Elle doit valoir celle
 de sa voisine, et celle-là se mesure : la plume du HUD, posée à 21,4 px CSS de haut, a un

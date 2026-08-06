@@ -980,6 +980,7 @@ const TEXTES={
   sub:        ["Elle court. Elle saute. Et si tu insistes, elle vole, tant qu'il lui reste des plumes. Gober des mouches lui en rend.",
                "She runs. She jumps. And if you keep at it, she flies, as long as she has feathers left. Eating flies gives them back."],
   record:     ["Record", "Best"],
+  festin:     ["Festin", "Feast"],
   gobees:     ["Gobées", "Eaten"],
   parties:    ["Parties", "Games"],
   start:      ["Start", "Start"],
@@ -3254,22 +3255,32 @@ function coulPres(v, rec){
   return INK;
 }
 const REC_GRIS="#A79A88";
-/* longueur des echelles de record, et corps de leur nombre */
-let REC_BARRE=38, REC_FONTE=10;
-/* L'ecart entre la jauge de plumes et la ligne du dessous — le coeur et le pouvoir.
-   Il se compte sous le BAS DE L'ICONE de plume, qui descend plus bas que la barre
-   elle-meme : trois unites ici en laissent une dizaine sous la barre. */
-const VIE_ECART=3;
-function larMou(h){ return h*MOU_W/MOU_H; }
-function icoMou(x,y,h){ ctx.drawImage(SPR.fly_ico, x, y, larMou(h), h); }
 /* Le coeur des vies : deux bosses et une pointe, cerne d'encre comme tout le reste du
    jeu. Plein, il est rouge ; vide, il garde le creme des jauges — la forme reste, et
    c'est la forme qui dit qu'il en manque un.
    L'epaisseur du trait est DONNEE, pas deduite de la taille du coeur : elle doit valoir
-   celle de son voisin, et celle-la est mesuree. La plume du HUD, posee a 21,4 px CSS de
-   haut, a un trait de 0,83 px — soit 0,039 fois sa hauteur ; la poule du monde, a sa
-   taille de jeu, a un trait de 1,5 unite, ce que STROKE declare deja. Deduite de la
-   hauteur du coeur, la ligne faisait deux fois et demie celle de la plume. */
+   celle de son voisin, et celle-la est mesuree. La plume du HUD a un trait de 0,039 fois
+   sa hauteur ; la poule du monde, a sa taille de jeu, un trait de 1,5 unite, ce que
+   STROKE declare deja. Deduite de la hauteur du coeur, la ligne faisait deux fois et
+   demie celle de la plume. */
+/* Une petite couronne, comme celle du panneau de fin : trois pointes et une base. Elle
+   marque le record sous chaque mesure — le mot « record » aurait demande une traduction
+   et deux fois la place. */
+function couronne(x, y, h){
+  const w=h*1.25;
+  ctx.beginPath();
+  ctx.moveTo(x, y+h);
+  ctx.lineTo(x, y+h*0.26);
+  ctx.lineTo(x+w*0.26, y+h*0.60);
+  ctx.lineTo(x+w*0.5, y);
+  ctx.lineTo(x+w*0.74, y+h*0.60);
+  ctx.lineTo(x+w, y+h*0.26);
+  ctx.lineTo(x+w, y+h);
+  ctx.closePath();
+  ctx.fillStyle=YELL; ctx.fill();
+  ctx.lineWidth=Math.max(0.7, h*0.16); ctx.strokeStyle=INK; ctx.lineJoin="round";
+  ctx.stroke();
+}
 function coeur(x, y, h, plein, trait){
   const w=h*1.08;
   ctx.beginPath();
@@ -3324,200 +3335,202 @@ function txtP(txt, x, y, taille, coul, align, base){
 
 function drawHUD(){
   if(state!==S.PLAY && state!==S.DEAD) return;
-  /* Le HUD se cale sur le terrain, pas sur la fenetre : sur un ecran large les
-     compteurs suivraient sinon les bords de l'ecran et flotteraient dans les bandes,
-     loin de l'action. */
+  /* ---------- le bandeau du haut ----------
+     Un seul bandeau creme d'un bord a l'autre du terrain, et tout dedans : a gauche ce
+     qui se depense — plumes, vies, pouvoir — au milieu la chaine de mouches quand elle
+     est allumee, a droite ce qui se compte, chaque mesure avec son record dessous.
+     Le bandeau remplace les deux colonnes posees a meme le ciel. Il coute une bande de
+     ciel en haut, il rend une lisibilite qu'aucune couleur de texte n'obtenait : le
+     fond ne change plus sous les chiffres au fil de l'heure du jour.
+     TOUTES les tailles descendent d'une seule : `u`, la hauteur du bandeau. Les
+     fractions sont relevees sur le visuel de reference — plume 0,37 u, jauge 0,175 u,
+     grands nombres 0,32 u, et ainsi de suite — si bien que le bandeau garde ses
+     proportions du telephone au bureau. */
   const L=bandX, VW=bandW, R=bandX+bandW;
-  const pad=Math.max(16,VW*0.045), top=pad+6, fs=Math.round(Math.min(38,VW*0.082));
-  const cx=L+pad, cw=VW-2*pad;
-  /* Tout le bloc a maigri : le HUD n'est pas le jeu, il n'a qu'a se laisser
-     consulter. */
-  const fv=Math.round(fs*0.58);
-  const fh=Math.min(26,VW*0.055), fw=fh*FEA_W/FEA_H;
-  const jh=fh*0.40, ph=jh*0.82, mh=Math.min(22,VW*0.046);
-  const hb=Math.max(3, REC_FONTE*0.30);
+  const u=Math.min(66, VW*0.163);
+  const pad=Math.max(10, u*0.24);
+  const top=Math.max(4, u*0.10);
+
+  const fh=u*0.37, fw=fh*FEA_W/FEA_H;        // la plume
+  const jh=u*0.175, jy=top+u*0.32-jh/2;      // la jauge de vol
+  const ph=u*0.155;                          // la barre de pouvoir
+  const cvh=u*0.21;                          // le coeur
+  const y2=top+u*0.65;                       // le milieu de la seconde ligne
+  const fbig=Math.round(u*0.32);             // les grands nombres
+  const fpet=Math.round(u*0.135);            // les records, en gris
   const pouvoir=traverse(), chaine=(state===S.PLAY && combo>=2);
-  /* La deuxieme ligne de la colonne de gauche porte le coeur des vies et, quand il est
-     allume, le pouvoir. Les deux partagent la meme ligne et se centrent dessus : le
-     coeur est plus court que la barre, et empiles ils faisaient un escalier. */
-  const cvh=Math.max(10, fh*0.62);
-  const lgh=Math.max(cvh, pouvoir?ph:0);
 
-  /* La hauteur du cadre se mesure sur la plus haute des deux colonnes. Il grandit
-     donc quand le pouvoir ou la chaine s'allument : c'est voulu, ce sont des
-     evenements, et un emplacement vide reserve en permanence les ferait passer pour
-     des ressources du jeu. */
-  let hg=fh+VIE_ECART+lgh;
-  const hd=(fv*1.35+4+hb+10)*2-10;   // les corps s'ajustent, on majore
-  const ch=Math.max(hg,hd), cy=top+2;
-
-  /* ---- colonne de droite : ce qui se compte ----
-     Le chiffre de la partie en gros, et JUSTE EN DESSOUS sa barre de record. La
-     barre partage le bord droit du chiffre et ne depasse jamais sa largeur : elle se
-     lit comme un soulignement, pas comme une deuxieme mesure. C'est une indication
-     discrete, elle n'a pas a peser autant que ce qu'elle situe.
-     Le nombre du record vit dans une colonne reservee a droite, la meme pour les deux
-     lignes, sinon les barres ne partiraient pas du meme bord. */
+  /* ---- ce qui se compte, a droite : mesure d'abord, dessin ensuite ----
+     La largeur se prend sur un GABARIT ou tous les chiffres sont des zeros. La fonte
+     n'a pas des chiffres de largeur egale : mesuree sur le texte reel, la colonne
+     changeait de largeur a chaque metre parcouru, et tout le bandeau respirait. */
   const MES=[
-    {val:String(eaten), v:eaten, r:save.bestMou,
-     rec: save.bestMou>0 ? String(save.bestMou) : null, ico:true},
-    {val:chiffre(metres())+" m", v:metres(), r:save.bestDist,
-     rec: save.bestDist>0 ? chiffre(save.bestDist)+" m" : null, ico:false},
+    {val:String(eaten), gab:String(eaten).replace(/\\d/g,"0"),
+     v:eaten, r:save.bestMou, rec:save.bestMou>0?String(save.bestMou):null, ico:true},
+    {val:chiffre(metres())+" m", gab:(chiffre(metres())+" m").replace(/\\d/g,"0"),
+     v:metres(), r:save.bestDist,
+     rec:save.bestDist>0?chiffre(save.bestDist)+" m":null, ico:false},
   ];
-  const aRec=MES.some(m=>m.rec);
-  /* Le bord droit est le meme pour tout : le gros chiffre, la barre et le nombre du
-     record. Ce dernier n'a plus de colonne a lui — il tient DANS la largeur de la
-     ligne, et c'est la barre qui se raccourcit d'autant. */
-  const xd=cx+cw;
+  const mh=u*0.185, mw=mh*MOU_W/MOU_H;       // l'icone de mouche
+  const cw=u*0.15;                           // la couronne des records
+  for(const m of MES){
+    ctx.font="900 "+fbig+"px "+FONT;
+    const g1=ctx.measureText(m.gab).width+(m.ico?mw+u*0.09:0);
+    ctx.font="700 "+fpet+"px "+FONT;
+    const g2=m.rec ? cw*1.25+u*0.07+ctx.measureText(m.rec.replace(/\\d/g,"0")).width : 0;
+    m.w=Math.max(g1,g2);
+  }
+  const ecart=u*0.19;                        // entre une mesure et son filet
+  const largeD=MES.reduce((a,m)=>a+m.w,0)+ecart*2*MES.length;
+  const xD=R-pad-largeD;                     // bord gauche du bloc de droite
 
-  /* LES DEUX LIGNES SE METTENT A LA MEME LARGEUR. A corps egal elles ne l'ont pas :
-     « 8 » avec sa mouche fait quarante-sept unites quand « 626 m » en fait soixante-
-     dix, et le bloc part en escalier. On mesure donc chaque ligne a son corps de base,
-     on prend la plus large, et on grossit l'autre jusqu'a la rejoindre. Le rapport est
-     borne : entre une mouche et dix mille metres l'ecart devient tel que suivre
-     ferait un chiffre enorme pour une seule mouche.
-     Sous chaque chiffre, la barre ET son nombre de record occupent ensemble la meme
-     largeur que lui : l'ensemble forme un rectangle plein au lieu d'un escalier. */
-  /* LA MESURE SE FAIT SUR UN GABARIT, PAS SUR LE TEXTE. La fonte n'a pas des chiffres
-     de largeur egale : « 1 » est plus etroit que « 8 ». En mesurant le texte reel, la
-     largeur changeait a chaque metre parcouru, donc le rapport, donc le corps — et les
-     deux nombres tremblaient en permanence. On mesure donc une chaine de meme longueur
-     ou tous les chiffres sont des zeros : le corps ne bouge plus qu'au passage d'un
-     ordre de grandeur, quelques fois par partie. */
-  const CAP=1.8;
-  for(const m of MES){
-    m.gab=m.val.replace(/[0-9]/g,"0");
-    ctx.font="900 "+fv+"px "+FONT;
-    m.nat=ctx.measureText(m.gab).width+(m.ico?larMou(fv*0.78)+9:0);
-  }
-  const W=Math.max(...MES.map(m=>m.nat));
-  for(const m of MES){
-    m.k=Math.min(CAP, W/m.nat);
-    m.fs=Math.round(fv*m.k);
-    ctx.font="900 "+m.fs+"px "+FONT;
-    m.lgc=ctx.measureText(m.val).width;
-    /* la largeur de la ligne se prend elle aussi sur le gabarit : sans cela le bloc
-       se retrecissait sur « 111 m » et s'elargissait sur « 888 m » */
-    m.large=ctx.measureText(m.gab).width+(m.ico?larMou(m.fs*0.78)+9*m.k:0);
-  }
-  const lgVal=Math.max(...MES.map(m=>m.large));
-  /* Les deux colonnes se bornent l'une l'autre : sans cela la barre de pouvoir, qui
-     tombe a la hauteur de la deuxieme ligne de droite, passait par-dessus le nombre
-     des metres. */
-  const xGauche=xd-lgVal-16;
-  let y=cy;
-  for(const m of MES){
-    txtP(m.val, xd, y, m.fs, coulPres(m.v,m.r), "right", "top");
-    if(m.ico) icoMou(xd-m.lgc-9*m.k-larMou(m.fs*0.78), y+m.fs*0.18, m.fs*0.78);
-    if(m.rec){
-      /* la barre prend ce que le nombre du record laisse : ensemble ils font la
-         largeur du chiffre du dessus, ni plus ni moins */
-      ctx.font="700 "+REC_FONTE+"px "+FONT;
-      const lr=ctx.measureText(m.rec.replace(/[0-9]/g,"0")).width;
-      const bw2=Math.max(10, m.large-lr-6), bx2=xd-m.large, by2=y+m.fs+4, battu=m.v>=m.r;
-      ctx.fillStyle="#E4DACA"; rr(bx2,by2,bw2,hb,hb/2); ctx.fill();
-      const prog=Math.min(1, m.v/m.r);
-      if(prog>0.01){
-        ctx.fillStyle = battu ? OR_BATTU : "#F5A623";
-        rr(bx2,by2,Math.max(hb,bw2*prog),hb,hb/2); ctx.fill();
-      }
-      txtP(m.rec, xd, by2+hb/2, REC_FONTE, battu ? OR_BATTU : REC_GRIS,
-           "right", "middle");
-      ctx.textBaseline="top";
-      y+=m.fs+4+hb+10;
-    }else y+=m.fs+6;
-  }
+  /* ---- la chaine, au milieu : sa place lui est gardee meme eteinte ----
+     Une jauge qui se raccourcirait au demarrage d'une chaine ferait bouger tout le
+     bandeau au pire moment. */
+  const bw=u*0.86, bh=u*0.60;                // la pastille
+  const bcx=Math.min(L+VW*0.52, xD-bw/2-u*0.24);
+  const bcy=top+u*0.44;
 
-  /* ---- colonne de gauche : ce qui se depense ---- */
-  const gx=cx, fy=cy;
-  ctx.drawImage(SPR.feather, gx, fy, fw, fh);
-  const bx=gx+fw+8, by=fy+fh*0.30;
-  /* La chaine de mouches vit desormais EN HAUT, a la suite de la jauge de vol, vers le
-     milieu de l'ecran : c'est un evenement, il se lit mieux la ou l'oeil passe deja.
-     La jauge est raccourcie d'autant, et la place de la chaine lui reste reservee meme
-     eteinte — une jauge qui se raccourcirait au demarrage d'une chaine ferait bouger
-     tout le coin au pire moment. */
-  const cbw=Math.max(26, mh*1.6);
-  const bw=Math.max(50, Math.min(150, xGauche-bx-cbw-9)), r2=jh/2;
-  ctx.lineWidth=Math.max(1.4,fh*0.075); ctx.strokeStyle=INK; ctx.lineJoin="round";
-  rr(bx,by,bw,jh,r2); ctx.fillStyle="#EFE6D6"; ctx.fill(); ctx.stroke();
+  /* ---- la jauge de vol : elle prend ce qui reste ---- */
+  const gx=L+pad, bx=gx+fw+u*0.14;
+  const gw=Math.max(u*0.6, bcx-bw/2-u*0.22-bx);
+
+  const BH=u;                                // hauteur du bandeau
+
+  /* le bandeau lui-meme, et le filet qui le ferme en bas */
+  ctx.fillStyle="#F4EBDA";
+  ctx.fillRect(L, 0, VW, BH);
+  /* Le filet du bas ferme le bandeau. Il n'est pas decoratif : le ciel passe du bleu
+     au creme au fil de l'heure, et vers le crepuscule le bandeau a exactement la teinte
+     du ciel qui le porte. Sans cette ligne, il n'aurait plus de bord. */
+  ctx.fillStyle="#DCCEB4";
+  ctx.fillRect(L, BH-Math.max(1.2,u*0.026), VW, Math.max(1.2,u*0.026));
+
+  /* ---- la plume et la jauge de vol ---- */
+  ctx.drawImage(SPR.feather, gx, top+u*0.32-fh/2, fw, fh);
+  const r2=jh/2;
+  ctx.lineWidth=Math.max(1.2,u*0.030); ctx.strokeStyle=INK; ctx.lineJoin="round";
+  rr(bx,jy,gw,jh,r2); ctx.fillStyle="#FFFFFF"; ctx.fill(); ctx.stroke();
   const f=Math.max(0,Math.min(1,hen.feathers));
   if(f>0.02){
-    ctx.save(); rr(bx,by,bw,jh,r2); ctx.clip();
+    ctx.save(); rr(bx,jy,gw,jh,r2); ctx.clip();
     /* La jauge est rouge d'un bout a l'autre. Sous un quart, le rouge s'eclaircit et
-       s'assombrit six fois par seconde — meme nature de signal, urgence croissante,
-       sans reprendre une couleur a une autre jauge. */
+       s'assombrit six fois par seconde — meme nature de signal, urgence croissante. */
     ctx.fillStyle = f>0.25 ? "#D6342B"
                   : mixHex("#D6342B","#FF9C8A", 0.5+0.5*Math.sin(t*13));
-    ctx.fillRect(bx,by,bw*f,jh);
+    ctx.fillRect(bx,jy,gw*f,jh);
     ctx.restore();
-    rr(bx,by,bw,jh,r2); ctx.stroke();
+    rr(bx,jy,gw,jh,r2); ctx.stroke();
   }
-  /* La chaine de mouches, a la suite de la jauge : le multiplicateur, et sous lui la
-     barre du temps qu'il reste pour l'entretenir. Meme grammaire que la colonne de
-     droite — un nombre, et dessous une barre a sa largeur. */
-  if(chaine){
-    const chaud=combo>=5, cbx=bx+bw+9, corps=Math.round(mh*0.92);
-    txtP("×"+combo, cbx, by+jh/2, corps, chaud ? "#D6342B" : YELL, "left", "middle");
-    ctx.font="900 "+corps+"px "+FONT;
-    const lw=Math.max(cbw*0.62, ctx.measureText("×"+combo).width);
-    const cbh=Math.max(2.5,mh*0.14), cby=by+jh+4;
-    const rest=Math.max(0,1-(t-lastEat)/COMBO_T);
-    ctx.fillStyle="#E4DACA"; rr(cbx,cby,lw,cbh,cbh/2); ctx.fill();
-    ctx.fillStyle = chaud ? "#D6342B" : YELL;
-    rr(cbx,cby,Math.max(cbh,lw*rest),cbh,cbh/2); ctx.fill();
-  }
-  /* La ligne du dessous : le coeur des vies a gauche, sous la plume, et le pouvoir a
-     sa suite quand il est allume. Elle est remontee contre la jauge de plumes — c'est
-     un seul bloc de trois choses, pas trois lignes qui se suivent. */
-  const ly=fy+fh+VIE_ECART;
 
-  /* La vie de rattrapage : UN coeur, et le nombre a cote. Un coeur par vie tenait tant
-     qu'il n'y en avait qu'une ; maintenant qu'on peut en ramasser, une file de cinq
-     coeurs prendrait toute la largeur de la colonne pour dire ce qu'un « ×3 » dit en
-     deux caracteres.
-     A zero, le coeur reste, vide, et le nombre disparait : la forme dit qu'il en
-     manque une, et il n'y a plus rien a compter.
-     Le coeur est centre sur la PLUME, pas cale sur son bord gauche : la plume est
-     penchee et son dessin est plus large que son trait, un alignement a gauche le
-     laissait de travers sous elle. */
+  /* ---- les vies : un coeur et le nombre a cote ----
+     A zero, le coeur reste, vide, et le nombre disparait : la forme dit qu'il en manque
+     une, et il n'y a plus rien a compter. */
   const cvw=cvh*1.08, cvx=gx+fw/2-cvw/2;
-  coeur(cvx, ly+(lgh-cvh)/2, cvh, vies>0, fh*COEUR_TRAIT);
+  coeur(cvx, y2-cvh/2, cvh, vies>0, Math.max(0.7,u*0.039));
   let coeurFin=cvx+cvw;
   if(vies>0){
-    const corps=Math.round(cvh*0.78), tx=coeurFin+cvh*0.30;
-    txtP("×"+vies, tx, ly+lgh/2, corps, INK, "left", "middle");
+    const corps=Math.round(cvh*0.80), tx=coeurFin+cvh*0.26;
+    txtP("×"+vies, tx, y2, corps, INK, "left", "middle");
     ctx.font="900 "+corps+"px "+FONT;
     coeurFin=tx+ctx.measureText("×"+vies).width;
   }
 
-  /* Le pouvoir : une barre sur la meme ligne que le coeur, qui se vide. Elle dit ce que
-     le clignotement de la poule ne dit pas — combien de temps il reste. Jaune, comme la
-     mouche qui la declenche et comme l'etoile qui la nomme ; la jauge de vol
-     au-dessus est rouge, les deux ne se confondent pas. */
-  let yg=ly+lgh;
+  /* ---- le pouvoir : l'etoile et sa barre, sur la ligne des vies ----
+     Elle dit ce que le clignotement de la poule ne dit pas : combien de temps il reste.
+     Elle demarre apres le nombre de vies et finit au bord droit de la jauge du dessus. */
   if(pouvoir){
     const reste=(orJusqu-t-OR_RAB)/OR_BARRE;   // le rab ne s'affiche pas : c'est une marge
-    const py=ly+(lgh-ph)/2;
-    /* Le pouvoir demarre apres le coeur et son nombre, jamais dessus : a trois vies le
-       « ×3 » mordait sur l'etoile. Il garde le bord droit de la jauge du dessus. */
-    const er=ph*0.95, pgx=Math.max(bx, coeurFin+7), ex=pgx+er;
-    const px2=pgx+er*2+6, pw2=bx+bw-px2;
-    ctx.lineWidth=Math.max(1.4,fh*0.075); ctx.strokeStyle=INK;
-    rr(px2,py,pw2,ph,ph/2); ctx.fillStyle="#EFE6D6"; ctx.fill(); ctx.stroke();
-    ctx.save(); rr(px2,py,pw2,ph,ph/2); ctx.clip();
-    ctx.fillStyle="#F5B93E"; ctx.fillRect(px2,py,pw2*Math.max(0,reste),ph);
-    ctx.restore();
-    rr(px2,py,pw2,ph,ph/2); ctx.stroke();
-    star(ctx, ex, py+ph/2, er, 0, Math.max(1,fh*0.055));
-    yg=py+ph;
+    const er=u*0.115, ex=Math.max(bx+er, coeurFin+u*0.10+er);
+    const px2=ex+er+u*0.10, pw2=bx+gw-px2, py=y2-ph/2;
+    if(pw2>u*0.3){
+      ctx.lineWidth=Math.max(1.2,u*0.030); ctx.strokeStyle=INK;
+      rr(px2,py,pw2,ph,ph/2); ctx.fillStyle="#FFFFFF"; ctx.fill(); ctx.stroke();
+      ctx.save(); rr(px2,py,pw2,ph,ph/2); ctx.clip();
+      ctx.fillStyle="#F5B93E"; ctx.fillRect(px2,py,pw2*Math.max(0,reste),ph);
+      ctx.restore();
+      rr(px2,py,pw2,ph,ph/2); ctx.stroke();
+    }
+    star(ctx, ex, y2, er, 0, Math.max(1,u*0.024));
   }
 
-  /* Le combo ne s'affiche qu'a partir de deux mouches, avec le temps qu'il reste
-     pour l'entretenir : sans cette barre, la chaine casse sans prevenir. */
-  ctx.textAlign="right"; ctx.textBaseline="top";
+  /* ---- ce qui se compte, a droite ---- */
+  let x=xD;
+  for(let i=0;i<MES.length;i++){
+    const m=MES[i];
+    /* un filet vertical avant chaque mesure : il separe sans encadrer */
+    ctx.fillStyle="#D8CBB4";
+    ctx.fillRect(Math.round(x)+0.5, top+u*0.16, Math.max(1,u*0.016), u*0.50);
+    x+=ecart;
+    const xg=x+m.w;                           // les deux lignes sont callees a DROITE
+    txtP(m.val, xg, top+u*0.31, fbig, coulPres(m.v,m.r), "right", "middle");
+    if(m.ico){
+      ctx.font="900 "+fbig+"px "+FONT;
+      const lg=ctx.measureText(m.val).width;
+      ctx.drawImage(SPR.fly_ico, xg-lg-u*0.09-mw, top+u*0.31-mh/2, mw, mh);
+    }
+    if(m.rec){
+      ctx.font="700 "+fpet+"px "+FONT;
+      const lr=ctx.measureText(m.rec).width;
+      txtP(m.rec, xg, top+u*0.60, fpet, REC_GRIS, "right", "middle");
+      couronne(xg-lr-u*0.07-cw*1.25, top+u*0.60-cw/2, cw);
+    }
+    x+=m.w+ecart;
+  }
 
-  bandeauTrophee(R, pad, VW, cy+ch+14);
+  /* ---- la chaine de mouches : une pastille rouge au milieu ----
+     Elle ne compte pas de points — le score se fait aux mouches et aux metres — elle
+     dit qu'on est en train d'en enchainer, et combien. D'ou le mot plutot qu'un chiffre
+     seul : c'est un moment, pas une mesure.
+     Elle rebondit a chaque mouche gobee, et les traits qui l'entourent sont ceux du
+     gobage, poses une fois pour toutes : dessines au hasard a chaque image, ils
+     grouilleraient. */
+  if(chaine){
+    const pop=1+0.14*Math.max(0, 1-(t-lastEat)/0.18);
+    const w=bw*pop, h=bh*pop, bx0=bcx-w/2, by0=bcy-h/2;
+    ctx.save();
+    ctx.strokeStyle="#D6342B"; ctx.lineCap="round";
+    ctx.lineWidth=Math.max(1.2,u*0.030);
+    for(let i=0;i<10;i++){
+      const a=(i/10)*Math.PI*2+0.31, lg=u*(i%2?0.10:0.075);
+      const rx=w/2+u*0.07, ry=h/2+u*0.07;
+      const x0=bcx+Math.cos(a)*rx, y0=bcy+Math.sin(a)*ry;
+      ctx.beginPath();
+      ctx.moveTo(x0,y0);
+      ctx.lineTo(x0+Math.cos(a)*lg, y0+Math.sin(a)*lg);
+      ctx.stroke();
+    }
+    /* la pastille : un rectangle arrondi aux quatre coins legerement inegaux, pour
+       qu'elle ait l'air tracee a la main comme le reste des dessins */
+    const rr4=(X,Y,W,H,a1,a2,a3,a4)=>{
+      ctx.beginPath();
+      ctx.moveTo(X+a1,Y);
+      ctx.lineTo(X+W-a2,Y); ctx.quadraticCurveTo(X+W,Y,X+W,Y+a2);
+      ctx.lineTo(X+W,Y+H-a3); ctx.quadraticCurveTo(X+W,Y+H,X+W-a3,Y+H);
+      ctx.lineTo(X+a4,Y+H); ctx.quadraticCurveTo(X,Y+H,X,Y+H-a4);
+      ctx.lineTo(X,Y+a1); ctx.quadraticCurveTo(X,Y,X+a1,Y);
+      ctx.closePath();
+    };
+    const k=h*0.30;
+    rr4(bx0,by0,w,h, k, k*1.22, k*0.86, k*1.10);
+    ctx.fillStyle="#D6342B"; ctx.fill();
+    ctx.lineWidth=Math.max(1.4,u*0.036); ctx.strokeStyle=INK; ctx.lineJoin="round";
+    ctx.stroke();
+    txtP("×"+combo, bcx, by0+h*0.36, Math.round(u*0.29*pop), "#FFFFFF", "center", "middle");
+    txtP(T("festin").toUpperCase(), bcx, by0+h*0.68, Math.round(u*0.105*pop),
+         "#FFFFFF", "center", "middle");
+    /* le temps qu'il reste pour entretenir la chaine, dans le bas de la pastille */
+    const tw=w*0.72, th=Math.max(1.6,h*0.075), tx0=bcx-tw/2, ty0=by0+h*0.82;
+    const rest=Math.max(0,1-(t-lastEat)/COMBO_T);
+    ctx.globalAlpha=0.34; ctx.fillStyle="#FFFFFF";
+    rr(tx0,ty0,tw,th,th/2); ctx.fill();
+    ctx.globalAlpha=1;
+    rr(tx0,ty0,Math.max(th,tw*rest),th,th/2); ctx.fill();
+    ctx.restore();
+  }
+
+  ctx.textAlign="right"; ctx.textBaseline="top";
+  bandeauTrophee(R, pad, VW, BH+u*0.22);
 }
 
 /* ---------- boucle ---------- */
