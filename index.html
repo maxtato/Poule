@@ -250,6 +250,21 @@
      sans image-rendering le navigateur les lisse et la pastille redevient floue. */
   body.px #fly, body.px #menu .sico, body.px #over .ico,
   body.px #over .ko, body.px #over .blob{image-rendering:pixelated}
+  /* En pixel, l'ombre portee du bouton de vol est un flou : elle ne connait pas la
+     grille et bave sur une dizaine de pixels d'art. On la remplace par un decalage
+     franc d'un pixel d'art, qui, lui, tombe dessus. */
+  body.px #fly{filter:none;
+    box-shadow:none;
+    -webkit-filter:none}
+  body.px #fly.presse{filter:brightness(.94)}
+  /* Les deux pastilles rondes sont des cercles CSS : leur bord est lisse et leur
+     icone est un SVG, deux choses hors grille. En pixel, leur dessin entier est
+     rasterise a la finesse du jeu et pose en fond ; le SVG s'efface. */
+  body.px #mute, body.px #reg{border:0;background-repeat:no-repeat;
+    background-position:center;background-size:100% 100%;
+    image-rendering:pixelated}
+  body.px #mute svg, body.px #reg svg{display:none}
+  body.px #mute::after{display:none}
 
   #over .couronne{height:clamp(24px,6.6vw,34px);width:auto;display:block}
   #over .tirets{width:100%;height:0;margin:clamp(10px,3vw,16px) 0 0;border:0;
@@ -1069,6 +1084,7 @@ function setMute(m, muetAuDemarrage){
   b.classList.toggle("off",m);
   b.setAttribute("aria-pressed", m?"true":"false");
   b.setAttribute("aria-label", m?T("sonon"):T("sonoff"));
+  if(typeof pastilles==="function") pastilles();   // l'icone est peinte, pas stylee
   if(!m && !muetAuDemarrage) SFX.palier();     // un retour sonore pour confirmer
 }
 
@@ -3136,6 +3152,68 @@ function fontePixel(){
     e.style.fontFamily="PP"+g+PP_SUITE;
   }
 }
+/* ---------- les pastilles rondes, sur la grille ----------
+   Le son et les reglages sont deux cercles CSS avec une icone SVG : un bord lisse et
+   un dessin vectoriel, deux choses qui ignorent la grille du jeu. En pixel, on peint
+   donc le bouton entier — disque, contour, icone — dans un canevas a la finesse du
+   jeu, on coupe net son alpha pour qu'aucun bord ne soit en degrade, et on le pose en
+   fond. Le SVG s'efface, le clic ne change pas de place.
+   C'est le meme principe que le panneau de fin et que le texte des compteurs : ce qui
+   doit se voir en pixels est PEINT en pixels, jamais lisse puis pixelise. */
+function pastillePx(el, icone, eteint){
+  if(!el) return;
+  if(!save.pixel){ el.style.backgroundImage=""; return; }
+  const e=1/PX_JEU, w=44, h=44;
+  const c=document.createElement("canvas");
+  c.width=Math.round(w*e); c.height=Math.round(h*e);
+  const g=c.getContext("2d",{willReadFrequently:true});
+  g.scale(e,e);
+  const teinte = eteint ? "#B5AA9A" : INK;
+  g.beginPath(); g.arc(w/2, h/2, w/2-1.2, 0, Math.PI*2);
+  g.fillStyle="#FAF3EC"; g.fill();
+  g.lineWidth=1.5; g.strokeStyle=teinte; g.stroke();
+  g.save(); g.translate(w/2, h/2); g.strokeStyle=teinte; g.fillStyle=teinte;
+  icone(g, eteint); g.restore();
+  /* le seuil : un pixel est peint ou il ne l'est pas */
+  const d=g.getImageData(0,0,c.width,c.height);
+  for(let i=3;i<d.data.length;i+=4) d.data[i]=d.data[i]>=110?255:0;
+  g.putImageData(d,0,0);
+  el.style.backgroundImage='url("'+c.toDataURL()+'")';
+}
+/* Le haut-parleur : un rectangle, un cone, et deux ondes. Barre quand le son est
+   coupe, comme le trait oblique du CSS qu'il remplace. */
+function iconeSon(g, eteint){
+  g.lineWidth=1.6; g.lineJoin="round"; g.lineCap="round";
+  g.beginPath();
+  g.moveTo(-6,-2.5); g.lineTo(-2.5,-2.5); g.lineTo(1.5,-6.5);
+  g.lineTo(1.5,6.5); g.lineTo(-2.5,2.5); g.lineTo(-6,2.5); g.closePath();
+  g.fill();
+  if(!eteint){
+    g.beginPath(); g.arc(3,0,3.4,-0.9,0.9); g.stroke();
+    g.beginPath(); g.arc(3,0,6.2,-0.9,0.9); g.stroke();
+  }else{
+    g.beginPath(); g.moveTo(3.5,-4); g.lineTo(8.5,4); g.stroke();
+    g.beginPath(); g.moveTo(8.5,-4); g.lineTo(3.5,4); g.stroke();
+  }
+}
+/* L'engrenage : un anneau, un moyeu, et huit dents posees au compas. */
+function iconeReglages(g){
+  g.lineWidth=1.6; g.lineJoin="round"; g.lineCap="round";
+  for(let i=0;i<8;i++){
+    const a=i*Math.PI/4;
+    g.beginPath();
+    g.moveTo(Math.cos(a)*5.2, Math.sin(a)*5.2);
+    g.lineTo(Math.cos(a)*8.2, Math.sin(a)*8.2);
+    g.stroke();
+  }
+  g.beginPath(); g.arc(0,0,5.2,0,Math.PI*2); g.stroke();
+  g.beginPath(); g.arc(0,0,2.1,0,Math.PI*2); g.stroke();
+}
+function pastilles(){
+  pastillePx($("mute"), iconeSon, muted);
+  pastillePx($("reg"), iconeReglages, false);
+}
+
 function styleJeu(px, init){
   save.pixel=!!px;
   if(!init) storeSave();
@@ -3155,6 +3233,7 @@ function styleJeu(px, init){
   /* Le carnet garde sa mouche ; le panneau de fin l'a perdue avec la sienne — il
      n'y affiche plus un compte de mouches mais un score, qui n'a pas d'unite. */
   $("sIco").src="data:image/png;base64,"+(px?T.fly_ico:T.fly_b);
+  pastilles();                       // les deux pastilles rondes suivent le style
   for(const im of document.querySelectorAll("#pref .apercu"))
     im.src="data:image/png;base64,"+(im.dataset.px==="1"?B64_PX:B64)[im.dataset.spr];
   /* Seules les pastilles de style : depuis que la langue en a deux autres, un

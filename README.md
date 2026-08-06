@@ -1546,6 +1546,23 @@ Un essai à **trois pixels d'écran par pixel d'art** a été fait, et mesuré :
 longueurs étaient des multiples de 3, contre 1 px et 11 à 35 % avant. Mais le bloc
 devenait gros et le détail partait avec. On a gardé la finesse.
 
+#### Les boutons y passent aussi
+
+Trois choses restaient hors du tampon, donc hors de la grille : l'ombre portée du
+bouton de vol, et les deux pastilles rondes du son et des réglages.
+
+L'ombre du bouton de vol était un **flou** — un `drop-shadow` qui ne connaît aucune
+grille et bave sur une dizaine de pixels d'art. En pixel elle disparaît : la planche
+porte déjà son propre relief.
+
+Les deux pastilles étaient des **cercles CSS avec une icône SVG** : un bord lissé et un
+dessin vectoriel. En pixel, leur dessin entier — disque, contour, icône — est peint
+dans un canevas à la finesse du jeu, son alpha est coupé net pour qu'aucun bord ne
+soit en dégradé, et le tout est posé en fond ; le SVG s'efface et le clic ne change
+pas de place. C'est le même principe que le panneau de fin et que le texte des
+compteurs : **ce qui doit se voir en pixels est peint en pixels**, jamais lissé puis
+pixelisé.
+
 ### Pourquoi un tiers, et pas un chiffre rond
 
 La scène est peinte dans un tampon large de `largeur / PX_JEU`, puis posée sur une toile
