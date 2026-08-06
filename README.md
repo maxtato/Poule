@@ -311,28 +311,64 @@ Un nombre à cinq chiffres se lit mal d'un bloc, mais une virgule ou une espace 
 en **deux mots** : `1,924,736` et `1 924 736` se lisent comme trois nombres posés côte à
 côte. Ce qu'il faut est plus petit que ça — un simple **respire**.
 
-Mesuré dans la fonte du jeu, sur `1924736`, en comptant les colonnes de blanc entre les
-chiffres :
+Il n'est confié à **aucun caractère**. Les espaces fines de l'Unicode se sont toutes
+révélées inutilisables ici, pour deux raisons. La première est mesurable : dans la fonte
+du jeu, l'espace ultrafine (U+200A) ne creuse qu'**un pixel** à la taille du bandeau,
+c'est-à-dire rien du tout sur un téléphone — essayée, elle ne se voyait pas. La seconde
+est plus grave : les fontes du mode pixel sont des **sous-ensembles**, elles ne
+contiennent que les signes dont le jeu se sert, et un signe absent est rendu par ce que
+le système veut bien lui donner — parfois une chasse nulle. Un séparateur qui dépend de
+la fonte du lecteur n'est pas un séparateur.
 
-| séparateur | creux à 17 px | à 26 px | à 34 px |
-| --- | --- | --- | --- |
-| aucun | 0 | 1 | 1 |
-| espace ultrafine (U+200A) | **1** | **3** | **3** |
-| espace fine insécable (U+202F) | 2 | 4 | 5 |
-| espace fine (U+2009) | 3 | 6 | 8 |
-| virgule | 4 + l'encre | 6 + l'encre | 8 + l'encre |
+Le nombre est donc écrit **par groupes**, et le creux posé à la main :
 
-Les chiffres de Fredoka se touchent déjà presque : le creux ordinaire entre deux
-chiffres vaut zéro ou un pixel. L'**ultrafine** double ce creux et s'arrête là. C'est le
-plus petit écart qui se voit, et il ne casse pas le nombre en morceaux.
+```
+MIL_EM = 0,16        // le creux, en cadratins — un seul réglage
+```
 
-Elle est suivie d'un **liant de mots** (U+2060). L'ultrafine est une espace comme une
-autre pour le navigateur : sans lui, `9 876 792 m` pourrait se couper en fin de ligne au
-milieu du nombre. Vérifié sur trois écrans jusqu'à 300 pixels de large, avec un score à
-dix chiffres : toujours une seule ligne.
+`chiffre()` coupe le nombre en groupes de trois. Sur la toile, `txtP()` mesure chaque
+groupe, additionne les creux et écrit les groupes un par un — le total sert de point de
+départ, si bien que le calage à droite, à gauche ou au centre reste exact. Dans le HTML,
+la même marque devient une boîte vide de `.16em`.
 
-Les deux langues la partagent. L'anglais avait sa virgule, le français son espace fine
+Une boîte vide est un élément à part entière, et la ligne **peut** se couper juste avant
+ou juste après : vérifié, un score à onze chiffres passait à la ligne sur un écran de
+320. Le nombre entier est donc enfermé dans une étiquette insécable. Vérifié à nouveau
+sur trois écrans jusqu'à 300 pixels : toujours une seule ligne.
+
+Mesuré sur la toile du vrai jeu, en comptant les colonnes de fond entre les chiffres de
+`14 820 m` :
+
+| | creux ordinaire entre deux chiffres | respire des milliers |
+| --- | --- | --- |
+| trait, 390×844 | 1 à 3 px écran | **9** |
+| pixel, 390×844 | 1 à 2 px écran | **11** |
+| pixel, 320×568 | 1 px | **8** |
+
+Les deux langues le partagent. L'anglais avait sa virgule, le français son espace fine
 insécable ; un nombre se lit maintenant de la même façon partout.
+
+### Le gabarit qui ne remplaçait rien
+
+La place du bloc de droite se réserve sur un **gabarit** où tous les chiffres sont des
+zéros : les chiffres de Fredoka n'ont pas la même chasse — le `1` fait 6 pixels quand le
+`0` en fait 10 — et une largeur mesurée sur le texte réel changerait à chaque mètre
+parcouru.
+
+Le remplacement était écrit `/\\d/` au lieu de `/\d/`, c'est-à-dire « un antislash suivi
+d'un d » : il ne remplaçait **rien**, et le gabarit valait le texte lui-même. Mesuré, le
+bord gauche du bloc — donc le compte de mouches, et la pastille du festin avec lui —
+sautait entre cinq positions étalées sur **15 pixels** selon les chiffres affichés :
+
+| distance | bord droit du compte de mouches |
+| --- | --- |
+| 11 111 m | 299,6 |
+| 88 888 m | 284,6 |
+| 99 999 m | 289,6 |
+| 70 707 m | 287,6 |
+
+Après correction, la même colonne vaut 284,6 pour les six distances essayées, dans les
+deux styles.
 
 ### Le score ne s'affiche pas pendant la course
 

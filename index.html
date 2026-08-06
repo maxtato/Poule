@@ -185,6 +185,11 @@
   h1{font-size:clamp(40px,12.5vw,82px);font-weight:900;letter-spacing:0;word-spacing:.08em;line-height:1;text-transform:uppercase}
   h1 em{font-style:normal;color:#D6342B}
   .sub{font-size:15px;line-height:1.5;color:#6C6258;max-width:19em}
+  /* Le respire entre les milliers : une boite vide, large d'une fraction du corps du
+     texte, la meme valeur que MIL_EM sur la toile. Une boite ne peut pas servir de
+     point de coupure, le nombre ne se casse donc jamais en fin de ligne. */
+  .mil{display:inline-block;width:.16em}
+  .nb{white-space:nowrap}
   .btn{border:1.5px solid #D6342B;background:#fff;color:#D6342B;
     font-size:15px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;
     padding:14px 32px;border-radius:999px;cursor:pointer;font-family:inherit;
@@ -1360,15 +1365,24 @@ let speed=0, dist=0, tSpawn=0, t=0, shake=0, hold=false, holdT=0, eaten=0;
 function metres(){ return Math.round(dist); }
 function score(){ return metres()*eaten; }
 /* Un nombre a cinq chiffres se lit mal d'un bloc, mais une virgule ou une espace le
-   coupe en deux mots. Ce qu'il faut, c'est un simple RESPIRE : l'espace ultrafine, qui
-   vaut six centiemes de cadratin dans la fonte du jeu — un pixel a la taille du
-   bandeau, deux au panneau de fin — la ou l'espace fine insecable en valait deux fois
-   plus et la virgule quatre fois. Le liant qui la suit interdit le retour a la ligne au
-   milieu du nombre : l'ultrafine, elle, est secable.
-   Les deux langues la partagent : un nombre se lit de la meme facon partout. */
-const CHIFFRE_SEP = "\u200a\u2060";     // espace ultrafine + liant de mots
+   coupe en deux mots. Ce qu'il faut, c'est un simple RESPIRE.
+   Il n'est confie a AUCUN caractere. Les espaces fines — ultrafine, fine insecable —
+   dependent de la fonte : celles du jeu sont des sous-ensembles, le telephone retombe
+   sur ce qu'il veut, et le creux fait un pixel ici, rien du tout ailleurs. Le nombre
+   est donc ecrit par groupes et le creux pose a la main, en fraction de la taille du
+   texte, la meme sur la toile et dans le HTML.
+   Les deux langues le partagent : un nombre se lit de la meme facon partout. */
+const MIL = " ";          // la marque de groupe : jamais affichee telle quelle
+const MIL_EM = 0.16;      // le creux, en cadratins — un seul reglage pour tout le jeu
 function chiffre(n){
-  return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, CHIFFRE_SEP);
+  return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, MIL);
+}
+/* Le meme nombre pour le HTML : la marque devient une boite vide de la bonne largeur.
+   Une boite vide est un element a part entiere, et la ligne PEUT se couper juste avant
+   ou juste apres — verifie, un score a onze chiffres passait a la ligne sur un ecran de
+   320. Le nombre entier est donc enferme dans une etiquette insecable. */
+function chiffreHTML(n){
+  return '<span class="nb">'+chiffre(n).split(MIL).join('<span class="mil"></span>')+'</span>';
 }
 let dernierObs="";   // le dernier obstacle lance : le cerf-volant ne se suit pas lui-meme
 let obs=[], flies=[], puffs=[], plumes=[], traits=[], clouds=[], sol=[], hills=[], miettes=[], decor=[];
@@ -1759,11 +1773,11 @@ function die(dessus){
   save.bestMou=Math.max(save.bestMou, eaten);
   save.bestDist=Math.max(save.bestDist, metres());
   save.flies+=eaten; save.runs++; storeSave();
-  $("fscore").textContent=chiffre(score());
-  $("fdetail").textContent=T("findetail", eaten, chiffre(metres()));
+  $("fscore").innerHTML=chiffreHTML(score());
+  $("fdetail").innerHTML=T("findetail", eaten, chiffreHTML(metres()));
   /* Les pastilles ne portent que des nombres : c'est la ligne au-dessus qui dit
      de quoi il s'agit, et c'est elle qui annonce le record battu. */
-  $("frec").textContent=chiffre(best);
+  $("frec").innerHTML=chiffreHTML(best);
   finRec=rec;
   textesFin();
   carnet();
@@ -1796,7 +1810,7 @@ function textesFin(){
   if(!$("frectitre")) return;
   $("frectitre").textContent = finRec ? T("nouveaurec") : T("recperso");
   $("fbravo").textContent = eaten ? T("tonscore") : T("rien");
-  if($("fdetail")) $("fdetail").textContent = T("findetail", eaten, chiffre(metres()));
+  if($("fdetail")) $("fdetail").innerHTML = T("findetail", eaten, chiffreHTML(metres()));
   $("ftot").textContent = save.runs>1 ? T("totaux", save.flies, save.runs) : "";
 }
 /* Le carnet de l'accueil, en trois colonnes : record, mouches gobees, parties. Les
@@ -1804,7 +1818,7 @@ function textesFin(){
    la ou une phrase disant "Record 0" sonnait comme une erreur. */
 function carnet(){
   const r=$("sRec"); if(!r) return;
-  r.textContent=chiffre(save.best); $("sMou").textContent=save.flies; $("sPar").textContent=save.runs;
+  r.innerHTML=chiffreHTML(save.best); $("sMou").textContent=save.flies; $("sPar").textContent=save.runs;
 }
 $("play").onclick=start; $("again").onclick=start;
 $("resume").onclick=unhalt;
@@ -3359,7 +3373,26 @@ function coeur(x, y, h, plein, trait){
    l'agrandit sans lissage. Le chiffre a des lors exactement le grain du reste. */
 const tampTxt=document.createElement("canvas");
 const ttx=tampTxt.getContext("2d",{willReadFrequently:true});
+/* La largeur d'un texte a groupes, creux compris : c'est elle qui reserve la place
+   dans le bandeau, sans quoi la colonne des metres se decalerait de tous ses creux. */
+function largeurP(txt, taille, poids){
+  ctx.font=(poids||"900")+" "+taille+"px "+FONT;
+  const m=String(txt).split(MIL);
+  return m.reduce((a,b)=>a+ctx.measureText(b).width, 0) + taille*MIL_EM*(m.length-1);
+}
 function txtP(txt, x, y, taille, coul, align, base){
+  /* Un nombre groupe s'ecrit groupe par groupe, le creux pose entre deux. L'ensemble
+     est mesure d'abord : c'est lui qui donne le point de depart, quel que soit le
+     calage demande. */
+  if(String(txt).indexOf(MIL)>=0){
+    const m=String(txt).split(MIL), creux=taille*MIL_EM;
+    ctx.font="900 "+taille+"px "+FONT;
+    const l=m.map(p=>ctx.measureText(p).width);
+    const tot=l.reduce((a,b)=>a+b,0)+creux*(m.length-1);
+    let cx = align==="right" ? x-tot : align==="center" ? x-tot/2 : x;
+    for(let i=0;i<m.length;i++){ txtP(m[i], cx, y, taille, coul, "left", base); cx+=l[i]+creux; }
+    return;
+  }
   ctx.font="900 "+taille+"px "+FONT;
   ctx.textAlign=align; ctx.textBaseline=base;
   if(!save.pixel){ ctx.fillStyle=coul; ctx.fillText(txt, x, y); return; }
@@ -3425,9 +3458,9 @@ function drawHUD(){
      n'a pas des chiffres de largeur egale : mesuree sur le texte reel, la colonne
      changeait de largeur a chaque metre parcouru, et tout le bandeau respirait. */
   const MES=[
-    {val:String(eaten), gab:String(eaten).replace(/\\d/g,"0"),
+    {val:String(eaten), gab:String(eaten).replace(/\d/g,"0"),
      v:eaten, r:save.bestMou, rec:save.bestMou>0?String(save.bestMou):null, ico:true},
-    {val:chiffre(metres())+" m", gab:(chiffre(metres())+" m").replace(/\\d/g,"0"),
+    {val:chiffre(metres())+" m", gab:(chiffre(metres())+" m").replace(/\d/g,"0"),
      v:metres(), r:save.bestDist,
      rec:save.bestDist>0?chiffre(save.bestDist)+" m":null, ico:false},
   ];
@@ -3435,9 +3468,8 @@ function drawHUD(){
   const cw=u*0.13;                           // la couronne des records
   for(const m of MES){
     ctx.font="900 "+fbig+"px "+FONT;
-    const g1=ctx.measureText(m.gab).width+(m.ico?mw+u*0.09:0);
-    ctx.font="700 "+fpet+"px "+FONT;
-    const g2=m.rec ? cw*1.25+u*0.07+ctx.measureText(m.rec.replace(/\\d/g,"0")).width : 0;
+    const g1=largeurP(m.gab, fbig, "900")+(m.ico?mw+u*0.09:0);
+    const g2=m.rec ? cw*1.25+u*0.07+largeurP(m.rec.replace(/\d/g,"0"), fpet, "700") : 0;
     m.w=Math.max(g1,g2);
   }
   const ecart=u*0.18;                        // entre une mesure et son filet
@@ -3537,15 +3569,13 @@ function drawHUD(){
     const xg=x+m.w;                           // les deux lignes sont callees a DROITE
     txtP(m.val, xg, top+u*0.31, fbig, coulPres(m.v,m.r), "right", "middle");
     if(m.ico){
-      ctx.font="900 "+fbig+"px "+FONT;
-      const lg=ctx.measureText(m.val).width;
+      const lg=largeurP(m.val, fbig, "900");
       /* fly_hud, pas fly_ico : la meme mouche, mais taillee pour la taille du bandeau.
          La planche du panneau de fin, posee ici, sortait a trois fois le grain du jeu. */
       ctx.drawImage(SPR.fly_hud, xg-lg-u*0.09-mw, top+u*0.31-mh/2, mw, mh);
     }
     if(m.rec){
-      ctx.font="700 "+fpet+"px "+FONT;
-      const lr=ctx.measureText(m.rec).width;
+      const lr=largeurP(m.rec, fpet, "700");
       txtP(m.rec, xg, top+u*0.60, fpet, REC_GRIS, "right", "middle");
       couronne(xg-lr-u*0.07-cw*1.25, top+u*0.60-cw/2, cw, trait);
     }
