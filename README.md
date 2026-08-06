@@ -1384,7 +1384,7 @@ suivant, c'est fini.
 
 | Instant | Ce qui se passe |
 |---|---|
-| 0 s | Le choc, puis la culbute |
+| 0 s | Le choc, la culbute, et le cœur qui s'échappe |
 | ~0,45 s | Le sol : poussière, secousse, étoiles |
 | ~0,95 s | Elle rouvre les yeux : les étoiles s'éteignent |
 | ~1,35 s | Elle se lève, en trois images |
@@ -1515,6 +1515,26 @@ deux se centrent sur la ligne : le cœur est plus court que la barre, et empilé
 faisaient un escalier. Cette ligne est remontée contre la jauge de plumes, trois unités
 sous le bas de l'icône au lieu de neuf, pour que les trois choses se lisent comme un
 seul bloc plutôt que comme trois étages.
+
+Les cœurs sont **centrés sur la plume**, pas calés sur son bord gauche : la plume est
+penchée et son dessin est plus large que son trait, un alignement à gauche les laissait
+de travers sous elle. Le calcul porte sur le groupe entier, pour que deux cœurs ou
+trois restent centrés de la même façon.
+
+### Le cœur qui s'échappe
+
+La vie se dépense **à l'instant du choc**, et c'est le seul moment où l'on ne regarde
+sûrement pas le coin de l'écran : le compteur se viderait sans témoin. Un cœur — le
+même dessin que celui du HUD, c'est bien celui-là qu'elle vient de perdre — monte donc
+au-dessus d'elle et s'évapore, là où l'œil est déjà.
+
+Il monte de 46 unités par seconde, ondule doucement, grossit d'un tiers et s'efface sur
+1,3 seconde. Il est peint **après** la poule : c'est lui qu'on doit suivre à cet
+instant-là. Comme le monde est figé pendant la culbute, il monte sur un décor immobile,
+ce qui le rend d'autant plus lisible.
+
+Il ne paraît qu'au choc qui **coûte une vie**. Au choc suivant il n'y a plus de cœur à
+perdre, et le panneau de fin arrive de toute façon une seconde plus tard.
 
 ### Le panneau de fin
 

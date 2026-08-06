@@ -1224,6 +1224,12 @@ let chocSur=false, deadVx=0, deadFrein=0;
 const VIES_DEPART = 1, KO_SONNEE = 0.5, RELEVE_INVU = 1.0, RELEVE_PLUMES = 0.35;
 let vies=VIES_DEPART, vaSeRelever=false, releveAt=-9, invuJusqu=-9;
 function invu(){ return t<invuJusqu; }
+/* Le coeur qui s'echappe. La vie se depense a l'instant du choc, et c'est le seul
+   moment ou l'on ne regarde surement PAS le coin de l'ecran : le compteur se viderait
+   sans temoin. Le coeur monte donc au-dessus d'elle et s'evapore, la ou l'oeil est
+   deja. Meme dessin que celui du HUD — c'est bien celui-la qu'elle vient de perdre. */
+let coeurs=[];
+const COEUR_VOL = 1.3, COEUR_MONTE = 46, COEUR_H = 22;
 /* La pose du relevage en cours, ou rien si ce n'est pas le moment. */
 function relevePose(){
   if(releveAt<0) return null;
@@ -1309,7 +1315,7 @@ function reset(){
   comboMax=0; orGobees=0; travObs=0; airDepuis=t; airMax=0; plafondTouche=false;
   trophFile=[]; trophCur=null; trophT=-9;
   deadLand=-9; chocVol=false; chocSur=false; deadVx=0; deadFrein=0;
-  vies=VIES_DEPART; vaSeRelever=false; releveAt=-9; invuJusqu=-9;
+  vies=VIES_DEPART; vaSeRelever=false; releveAt=-9; invuJusqu=-9; coeurs=[];
   tFly=3; tOr=OR_ATTENTE[0]*0.55; orJusqu=-9;
   clouds=[]; for(let i=0;i<5;i++) clouds.push({x:Math.random()*VIEW_W*1.5, f:.15+Math.random()*.6, s:.55+Math.random()*.6, v:.5+Math.random()*.7});
   /* Les massifs debordent largement du cadre : on seme au-dela des deux bords pour
@@ -1646,7 +1652,10 @@ function die(dessus){
   hen.ground=false;
   for(let i=0;i<15;i++) plumes.push({x:hen.x+70,y:hen.y-60,vx:-40-Math.random()*170,
     vy:-130-Math.random()*230,r:Math.random()*6,vr:(Math.random()-.5)*8,l:1});
-  if(vaSeRelever) return;              // elle n'a rien perdu d'autre que sa vie de rattrapage
+  if(vaSeRelever){
+    coeurs.push({x:hen.x+80, y:hen.y-125, l:1, ph:Math.random()*6.3});
+    return;                            // elle n'a rien perdu d'autre que sa vie de rattrapage
+  }
   /* Trois records, et un seul fait titre. Le score commande l'ecran de fin et le
      carnet ; les deux autres sont les ingredients, et ce sont eux que le HUD montre
      pendant la course parce que ce sont eux qu'on peut encore faire monter. */
@@ -2020,6 +2029,10 @@ function obsBox(o){
 
 function update(dt){
   t+=dt;
+  /* Le coeur perdu monte et s'evapore, quel que soit l'etat : il est lache pendant la
+     culbute, ou le jeu n'est plus en course, et il doit finir sa montee. */
+  for(const c of coeurs){ c.l-=dt/COEUR_VOL; c.y-=dt*COEUR_MONTE; c.ph+=dt*3.1; }
+  coeurs=coeurs.filter(c=>c.l>0);
   /* Les trophees continuent d'etre servis pendant la culbute : celui qui tombe sur
      la derniere mouche doit avoir le temps de s'afficher. Aucun ne peut plus se
      gagner a ce moment-la, les compteurs sont figes. */
@@ -2895,6 +2908,15 @@ function draw(){
   }
   ctx.globalAlpha=1;
 
+  /* Le coeur perdu, au-dessus d'elle : il monte, ondule, grossit un peu et s'efface.
+     Il est peint APRES la poule — c'est lui qu'on doit suivre a cet instant-la. */
+  for(const c of coeurs){
+    const u=1-c.l, h=COEUR_H*(1+u*0.3);
+    ctx.globalAlpha=Math.min(1, c.l*2.4);
+    coeur(c.x+Math.sin(c.ph)*6-h*0.54, c.y, h, true);
+  }
+  ctx.globalAlpha=1;
+
   ctx.restore();                    // fin du premier plan translate
   ctx.restore();
   drawHUD();
@@ -3103,7 +3125,7 @@ function drawHUD(){
   /* La deuxieme ligne de la colonne de gauche porte le coeur des vies et, quand il est
      allume, le pouvoir. Les deux partagent la meme ligne et se centrent dessus : le
      coeur est plus court que la barre, et empiles ils faisaient un escalier. */
-  const cvh=Math.max(7, fh*0.42);
+  const cvh=Math.max(10, fh*0.62);
   const lgh=Math.max(cvh, pouvoir?ph:0);
 
   /* La hauteur du cadre se mesure sur la plus haute des deux colonnes. Il grandit
@@ -3218,9 +3240,13 @@ function drawHUD(){
 
   /* La vie de rattrapage : un coeur par vie, plein tant qu'elle est en reserve, vide
      une fois depensee. Il ne disparait pas quand il est vide — c'est justement a ce
-     moment-la qu'il faut le voir, puisque le prochain choc sera le dernier. */
+     moment-la qu'il faut le voir, puisque le prochain choc sera le dernier.
+     Les coeurs sont centres sur la PLUME, pas cales sur son bord gauche : la plume est
+     penchee et son dessin est plus large que son trait, un alignement a gauche les
+     laissait de travers sous elle. */
+  const cvl=VIES_DEPART*cvh*1.08+(VIES_DEPART-1)*cvh*0.27;
   for(let i=0;i<VIES_DEPART;i++)
-    coeur(gx+i*(cvh*1.35), ly+(lgh-cvh)/2, cvh, i<vies);
+    coeur(gx+fw/2-cvl/2+i*(cvh*1.35), ly+(lgh-cvh)/2, cvh, i<vies);
 
   /* Le pouvoir : une barre sur la meme ligne que le coeur, qui se vide. Elle dit ce que
      le clignotement de la poule ne dit pas — combien de temps il reste. Jaune, comme la
