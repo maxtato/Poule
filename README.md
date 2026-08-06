@@ -307,29 +307,42 @@ qu'on puisse utiliser, alors que ses deux facteurs disent chacun quoi faire — 
 chercher une mouche, ou tenir encore un peu. On ne décide pas d'un score ; on décide
 d'aller chercher une mouche de plus.
 
-Tout tient dans un seul cadre. Pour chaque mesure : le nombre de la partie en cours
-**en gros**, et à côté une échelle courte portant le record. On lit d'abord où l'on en
-est, ensuite d'où l'on vient — et les deux ne se disputent plus l'attention puisque
-le corps du texte les départage.
+### Un seul cartouche, et tout dedans
+
+Le HUD était fait de morceaux qui ne se ressemblaient pas : une plume et sa jauge
+posées à nu en haut à gauche, un cadre à droite pour les compteurs, une barre de
+pouvoir et un combo flottant ailleurs. Mélanger l'encadré et le libre fait bizarre —
+on ne sait plus ce qui est une interface et ce qui est du décor.
+
+Tout est donc dans le même cadre, en deux colonnes : **à gauche ce qui se dépense**
+(les plumes, le pouvoir, la chaîne), **à droite ce qui se compte** (les mouches, les
+mètres) avec son record.
 
 ```
-   ╭───────────────────────────╮
-   │  🪰  32   ▬▬▬▭      34    │
-   │  1 988 m  ▬▬▬▭  2 100 m   │
-   ╰───────────────────────────╯
+ ╭──────────────────────────────────────────────╮
+ │  🪶 ▬▬▬▬▬▬▬▬     🪰  32   ▬▬▬▭      34       │
+ │  ⭐ ▬▬▬▬▭      1 988 m    ▬▬▬▭  2 100 m      │
+ │  ×7 ▬▬▭                                      │
+ ╰──────────────────────────────────────────────╯
 ```
 
-C'était d'abord deux blocs séparés, les valeurs en haut et un cartouche RECORD en
-dessous. Un cadre par registre disait bien « ceci n'est pas ta partie », mais cela
-faisait deux blocs à parcourir là où il n'y a que deux nombres à lire. Quatre façons
-de les fondre ont été comparées à l'écran : échelle en colonne à gauche, échelle
-alignée à droite sous le nombre, échelle sur la même ligne, et le tout sans cadre.
+Pour chaque mesure, le nombre de la partie en cours **en gros**, et à côté une échelle
+courte portant le record. On lit d'abord où l'on en est, ensuite d'où l'on vient — et
+les deux ne se disputent plus l'attention puisque le corps du texte les départage.
 
-Les échelles sont volontairement **brèves** — un demi-pouce. Une barre longue invite à
-la lire dans le détail ; celle-ci n'a qu'un travail, dire où l'on en est du record.
+Les deux colonnes **se bornent l'une l'autre** : le plus large des deux nombres est
+mesuré, icône comprise, et la colonne de gauche s'arrête là. Sans cela la barre de
+pouvoir, qui tombe à la hauteur de la deuxième ligne de droite, passait par-dessus le
+nombre des mètres.
 
-Au tout premier essai il n'y a rien à situer : pas de cadre, pas d'échelle, juste les
-deux nombres.
+Le cadre grandit quand le pouvoir ou la chaîne s'allument. C'est voulu : ce sont des
+événements, et un emplacement vide réservé en permanence les ferait passer pour des
+ressources du jeu.
+
+Les échelles de record sont volontairement **brèves** — un demi-pouce. Une barre longue
+invite à la lire dans le détail ; celle-ci n'a qu'un travail, dire où l'on en est.
+
+Au tout premier essai il n'y a rien à situer : pas d'échelle, juste les deux nombres.
 
 Un signal d'approche commun aux deux lignes : rien tant qu'on est loin, **ambre aux
 trois quarts**, un battement ambre-rouge dans les dix derniers pour cent, **rouge** une

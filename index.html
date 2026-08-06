@@ -2835,11 +2835,18 @@ function bandeauTrophee(R, pad, VW, y){
    rien qu'on puisse utiliser, alors que ses deux facteurs disent chacun quoi faire —
    aller chercher une mouche, ou tenir encore un peu.
 
-   Tout tient dans un seul cadre : pour chaque mesure, le nombre de la partie en
-   cours EN GROS, et sous lui une echelle courte portant le record. On lit d'abord ou
-   l'on en est, ensuite d'ou l'on vient — et les deux ne se disputent plus l'attention
-   puisque le corps du texte les departage.
-   Quatre facons de le poser, le temps de choisir : `HUD_FUS`. */
+   UN SEUL CARTOUCHE, ET TOUT DEDANS. Le HUD etait fait de morceaux qui ne se
+   ressemblaient pas : une plume et sa jauge posees a nu en haut a gauche, un cadre a
+   droite pour les compteurs, une barre de pouvoir et un combo flottant ailleurs.
+   Melanger l'encadre et le libre fait bizarre — on ne sait plus ce qui est une
+   interface et ce qui est du decor. Tout est donc dans le meme cadre, en deux
+   colonnes : a gauche ce qui se depense (les plumes, le pouvoir, la chaine), a droite
+   ce qui se compte (les mouches, les metres) avec son record.
+
+   Pour chaque mesure, le nombre de la partie en cours EN GROS, et a cote une echelle
+   courte portant le record. On lit d'abord ou l'on en est, ensuite d'ou l'on vient —
+   et les deux ne se disputent plus l'attention puisque le corps du texte les
+   departage. */
 /* L'avancement vers le record, et la couleur qui va avec : rien tant qu'on est loin,
    ambre aux trois quarts, un battement ambre-rouge dans les dix derniers pour cent,
    rouge une fois passe. */
@@ -2852,88 +2859,10 @@ function coulPres(v, rec){
   return INK;
 }
 const REC_GRIS="#A79A88";
-/* longueur des echelles, ecart entre elles, corps du nombre du record */
-let REC_BARRE=54, REC_ECART=15, REC_FONTE=12;
-let HUD_FUS=0;
+/* longueur des echelles de record, et corps de leur nombre */
+let REC_BARRE=54, REC_FONTE=12;
 function larMou(h){ return h*MOU_W/MOU_H; }
 function icoMou(x,y,h){ ctx.drawImage(SPR.fly_ico, x, y, larMou(h), h); }
-/* une echelle courte et son record a droite, posee a partir de (x,y) */
-function echelle(x, y, w, v, r, rec){
-  const hb=Math.max(3, REC_FONTE*0.30), battu=v>=r;
-  ctx.fillStyle="#E4DACA"; rr(x,y,w,hb,hb/2); ctx.fill();
-  const prog=Math.min(1, v/r);
-  if(prog>0.01){
-    ctx.fillStyle = battu ? "#D6342B" : "#F5A623";
-    rr(x,y,Math.max(hb,w*prog),hb,hb/2); ctx.fill();
-  }
-  ctx.font="700 "+REC_FONTE+"px "+FONT;
-  ctx.fillStyle = battu ? "#D6342B" : REC_GRIS;
-  ctx.textAlign="left"; ctx.textBaseline="middle";
-  ctx.fillText(rec, x+w+7, y+hb/2);
-  ctx.textBaseline="top";
-  return hb;
-}
-
-function hudInfos(L, R, pad, VW, top, fs){
-  const fv=Math.round(fs*0.62), marge=10;
-  const MES=[
-    {val:String(eaten), v:eaten, r:save.bestMou,
-     rec: save.bestMou>0 ? String(save.bestMou) : null, ico:true},
-    {val:chiffre(metres())+" m", v:metres(), r:save.bestDist,
-     rec: save.bestDist>0 ? chiffre(save.bestDist)+" m" : null, ico:false},
-  ];
-  /* la largeur du cadre : mesuree sur ce qu'il doit contenir, jamais ecrite en dur */
-  ctx.font="700 "+REC_FONTE+"px "+FONT;
-  const lgRec=Math.max(...MES.map(m=>m.rec?ctx.measureText(m.rec).width:0));
-  ctx.font="900 "+fv+"px "+FONT;
-  const ih=Math.round(fv*0.78), iw=larMou(ih);
-  const lgVal=Math.max(...MES.map(m=>ctx.measureText(m.val).width+(m.ico?iw+9:0)));
-  const aRec=MES.some(m=>m.rec);
-  const hb=Math.max(3, REC_FONTE*0.30);
-
-  /* 2 — nombre et echelle sur la MEME ligne : le cadre est deux fois moins haut,
-         mais le nombre partage sa ligne et perd un peu de sa preseance. */
-  const cote = HUD_FUS===2;
-  const cw = cote ? marge*2+lgVal+14+REC_BARRE+7+lgRec
-                  : marge*2+Math.max(lgVal, REC_BARRE+7+lgRec);
-  const lignes = cote ? fv+REC_ECART-4 : fv+3+hb+REC_ECART-4;
-  const ch = marge*1.6 + lignes*MES.length - (cote?REC_ECART-8:REC_ECART-8);
-  const cx=R-pad-cw, cy=top+2;
-
-  /* 3 — pas de cadre du tout : le meme empilement, pose a meme le ciel. Le cadre
-         affirme une interface ; s'en passer laisse le jeu respirer. */
-  if(HUD_FUS!==3 && aRec){
-    rr(cx,cy,cw,ch,9);
-    ctx.fillStyle="rgba(250,243,236,.72)"; ctx.fill();
-    ctx.strokeStyle=TROPH_BORD; ctx.lineWidth=1.4; ctx.stroke();
-  }
-
-  let y=cy+marge*0.8;
-  for(const m of MES){
-    ctx.textAlign="right"; ctx.textBaseline="top";
-    ctx.font="900 "+fv+"px "+FONT; ctx.fillStyle=coulPres(m.v,m.r);
-    if(cote){
-      /* le nombre cale a gauche de la colonne des echelles */
-      const xv=cx+marge+lgVal;
-      ctx.fillText(m.val, xv, y);
-      if(m.ico) icoMou(xv-ctx.measureText(m.val).width-9-iw, y+fv*0.18, ih);
-      if(m.rec) echelle(xv+14, y+fv*0.42, REC_BARRE, m.v, m.r, m.rec);
-      y+=fv+REC_ECART-4;
-    }else{
-      ctx.fillText(m.val, cx+cw-marge, y);
-      if(m.ico) icoMou(cx+cw-marge-ctx.measureText(m.val).width-9-iw, y+fv*0.18, ih);
-      if(m.rec){
-        /* 1 — l'echelle alignee a DROITE comme le nombre ; 0 — alignee a gauche du
-               cadre, ce qui donne une colonne franche sous les deux nombres */
-        const bx = HUD_FUS===1 ? cx+cw-marge-lgRec-7-REC_BARRE : cx+marge;
-        echelle(bx, y+fv+3, REC_BARRE, m.v, m.r, m.rec);
-      }
-      y+=fv+3+hb+REC_ECART-4;
-    }
-  }
-  ctx.textAlign="right"; ctx.textBaseline="top";
-  return (HUD_FUS!==3 && aRec) ? cy+ch : y-6;
-}
 
 function drawHUD(){
   if(state!==S.PLAY && state!==S.DEAD) return;
@@ -2942,72 +2871,129 @@ function drawHUD(){
      loin de l'action. */
   const L=bandX, VW=bandW, R=bandX+bandW;
   const pad=Math.max(16,VW*0.045), top=pad+6, fs=Math.round(Math.min(38,VW*0.082));
-  bandeauTrophee(R, pad, VW, hudInfos(L, R, pad, VW, top, fs)+16);
+  const M=13, cx=L+pad, cw=VW-2*pad;
+  const fv=Math.round(fs*0.62);
+  const fh=Math.min(26,VW*0.055), fw=fh*FEA_W/FEA_H;
+  const jh=fh*0.40, ph=jh*0.82, mh=Math.min(22,VW*0.046);
+  const hb=Math.max(3, REC_FONTE*0.30);
+  const pouvoir=traverse(), chaine=(state===S.PLAY && combo>=2);
 
-  /* jauge de vol : une plume, puis une barre qui se vide et se remplit */
-  const fh=Math.min(26,VW*0.055), fw=fh*FEA_W/FEA_H, fy=top+2;
-  ctx.drawImage(SPR.feather, L+pad, fy, fw, fh);
-  const bx=L+pad+fw+8, by=fy+fh*0.30, bw=Math.min(150,VW*0.32), bh=fh*0.40, r=bh/2;
-  ctx.lineWidth=Math.max(1.4,fh*0.075); ctx.strokeStyle=INK; ctx.lineJoin="round";
-  rr(bx,by,bw,bh,r); ctx.fillStyle="#EFE6D6"; ctx.fill(); ctx.stroke();
-  const f=Math.max(0,Math.min(1,hen.feathers));
-  if(f>0.02){
-    ctx.save(); rr(bx,by,bw,bh,r); ctx.clip();
-    /* La jauge est rouge d'un bout a l'autre. Elle virait au rouge en fin de reserve,
-       ce qui n'a plus de sens maintenant qu'elle l'est deja : c'est un battement qui
-       prend le relais. Sous un quart, le rouge s'eclaircit et s'assombrit six fois par
-       seconde — un signal de meme nature, urgence croissante, sans reprendre une
-       couleur a une autre jauge. */
-    ctx.fillStyle = f>0.25 ? "#D6342B"
-                  : mixHex("#D6342B","#FF9C8A", 0.5+0.5*Math.sin(t*13));
-    ctx.fillRect(bx,by,bw*f,bh);
-    ctx.restore();
-    rr(bx,by,bw,bh,r); ctx.stroke();
+  /* La hauteur du cadre se mesure sur la plus haute des deux colonnes. Il grandit
+     donc quand le pouvoir ou la chaine s'allument : c'est voulu, ce sont des
+     evenements, et un emplacement vide reserve en permanence les ferait passer pour
+     des ressources du jeu. */
+  let hg=fh;
+  if(pouvoir) hg+=9+ph;
+  if(chaine)  hg+=8+mh+5+Math.max(2.5,mh*0.14);
+  const hd=fv*2+8;
+  const ch=M*2+Math.max(hg,hd), cy=top;
+
+  rr(cx,cy,cw,ch,10);
+  ctx.fillStyle="rgba(250,243,236,.62)"; ctx.fill();
+  ctx.strokeStyle=TROPH_BORD; ctx.lineWidth=1.4; ctx.lineJoin="round"; ctx.stroke();
+
+  /* ---- colonne de droite : ce qui se compte ---- */
+  const MES=[
+    {val:String(eaten), v:eaten, r:save.bestMou,
+     rec: save.bestMou>0 ? String(save.bestMou) : null, ico:true},
+    {val:chiffre(metres())+" m", v:metres(), r:save.bestDist,
+     rec: save.bestDist>0 ? chiffre(save.bestDist)+" m" : null, ico:false},
+  ];
+  const aRec=MES.some(m=>m.rec);
+  ctx.font="700 "+REC_FONTE+"px "+FONT;
+  const lgRec=Math.max(...MES.map(m=>m.rec?ctx.measureText(m.rec).width:0));
+  const xd=cx+cw-M;
+  const xbR = aRec ? xd-lgRec-7 : xd;      // bord droit des echelles
+  const xNum = aRec ? xbR-REC_BARRE-14 : xd;
+  /* Les deux colonnes se bornent l'une l'autre. Sans cela la barre de pouvoir, qui
+     tombe a la hauteur de la deuxieme ligne de droite, passait par-dessus le nombre
+     des metres. On mesure donc le plus large des deux nombres, icone comprise, et la
+     colonne de gauche s'arrete la. */
+  ctx.font="900 "+fv+"px "+FONT;
+  const lgVal=Math.max(...MES.map(m=>ctx.measureText(m.val).width
+                                     +(m.ico?larMou(fv*0.78)+9:0)));
+  const xGauche=xNum-lgVal-16;
+  let y=cy+M;
+  for(const m of MES){
+    ctx.textAlign="right"; ctx.textBaseline="top";
+    ctx.font="900 "+fv+"px "+FONT; ctx.fillStyle=coulPres(m.v,m.r);
+    ctx.fillText(m.val, xNum, y);
+    if(m.ico) icoMou(xNum-ctx.measureText(m.val).width-9-larMou(fv*0.78),
+                     y+fv*0.18, fv*0.78);
+    if(m.rec){
+      const bx2=xbR-REC_BARRE, by2=y+fv*0.42, battu=m.v>=m.r;
+      ctx.fillStyle="#E4DACA"; rr(bx2,by2,REC_BARRE,hb,hb/2); ctx.fill();
+      const prog=Math.min(1, m.v/m.r);
+      if(prog>0.01){
+        ctx.fillStyle = battu ? "#D6342B" : "#F5A623";
+        rr(bx2,by2,Math.max(hb,REC_BARRE*prog),hb,hb/2); ctx.fill();
+      }
+      ctx.font="700 "+REC_FONTE+"px "+FONT;
+      ctx.fillStyle = battu ? "#D6342B" : REC_GRIS;
+      ctx.textAlign="right"; ctx.textBaseline="middle";
+      ctx.fillText(m.rec, xd, by2+hb/2);
+      ctx.textBaseline="top";
+    }
+    y+=fv+8;
   }
 
+  /* ---- colonne de gauche : ce qui se depense ---- */
+  const gx=cx+M, fy=cy+M;
+  ctx.drawImage(SPR.feather, gx, fy, fw, fh);
+  const bx=gx+fw+8, by=fy+fh*0.30;
+  const bw=Math.max(60, Math.min(150, xGauche-bx)), r2=jh/2;
+  ctx.lineWidth=Math.max(1.4,fh*0.075); ctx.strokeStyle=INK; ctx.lineJoin="round";
+  rr(bx,by,bw,jh,r2); ctx.fillStyle="#EFE6D6"; ctx.fill(); ctx.stroke();
+  const f=Math.max(0,Math.min(1,hen.feathers));
+  if(f>0.02){
+    ctx.save(); rr(bx,by,bw,jh,r2); ctx.clip();
+    /* La jauge est rouge d'un bout a l'autre. Sous un quart, le rouge s'eclaircit et
+       s'assombrit six fois par seconde — meme nature de signal, urgence croissante,
+       sans reprendre une couleur a une autre jauge. */
+    ctx.fillStyle = f>0.25 ? "#D6342B"
+                  : mixHex("#D6342B","#FF9C8A", 0.5+0.5*Math.sin(t*13));
+    ctx.fillRect(bx,by,bw*f,jh);
+    ctx.restore();
+    rr(bx,by,bw,jh,r2); ctx.stroke();
+  }
+  let yg=fy+fh;
+
   /* Le pouvoir : une barre sous la jauge de plumes, qui se vide. Elle dit ce que le
-     clignotement de la poule ne dit pas — combien de temps il reste. Elle n'existe
-     que pendant le pouvoir : hors traversee, il n'y a rien a cet endroit, pas meme
-     une barre vide. Une jauge toujours la se lit comme une ressource du jeu ; une
-     jauge qui apparait se lit comme un evenement, et c'en est un.
-     Jaune, comme la mouche qui la declenche et comme l'etoile qui la nomme. La jauge
-     de vol au-dessus est rouge : les deux ne se confondent plus. */
-  if(traverse()){
+     clignotement de la poule ne dit pas — combien de temps il reste. Jaune, comme la
+     mouche qui la declenche et comme l'etoile qui la nomme ; la jauge de vol
+     au-dessus est rouge, les deux ne se confondent pas. */
+  if(pouvoir){
     const reste=(orJusqu-t-OR_RAB)/OR_BARRE;   // le rab ne s'affiche pas : c'est une marge
-    const py=by+bh+9, ph2=bh*0.82;
-    /* L'etoile tient lieu de nom — le mot TRAVERSÉE prenait une ligne entiere sous
-       la barre pour dire ce qu'un pictogramme dit d'un coup d'oeil. C'est la meme
-       etoile que celles qui tournent au-dessus de la poule assommee : le jeu n'en a
-       qu'une. Elle se cale a gauche, la ou la plume tient la jauge de vol, et la
-       barre se raccourcit d'autant — les deux gardent ainsi le meme bord droit. */
-    const er=ph2*0.95, ex=bx+er;
+    const py=yg+9;
+    const er=ph*0.95, ex=bx+er;
     const px2=bx+er*2+6, pw2=bw-(er*2+6);
     ctx.lineWidth=Math.max(1.4,fh*0.075); ctx.strokeStyle=INK;
-    rr(px2,py,pw2,ph2,ph2/2); ctx.fillStyle="#EFE6D6"; ctx.fill(); ctx.stroke();
-    ctx.save(); rr(px2,py,pw2,ph2,ph2/2); ctx.clip();
-    ctx.fillStyle="#F5B93E"; ctx.fillRect(px2,py,pw2*Math.max(0,reste),ph2);
+    rr(px2,py,pw2,ph,ph/2); ctx.fillStyle="#EFE6D6"; ctx.fill(); ctx.stroke();
+    ctx.save(); rr(px2,py,pw2,ph,ph/2); ctx.clip();
+    ctx.fillStyle="#F5B93E"; ctx.fillRect(px2,py,pw2*Math.max(0,reste),ph);
     ctx.restore();
-    rr(px2,py,pw2,ph2,ph2/2); ctx.stroke();
-    star(ctx, ex, py+ph2/2, er, 0, Math.max(1,fh*0.055));
+    rr(px2,py,pw2,ph,ph/2); ctx.stroke();
+    star(ctx, ex, py+ph/2, er, 0, Math.max(1,fh*0.055));
+    yg=py+ph;
   }
 
   /* Le combo ne s'affiche qu'a partir de deux mouches, avec le temps qu'il reste
-     pour l'entretenir : sans cette barre, la chaine casse sans prevenir. Le petit
-     compteur de mouches qui vivait ici a disparu — le grand chiffre en haut a droite
-     dit deja la meme chose. */
-  if(state===S.PLAY && combo>=2){
-    const mh=Math.min(22,VW*0.046), my=fy+fh+8, chaud=combo>=5;
+     pour l'entretenir : sans cette barre, la chaine casse sans prevenir. */
+  if(chaine){
+    const my=yg+8, chaud=combo>=5;
     ctx.textAlign="left"; ctx.textBaseline="middle";
     ctx.font="900 "+Math.round(mh*0.92)+"px "+FONT;
     ctx.fillStyle = chaud ? "#D6342B" : YELL;
-    ctx.fillText("×"+combo, L+pad, my+mh*0.52);
-    const cw=Math.min(70,VW*0.15), ch=Math.max(2.5,mh*0.14), cy=my+mh+7;
+    ctx.fillText("×"+combo, gx, my+mh*0.52);
+    const cbw=Math.min(70,VW*0.15), cbh=Math.max(2.5,mh*0.14), cby=my+mh+5;
     const rest=Math.max(0,1-(t-lastEat)/COMBO_T);
-    ctx.fillStyle="#E4DACA"; rr(L+pad,cy,cw,ch,ch/2); ctx.fill();
-    ctx.fillStyle = chaud ? "#D6342B" : YELL; rr(L+pad,cy,Math.max(ch,cw*rest),ch,ch/2); ctx.fill();
+    ctx.fillStyle="#E4DACA"; rr(gx,cby,cbw,cbh,cbh/2); ctx.fill();
+    ctx.fillStyle = chaud ? "#D6342B" : YELL;
+    rr(gx,cby,Math.max(cbh,cbw*rest),cbh,cbh/2); ctx.fill();
   }
   ctx.textAlign="right"; ctx.textBaseline="top";
 
+  bandeauTrophee(R, pad, VW, cy+ch+12);
 }
 
 /* ---------- boucle ---------- */
