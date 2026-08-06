@@ -179,8 +179,9 @@ pas une avec deux cerfs-volants, pas un cerf-volant suivi d'un cerf-volant.
 
 ## La mouche dorée
 
-De loin en loin, une mouche **dorée** traverse le ciel, seule, à hauteur de vol
-franche et sans dérive : on doit la voir venir et décider d'aller la chercher. Une
+De loin en loin, une mouche **dorée** traverse le ciel, seule, sans dérive, à une hauteur
+tirée au hasard dans tout le ciel jouable (voir *Une hauteur tirée dans tout le ciel*) :
+on doit la voir venir et décider d'aller la chercher. Une
 toutes les **38 à 60 secondes**, soit environ soixante-dix sur une heure de jeu : assez
 rare pour rester un événement. La gober donne **six secondes de traversée** — les
 obstacles ne l'arrêtent plus.
@@ -746,6 +747,49 @@ apercevait l'ancien bec derrière. Il restait enfin un bout du bec fermé visibl
 la couche de tête ne le couvre pas partout. On relève donc le jaune du bec des trois
 poses de vol qui dépasse d'elle — 9 767 pixels une fois élargis — et on comble avec
 la couleur du voisinage de la couche elle-même.
+
+### Le plafond s'arrête sous le bandeau
+
+Le plafond de vol se comptait depuis le **haut de l'écran** : soixante-dix unités de
+monde, une valeur ronde choisie avant que le bandeau de scores existe. La poule montait
+donc **derrière lui**, tête coupée, et on ne voyait plus où elle allait — mesuré, sa
+crête dépassait de treize à vingt-sept pixels au-dessus du bord de l'écran, et de
+soixante-huit à quatre-vingt-onze au-dessus du bas du bandeau.
+
+Il se compte maintenant depuis le **bas du bandeau**, et il retranche la hauteur de la
+poule elle-même :
+
+```
+bandU  = min(64, largeur du cadre × 0,155) / échelle    // le bandeau, en unités de monde
+flyCeil = min(-320, -(ciel - 99 - bandU - 16))
+```
+
+Les 99 unités sont la hauteur de sa tête au-dessus de ses pattes, relevée sur la pose la
+plus haute. On ne l'a pas devinée : on espionne les appels à `drawImage` pendant un
+`draw()`, on retient celui qui pose la poule, et on mesure l'**encre réelle** de la
+planche — l'alpha, pas le cadre — qu'on ramène en pixels écran par la matrice du
+contexte. La photo ne pouvait pas servir : le bandeau est peint par-dessus elle, une
+différence d'images n'aurait jamais vu le haut de sa tête.
+
+Le tri des poses compte : `CLE` connaît aussi la plume qui s'envole et la mouche du
+bandeau, et les deux se sont retrouvées « plus hautes » que la poule dans une première
+mesure. Seules les poses de vol, de course, de saut et de becquée sont retenues.
+
+| pose | haut d'encre |
+| --- | --- |
+| becquée | 2,3 % de la planche |
+| course, saut | 3,4 % |
+| vol | 5,1 % |
+
+La becquée est plus haute encore, mais elle ne se joue qu'**au sol** : elle ne peut pas
+toucher le plafond. C'est donc le saut qui commande.
+
+Le résultat, mesuré sur cinq écrans et dans les deux styles : la crête s'arrête **7 à 15
+pixels sous le bandeau**, jamais dessous. Le second terme du `min` garde toujours de
+quoi voler, même sur une fenêtre si basse que le bandeau mangerait tout le ciel.
+
+L'aigle et le cerf-volant tirent leur hauteur à partir de `flyCeil` : ils redescendent
+avec lui, sans une ligne à changer.
 
 ### Le bec de dessous, deuxième prise
 
@@ -1617,21 +1661,23 @@ Ils ne se comptent pas en secondes mais en **mètres**. Le jeu accélère de 500
 rendez-vous au chronomètre se rapprocherait à mesure que la course va plus vite, et deux
 cœurs finiraient par se suivre. En mètres, l'écart est le même du début à la fin.
 
-Le premier n'arrive pas avant sept cents mètres, les suivants **entre 1 200 et 2 100
-mètres** après le précédent — treize à trente-cinq secondes selon la vitesse. L'écart
-tiré au hasard sur neuf cents mètres interdit de les attendre ; son plancher interdit
-qu'ils se suivent.
+Le premier n'arrive pas avant quinze cents mètres, les suivants **entre 2 800 et 4 400
+mètres** après le précédent — une bonne minute de course à pleine vitesse. L'écart tiré
+au hasard sur seize cents mètres interdit de les attendre ; son plancher interdit qu'ils
+se suivent.
 
-Mesuré sur vingt parties de six mille mètres, sans obstacle :
+Ces chiffres ont doublé : à un cœur tous les 1 765 mètres, on en croisait deux ou trois
+par partie et la vie de rattrapage n'avait plus rien de rare. Mesuré sur vingt parties de
+six mille mètres, sans obstacle, avant et après :
 
-| | |
-| --- | --- |
-| cœurs par partie | 3,4 — soit un tous les 1 765 m |
-| premier cœur | de 703 à 1 257 m |
-| écart entre deux | de 1 206 à 2 099 m, moyenne 1 710 |
+| | avant | après |
+| --- | --- | --- |
+| cœurs par partie | 3,4 — un tous les 1 765 m | 1,9 — un tous les 3 243 m |
+| premier cœur | de 703 à 1 257 m | de 1 606 à 2 599 m |
+| écart entre deux | de 1 206 à 2 099 m | de 2 810 à 4 267 m, moyenne 3 182 |
 
-Sur une vraie partie, qui dépasse rarement trois mille mètres, cela fait **un ou deux
-cœurs**, et jamais deux d'affilée.
+Sur une vraie partie, qui dépasse rarement trois mille mètres, cela fait **zéro ou un
+cœur** — c'est le prix de la rareté.
 
 Le cœur arrive seul, franchement en l'air, sans dérive : il faut le voir venir et
 décider d'aller le chercher, exactement comme la mouche dorée, en plus rare encore. Il
@@ -1640,6 +1686,29 @@ seul, et le halo est déjà le langage de la dorée.
 
 Au plafond de vies, le rendez-vous est **consommé sans rien poser** : personne ne fait
 de réserve en attendant d'avoir la place.
+
+### Une hauteur tirée dans tout le ciel
+
+Le cœur naissait entre 200 et 450 unités au-dessus du sol, la mouche dorée entre 230 et
+490 : deux bandes de 250 unités, toujours au même endroit, dans le bas du ciel. On savait
+d'avance où regarder, et **rien n'obligeait jamais à monter** les chercher — dans un jeu
+qui s'appelle *la poule qui vole*, c'est un aveu.
+
+Les deux tirent maintenant leur hauteur par la même fonction, uniformément entre le
+dessus des obstacles et un cheveu sous le plafond :
+
+```
+hauteurLibre() = -210 + hasard × (flyCeil + 60 + 210)
+```
+
+Le plancher est calé au-dessus de la **fourche**, le plus haut des obstacles au sol
+(183 unités). Plus bas, un cœur pourrait naître dans un tas de foin et y rester : il
+dérive à la vitesse du décor, la position relative ne change jamais. La mouche, elle,
+sait déjà remonter au-dessus d'un obstacle — c'est une règle qu'elle avait déjà.
+
+Vérifié sur dix mille tirages : dix tranches égales entre 949 et 1 057 apparitions, la
+loi est plate. Et sur le jeu réel, les cœurs naissent de -211 à -960, les dorées de -223
+à -938 — tout le ciel jouable, du dessus des obstacles au plafond.
 
 ### Le répit, et pourquoi il est nécessaire
 

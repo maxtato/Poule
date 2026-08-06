@@ -1168,6 +1168,12 @@ const VIEW_W=800, GROUND_GAP=470;   // bande sous le sol : zone d'appui du pouce
    telephone couche). En dessous de ce seuil, c'est la hauteur qui commande et le
    terrain se centre entre deux bandes plutot que de deborder. */
 const MIN_H=1250;
+/* Le plafond de vol. Il ne se compte plus depuis le haut de l'ecran mais depuis le
+   bas du bandeau de scores : la poule montait jusqu'a passer DERRIERE lui, tete
+   coupee, et on ne voyait plus ou elle allait. HEN_TETE est la hauteur de sa tete
+   au-dessus de ses pattes, mesuree sur la pose la plus haute (le saut) : 99 unites
+   de monde. PLAF_MARGE laisse un cheveu de ciel entre la crete et le bandeau. */
+const HEN_TETE=99, PLAF_MARGE=16;
 let VIEW_H=1734;
 let W=0,H=0,dpr=1,scale=1,groundY=0,worldH=0,flyCeil=-300,skyH=340;
 let bandX=0,bandW=0;                // cadre de jeu en pixels ecran : le HUD s'y aligne
@@ -1206,7 +1212,11 @@ function resize(){
   if(typeof fontePixel==="function") fontePixel();   // les corps sont en clamp()
   groundY=worldH-GROUND_GAP;                 // le sol reste a distance fixe du bas de l'ecran
   skyH=groundY;                              // tout l'espace au-dessus du sol est jouable
-  flyCeil=-(skyH-70);
+  /* Le bandeau occupe le haut de l'ecran, en pixels CSS : ramene en unites de monde,
+     il donne la hauteur de ciel a retrancher. Le second terme garde toujours de quoi
+     voler, meme sur une fenetre si basse que le bandeau mangerait tout le ciel. */
+  const bandU=Math.min(64, bandW*0.155)/scale;
+  flyCeil=Math.min(-320, -(skyH-HEN_TETE-bandU-PLAF_MARGE));
 }
 addEventListener("resize",resize);
 addEventListener("orientationchange",()=>setTimeout(resize,120));
@@ -1245,11 +1255,12 @@ const VIES_MAX = 5;
    de 500 a 900 : un rendez-vous au chronometre se rapprocherait a mesure que la course
    va plus vite, et deux coeurs finiraient par se suivre. En metres, l'ecart est le
    meme du debut a la fin.
-   Le premier n'arrive pas avant sept cents metres, les suivants entre douze cents et
-   deux mille cent metres apres le precedent — treize a trente-cinq secondes selon la
-   vitesse. L'ecart tire au hasard sur neuf cents metres interdit de les attendre ;
-   son plancher interdit qu'ils se suivent. */
-const COEUR_PREM=[700,1300], COEUR_ECART=[1200,2100];
+   Le premier n'arrive pas avant quinze cents metres, les suivants entre deux mille
+   huit cents et quatre mille quatre cents metres apres le precedent — une bonne minute
+   de course a pleine vitesse. L'ecart tire au hasard sur seize cents metres interdit
+   de les attendre ; son plancher interdit qu'ils se suivent. Une partie ordinaire n'en
+   croise aucun ou un seul : c'est le prix de la rarete. */
+const COEUR_PREM=[1500,2600], COEUR_ECART=[2800,4400];
 const COEUR_MONDE = 30;                    // sa taille dans le monde
 let vies=VIES_DEPART, vaSeRelever=false, releveAt=-9, invuJusqu=-9;
 let bonus=[], distCoeur=0;
@@ -2003,6 +2014,18 @@ function tirage(){
   }
   return "bale";
 }
+/* Une hauteur tiree au hasard dans TOUT le ciel jouable, du dessus des obstacles
+   jusqu'a un cheveu sous le plafond. La doree et le coeur naissaient dans une bande de
+   250 unites toujours au meme endroit, un peu au-dessus du sol : on savait d'avance ou
+   regarder, et rien n'obligeait jamais a monter les chercher.
+   Le plancher est cale au-dessus de la fourche, le plus haut des obstacles au sol
+   (183 unites) : plus bas, un coeur pourrait naitre dans un tas de foin et y rester,
+   puisqu'il derive a la meme vitesse que le decor. */
+const CIEL_BAS=-210;
+function hauteurLibre(){
+  const haut=flyCeil+60;                 // sous le plafond, donc sous le bandeau
+  return CIEL_BAS+Math.random()*(haut-CIEL_BAS);
+}
 function spawn(){
   const hard=Math.min(dist/1000,1);
   const k=tirage();
@@ -2331,7 +2354,7 @@ function update(dt){
   tOr-=dt;
   if(tOr<=0){
     tOr=OR_ATTENTE[0]+Math.random()*(OR_ATTENTE[1]-OR_ATTENTE[0]);
-    flies.push({x:VIEW_W+90, y:Math.max(-skyH+160, -230-Math.random()*260),
+    flies.push({x:VIEW_W+90, y:hauteurLibre(),
       ph:Math.random()*7, amp:9, sp:1.7, drift:0, or:true});
   }
 
@@ -2342,8 +2365,7 @@ function update(dt){
   if(dist>=distCoeur){
     distCoeur = dist + COEUR_ECART[0] + Math.random()*(COEUR_ECART[1]-COEUR_ECART[0]);
     if(vies<VIES_MAX)
-      bonus.push({x:VIEW_W+90, y:Math.max(-skyH+150, -200-Math.random()*250),
-                  ph:Math.random()*7});
+      bonus.push({x:VIEW_W+90, y:hauteurLibre(), ph:Math.random()*7});
   }
   for(const b of bonus){
     b.x-=speed*dt;
