@@ -1111,6 +1111,11 @@ const SFX={
                 souffle(.18,{vol:.07,cut:3200,at:.06}); },
   /* Le nuage de la fin : plus grave et plus long que le choc, qui claque. Celui-ci
      s'affaisse — c'est un souffle qui retombe, pas un coup. */
+  /* Le coeur ramasse : trois notes qui montent, tenues, plus rondes que le gobage et
+     plus courtes que la doree. On gagne quelque chose qui se garde. */
+  vie:   ()=>{ [523,784,1047].forEach((f,i)=>
+                 tone(f,.22,{type:"triangle",vol:.20,at:i*.085,to:f*1.01}));
+               tone(1568,.26,{type:"triangle",vol:.13,at:.25}); },
   boum:  ()=>{ souffle(.46,{vol:.34,cut:1100});
                tone(160,.5,{type:"sawtooth",vol:.24,to:36});
                tone(72,.55,{type:"triangle",vol:.20,to:28,at:.02}); }
@@ -1231,7 +1236,22 @@ let chocSur=false, deadVx=0, deadFrein=0;
    Le plancher de plumes est du meme ordre : un choc en vol la laisse souvent a zero,
    et sans lui elle se releve sans rien pour voler, donc pour rien. */
 const VIES_DEPART = 1, KO_SONNEE = 0.85, RELEVE_INVU = 1.0, RELEVE_PLUMES = 0.35;
+/* On peut en ramasser d'autres. Le plafond n'est pas une contrainte de place — le HUD
+   n'affiche qu'un coeur et un nombre — mais de tension : avec dix vies en poche il n'y
+   a plus de partie. */
+const VIES_MAX = 5;
+/* Les coeurs a ramasser ne se comptent pas en secondes mais en METRES. Le jeu accelere
+   de 500 a 900 : un rendez-vous au chronometre se rapprocherait a mesure que la course
+   va plus vite, et deux coeurs finiraient par se suivre. En metres, l'ecart est le
+   meme du debut a la fin.
+   Le premier n'arrive pas avant sept cents metres, les suivants entre douze cents et
+   deux mille cent metres apres le precedent — treize a trente-cinq secondes selon la
+   vitesse. L'ecart tire au hasard sur neuf cents metres interdit de les attendre ;
+   son plancher interdit qu'ils se suivent. */
+const COEUR_PREM=[700,1300], COEUR_ECART=[1200,2100];
+const COEUR_MONDE = 30;                    // sa taille dans le monde
 let vies=VIES_DEPART, vaSeRelever=false, releveAt=-9, invuJusqu=-9;
+let bonus=[], distCoeur=0;
 function invu(){ return t<invuJusqu; }
 /* Le coeur qui s'echappe. La vie se depense a l'instant du choc, et c'est le seul
    moment ou l'on ne regarde surement PAS le coin de l'ecran : le compteur se viderait
@@ -1357,6 +1377,8 @@ function reset(){
   deadLand=-9; chocVol=false; chocSur=false; deadVx=0; deadFrein=0;
   vies=VIES_DEPART; vaSeRelever=false; releveAt=-9; invuJusqu=-9;
   coeurs=[]; fumee=[]; terre=[]; tombeAt=-9; tombeGicle=false;
+  bonus=[];
+  distCoeur=COEUR_PREM[0]+Math.random()*(COEUR_PREM[1]-COEUR_PREM[0]);
   tFly=3; tOr=OR_ATTENTE[0]*0.55; orJusqu=-9;
   clouds=[]; for(let i=0;i<5;i++) clouds.push({x:Math.random()*VIEW_W*1.5, f:.15+Math.random()*.6, s:.55+Math.random()*.6, v:.5+Math.random()*.7});
   /* Les massifs debordent largement du cadre : on seme au-dela des deux bords pour
@@ -2312,6 +2334,30 @@ function update(dt){
       ph:Math.random()*7, amp:9, sp:1.7, drift:0, or:true});
   }
 
+  /* Le coeur a ramasser : seul, franchement en l'air, sans derive. Il faut le voir
+     venir et decider d'aller le chercher — c'est le meme contrat que la doree, en plus
+     rare encore. A plafond de vies, le rendez-vous est consomme sans rien poser :
+     personne ne fait de reserve. */
+  if(dist>=distCoeur){
+    distCoeur = dist + COEUR_ECART[0] + Math.random()*(COEUR_ECART[1]-COEUR_ECART[0]);
+    if(vies<VIES_MAX)
+      bonus.push({x:VIEW_W+90, y:Math.max(-skyH+150, -200-Math.random()*250),
+                  ph:Math.random()*7});
+  }
+  for(const b of bonus){
+    b.x-=speed*dt;
+    b.y+=Math.sin(t*1.6+b.ph)*10*dt*2.4;
+  }
+  bonus=bonus.filter(b=>b.x>-90);
+  for(let i=bonus.length-1;i>=0;i--){
+    const b=bonus[i];
+    if(Math.abs(b.x-(hen.x+78))<58 && Math.abs(b.y-(hen.y-56))<58){
+      bonus.splice(i,1);
+      vies=Math.min(VIES_MAX, vies+1);
+      SFX.vie(); eclat(b.x, b.y, 16);
+    }
+  }
+
   const FLY_MIN=-52-MOU_H/2;
   for(const f of flies){
     f.x-=(speed+f.drift)*dt;
@@ -2885,6 +2931,15 @@ function draw(){
   }
   ctx.globalAlpha=1;
 
+  /* Les coeurs a ramasser, avant les mouches : ils battent lentement, comme un coeur.
+     Pas de halo — le rouge sur le ciel se voit tout seul, et le halo est deja le
+     langage de la mouche doree. */
+  for(const b of bonus){
+    const bat=1+0.09*Math.sin(t*4.2+b.ph);
+    const h=COEUR_MONDE*bat;
+    coeur(b.x-h*0.54, b.y-h/2, h, true, STROKE);
+  }
+
   for(const f of flies){                          // battement rapide : deux poses alternees
     const x=f.x+(f.jx||0), y=f.y+(f.jy||0);
     if(f.or){
@@ -3293,7 +3348,6 @@ function drawHUD(){
      evenements, et un emplacement vide reserve en permanence les ferait passer pour
      des ressources du jeu. */
   let hg=fh+VIE_ECART+lgh;
-  if(chaine)  hg+=8+mh+5+Math.max(2.5,mh*0.14);
   const hd=(fv*1.35+4+hb+10)*2-10;   // les corps s'ajustent, on majore
   const ch=Math.max(hg,hd), cy=top+2;
 
@@ -3378,7 +3432,13 @@ function drawHUD(){
   const gx=cx, fy=cy;
   ctx.drawImage(SPR.feather, gx, fy, fw, fh);
   const bx=gx+fw+8, by=fy+fh*0.30;
-  const bw=Math.max(60, Math.min(150, xGauche-bx)), r2=jh/2;
+  /* La chaine de mouches vit desormais EN HAUT, a la suite de la jauge de vol, vers le
+     milieu de l'ecran : c'est un evenement, il se lit mieux la ou l'oeil passe deja.
+     La jauge est raccourcie d'autant, et la place de la chaine lui reste reservee meme
+     eteinte — une jauge qui se raccourcirait au demarrage d'une chaine ferait bouger
+     tout le coin au pire moment. */
+  const cbw=Math.max(26, mh*1.6);
+  const bw=Math.max(50, Math.min(150, xGauche-bx-cbw-9)), r2=jh/2;
   ctx.lineWidth=Math.max(1.4,fh*0.075); ctx.strokeStyle=INK; ctx.lineJoin="round";
   rr(bx,by,bw,jh,r2); ctx.fillStyle="#EFE6D6"; ctx.fill(); ctx.stroke();
   const f=Math.max(0,Math.min(1,hen.feathers));
@@ -3393,20 +3453,43 @@ function drawHUD(){
     ctx.restore();
     rr(bx,by,bw,jh,r2); ctx.stroke();
   }
+  /* La chaine de mouches, a la suite de la jauge : le multiplicateur, et sous lui la
+     barre du temps qu'il reste pour l'entretenir. Meme grammaire que la colonne de
+     droite — un nombre, et dessous une barre a sa largeur. */
+  if(chaine){
+    const chaud=combo>=5, cbx=bx+bw+9, corps=Math.round(mh*0.92);
+    txtP("×"+combo, cbx, by+jh/2, corps, chaud ? "#D6342B" : YELL, "left", "middle");
+    ctx.font="900 "+corps+"px "+FONT;
+    const lw=Math.max(cbw*0.62, ctx.measureText("×"+combo).width);
+    const cbh=Math.max(2.5,mh*0.14), cby=by+jh+4;
+    const rest=Math.max(0,1-(t-lastEat)/COMBO_T);
+    ctx.fillStyle="#E4DACA"; rr(cbx,cby,lw,cbh,cbh/2); ctx.fill();
+    ctx.fillStyle = chaud ? "#D6342B" : YELL;
+    rr(cbx,cby,Math.max(cbh,lw*rest),cbh,cbh/2); ctx.fill();
+  }
   /* La ligne du dessous : le coeur des vies a gauche, sous la plume, et le pouvoir a
      sa suite quand il est allume. Elle est remontee contre la jauge de plumes — c'est
      un seul bloc de trois choses, pas trois lignes qui se suivent. */
   const ly=fy+fh+VIE_ECART;
 
-  /* La vie de rattrapage : un coeur par vie, plein tant qu'elle est en reserve, vide
-     une fois depensee. Il ne disparait pas quand il est vide — c'est justement a ce
-     moment-la qu'il faut le voir, puisque le prochain choc sera le dernier.
-     Les coeurs sont centres sur la PLUME, pas cales sur son bord gauche : la plume est
-     penchee et son dessin est plus large que son trait, un alignement a gauche les
+  /* La vie de rattrapage : UN coeur, et le nombre a cote. Un coeur par vie tenait tant
+     qu'il n'y en avait qu'une ; maintenant qu'on peut en ramasser, une file de cinq
+     coeurs prendrait toute la largeur de la colonne pour dire ce qu'un « ×3 » dit en
+     deux caracteres.
+     A zero, le coeur reste, vide, et le nombre disparait : la forme dit qu'il en
+     manque une, et il n'y a plus rien a compter.
+     Le coeur est centre sur la PLUME, pas cale sur son bord gauche : la plume est
+     penchee et son dessin est plus large que son trait, un alignement a gauche le
      laissait de travers sous elle. */
-  const cvl=VIES_DEPART*cvh*1.08+(VIES_DEPART-1)*cvh*0.27;
-  for(let i=0;i<VIES_DEPART;i++)
-    coeur(gx+fw/2-cvl/2+i*(cvh*1.35), ly+(lgh-cvh)/2, cvh, i<vies, fh*COEUR_TRAIT);
+  const cvw=cvh*1.08, cvx=gx+fw/2-cvw/2;
+  coeur(cvx, ly+(lgh-cvh)/2, cvh, vies>0, fh*COEUR_TRAIT);
+  let coeurFin=cvx+cvw;
+  if(vies>0){
+    const corps=Math.round(cvh*0.78), tx=coeurFin+cvh*0.30;
+    txtP("×"+vies, tx, ly+lgh/2, corps, INK, "left", "middle");
+    ctx.font="900 "+corps+"px "+FONT;
+    coeurFin=tx+ctx.measureText("×"+vies).width;
+  }
 
   /* Le pouvoir : une barre sur la meme ligne que le coeur, qui se vide. Elle dit ce que
      le clignotement de la poule ne dit pas — combien de temps il reste. Jaune, comme la
@@ -3416,8 +3499,10 @@ function drawHUD(){
   if(pouvoir){
     const reste=(orJusqu-t-OR_RAB)/OR_BARRE;   // le rab ne s'affiche pas : c'est une marge
     const py=ly+(lgh-ph)/2;
-    const er=ph*0.95, ex=bx+er;
-    const px2=bx+er*2+6, pw2=bw-(er*2+6);
+    /* Le pouvoir demarre apres le coeur et son nombre, jamais dessus : a trois vies le
+       « ×3 » mordait sur l'etoile. Il garde le bord droit de la jauge du dessus. */
+    const er=ph*0.95, pgx=Math.max(bx, coeurFin+7), ex=pgx+er;
+    const px2=pgx+er*2+6, pw2=bx+bw-px2;
     ctx.lineWidth=Math.max(1.4,fh*0.075); ctx.strokeStyle=INK;
     rr(px2,py,pw2,ph,ph/2); ctx.fillStyle="#EFE6D6"; ctx.fill(); ctx.stroke();
     ctx.save(); rr(px2,py,pw2,ph,ph/2); ctx.clip();
@@ -3430,16 +3515,6 @@ function drawHUD(){
 
   /* Le combo ne s'affiche qu'a partir de deux mouches, avec le temps qu'il reste
      pour l'entretenir : sans cette barre, la chaine casse sans prevenir. */
-  if(chaine){
-    const my=yg+8, chaud=combo>=5;
-    txtP("×"+combo, gx, my+mh*0.52, Math.round(mh*0.92),
-         chaud ? "#D6342B" : YELL, "left", "middle");
-    const cbw=Math.min(70,VW*0.15), cbh=Math.max(2.5,mh*0.14), cby=my+mh+5;
-    const rest=Math.max(0,1-(t-lastEat)/COMBO_T);
-    ctx.fillStyle="#E4DACA"; rr(gx,cby,cbw,cbh,cbh/2); ctx.fill();
-    ctx.fillStyle = chaud ? "#D6342B" : YELL;
-    rr(gx,cby,Math.max(cbh,cbw*rest),cbh,cbh/2); ctx.fill();
-  }
   ctx.textAlign="right"; ctx.textBaseline="top";
 
   bandeauTrophee(R, pad, VW, cy+ch+14);

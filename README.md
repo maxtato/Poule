@@ -19,8 +19,8 @@ d'engrenage, à côté du bouton de son, bascule de l'un à l'autre.
 
 La poule a **une vie de rattrapage** : au premier choc elle tombe, se relève au bout
 d'une demi-seconde et la course repart où elle en était ; au choc suivant, la partie
-s'arrête. Un cœur sous la jauge de plumes dit si elle est encore en réserve — voir
-[La vie de rattrapage](#la-vie-de-rattrapage).
+s'arrête. Un cœur sous la jauge de plumes dit combien il lui en reste, et on peut en
+**ramasser d'autres** en vol — voir [La vie de rattrapage](#la-vie-de-rattrapage).
 
 Le saut part toujours à pleine impulsion et se **coupe net au relâchement** : la
 hauteur suit donc la durée de l'appui, sans qu'il faille attendre de savoir combien
@@ -314,12 +314,13 @@ d'aller chercher une mouche de plus.
 
 ### Deux colonnes, sans cadre
 
-**À gauche ce qui se dépense** — les plumes, le pouvoir, la chaîne. **À droite ce qui se
-compte** — les mouches, les mètres, chacun avec son record.
+**À gauche ce qui se dépense** — les plumes, les vies, le pouvoir. **En haut au milieu**
+la chaîne de mouches. **À droite ce qui se compte** — les mouches, les mètres, chacun
+avec son record.
 
 ```
-   🪶 ▬▬▬▬▬▬▬▬          🪰  32   ▬▬▭      34
-   ⭐ ▬▬▬▬▭          1 988 m    ▬▬▭  2 100 m
+   🪶 ▬▬▬▬▬▬  ×7        🪰  32   ▬▬▭      34
+   ♥ ×2 ⭐ ▬▬▭       1 988 m    ▬▬▭  2 100 m
    ×7 ▬▬▭
 ```
 
@@ -426,8 +427,14 @@ vrai texte en pixel art, lisible mais rugueux. C'est le prix de la cohérence.
 Au tout premier essai il n'y a rien à situer : pas d'échelle, juste les deux nombres.
 
 Le petit compteur de mouches qui vivait sous la jauge de plumes a disparu : il
-répétait le grand chiffre. Il ne reste à gauche que le combo, qui n'apparaît qu'à
-partir de deux mouches enchaînées.
+répétait le grand chiffre.
+
+La **chaîne de mouches** a quitté la colonne de gauche pour se poser en haut, à la suite
+de la jauge de vol, vers le milieu de l'écran : c'est un événement, il se lit mieux là où
+l'œil passe déjà. La jauge est raccourcie d'autant, et la place de la chaîne lui reste
+réservée même éteinte — une jauge qui se raccourcirait au démarrage d'une chaîne ferait
+bouger tout le coin au pire moment. Le multiplicateur garde sa barre de temps juste
+dessous, à sa largeur : la même grammaire que les records de la colonne de droite.
 
 ### L'écran de fin dit la formule
 
@@ -1508,6 +1515,40 @@ pose sa propre ombre. Les pointillés sont les seules taches d'encre à la fois 
 traits de mouvement et la spirale, eux, sont hauts ou ronds. Ils partent avec ce tri,
 aucun trait de mouvement avec eux.
 
+### Les cœurs à ramasser
+
+On peut en trouver en vol, jusqu'à **cinq vies** en poche. Le plafond n'est pas une
+contrainte de place — le HUD n'affiche qu'un cœur et un nombre — mais de tension : avec
+dix vies en réserve il n'y a plus de partie.
+
+Ils ne se comptent pas en secondes mais en **mètres**. Le jeu accélère de 500 à 900 : un
+rendez-vous au chronomètre se rapprocherait à mesure que la course va plus vite, et deux
+cœurs finiraient par se suivre. En mètres, l'écart est le même du début à la fin.
+
+Le premier n'arrive pas avant sept cents mètres, les suivants **entre 1 200 et 2 100
+mètres** après le précédent — treize à trente-cinq secondes selon la vitesse. L'écart
+tiré au hasard sur neuf cents mètres interdit de les attendre ; son plancher interdit
+qu'ils se suivent.
+
+Mesuré sur vingt parties de six mille mètres, sans obstacle :
+
+| | |
+| --- | --- |
+| cœurs par partie | 3,4 — soit un tous les 1 765 m |
+| premier cœur | de 703 à 1 257 m |
+| écart entre deux | de 1 206 à 2 099 m, moyenne 1 710 |
+
+Sur une vraie partie, qui dépasse rarement trois mille mètres, cela fait **un ou deux
+cœurs**, et jamais deux d'affilée.
+
+Le cœur arrive seul, franchement en l'air, sans dérive : il faut le voir venir et
+décider d'aller le chercher, exactement comme la mouche dorée, en plus rare encore. Il
+bat lentement, comme un cœur. Pas de halo autour : le rouge sur le ciel se voit tout
+seul, et le halo est déjà le langage de la dorée.
+
+Au plafond de vies, le rendez-vous est **consommé sans rien poser** : personne ne fait
+de réserve en attendant d'avoir la place.
+
 ### Le répit, et pourquoi il est nécessaire
 
 Le monde étant resté figé, **l'obstacle qu'elle vient de percuter est toujours sur
@@ -1548,11 +1589,15 @@ cinquantaine d'unités, et elle rattrape ce retard **une fois le monde reparti**
 courant plus vite que le décor. Ramenée de force pendant le relevage, elle glissait sur
 le sol sans lever une patte.
 
-### Le cœur
+### Le cœur, et son nombre
 
-Un cœur par vie, plein tant qu'elle est en réserve, **vide** une fois dépensée. Il ne
-disparaît pas quand il est vide : c'est justement à ce moment-là qu'il faut le voir,
-puisque le prochain choc sera le dernier.
+**Un** cœur, et le nombre à côté — `♥ ×1`, `♥ ×3`. Un cœur par vie tenait tant qu'il n'y
+en avait qu'une ; maintenant qu'on peut en ramasser, une file de cinq cœurs prendrait
+toute la largeur de la colonne pour dire ce qu'un « ×3 » dit en deux caractères.
+
+À zéro, le cœur reste — **vide**, et sans rien à côté. La forme dit qu'il en manque une,
+et il n'y a plus rien à compter. Il ne disparaît pas : c'est justement à ce moment-là
+qu'il faut le voir, puisque le prochain choc sera le dernier.
 
 Il vit sur la **deuxième ligne de la colonne de gauche**, celle que partage la barre de
 pouvoir avec son étoile — cœur à gauche sous la plume, étoile et barre à sa suite. Les
