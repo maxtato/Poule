@@ -2835,14 +2835,11 @@ function bandeauTrophee(R, pad, VW, y){
    rien qu'on puisse utiliser, alors que ses deux facteurs disent chacun quoi faire —
    aller chercher une mouche, ou tenir encore un peu.
 
-   Ce qui se passe MAINTENANT est en haut, en gros : les mouches et les metres. Ce
-   qui s'est passe AVANT est en dessous, dans un petit cartouche marque RECORD — deux
-   echelles courtes, chacune avec son nombre a droite. Les deux registres ne se
-   melangent plus : un cadre suffit a dire « ceci n'est pas ta partie ».
-   Les echelles sont volontairement breves. Une barre longue invite a la lire dans le
-   detail ; celle-ci n'a qu'un travail, dire ou l'on en est du record, et un demi-pouce
-   y suffit. Serrees l'une contre l'autre, elles se lisent aussi comme un bloc, ce qui
-   est le but du cadre. */
+   Tout tient dans un seul cadre : pour chaque mesure, le nombre de la partie en
+   cours EN GROS, et sous lui une echelle courte portant le record. On lit d'abord ou
+   l'on en est, ensuite d'ou l'on vient — et les deux ne se disputent plus l'attention
+   puisque le corps du texte les departage.
+   Quatre facons de le poser, le temps de choisir : `HUD_FUS`. */
 /* L'avancement vers le record, et la couleur qui va avec : rien tant qu'on est loin,
    ambre aux trois quarts, un battement ambre-rouge dans les dix derniers pour cent,
    rouge une fois passe. */
@@ -2854,71 +2851,88 @@ function coulPres(v, rec){
   if(u>=0.75) return "#F5A623";
   return INK;
 }
-/* le gris du record : il ne doit jamais se lire aussi fort que la valeur */
 const REC_GRIS="#A79A88";
-/* La geometrie du cartouche. Ces trois-la sont les reglages a l'oeil du bloc :
-   longueur des echelles, ecart entre les deux, et corps du nombre du record. */
+/* longueur des echelles, ecart entre elles, corps du nombre du record */
 let REC_BARRE=54, REC_ECART=15, REC_FONTE=12;
-/* la mouche du HUD : la pose ailes ecartees, seule lisible en tout petit */
+let HUD_FUS=0;
 function larMou(h){ return h*MOU_W/MOU_H; }
 function icoMou(x,y,h){ ctx.drawImage(SPR.fly_ico, x, y, larMou(h), h); }
+/* une echelle courte et son record a droite, posee a partir de (x,y) */
+function echelle(x, y, w, v, r, rec){
+  const hb=Math.max(3, REC_FONTE*0.30), battu=v>=r;
+  ctx.fillStyle="#E4DACA"; rr(x,y,w,hb,hb/2); ctx.fill();
+  const prog=Math.min(1, v/r);
+  if(prog>0.01){
+    ctx.fillStyle = battu ? "#D6342B" : "#F5A623";
+    rr(x,y,Math.max(hb,w*prog),hb,hb/2); ctx.fill();
+  }
+  ctx.font="700 "+REC_FONTE+"px "+FONT;
+  ctx.fillStyle = battu ? "#D6342B" : REC_GRIS;
+  ctx.textAlign="left"; ctx.textBaseline="middle";
+  ctx.fillText(rec, x+w+7, y+hb/2);
+  ctx.textBaseline="top";
+  return hb;
+}
 
 function hudInfos(L, R, pad, VW, top, fs){
-  const fv=Math.round(fs*0.62);
-  /* d'abord ce qui compte : les deux nombres de la partie en cours */
-  ctx.textAlign="right"; ctx.textBaseline="top";
-  let y=top+2;
-  for(const [val, v, r, ico] of [
-      [String(eaten), eaten, save.bestMou, true],
-      [chiffre(metres())+" m", metres(), save.bestDist, false]]){
-    ctx.font="900 "+fv+"px "+FONT; ctx.fillStyle=coulPres(v,r);
-    ctx.fillText(val, R-pad, y);
-    if(ico) icoMou(R-pad-ctx.measureText(val).width-9-larMou(fv*0.78), y+fv*0.18, fv*0.78);
-    y+=fv+2;
-  }
-  /* puis le cartouche, s'il y a quelque chose a y mettre */
-  if(!save.bestMou && !save.bestDist) return y;
-  const ih=Math.round(REC_FONTE*0.92), iw=larMou(ih);
+  const fv=Math.round(fs*0.62), marge=10;
+  const MES=[
+    {val:String(eaten), v:eaten, r:save.bestMou,
+     rec: save.bestMou>0 ? String(save.bestMou) : null, ico:true},
+    {val:chiffre(metres())+" m", v:metres(), r:save.bestDist,
+     rec: save.bestDist>0 ? chiffre(save.bestDist)+" m" : null, ico:false},
+  ];
+  /* la largeur du cadre : mesuree sur ce qu'il doit contenir, jamais ecrite en dur */
   ctx.font="700 "+REC_FONTE+"px "+FONT;
-  const lg=Math.max(save.bestMou>0 ? ctx.measureText(String(save.bestMou)).width : 0,
-                    save.bestDist>0 ? ctx.measureText(chiffre(save.bestDist)+" m").width : 0);
-  const marge=9, hb=Math.max(3, REC_FONTE*0.30);
-  const cw=marge*2+iw+5+REC_BARRE+8+lg;
-  ctx.font="700 10px "+FONT; ctx.letterSpacing="0.14em";
-  const ht=12;
-  const ch=marge+ht+REC_ECART*2-2+marge*0.4;
-  const cx=R-pad-cw, cy=y+7;
-  rr(cx,cy,cw,ch,8);
-  ctx.fillStyle="rgba(250,243,236,.72)"; ctx.fill();
-  ctx.strokeStyle=TROPH_BORD; ctx.lineWidth=1.4; ctx.stroke();
-  ctx.textAlign="left"; ctx.fillStyle=MUTE;
-  ctx.fillText(T("hudrec"), cx+marge, cy+marge*0.55);
-  ctx.letterSpacing="0px";
-  /* les deux echelles, serrees, chacune son nombre a droite */
-  const bx=cx+marge+iw+5;
-  let yr=cy+marge*0.55+ht+3;
-  for(const [v, r, rec, ico] of [
-      [eaten, save.bestMou, save.bestMou>0?String(save.bestMou):null, true],
-      [metres(), save.bestDist, save.bestDist>0?chiffre(save.bestDist)+" m":null, false]]){
-    if(rec){
-      const battu=v>=r;
-      ctx.fillStyle="#E4DACA"; rr(bx,yr,REC_BARRE,hb,hb/2); ctx.fill();
-      const prog=Math.min(1, v/r);
-      if(prog>0.01){
-        ctx.fillStyle = battu ? "#D6342B" : "#F5A623";
-        rr(bx,yr,Math.max(hb,REC_BARRE*prog),hb,hb/2); ctx.fill();
+  const lgRec=Math.max(...MES.map(m=>m.rec?ctx.measureText(m.rec).width:0));
+  ctx.font="900 "+fv+"px "+FONT;
+  const ih=Math.round(fv*0.78), iw=larMou(ih);
+  const lgVal=Math.max(...MES.map(m=>ctx.measureText(m.val).width+(m.ico?iw+9:0)));
+  const aRec=MES.some(m=>m.rec);
+  const hb=Math.max(3, REC_FONTE*0.30);
+
+  /* 2 — nombre et echelle sur la MEME ligne : le cadre est deux fois moins haut,
+         mais le nombre partage sa ligne et perd un peu de sa preseance. */
+  const cote = HUD_FUS===2;
+  const cw = cote ? marge*2+lgVal+14+REC_BARRE+7+lgRec
+                  : marge*2+Math.max(lgVal, REC_BARRE+7+lgRec);
+  const lignes = cote ? fv+REC_ECART-4 : fv+3+hb+REC_ECART-4;
+  const ch = marge*1.6 + lignes*MES.length - (cote?REC_ECART-8:REC_ECART-8);
+  const cx=R-pad-cw, cy=top+2;
+
+  /* 3 — pas de cadre du tout : le meme empilement, pose a meme le ciel. Le cadre
+         affirme une interface ; s'en passer laisse le jeu respirer. */
+  if(HUD_FUS!==3 && aRec){
+    rr(cx,cy,cw,ch,9);
+    ctx.fillStyle="rgba(250,243,236,.72)"; ctx.fill();
+    ctx.strokeStyle=TROPH_BORD; ctx.lineWidth=1.4; ctx.stroke();
+  }
+
+  let y=cy+marge*0.8;
+  for(const m of MES){
+    ctx.textAlign="right"; ctx.textBaseline="top";
+    ctx.font="900 "+fv+"px "+FONT; ctx.fillStyle=coulPres(m.v,m.r);
+    if(cote){
+      /* le nombre cale a gauche de la colonne des echelles */
+      const xv=cx+marge+lgVal;
+      ctx.fillText(m.val, xv, y);
+      if(m.ico) icoMou(xv-ctx.measureText(m.val).width-9-iw, y+fv*0.18, ih);
+      if(m.rec) echelle(xv+14, y+fv*0.42, REC_BARRE, m.v, m.r, m.rec);
+      y+=fv+REC_ECART-4;
+    }else{
+      ctx.fillText(m.val, cx+cw-marge, y);
+      if(m.ico) icoMou(cx+cw-marge-ctx.measureText(m.val).width-9-iw, y+fv*0.18, ih);
+      if(m.rec){
+        /* 1 — l'echelle alignee a DROITE comme le nombre ; 0 — alignee a gauche du
+               cadre, ce qui donne une colonne franche sous les deux nombres */
+        const bx = HUD_FUS===1 ? cx+cw-marge-lgRec-7-REC_BARRE : cx+marge;
+        echelle(bx, y+fv+3, REC_BARRE, m.v, m.r, m.rec);
       }
-      if(ico) icoMou(cx+marge, yr+hb/2-ih/2, ih);
-      ctx.font="700 "+REC_FONTE+"px "+FONT;
-      ctx.fillStyle = battu ? "#D6342B" : REC_GRIS;
-      ctx.textAlign="right"; ctx.textBaseline="middle";
-      ctx.fillText(rec, cx+cw-marge, yr+hb/2);
-      ctx.textAlign="left"; ctx.textBaseline="top";
+      y+=fv+3+hb+REC_ECART-4;
     }
-    yr+=REC_ECART;
   }
   ctx.textAlign="right"; ctx.textBaseline="top";
-  return cy+ch;
+  return (HUD_FUS!==3 && aRec) ? cy+ch : y-6;
 }
 
 function drawHUD(){

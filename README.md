@@ -307,30 +307,29 @@ qu'on puisse utiliser, alors que ses deux facteurs disent chacun quoi faire — 
 chercher une mouche, ou tenir encore un peu. On ne décide pas d'un score ; on décide
 d'aller chercher une mouche de plus.
 
-Ce qui se passe **maintenant** est en haut, en gros : les mouches et les mètres. Ce
-qui s'est passé **avant** est en dessous, dans un petit cartouche marqué **RECORD** — deux
-échelles courtes, chacune avec son nombre à droite.
+Tout tient dans un seul cadre. Pour chaque mesure : le nombre de la partie en cours
+**en gros**, et à côté une échelle courte portant le record. On lit d'abord où l'on en
+est, ensuite d'où l'on vient — et les deux ne se disputent plus l'attention puisque
+le corps du texte les départage.
 
 ```
-             🪰 32
-          1 988 m
-   ╭──────────────────╮
-   │ RECORD           │
-   │ 🪰 ▬▬▬▬▭      34 │
-   │    ▬▬▬▬▭  2 100 m│
-   ╰──────────────────╯
+   ╭───────────────────────────╮
+   │  🪰  32   ▬▬▬▭      34    │
+   │  1 988 m  ▬▬▬▭  2 100 m   │
+   ╰───────────────────────────╯
 ```
 
-Les deux registres ne se mélangent plus : un cadre suffit à dire « ceci n'est pas ta
-partie ». Avant, la valeur et son record se touchaient sur la même ligne, et l'œil
-devait faire le tri à chaque coup d'œil.
+C'était d'abord deux blocs séparés, les valeurs en haut et un cartouche RECORD en
+dessous. Un cadre par registre disait bien « ceci n'est pas ta partie », mais cela
+faisait deux blocs à parcourir là où il n'y a que deux nombres à lire. Quatre façons
+de les fondre ont été comparées à l'écran : échelle en colonne à gauche, échelle
+alignée à droite sous le nombre, échelle sur la même ligne, et le tout sans cadre.
 
 Les échelles sont volontairement **brèves** — un demi-pouce. Une barre longue invite à
 la lire dans le détail ; celle-ci n'a qu'un travail, dire où l'on en est du record.
-Serrées l'une contre l'autre, elles se lisent aussi comme un bloc, ce qui est le but
-du cadre. Trois longueurs ont été comparées à l'écran, de 40 à 70.
 
-Au tout premier essai il n'y a rien à mettre dans le cartouche : il n'apparaît pas.
+Au tout premier essai il n'y a rien à situer : pas de cadre, pas d'échelle, juste les
+deux nombres.
 
 Un signal d'approche commun aux deux lignes : rien tant qu'on est loin, **ambre aux
 trois quarts**, un battement ambre-rouge dans les dix derniers pour cent, **rouge** une
