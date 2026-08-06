@@ -1530,6 +1530,22 @@ avec le personnage. Le pixel vaut donc **0,40 pixel CSS**, le même partout ; ch
 dessin est converti à sa taille d'affichage divisée par cette valeur. La poule fait
 192 pixels de large, la mouche 60, la montagne 1299.
 
+Le pixel vaut **un tiers de pixel CSS**, le même partout — et « partout » veut dire
+tout : les planches, le décor, les aigles, les jauges tracées au vecteur, les
+particules, le texte des compteurs. Tout passe par le même tampon, donc tout a la même
+définition. La poule fait 230 pixels de large, et la planche du ballot 253 colonnes
+pour exactement 253 pixels d'écran — **rien n'est rééchantillonné**.
+
+Un tiers de pixel CSS, c'est fin : à peu près le pixel de l'écran sur un téléphone
+moderne. Ce n'est pas un gros bloc de pixel art, c'est une **définition commune**. Le
+grain vient de la palette réduite à quatorze teintes et du niveau de détail des
+planches, pas de la taille du bloc.
+
+Un essai à **trois pixels d'écran par pixel d'art** a été fait, et mesuré : la grille
+était parfaite — la plus courte plage de couleur valait 3 partout, et 100 % des
+longueurs étaient des multiples de 3, contre 1 px et 11 à 35 % avant. Mais le bloc
+devenait gros et le détail partait avec. On a gardé la finesse.
+
 ### Pourquoi un tiers, et pas un chiffre rond
 
 La scène est peinte dans un tampon large de `largeur / PX_JEU`, puis posée sur une toile
