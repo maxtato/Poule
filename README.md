@@ -339,8 +339,8 @@ bandeau n'aurait plus de bord.
 #### Toutes les tailles descendent d'une seule
 
 `u`, la hauteur du bandeau, vaut 15,5 % de la largeur du terrain, plafonnée à 64. Tout
-le reste en découle : plume 0,315 u, jauge de vol 0,150 u, barre de pouvoir 0,133 u,
-cœur 0,21 u, grands nombres 0,27 u, records 0,147 u, couronne 0,13 u, pastille
+le reste en découle : plume 0,27 u, jauge de vol 0,150 u, barre de pouvoir 0,133 u,
+cœur 0,25 u, grands nombres 0,27 u, records 0,147 u, couronne 0,13 u, pastille
 0,84 × 0,60 u.
 
 Les deux jauges ont maigri d'un septième par rapport au visuel, qui les donnait à 0,175
@@ -381,10 +381,18 @@ bandeau.
 | la couronne | 1,64 px | 2,0 |
 | l'étoile | 1,45 px | 1,7 |
 
+*(mesures prises quand la plume valait 0,37 u)*
+
 L'épaisseur commune n'est donc pas choisie : c'est celle du trait des dessins posés à
-côté, **mesurée à la taille où le bandeau les pose**. La plume donne 0,833 px pour une
-hauteur de bandeau de 60,5, soit **0,0138 u** ; on prend celle-là, la plus grosse des
-deux et la voisine immédiate du cœur.
+côté, **mesurée à la taille où le bandeau les pose**. À la taille actuelle de la plume,
+0,27 u, elle donne 0,667 px pour une hauteur de bandeau de 60,5, soit **0,0110 u** — et
+la mouche, mesurée de la même façon, donne exactement la même valeur. Les deux dessins
+posés dans le bandeau s'accordent sur ce trait.
+
+Cette valeur **suit la taille de la plume**. Quand la plume est passée de 0,315 à 0,27 u,
+son trait est descendu de 0,0138 à 0,0110 u, et tout le reste avec — c'est la
+conséquence assumée de la règle : le trait tracé imite le trait dessiné, et le trait
+dessiné maigrit quand le dessin rapetisse.
 
 La mesure se fait à six fois la taille réelle puis se divise : à la taille réelle le
 trait fait un pixel et une médiane de 1 ne dit plus rien. Vérifié sur quatre largeurs
