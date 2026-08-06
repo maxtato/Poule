@@ -3386,7 +3386,7 @@ function drawHUD(){
      rec:save.bestDist>0?chiffre(save.bestDist)+" m":null, ico:false},
   ];
   const mh=u*0.21, mw=mh*MOU_W/MOU_H;        // l'icone de mouche
-  const cw=u*0.17;                           // la couronne des records
+  const cw=u*0.13;                           // la couronne des records
   for(const m of MES){
     ctx.font="900 "+fbig+"px "+FONT;
     const g1=ctx.measureText(m.gab).width+(m.ico?mw+u*0.09:0);
@@ -3449,8 +3449,14 @@ function drawHUD(){
   coeur(cvx, y2-cvh/2, cvh, vies>0, trait);
   let coeurFin=cvx+cvw;
   if(vies>0){
-    const corps=Math.round(cvh*0.80), tx=coeurFin+cvh*0.26;
-    txtP("×"+vies, tx, y2, corps, INK, "left", "middle");
+    const corps=Math.round(cvh*0.95), tx=coeurFin+cvh*0.22;
+    /* Le nombre se cale sur le MILIEU D'ENCRE du coeur, pas sur la ligne. Mesure sur la
+       photo du bandeau : le coeur retombe 0,86 px sous la ligne — sa pointe tire son
+       encre vers le bas — et le nombre 0,74 px au-dessus, la ligne de base « milieu »
+       n'etant qu'une approximation. Un pixel et demi d'ecart sur un chiffre haut de
+       neuf : ca se voit. Les deux ecarts suivent la taille, la correction est donc une
+       fraction de u comme le reste. */
+    txtP("×"+vies, tx, y2+u*0.0264, corps, INK, "left", "middle");
     ctx.font="900 "+corps+"px "+FONT;
     coeurFin=tx+ctx.measureText("×"+vies).width;
   }
@@ -3501,26 +3507,13 @@ function drawHUD(){
      Elle ne compte pas de points — le score se fait aux mouches et aux metres — elle
      dit qu'on est en train d'en enchainer, et combien. D'ou le mot plutot qu'un chiffre
      seul : c'est un moment, pas une mesure.
-     Elle rebondit a chaque mouche gobee, et les traits qui l'entourent sont ceux du
-     gobage, poses une fois pour toutes : dessines au hasard a chaque image, ils
-     grouilleraient. */
+     Elle rebondit a chaque mouche gobee. Elle a porte un moment les traits du gobage
+     tout autour ; ils encombraient plus qu'ils ne disaient, la tache rouge se voit
+     toute seule. */
   if(chaine){
     const pop=1+0.14*Math.max(0, 1-(t-lastEat)/0.18);
     const w=bw*pop, h=bh*pop, bx0=bcx-w/2, by0=bcy-h/2;
     ctx.save();
-    /* Six traits, trois de chaque cote et aucun en haut ni en bas : c'est ainsi qu'ils
-       sont poses sur le visuel, et c'est ce qui laisse le mot respirer. */
-    ctx.strokeStyle="#D6342B"; ctx.lineCap="round";
-    ctx.lineWidth=Math.max(1.2,u*0.030);
-    for(const a of [-0.42,0,0.42, Math.PI-0.42, Math.PI, Math.PI+0.42]){
-      const lg=u*(Math.abs(Math.sin(a))>0.1?0.075:0.105);
-      const rx=w/2+u*0.13, ry=h/2+u*0.13;
-      const x0=bcx+Math.cos(a)*rx, y0=bcy+Math.sin(a)*ry;
-      ctx.beginPath();
-      ctx.moveTo(x0,y0);
-      ctx.lineTo(x0+Math.cos(a)*lg, y0+Math.sin(a)*lg);
-      ctx.stroke();
-    }
     /* La pastille est un NUAGE, pas un rectangle : une croix de deux rectangles et huit
        ronds poses le long du pourtour, le tout en un seul trace. Le remplissage non nul
        en fait l'union — c'est le meme procede que le nuage de la pierre tombale. Les

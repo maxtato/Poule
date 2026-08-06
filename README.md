@@ -404,10 +404,9 @@ une demi-ligne, et la couleur du grand chiffre dit le reste.
 #### La chaîne de mouches : une pastille, et un mot
 
 Au milieu du bandeau, une pastille rouge : le multiplicateur en blanc, le mot **FESTIN**
-dessous, et le temps qu'il reste dans une barre au bas de la pastille. Autour, six traits
-rouges — ceux du gobage — trois de chaque côté et aucun en haut ni en bas, ce qui laisse
-le mot respirer. Ils sont posés une fois pour toutes : tirés au hasard à chaque image,
-ils grouilleraient. La pastille rebondit à chaque mouche gobée.
+dessous, et le temps qu'il reste dans une barre au bas de la pastille. Elle rebondit à
+chaque mouche gobée. Elle a porté un moment les traits du gobage tout autour ; ils
+encombraient plus qu'ils ne disaient, la tache rouge se voit toute seule.
 
 Le mot plutôt qu'un chiffre seul : la chaîne ne compte pas de points — le score se fait
 aux mouches et aux mètres — elle dit qu'on est en train d'en enchaîner. C'est un moment,
@@ -1659,6 +1658,16 @@ son étoile — cœur à gauche sous la plume, étoile et barre à sa suite. Le 
 dessin est plus large que son trait, un alignement à gauche le laissait de travers sous
 elle. Et la barre de pouvoir démarre après le nombre de vies, jamais dessus : à trois
 vies, le « ×3 » mordait sur l'étoile.
+
+Le nombre se cale sur le **milieu d'encre du cœur**, pas sur la ligne de la rangée.
+Mesuré sur la photo du bandeau : le cœur retombe 0,86 px sous la ligne — sa pointe tire
+son encre vers le bas — et le nombre 0,74 px au-dessus, la ligne de base « milieu »
+n'étant qu'une approximation. Un pixel et demi d'écart sur un chiffre haut de neuf : ça
+se voit. Les deux écarts suivent la taille, la correction est donc une fraction de `u`
+comme le reste, et le décalage mesuré retombe à **0,00 px**.
+
+La couronne, elle, tombait juste : 0,12 px de la ligne visée, et de 0,2 à 0,4 px du
+milieu du nombre qu'elle accompagne.
 
 L'épaisseur de son trait est **donnée, pas déduite de sa taille**. Elle doit valoir celle
 de sa voisine, et celle-là se mesure : la plume du HUD, posée à 21,4 px CSS de haut, a un
