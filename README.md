@@ -1681,14 +1681,26 @@ place sous les arbres.
 | --- | --- | --- | --- | --- |
 | les racines | 369 × 100 | 90 % de la largeur | 63 | oui |
 | le tronc couché | 221 × 115 | 93 % | 80 | oui |
+| le champignon | 151 × 130 | 92 % | 95 | oui |
 | la souche | 201 × 150 | 92 % | 109 | oui |
-| le serpent | 138 × 145 | 88 % | 112 | oui |
-| le champignon | 196 × 165 | 92 % | 126 | oui |
-| la plante carnivore | 226 × 215 | 93 % | 166 | oui |
+| le serpent | 138 × 144 | 88 % | 111 | oui |
+| la plante carnivore | 184 × 175 | 93 % | 131 | oui |
 
 Pour un sommet de saut à 321 : les racines sont ce qu'on enjambe — le plus bas obstacle du
 jeu, tous mondes confondus, et de loin le plus large — et la plante carnivore ce qui se
-mérite. Les boîtes ne sont pas écrites à la main — elles sont
+mérite. Le champignon et la plante ont été **réduits d'un cinquième** après coup, à la
+demande ; la jungle plafonne donc à 131 là où le champ demande 183 pour son épouvantail et
+184 pour sa fourche. C'est le monde le plus indulgent des trois au sol, et celui qui a le
+plus de choses au ciel.
+
+**Le serpent et le champignon ont été redessinés**, et leurs nouvelles feuilles sont plus
+sombres que les premières : papier à 240, 224, 217 et 241, 230, 224, contre 247, 236, 230.
+Celui du serpent passe même **sous le seuil du papier** — 227,6 de clarté pour un seuil à
+232. Rien ne casse pour autant, et c'est le détour par l'ombre portée qui les sauve :
+l'inondation venue du bord avance aussi dans ce qui est clair et peu saturé (185 de clarté,
+34 de saturation), et ces deux papiers-là y tombent largement. La règle écrite pour manger
+les ombres mange aussi les papiers gris. Le nouvel œil du serpent, lui, se sépare tout
+seul : 26 unités du papier contre 7 pour l'ancien. Les boîtes ne sont pas écrites à la main — elles sont
 mesurées sur chaque dessin au démarrage, en ignorant la frange basse où vivent les
 racines, l'herbe et les feuilles.
 
@@ -1728,7 +1740,7 @@ partagent leur espacement (600 unités garanties, 1 s d'attente) :
 | --- | --- | --- | --- |
 | le champ | 11,2 | 611 | 603 |
 | la ville | 8,8 | 870 | 862 |
-| **la jungle** | **10,9** | **612** | **604** |
+| **la jungle** | **11,1** | **611** | **604** |
 
 Le plus petit écart mesuré y descend à 467 quand le champ tient 600 : la jungle a trois
 choses au ciel là où le champ n'en a qu'une, et un obstacle de sol qui suit un vol garde
