@@ -1063,6 +1063,30 @@ pieds fins, et une base étroite a besoin d'être plus enfoncée qu'une base lar
 poser vraiment. La boîte de collision suit le dessin, les hauteurs à franchir ont baissé
 d'autant.
 
+### La ferme est beige, la ville est grise
+
+La palette de l'heure appartient au monde, comme le décor et les obstacles. Celle de la
+ville n'est pas une autre journée : c'est **la même, décolorée**. Chaque teinte garde
+exactement sa **clarté** — le jeu se lit pareil, les dessins à l'encre sombre ressortent
+pareil, et l'heure se raconte toujours dans le même ordre, matin, midi, après-midi,
+crépuscule — et ne garde que **22 centièmes de sa couleur**.
+
+| | saturation à la ferme | à la ville |
+| --- | --- | --- |
+| haut du ciel | 22 à 70 | 5 à 15 |
+| bas du ciel | 11 à 31 | 2 à 7 |
+| les massifs, les immeubles | 10 à 59 | 3 à 13 |
+| la terre | 28 à 57 | 6 à 13 |
+| le deuxième plan | 6 à 41 | 1 à 9 |
+
+Il reste juste ce qu'il faut de bleu à midi et de chaud l'après-midi pour qu'on sente
+l'heure tourner ; le béton fait le reste. Le sol descend en plus de trois centièmes : un
+trottoir est plus sombre qu'un champ.
+
+Mesuré sur la scène elle-même — teinte moyenne de l'image, bandeau et boutons exclus, à
+quatre moments de la journée : la ferme tient une saturation moyenne de **24,8**, la
+ville de **6,0**, soit **un quart** de la couleur de la ferme.
+
 ### Trois choses que ces dessins-là avaient en plus
 
 Les cinq obstacles de la ville ne se détourent pas comme ceux de la ferme.
