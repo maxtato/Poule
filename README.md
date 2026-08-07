@@ -1044,12 +1044,15 @@ intermédiaire : la rue qu'on longe (voir plus bas).
 
 | Objet | Part | Pourquoi |
 |---|---|---|
-| Banc | 24 % | Il y en a à tous les coins |
-| Corbeau | 20 % | L'oiseau des villes autant que des champs |
-| Bouche d'incendie | 17 % | Une par pâté de maisons |
-| Barrière de chantier | 16 % | Une rue barrée, ça se croise |
-| Trottinette | 12 % | Laissée en travers du trottoir |
-| Boîte aux lettres | 10 % | Une par quartier |
+| Banc | 22 % | Il y en a à tous les coins |
+| Pigeon | 19 % | L'oiseau des villes |
+| Barrière de chantier | 18 % | Une rue barrée, ça se croise |
+| Bouche d'incendie | 16 % | Une par pâté de maisons |
+| Poubelle | 15 % | Une à chaque coin de rue |
+| Journal | 14 % | Porté par le vent |
+| Trottinette | 14 % | Laissée en travers du trottoir |
+| Cône de chantier | 13 % | Le plus bas de tous |
+| Boîte aux lettres | 12 % | Une par quartier |
 
 Mesuré sur vingt parties de quatre mille mètres. Chacun tue, chacun se franchit d'un
 simple saut : de 107 unités pour la bouche d'incendie à 132 pour la boîte aux lettres,
@@ -1462,6 +1465,35 @@ c'est qu'une fente entre deux lattes parallèles est une **bande** quand une env
 compacte. On perce donc aussi ce qui est six fois plus long que large. La contrepartie est
 connue et assumée : le jour où un objet portera une rayure blanche peinte, il faudra la
 nommer.
+
+### Une poubelle, un cône, et le jour où il a fallu la nommer
+
+Deux obstacles de plus pour la rue, sur une même feuille. La poubelle monte à **180
+unités** — 151 à franchir — et le cône à **118**, soit 99 à franchir : c'est le plus bas du
+jeu, celui sur lequel on apprend à sauter. Les deux entrent dès le premier mètre.
+
+Le cône est exactement l'objet à rayure blanche peinte qu'on attendait. Ses bandes sont à
+**quatre** unités du papier — plus près que ne l'étaient les vraies fentes du banc — et
+aucun des critères trouvés jusque-là ne les en distingue :
+
+| | écart au papier | allongement | traversée de son objet |
+| --- | --- | --- | --- |
+| bandes du cône *(peintes)* | **4** | 1,1 et 1,5 | 63 et 66 % |
+| fentes du banc *(vraies)* | 4 à 13 | 1,4 à 26,7 | 19 à **71 %** |
+
+Une fente du banc traverse *plus* de son objet qu'une bande du cône ne traverse le sien : le
+critère qui semblait le plus structurel — « une bande peinte va d'un bord à l'autre » — dit
+le contraire de la vérité. Ce qui sépare vraiment, c'est de savoir ce que le dessin
+représente, et ça ne se mesure pas.
+
+On l'écrit donc, au lieu de continuer à chercher : chaque feuille porte **une taille au-delà
+de laquelle une tache n'est plus un vide**. C'est du même ordre que le seuil du papier ou la
+taille de la poussière, qui appartiennent déjà à chaque feuille depuis le début.
+
+| feuille | plafond | ce qu'il sépare |
+| --- | --- | --- |
+| banc, boîte, trottinette | 8000 px | son plus grand vide vrai en fait 5049 |
+| poubelle, cône | 2000 px | vides ≤ 637, bandes du cône 7523 et 12284 |
 
 **Et la chaîne était trop courte.** Une silhouette vit jusqu'à ce que son bord gauche
 franchisse le seuil de sortie, calculé sur la plus large du monde : −1543 pour la ville,
