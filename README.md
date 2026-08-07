@@ -2453,7 +2453,56 @@ jusqu'à la partie suivante. La bascule les retire maintenant.
 Après quoi, sur les 72 planches, une seule s'écarte de la grille : `fly_ico`, la mouche
 du panneau de fin, taillée exprès pour les 76 pixels qu'il lui donne sur grand écran.
 
-### Les obstacles ont pris 15 %
+### Le dessin doit avoir plus de pixels que la grille
+
+Toutes les planches étaient à la bonne taille, au bon grain, à bord net — et l'arrière-
+plan avait quand même **des pixels plus gros que la poule**. Il a fallu descendre dans la
+conversion pour comprendre.
+
+Elle vote sur les pixels **entiers** du dessin : chaque case de la grille regarde la boîte
+de pixels source qu'elle recouvre, et décide. Tant que le dessin est plusieurs fois plus
+fin que la grille, chaque case décide sur beaucoup de pixels et le contour tombe au pixel
+de grille près. Mais quand le dessin est aussi grossier que la grille, **plusieurs cases
+voisines retombent sur le même pixel source** : elles décident pareil, et la marche du
+contour n'est plus celle de la grille mais celle du dessin.
+
+Le rapport dessin/grille le dit d'un chiffre :
+
+| | dessin | grille | rapport |
+| --- | --- | --- | --- |
+| la poule | 920 | 230 | **4,0** |
+| le corbeau | 873 | 193 | 4,5 |
+| le ballot | 605 | 291 | 2,1 |
+| le chêne | 966 | 689 | 1,4 |
+| le massif | 1 452 | **2 021** | **0,72** |
+| la ville | 1 099 | 1 948 | **0,56** |
+
+Les massifs et la ville sont **agrandis**, pas réduits : leur dessin a moins de pixels
+que la grille n'en demande. Mesuré sur le flanc d'un massif, la marche du contour faisait
+deux pixels de grille là où celle de la poule en fait un. C'est exactement ce que l'œil
+appelle des pixels plus gros, et les agrandissements successifs du décor l'avaient
+aggravé.
+
+La correction tient en cinq lignes : **on agrandit d'abord le dessin, avec le lissage du
+navigateur, jusqu'à deux fois la grille**, et le vote suit sans changer d'une ligne. Rien
+n'est inventé — le bord des planches est anticrêné, sa position est connue au sous-pixel
+près, et l'agrandissement lissé ne fait que la rendre lisible case par case.
+
+Mesuré sur la marche moyenne du contour, la poule valant 1 :
+
+| | avant | après |
+| --- | --- | --- |
+| le massif | 1,05 | **0,94** |
+| le grand massif | 0,82 | **0,72** |
+| la colline | 0,72 | **0,65** |
+| le moulin | 0,78 | **0,74** |
+| la poule | 1,00 | 1,00 (inchangée) |
+
+Et le nombre de marches lisibles sur un même contour monte de 10 %, ce qui est le vrai
+signe : le bord a récupéré du détail au lieu de le recopier par blocs. La table pixel
+grossit de 29 Ko.
+
+### Les obstacles ont pris 15 %### Les obstacles ont pris 15 %
 
 La ferme est vue d'un peu plus près, décor compris : les sept obstacles suivent, et le
 creux sous la ligne d'horizon avec eux — sinon les gros objets flottent et les petits
