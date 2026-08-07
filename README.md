@@ -1670,23 +1670,25 @@ Elles descendent **179 unités sous le plafond de vol** — leurs brins les plus
 dans la zone où la poule vole. C'est voulu, et ça ne coûte rien : le second plan est peint
 avant le premier, la poule passe donc *devant* les lianes. Elle vole sous la voûte.
 
-#### Les cinq obstacles du sous-bois
+#### Les six obstacles du sous-bois
 
-Une souche, un tronc couché, un serpent lové, un champignon, une plante carnivore. Les
-ballots de paille empruntés au champ sont partis avec eux ; il ne reste plus rien
-d'emprunté que les touffes d'herbe et les cailloux du sol, qui sont à leur place sous les
-arbres.
+Un enchevêtrement de racines, une souche, un tronc couché, un serpent lové, un champignon,
+une plante carnivore. Les ballots de paille empruntés au champ sont partis avec eux ; il ne
+reste plus rien d'emprunté que les touffes d'herbe et les cailloux du sol, qui sont à leur
+place sous les arbres.
 
 | | dessin | boîte | il faut monter de | il tue |
 | --- | --- | --- | --- | --- |
-| le tronc couché | 221 × 115 | 93 % de la largeur | 80 | oui |
+| les racines | 369 × 100 | 90 % de la largeur | 63 | oui |
+| le tronc couché | 221 × 115 | 93 % | 80 | oui |
 | la souche | 201 × 150 | 92 % | 109 | oui |
 | le serpent | 138 × 145 | 88 % | 112 | oui |
 | le champignon | 196 × 165 | 92 % | 126 | oui |
 | la plante carnivore | 226 × 215 | 93 % | 166 | oui |
 
-Pour un sommet de saut à 321 : le tronc est celui qu'on apprend à sauter, la plante
-carnivore celle qui se mérite. Les boîtes ne sont pas écrites à la main — elles sont
+Pour un sommet de saut à 321 : les racines sont ce qu'on enjambe — le plus bas obstacle du
+jeu, tous mondes confondus, et de loin le plus large — et la plante carnivore ce qui se
+mérite. Les boîtes ne sont pas écrites à la main — elles sont
 mesurées sur chaque dessin au démarrage, en ignorant la frange basse où vivent les
 racines, l'herbe et les feuilles.
 
@@ -1698,9 +1700,17 @@ tombaient les taches pour s'en apercevoir :
 
 | | taches enfermées | ce que c'est |
 | --- | --- | --- |
+| les racines | 10 taches, de 214 à 2 712 px, écarts 5 à 10 | **les arches entre deux racines** — toutes percées |
 | la souche | 1 768 px, écart 0 | le jour sous la racine — **percé** |
 | le serpent | 1 238 px, écart 7 | **son œil** — gardé |
 | la plante carnivore | 8 taches, de 49 à 6 382 px, écarts 3 à 9 | **le reflet du bulbe et les dents** — gardées |
+
+L'enchevêtrement de racines demande son propre écart : **14**, quand les cinq autres
+tiennent à 8. La raison se lit dans les chiffres : **son papier est plus sombre** —
+245, 233, 228 contre 251, 250, 248 — alors que le liseré blanc qui borde l'encre est le
+même partout. Une petite arche, faite pour moitié de ce liseré, tombe donc à 10 du papier
+là où une grande tombe à 6. À 8, les deux plus petites restaient bouchées : deux taches
+roses de sept unités sur un enchevêtrement brun, et ça se voyait.
 
 Le papier du serpent est chaud, le blanc de son œil aussi, et sept unités les séparent : la
 couleur ne peut pas trancher. Ni la taille, ni l'allongement non plus. Ce qui sépare, c'est
@@ -1718,7 +1728,7 @@ partagent leur espacement (600 unités garanties, 1 s d'attente) :
 | --- | --- | --- | --- |
 | le champ | 11,2 | 611 | 603 |
 | la ville | 8,8 | 870 | 862 |
-| **la jungle** | **11,3** | **614** | **604** |
+| **la jungle** | **10,9** | **612** | **604** |
 
 Le plus petit écart mesuré y descend à 467 quand le champ tient 600 : la jungle a trois
 choses au ciel là où le champ n'en a qu'une, et un obstacle de sol qui suit un vol garde
