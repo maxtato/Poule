@@ -1536,9 +1536,10 @@ monstera, les vides entre deux palmes : sept, neuf et cinq respectivement. Le pl
 repeint en aplat à la couleur de l'heure, un vide non percé disparaîtrait dans la masse.
 Aucune poussière n'a été jetée : les douze dessins sont propres.
 
-**Le fond est rééchantillonné, le second plan non.** Les massifs s'affichent à 736, 749 et
-833 unités de large, c'est-à-dire près de deux mille pixels d'écran sur un téléphone,
-quand leur dessin n'en a que treize cents : agrandi, l'escalier du contour se verrait. On
+**Le fond est rééchantillonné, le second plan non.** Les massifs s'affichent à 920, 940 et
+1 037 unités de large, c'est-à-dire près de deux mille cinq cents pixels d'écran sur un
+téléphone, quand leur dessin n'en a que treize cents : agrandi, l'escalier du contour se
+verrait. On
 ne peut pas inventer des pixels, mais on peut **rééchantillonner une forme** — la distance
 signée au bord est une grandeur continue, connue partout, qu'on relit à une maille plus
 fine. Les trois sortent à 2 200 pixels de large, la taille des autres planches de fond.
@@ -1547,22 +1548,26 @@ restent telles quelles.
 
 #### Une canopée n'est pas une chaîne de montagnes
 
-Le fond de la jungle est **plus bas** que celui des deux autres mondes — 450 à 560 unités,
-contre 678 au champ et 800 en ville. Ce n'est pas de la modestie : dans une jungle on ne
-voit pas loin, et ce qui ferme l'horizon n'est pas un relief à l'horizon mais le feuillage
-d'à peine cent mètres plus loin. Les arbres du second plan, hauts de 520 à 600 unités et
-qui poussent d'un tiers de plus, passent donc **devant elle et au-dessus** — c'est de là
-que vient la profondeur, et non d'un écart de teinte.
+Le fond de la jungle monte de **560 à 700 unités**, quand le champ plafonne à 678 et la
+ville à 800. Il ferme l'horizon aussi haut qu'une colline — mais il n'est pas loin pour
+autant : dans une jungle on ne voit pas loin, et ce qui bouche la vue n'est pas un relief
+à l'horizon, c'est le feuillage d'à peine cent mètres plus loin. Les arbres du second
+plan, hauts de 520 à 600 unités et qui poussent d'un tiers de plus, passent devant lui et
+leurs couronnes en dépassent — c'est de là que vient la profondeur, et non d'un écart de
+teinte.
 
-Ils sont aussi plus **étroits** : 736 à 833 unités contre près de quinze cents au champ.
-Trois crêtes par écran plutôt qu'une seule. Une canopée est une suite de bouquets, pas une
-ligne de partage des eaux. Le chevauchement suit — de 250 à 410 unités, contre 350 à 644
-au champ : à l'échelle du champ, des massifs de cette taille ne se seraient jamais quittés
-et le plafond des 45 % aurait figé la chaîne.
+La hauteur s'est cherchée en trois fois. **380–470** d'abord : les images où le hasard ne
+donnait pas d'arbre montraient un ciel vide sur les deux tiers de la hauteur.
+**450–560** ensuite, ce qui tenait l'horizon d'un bord à l'autre. **560–700** enfin, à la
+demande : la canopée occupe maintenant le tiers bas du ciel, et il reste de quoi voir les
+couronnes s'en détacher.
 
-Premier essai à 380–470 : les frames où le hasard ne donnait pas d'arbre montraient un
-ciel vide sur les deux tiers de la hauteur. Remonté à 450–560, la ligne de feuillage tient
-l'horizon d'un bord à l'autre sans jamais cacher ce qui est devant.
+Ils restent plus **étroits** que les massifs du champ : 920 à 1 037 unités contre près de
+quinze cents. Un peu plus d'une largeur d'écran chacun, deux crêtes en vue plutôt qu'une.
+Une canopée est une suite de bouquets, pas une ligne de partage des eaux. Le chevauchement
+suit — de 250 à 410 unités, contre 350 à 644 au champ : à l'échelle du champ, des massifs
+de cette taille ne se seraient jamais quittés et le plafond des 45 % aurait figé la
+chaîne.
 
 #### Trois étages, et pas une haie
 
@@ -1582,15 +1587,18 @@ de garder sa taille — pas de panneau, pas de tracteur, pas de façade. La list
 pousse est devenue commune aux trois mondes ; les clés sont uniques d'un monde à l'autre,
 une seule suffit.
 
-**Une jungle est dense.** Quarante unités de terre entre deux plantes, deux cent trente au
-plus : deux fois plus serré que le verger du champ, qui va de 85 à 369. Mesuré sur dix
-minutes de course dans chaque monde :
+**Une jungle est dense.** Dix unités de terre entre deux plantes, cent vingt au plus :
+quatre fois plus serré que le verger du champ, qui va de 85 à 369, et les feuillages se
+touchent presque. C'est le second réglage, après un premier passage à 40–230 qui laissait
+encore de la terre nue entre les touffes. Mesuré sur dix minutes de course dans chaque
+monde :
 
 | | écran couvert par le second plan | plus grand trou |
 | --- | --- | --- |
 | le champ | 65 % | 373 |
 | la ville | 66 % | 362 |
-| **la jungle** | **73 %** | **235** |
+| la jungle, premier réglage | 73 % | 235 |
+| **la jungle** | **85 %** | **124** |
 
 Il en reste assez pour que la canopée se voie par les trouées — sans elles, le second plan
 la cacherait tout entière et le monde n'aurait plus qu'un plan. Sur ces dix minutes :
