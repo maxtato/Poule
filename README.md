@@ -1405,6 +1405,47 @@ du papier, que personne ne verra jamais.
 
 Les fenêtres restent percées : 83, 41 et 88.
 
+### L'ombre qui était dessinée mais qu'on ne voyait pas
+
+Signalé : la bouche d'incendie n'a pas d'ombre. Le code en dessinait pourtant une, comme
+pour tous les obstacles posés au sol. Ce qui manquait, c'est qu'elle se **voie** : l'ombre
+est peinte *avant* l'objet, et l'objet la recouvre sur toute sa propre largeur.
+
+On l'a donc mesurée telle qu'elle arrive à l'écran, et non telle qu'elle est appelée : deux
+images de la même scène, l'une avec `ombres`, l'autre sans, et on compte les pixels qui
+diffèrent. Zéro pixel, pas d'ombre.
+
+| | avant | après |
+| --- | --- | --- |
+| brouette | 10 002 | 8 312 |
+| banc | 9 668 | 9 576 |
+| barrière de chantier | 11 314 | 5 981 |
+| trottinette | 4 762 | 4 887 |
+| ballot | 4 347 | 4 923 |
+| fourche | 2 359 | 2 285 |
+| seau | 1 043 | 1 394 |
+| **bouche d'incendie** | **69** | **1 134** |
+
+Le coupable était le placement. L'ombre était calée par une **remontée tenue à la main** —
+13 unités pour les objets massifs, 8 pour le seau et la fourche, 3 pour la barrière — et
+une remontée fixe ne veut rien dire quand les ombres n'ont pas la même hauteur. Celle d'un
+gros objet est haute et dépassait sous lui ; celle d'un petit est plate et restait tout
+entière **dans** son dessin. La bouche d'incendie, la plus petite et la seule dont le pied
+soit aussi large que le corps, n'en montrait plus rien.
+
+Deux contraintes remplacent la table, et elles se posent d'elles-mêmes sur n'importe quelle
+taille :
+
+- **le bas** de l'ombre passe 5 unités sous la base du dessin — c'est ce liseré qui se voit,
+  et il est le même pour tous, du plus gros au plus petit ;
+- **le haut** ne remonte jamais au-dessus de la ligne de sol, sans quoi la barrière, qui
+  n'est enfoncée que de deux, verrait la sienne se détacher derrière elle en plein ciel.
+
+C'est cette seconde contrainte qui aplatit l'ombre des objets peu enfoncés — la barrière
+perd la moitié de la sienne, et c'est correct : elle en avait trop, pas assez enfoncée pour
+la porter. Vérifié dans les deux styles, les douze obstacles ont maintenant une ombre
+visible.
+
 ### Les obstacles de la ville, plus gros et plus bas
 
 Les cinq ont pris **12 %**, et la trottinette **30**. Posée de biais sur ses deux roues,
