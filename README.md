@@ -1342,6 +1342,102 @@ sont les mêmes, sa longueur dérive au hasard — l'écran d'avance encaisse la
 Le plus grand trou vaut désormais exactement l'écart maximal du monde : il n'y a plus
 d'autre trou que ceux qu'on a demandés.
 
+### La ligne de crête, refaite à pleine résolution
+
+Une **troisième silhouette** est venue s'ajouter aux deux premières, et les trois ont été
+retaillées entières. Elles avaient été ramenées à 640 pixels, la taille qu'on donne
+d'habitude aux planches de fond ; c'était trop peu. Elles s'affichent à plus de 530 unités
+de large, soit 1300 pixels d'écran sur un téléphone à trois pixels par point : agrandies
+de deux fois, ça se voyait. Le mode pixel ne s'en apercevait pas — il réagrandit de toute
+façon avant de voter — mais le mode trait, si.
+
+Rien n'empêchait de les garder entières : le jeu ne lit que leur **alpha**, il les repeint
+en aplat à la couleur de l'heure. Leur intérieur est donc devenu un gris unique, et le
+résultat est que les trois planches, deux fois plus fines qu'avant, **pèsent moins** que
+les deux d'avant — 61 Ko contre 108 : ce que transportaient les anciennes, c'était le grain
+du papier, que personne ne verra jamais.
+
+| | avant | après |
+| --- | --- | --- |
+| `ville_fond0` | 530 px, 50 Ko | **1013 px, 22 Ko** |
+| `ville_fond1` | 649 px, 58 Ko | **1099 px, 20 Ko** |
+| `ville_fond2` | — | **1082 px, 19 Ko** |
+
+Les fenêtres restent percées : 83, 41 et 88.
+
+### Les obstacles de la ville, plus gros et plus bas
+
+Les cinq ont pris **12 %**, et la trottinette **30**. Posée de biais sur ses deux roues,
+elle occupe moins de place à taille égale que le banc ou la barrière, et elle passait pour
+un jouet à côté d'eux. Leur creux sous la ligne d'horizon a grandi aussi : de six
+centièmes de leur hauteur pour les cinq, de treize pour le **banc** et la **trottinette**,
+les deux qui restaient assis trop haut.
+
+Ce que ça change vraiment, c'est la hauteur à franchir — la hauteur *moins* le creux — et
+elle ne va pas dans le même sens pour tous :
+
+| | avant | après |
+| --- | --- | --- |
+| Banc | 116 | **110** |
+| Bouche d'incendie | 107 | **113** |
+| Trottinette | 113 | **127** |
+| Barrière | 125 | **131** |
+| Boîte aux lettres | 132 | **138** |
+
+Le saut, lui, monte à 321. Les cinq tuent toujours, les cinq se franchissent toujours d'un
+seul saut.
+
+### Un journal dans le vent
+
+Une feuille de papier dans le vent, ce n'est pas un oiseau : ça ne va pas quelque part.
+**Trois mouvements se superposent, et c'est leur désaccord qui fait le vent** — trois
+périodes qui ne retombent jamais ensemble, donc une trajectoire qui ne se répète pas.
+
+**La bourrasque.** Il ne dérive pas à vitesse constante : le vent le pousse, mollit, le
+reprend. Mesuré sur une traversée, sa vitesse horizontale va de **119 à 546 unités par
+seconde** — il stalle presque, puis il file plus vite que le décor.
+
+**La portance.** Il monte et redescend en larges courbes : 181 unités d'amplitude sur une
+traversée de 3,4 secondes. Deux souffles, l'un lent et ample — le vol plané — l'autre bref
+et court — le tremblement de la feuille.
+
+**La vrille.** C'est elle qui dit « papier » plutôt que « pierre », et elle fait deux
+choses à la fois. Le journal **s'incline** — de −22° à +21°, son balancement propre plus la
+pente de sa trajectoire : nez en bas quand il tombe, nez en l'air quand il remonte. Et il
+**tourne sur lui-même** autour de son axe vertical, en passant par la tranche : c'est ce
+passage par la tranche qui fait la feuille plutôt que la carte. On l'obtient en écrasant sa
+largeur par un cosinus, sans jamais l'annuler tout à fait — à zéro exact il disparaît une
+image, et le clignotement se voit.
+
+Vérifié qu'aucune traversée n'en répète une autre : sur dix journaux tirés au hasard, leurs
+courbes de hauteur diffèrent de 141 unités en moyenne, et de 15 pour les deux plus proches.
+
+**L'altitude est écrite en position, pas intégrée d'une vitesse.** C'est la correction qui
+comptait. Intégrer une vitesse en sinus ne revient pas au point de départ : sur une
+traversée de trois secondes, la période lente n'a pas le temps de se boucler, et le journal
+dérivait jusqu'à 468 unités dans un sens — mesuré, il finissait **322 unités sous la ligne
+d'horizon**, un journal qui vole sous le trottoir. Écrite en position, son altitude est
+bornée par construction, et la vitesse verticale dont on a besoin pour l'incliner devient
+la **dérivée exacte** de cette position : elle ne peut plus la contredire.
+
+**Sa bande d'entrée se calcule, elle non plus ne peut pas être écrite en dur.** Le bandeau
+du haut descend d'autant plus bas, *en unités de monde*, que l'écran est court : 123 unités
+sur un téléphone, 190 sur une fenêtre de bureau couchée. Calé sur une bande fixe, le
+journal passait derrière lui. Il part maintenant entre le plafond de vol — celui-là même
+qui empêche la poule d'aller sous le bandeau — et le sol, avec de quoi loger le dessin
+entier plus toute son ondulation aux deux bouts.
+
+| écran | le plus bas (le sol est à 0) | le plus haut | bas du bandeau |
+| --- | --- | --- | --- |
+| 390×844 | −33 | −991 | −1137 |
+| 360×640 | −30 | −682 | −828 |
+| 430×932 | −54 | −993 | −1145 |
+| 820×420 | −29 | −513 | −656 |
+
+Il ne touche à rien : ce n'est pas un obstacle, c'est du vent qu'on voit. Il passe devant
+les immeubles et derrière la poule, il n'existe que dans la ville, et il disparaît dès
+qu'on change de monde.
+
 ### Le corbeau, mis à l'échelle sur trois repères
 
 Trois dessins, un seul canevas, comme l'aigle. Mais l'échelle de chaque pose n'est pas
