@@ -1369,6 +1369,28 @@ l'adoucissement du bord vaudrait deux pixels au lieu d'un et la silhouette para�
 | `ville_fond1` | 1099×462, 20 Ko | **2196×922, 64 Ko** |
 | `ville_fond2` | 1082×432, 19 Ko | **2162×862, 61 Ko** |
 
+### Les trois sols, remis dans l'ordre
+
+Trois plans, trois lignes de sol, et elles doivent se ranger du plus lointain — le plus
+**haut** à l'écran — au plus proche. C'était faux : la ligne de crête était posée au ras de
+l'horizon, donc *sous* le trottoir du second plan. Le sol le plus lointain passait sous le
+sol le plus proche, et la profondeur disait le contraire de ce qu'il fallait.
+
+La crête a donc été **remontée de 76 unités**. Une silhouette remontée laisse sous elle une
+bande de ciel, entre son pied et l'horizon : on la comble d'un **aplat de la couleur du
+fond**, sur toute la largeur, du pied de la crête jusqu'au sol. C'est le sol lointain, et il
+n'a rien d'autre à montrer. La bande descend jusqu'à l'horizon même si le trottoir et le sol
+la recouvrent ensuite — mieux vaut peindre trente unités de trop que d'en oublier une.
+
+| | pied de la crête | haut du trottoir | pied du mobilier | sol |
+| --- | --- | --- | --- | --- |
+| la ville | **−73** | **−24** | **−16** | 0 |
+| la ferme | +3 | +8 | +16 | 0 |
+
+La ville descend maintenant du plus lointain au plus proche. La ferme, elle, n'a ni
+trottoir ni levée : ses trois plans se rejoignent au ras de l'horizon, et c'est ce qu'on
+demande à un champ.
+
 ### Le trottoir, lu sur les dessins
 
 Les quatre immeubles sont dessinés **posés sur une dalle** : une bande horizontale qui court
