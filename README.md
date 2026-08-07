@@ -1466,6 +1466,35 @@ compacte. On perce donc aussi ce qui est six fois plus long que large. La contre
 connue et assumée : le jour où un objet portera une rayure blanche peinte, il faudra la
 nommer.
 
+### La fiente du pigeon
+
+Un pigeon sur trois en lâche une, et elle tombe. Elle n'est pas envoyée par le semeur
+d'obstacles : c'est l'oiseau qui la fait, à un moment de sa traversée où il est bien en vue
+— ni à peine entré, ni déjà sorti — et une seule par oiseau. Elle ne compte donc ni dans
+l'espacement des obstacles ni dans la règle du ciel : un pigeon et sa fiente sont un seul
+événement. Mesuré sur 295 pigeons : **33 % en lâchent une**, jamais plus de deux à l'écran.
+
+**En l'air elle tue, posée elle ne tue plus.** Une chute qui vient d'en haut doit se voir
+arriver, et c'est le cas — il lui faut une bonne seconde pour traverser le ciel, et sa boîte
+est rentrée d'un quart pour pardonner le frôlement. Mais une trace sur le trottoir n'a
+aucune raison d'être mortelle : la poule doit pouvoir marcher dessus. Elle s'efface alors
+en deux secondes, en défilant avec le sol.
+
+**Une boîte vide ne suffisait pas.** Premier essai, la fiente posée gardait une boîte de
+largeur et de hauteur nulles — et elle tuait encore. Le test de collision demande seulement
+que les bords se croisent, et un bord de largeur nulle se croise très bien dès qu'il tombe
+dans la boîte de la poule. C'est la mesure qui l'a dit, pas le raisonnement. Elle est
+maintenant écartée explicitement de la boucle : savoir si quelque chose blesse est une
+autre question que savoir quelle forme il a.
+
+Elle est dessinée **en code**, comme le cœur et l'étoile : quinze unités de haut n'ont pas
+besoin d'une planche, et une goutte qui s'écrase demande de toute façon deux formes et non
+deux images. Deux corrections en la dessinant — une forme pointue aux deux bouts se lisait
+comme un grain de riz et ne tombait pas (c'est une **larme** : pointue en haut, par où elle
+est partie, ronde en bas où le poids l'a rassemblée) ; et les deux éclaboussures de la
+trace, enchaînées dans un seul chemin, se reliaient par une droite qui barrait la tache en
+diagonale.
+
 ### Une poubelle, un cône, et le jour où il a fallu la nommer
 
 Deux obstacles de plus pour la rue, sur une même feuille. La poubelle monte à **180
