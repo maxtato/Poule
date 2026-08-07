@@ -1809,6 +1809,39 @@ l'aurait fait entrer dans le ciel comme un aigle.
 Il vole plus lentement (140 contre 175 et 165) et bat plus lentement (9 images par seconde
 contre 12 et 14) : c'est un gros oiseau au vol lourd, pas un pigeon de ville.
 
+### L'ara, le second oiseau
+
+La jungle est le seul monde à en avoir **deux**. Ils ne se croisent pas — la règle du ciel
+n'en laisse passer qu'un à la fois — mais on ne voit pas deux fois le même oiseau en dix
+minutes, ce qu'aucun autre monde n'offre. Le toucan et l'ara se partagent le poids qu'avait
+le corbeau à lui seul : dix et dix pour dix-neuf. Le ciel n'est ni plus ni moins occupé
+qu'ailleurs, il est simplement plus varié.
+
+Même chaîne que le toucan, avec du travail en moins : **les trois aras sont de la même
+taille.** C'est la *joue blanche* qui le dit — le plus gros fond enfermé de chaque pose, une
+pièce rigide de la tête qui ne dépend ni des ailes ni de la queue.
+
+| | joue blanche | œil | encre |
+| --- | --- | --- | --- |
+| ailes hautes | 1 831 px | 198 px | 499 × 494 |
+| ailes au milieu | 1 836 px | 175 px | 469 × 249 |
+| ailes basses | 1 912 px | 198 px | 445 × 365 |
+
+**2,2 %** d'écart sur la racine, quand les trois toucans en accusaient sept et qu'il avait
+fallu les remettre à l'échelle. L'ancre reste l'œil — deuxième fond enfermé — et il tombe à
+seize pixels au-dessus du centre de la joue dans les trois poses, ce qui vérifie l'un par
+l'autre.
+
+Sa boîte est l'intersection du corps épais des trois poses : la tête et le buste, du bec au
+milieu du dos. Elle part **huit unités devant l'œil** — un bec d'ara est court et épais, il
+fait partie de l'oiseau, là où celui du toucan est une lame de corne creuse qu'on a exclue.
+Ni les ailes ni la **queue** n'y sont : une queue d'ara fait la moitié de l'oiseau et n'est
+qu'un éventail de plumes. C'est ce qui fait tomber sa part d'encre couverte à 74–86 %, contre
+82–97 % au toucan — la différence, c'est exactement la queue.
+
+Il vole plus vite et bat plus vite : **195 contre 140**, treize battements par seconde contre
+neuf. Le toucan est lourd, l'ara file.
+
 ### Le singe, et sa noix
 
 Ce n'est pas un oiseau : il ne traverse pas le ciel, **il y est accroché**. Pendu à sa
