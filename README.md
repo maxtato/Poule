@@ -1548,26 +1548,23 @@ restent telles quelles.
 
 #### Une canopée n'est pas une chaîne de montagnes
 
-Le fond de la jungle monte de **560 à 700 unités**, quand le champ plafonne à 678 et la
-ville à 800. Il ferme l'horizon aussi haut qu'une colline — mais il n'est pas loin pour
-autant : dans une jungle on ne voit pas loin, et ce qui bouche la vue n'est pas un relief
-à l'horizon, c'est le feuillage d'à peine cent mètres plus loin. Les arbres du second
-plan, hauts de 520 à 600 unités et qui poussent d'un tiers de plus, passent devant lui et
-leurs couronnes en dépassent — c'est de là que vient la profondeur, et non d'un écart de
-teinte.
+Le fond de la jungle monte de **720 à 900 unités**, quand le champ plafonne à 678 et la
+ville à 800 : c'est le fond le plus haut des trois mondes. Il n'est pas loin pour autant :
+dans une jungle on ne voit pas loin, et ce qui bouche la vue n'est pas un relief à
+l'horizon, c'est le feuillage d'à peine cent mètres plus loin. Les arbres du second plan
+passent devant lui et leurs couronnes en dépassent — c'est de là que vient la profondeur,
+et non d'un écart de teinte.
 
-La hauteur s'est cherchée en trois fois. **380–470** d'abord : les images où le hasard ne
-donnait pas d'arbre montraient un ciel vide sur les deux tiers de la hauteur.
-**450–560** ensuite, ce qui tenait l'horizon d'un bord à l'autre. **560–700** enfin, à la
-demande : la canopée occupe maintenant le tiers bas du ciel, et il reste de quoi voir les
-couronnes s'en détacher.
+La hauteur s'est cherchée en quatre fois. **380–470** d'abord : les images où le hasard ne
+donnait pas d'arbre montraient un ciel vide sur les deux tiers de la hauteur. **450–560**
+ensuite, ce qui tenait l'horizon d'un bord à l'autre. **560–700**, puis **720–900**, à la
+demande. Le second plan a suivi à chaque fois : c'est en montant les deux **ensemble** que
+la profondeur tient. Monter le fond seul l'aurait aplatie.
 
-Ils restent plus **étroits** que les massifs du champ : 920 à 1 037 unités contre près de
-quinze cents. Un peu plus d'une largeur d'écran chacun, deux crêtes en vue plutôt qu'une.
-Une canopée est une suite de bouquets, pas une ligne de partage des eaux. Le chevauchement
-suit — de 250 à 410 unités, contre 350 à 644 au champ : à l'échelle du champ, des massifs
-de cette taille ne se seraient jamais quittés et le plafond des 45 % aurait figé la
-chaîne.
+Ils font maintenant 1 183, 1 160 et 1 333 unités de large — plus d'un écran et demi
+chacun, autant que les massifs du champ, et il en passe deux par écran au lieu de trois.
+Une canopée reste une suite de bouquets, pas une ligne de partage des eaux. Le
+chevauchement, lui, n'a pas bougé : de 250 à 410 unités, contre 350 à 644 au champ.
 
 #### Trois étages, et pas une haie
 
@@ -1577,13 +1574,42 @@ soit la richesse des dessins.
 
 | étage | hauteur | ce qu'il y a | poids |
 | --- | --- | --- | --- |
-| les arbres | 660 à 760 | l'arbre à couronne ronde, le même drapé de lianes, un palmier, deux palmiers | 30 % |
-| les plantes | 450 et 500 | les grandes palmes dressées, la touffe en éventail | 29 % |
-| le sous-bois | 235 et 260 | le monstera, le buisson large | 38 % |
+| les arbres | 830 à 950 | l'arbre à couronne ronde, le même drapé de lianes, un palmier, deux palmiers | 30 % |
+| les plantes | 570 et 630 | les grandes palmes dressées, la touffe en éventail | 29 % |
+| le sous-bois | 295 et 330 | le monstera, le buisson large | 38 % |
 
-Les trois étages ont grandi **d'un quart d'un coup**, ensemble. Ce sont les rapports entre
-eux qui font la forêt, pas leurs tailles absolues : n'agrandir que les arbres aurait donné
-des fougères de poupée sous des géants.
+Les trois étages grandissent toujours **ensemble**. Ce sont les rapports entre eux qui font
+la forêt, pas leurs tailles absolues : n'agrandir que les arbres donnerait des fougères de
+poupée sous des géants.
+
+#### Huit dessins, seize silhouettes
+
+Une forêt dont on reconnaît les arbres n'est pas une forêt. Deux réglages y répondent, et
+aucun des deux ne coûte une planche de plus.
+
+**Elles poussent de moitié**, contre un tiers pour les arbres du champ : chaque plante tire
+son échelle à la plantation entre 1,00 et 1,50.
+
+**Une fois sur deux, elle est posée à l'envers.** Le miroir joue autour du milieu de la
+silhouette, si bien que ni sa largeur, ni son abscisse, ni sa base ne changent — tout ce
+que la chaîne a calculé reste vrai. Il ne vaut que pour ce qui n'a ni endroit ni envers,
+c'est-à-dire une plante : un tracteur retourné roulerait à reculons et un moulin tournerait
+à l'envers, et les deux autres mondes ne le demandent pas.
+
+C'est aussi ce qui reste de la variété en **pixel**, où la taille ne varie pas — une
+planche unique ne peut pas suivre une échelle continue sans changer la taille de ses
+pixels, et c'est la seule chose du jeu qui n'ait pas le droit de bouger. Un retournement,
+lui, ne déplace pas un seul pixel de la grille.
+
+Mesuré sur dix minutes de course dans chaque monde, en comptant les couples *(dessin,
+sens)* :
+
+| | dessins | silhouettes vues | à l'envers | échelle |
+| --- | --- | --- | --- | --- |
+| le champ | 10 | 10 | 0 % | 1,00 à 1,32 |
+| la ville | 7 | 7 | 0 % | — |
+| **la jungle** | **8** | **16** | **47 %** | **1,00 à 1,50** |
+| la jungle, en pixel | 8 | **16** | 51 % | — |
 
 Les huit **poussent**, comme les arbres du champ : chacune tire son échelle à la
 plantation, entre un et un tiers de plus. Dans une jungle il n'y a rien qui ait une raison
@@ -1598,11 +1624,11 @@ monde :
 
 | | écran couvert par le second plan | plus grand trou |
 | --- | --- | --- |
-| le champ | 65 % | 373 |
-| la ville | 66 % | 362 |
+| le champ | 64 % | 370 |
+| la ville | 68 % | 362 |
 | la jungle, 40–230 | 73 % | 235 |
 | la jungle, 10–120 | 85 % | 124 |
-| **la jungle** | **91 %** | **92** |
+| **la jungle** | **93 %** | **95** |
 
 Il en reste assez pour que la canopée se voie par les trouées — sans elles, le second plan
 la cacherait tout entière et le monde n'aurait plus qu'un plan. Sur ces dix minutes :
@@ -1618,11 +1644,17 @@ ce qui fait la voûte : on ne voit pas d'où elles partent, donc elles partent d
 qui déborde de l'écran.
 
 Elles appartiennent au **second plan** — même couleur, même parallaxe que les arbres — et
-c'est voulu : ce sont les lianes de ces arbres-là, pas d'un plan plus lointain. Elles se
-suivent bout à bout avec un recouvrement franc, comme la ligne de crête, parce qu'une voûte
-trouée ne serait plus une voûte. Sur dix minutes de course, **553 guirlandes replantées,
-aucune disparue à vue, la voûte ne s'ouvre pas une seule image**, et les trois dessins
-tombent à 32, 34 et 34 %.
+c'est voulu : ce sont les lianes de ces arbres-là, pas d'un plan plus lointain.
+
+**Elles ne se suivent pas bout à bout.** Première version : une chaîne continue, chaque
+guirlande recouvrant sa voisine comme le font les massifs de la ligne de crête, sans jamais
+laisser passer le ciel. C'était trop — un rideau plein en haut du cadre, où l'on ne
+distinguait plus les guirlandes les unes des autres. Elles sont donc semées **à distance**,
+comme les arbres : de 240 à 640 unités de ciel entre deux, pour des guirlandes larges de
+420 à 500. Il y en a une ou deux en vue, pas cinq, et entre elles le ciel remonte jusqu'au
+bandeau — c'est ce vide qui fait qu'on les voit. Sur dix minutes de course, **554
+guirlandes replantées, aucune disparue à vue**, et les trois dessins tombent à 32, 33 et
+35 %.
 
 **Il n'y avait rien à détourer.** Les trois fichiers arrivent avec un fond *transparent* —
 94 à 95 % de leurs pixels sont à alpha zéro — et non sur du papier blanc comme tous les
