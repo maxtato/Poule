@@ -2088,7 +2088,13 @@ const MONDES = {
       {k:"bale2",   p:9,  des:400},   // la pile de ballots, plus rare qu'un ballot seul
       {k:"fork",    p:5,  des:250},   // une fourche plantee, on n'en croise pas dix
       {k:"barrow",  p:3,  des:170},   // une seule brouette pour toute la ferme
-      {k:"corbeau", p:16, des:170},   // le ciel, lui, en a toujours un qui tourne
+      /* 19 et non 16, le poids qu'avait l'aigle. Le corbeau etait deja LANCE un peu plus
+         souvent que lui, mais on en voyait un moins souvent : plus petit, il degage le
+         cadre plus tot, et la regle qui interdit deux oiseaux a la fois le remet donc
+         plus vite dans le chapeau sans qu'on l'ait vu davantage. Mesure sur cinq courses
+         de dix minutes, c'est le TEMPS DE PRESENCE a l'ecran qui compte : 13,3 % du
+         temps a 16, contre 15,3 % pour l'aigle d'avant. A 19, 15,4 %. */
+      {k:"corbeau", p:19, des:170},   // le ciel, lui, en a toujours un qui tourne
     ],
   },
 };

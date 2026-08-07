@@ -149,13 +149,13 @@ de brouettes.
 
 | Objet | Part | Pourquoi |
 |---|---|---|
-| Ballot de paille | 29 % | C'est *l'*objet du champ |
-| Seau | 17 % | Il en traîne toujours un |
-| Corbeau | 15 % | Le ciel en a toujours un qui tourne |
-| Pneu | 12 % | Quelques-uns, pour tenir les bâches |
+| Ballot de paille | 30 % | C'est *l'*objet du champ |
+| Corbeau | 17 % | Le ciel en a toujours un qui tourne |
+| Seau | 16 % | Il en traîne toujours un |
 | Barrière | 12 % | Une par clôture |
-| Pile de ballots | 9 % | Plus rare qu'un ballot seul |
-| Fourche | 4 % | On n'en croise pas dix |
+| Pneu | 10 % | Quelques-uns, pour tenir les bâches |
+| Pile de ballots | 7 % | Plus rare qu'un ballot seul |
+| Fourche | 5 % | On n'en croise pas dix |
 | Brouette | 2 % | Une seule pour toute la ferme |
 
 *L'aigle et le cerf-volant tenaient 14 % et 5 % : sortis du tirage de la ferme, leurs
@@ -1068,9 +1068,32 @@ seconde** contre 1,9 auparavant. Compté sur le vrai dessin, en espionnant les p
 posées pendant deux secondes de jeu : 24 changements d'image, exactement les trois
 battements attendus. Pour comparer, la poule en fait 3,25 et l'aigle 1,9.
 
-Le corbeau sort au poids de l'aigle, 16 sur cent. Mesuré sur vingt parties de quatre
-mille mètres : 14,9 % de ce que la ferme lance, aucun aigle, aucun cerf-volant, jamais
-deux oiseaux à l'écran en dix minutes de course.
+### Un poids plus fort pour la même présence
+
+Le corbeau est d'abord sorti au poids exact de l'aigle, 16 sur cent. Et il paraissait
+plus rare. Mesuré sur cinq courses de dix minutes, il ne l'était pas : il était **lancé
+un peu plus souvent** que l'aigle — 9,2 oiseaux par minute contre 8,8 — puisque le
+cerf-volant avait quitté le chapeau et que sa part s'était redistribuée.
+
+Ce qui avait baissé, c'est le **temps de présence** : un oiseau à l'écran 13,3 % du temps
+contre 15,3 % pour l'aigle d'avant. La raison est mécanique. Le corbeau est plus petit,
+donc il dégage le cadre plus tôt ; la règle qui interdit deux oiseaux à la fois le remet
+plus vite dans le chapeau, et on le relance sans l'avoir vu davantage. Plus de départs,
+moins de ciel occupé.
+
+C'est la présence qui se remarque, pas le compte des départs. Son poids passe donc à
+**19** :
+
+| | lancés par minute | un oiseau à l'écran |
+| --- | --- | --- |
+| aigle d'avant (16, avec le cerf-volant) | 8,8 | **15,3 %** du temps |
+| corbeau à 16 | 9,2 | 13,3 % |
+| corbeau à 19 | 10,9 | **15,8 %** |
+
+Moyennes de cinq courses de dix minutes chacune : une seule course bouge d'un point et
+demi d'une fois sur l'autre, et le poids se serait choisi sur du bruit. Vérifié au
+passage, sur vingt parties de quatre mille mètres : 17,4 % de ce que la ferme lance,
+aucun aigle, aucun cerf-volant, jamais deux oiseaux à l'écran en dix minutes de course.
 
 ## L'aigle, mis de côté
 
