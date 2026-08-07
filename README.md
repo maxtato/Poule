@@ -1611,10 +1611,131 @@ Deux choses n'ont pas été dessinées pour elle, et sont reprises du champ :
 
 - **Le sol** — les touffes d'herbe et les cailloux. Un sous-bois n'est pas un trottoir,
   herbe et pierre y sont à leur place ; ça restera peut-être.
-- **Les obstacles** — un tonneau, un seau, un pneu, un ballot, une barrière, une fourche,
-  et le corbeau au ciel. Ceux-là sont provisoires : ils rendent le monde jouable, pas
-  crédible. Les six sont franchissables (de 56 à 184 unités, pour un sommet de saut à 321)
-  et les six tuent, vérifié un par un.
+- **Les obstacles au sol** — un tonneau, un seau, un pneu, un ballot, une barrière, une
+  fourche. Ceux-là sont provisoires : ils rendent le monde jouable, pas crédible. Les six
+  sont franchissables (de 56 à 184 unités, pour un sommet de saut à 321) et les six tuent,
+  vérifié un par un.
+
+Son **ciel**, lui, est à elle : le toucan et le singe qui jette sa noix de coco.
+
+### Le toucan
+
+Même chaîne que le pigeon, et pour la même raison : ses trois poses sont sur une seule
+feuille, calées sur son **œil** — le seul fond enfermé de sa tête, donc trouvable sans
+rien deviner, et le point qui ne bouge pas quand les ailes battent.
+
+Avec une différence : **les trois n'étaient pas de la même taille.** La main a dérivé en
+traversant la feuille, et quatre mesures indépendantes le disent d'une seule voix.
+
+| | aire du bec | largeur du bec | hauteur du bec | aire de l'œil | **taille retenue** |
+| --- | --- | --- | --- | --- | --- |
+| ailes hautes | 2 929 | 102 | 45 | 245 | **1,048** |
+| ailes au milieu | 2 667 | 95 | 43 | 211 | **0,988** |
+| ailes basses | 2 445 | 93 | 43 | 197 | **0,964** |
+
+Le bec est la mesure qui compte : c'est une pièce rigide, elle ne dépend ni de la pose des
+ailes ni du pli du cou. Sept pour cent d'écart entre la première et la dernière, ça se voit
+au battement — l'oiseau respire au rythme de ses ailes. Les trois sont donc ramenées à leur
+taille moyenne **autour de l'œil**, si bien que le point fixe le reste.
+
+Sa taille de jeu se pose sur le **corps**, comme celle des trois autres oiseaux : 66 unités,
+à peine plus que le pigeon (62), moins que le corbeau (82). Sa planche, elle, est la plus
+grande des quatre — **trois fois son corps**, quand celle du corbeau n'en fait qu'une fois
+trois quarts. Un toucan est surtout un bec et une envergure, et se caler sur la planche
+l'aurait fait entrer dans le ciel comme un aigle.
+
+Il vole plus lentement (140 contre 175 et 165) et bat plus lentement (9 images par seconde
+contre 12 et 14) : c'est un gros oiseau au vol lourd, pas un pigeon de ville.
+
+### Le singe, et sa noix
+
+Ce n'est pas un oiseau : il ne traverse pas le ciel, **il y est accroché**. Pendu à sa
+liane, il défile à la vitesse du décor comme tout ce qui appartient au monde, et c'est la
+poule qui vient à lui. Ses quatre poses ne sont donc pas un battement mais une **séquence**,
+jouée une fois : il tient la noix, il arme, il lâche, il retombe bras ballant.
+
+#### Sa liane est prolongée par le jeu
+
+Le dessin la coupe net en haut de la planche. Posée telle quelle en plein ciel, elle
+ressemblerait à un bâton flottant.
+
+Première version : pendre le singe **au bandeau**, planche collée sous lui, la liane
+disparaissant derrière le HUD. Le calcul a dit pourquoi ça ne pouvait pas marcher. La
+poule, au plafond de vol, occupe une bande de 58 unités qui s'arrête 73 unités sous le
+bandeau ; le tronc du singe, lui, pend 110 unités sous le haut de sa planche. **Son tronc
+tombait donc 13 unités sous la boîte de la poule la plus haute** — hors d'atteinte pour
+toujours — tandis que son bras, lui, la traversait sans la tuer. Un obstacle qu'on ne peut
+pas toucher et qu'on traverse quand même n'est pas un obstacle. Aucun réglage n'en sortait :
+le grossir descend son tronc, le rapetisser le rend minuscule, le remonter avale la main
+qui tient la liane.
+
+Il n'y avait rien à redessiner : **une liane, à cette échelle, est un trait.** On a relevé
+sur les quatre planches où elle passe en haut (centrée 7,3 unités à gauche de l'œil), de
+combien elle penche (un tiers d'unité par unité de descente), quelle épaisseur elle a
+(4 unités) et quelle couleur — les quatre poses s'accordent au pixel près, la liane ne
+saute pas d'une image à l'autre. Le jeu tire le même trait jusqu'au bandeau.
+
+Le singe peut alors pendre où l'on veut. Il pend dans les 260 unités sous le plafond de
+vol, à une hauteur tirée comme celle d'un oiseau : c'est là que la poule vole quand elle
+vole haut. Vérifié — il tue, et il est à portée quand elle vole entre −732 et −844 sur un
+téléphone dont le plafond est à −1 022.
+
+#### La noix, et la seule règle qui compte
+
+La poule ne sait ni freiner, ni s'écarter, ni se baisser. La seule chose qu'elle peut faire
+est **monter**, ce qui l'envoie au-devant de ce qui tombe. Une noix qui lui arrive dessus
+pendant qu'elle court n'a donc aucune parade — et une mort sans parade n'est pas un
+obstacle, c'est une punition.
+
+Première version, un déclic à distance fixe du bord droit. Mesuré image par image : sur une
+fenêtre de bureau, **la noix tuait la poule qui courait sans rien faire, dès la première
+minute** — elle traversait sa colonne à 92 unités du sol, en plein dans son corps.
+
+Le singe ne lance donc pas quand il arrive quelque part : il lance **quand il faut**. Le
+point de lâcher se calcule à chaque image, à partir de la vitesse du moment et de la
+hauteur de sa main — la chute est un mouvement uniformément accéléré dont on connaît tout
+d'avance, le temps de vol se résout exactement — et il recule quand la course accélère.
+
+Le bord droit de la boîte de la poule est à 268 unités ; la cible est posée à 380. Ce n'est
+pas une marge de temps mais de **géométrie** : la noix éclate, donc n'existe plus, avant
+d'atteindre sa colonne, quelle que soit la vitesse.
+
+| écran | chute | plus petite marge, sur 15 vitesses de 520 à 900 | morts |
+| --- | --- | --- | --- |
+| 390 × 844 | 0,53 s | 92 unités | 0 |
+| 820 × 1180 | 0,37 s | 84 unités | 0 |
+| 1440 × 900 | 0,35 s | 91 unités | 0 |
+| 1180 × 700 | 0,33 s | 93 unités | 0 |
+
+**Elle tombe et elle éclate.** Une fiente posée reste et pâlit — une trace sur un trottoir
+a une raison d'être là ; une noix fendue n'en a aucune, et le sol de la jungle est déjà
+chargé. Il n'en reste que neuf grains de poussière et un claquement sec, très haut de
+spectre : rien à voir avec le choc de la poule, qui est long et grave. Celui-ci ne doit pas
+se lire comme une mort mais comme un objet qui tombe à côté.
+
+La noix part de sa main, et cette main est dessinée — inutile de la placer à l'estime :
+mesurée sur la planche de la pose armée, elle est à 156 pixels à gauche de l'œil et 23
+dessous, soit 79 et 12 unités de jeu.
+
+Un dernier point, honnête : **sur un téléphone, le lancer se fait au bord du cadre.** À
+520 unités par seconde la noix doit partir de x = 734 pour éclater à 380, et le singe fait
+193 unités de large — on voit son bras tendu et la noix qui s'en va, pas son corps. Il entre
+ensuite tout entier dans la seconde qui suit, bras encore tendu et main ouverte, et reste en
+vue jusqu'à sa sortie : on voit qui a lancé. Sur un écran de bureau, où le ciel est deux
+fois moins haut et la chute deux fois plus courte, tout le lancer est dans le cadre.
+
+#### Un seul du ciel à la fois
+
+Les oiseaux le traversent, le singe y est pendu : ni les uns ni l'autre ne doivent se
+croiser, et le jeu n'en lance qu'un à la fois — la règle qui existait pour les oiseaux
+s'étend au singe. Il reste en vue bien plus longtemps qu'eux, lui : il défile à la vitesse
+du sol quand un oiseau vient à contresens. C'est voulu — on le voit venir, armer et lancer.
+
+Sa noix ne compte ni dans l'espacement des obstacles ni dans la règle du ciel : un singe et
+sa noix sont un seul événement, comme un pigeon et sa fiente.
+
+Sur vingt parties de 4 000 m : toucan 13,1 %, singe 7,4 %, noix 7,4 % — un singe, une noix,
+toujours.
 
 
 ### La poule descend, et le sol s'épaissit
