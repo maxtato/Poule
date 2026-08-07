@@ -1087,6 +1087,34 @@ Mesuré sur la scène elle-même — teinte moyenne de l'image, bandeau et bouto
 quatre moments de la journée : la ferme tient une saturation moyenne de **24,8**, la
 ville de **6,0**, soit **un quart** de la couleur de la ferme.
 
+### Ce qui reste de la ferme, et ce qui part
+
+Trois choses ne se transposaient pas, et appartiennent maintenant au monde.
+
+**L'herbe et les cailloux.** Ce sont ceux d'un champ ; un trottoir n'a ni touffes ni
+gravier. Le semis du premier plan est simplement sauté quand le monde n'en veut pas.
+
+**Le bandeau du haut.** Il était crème comme la ferme. Celui de la ville est gris — mais
+à la **même clarté**, si bien que le contraste avec la scène ne bouge pas. Mesuré, écart
+de clarté entre le bandeau et les vingt lignes de ciel juste dessous, aux quatre moments
+de la journée : **−44,2 à la ferme, −43,8 à la ville**. Moins d'un pour cent d'écart, ce
+qui est exactement le but : la même lecture, une autre couleur.
+
+**Le recouvrement des silhouettes du fond.** Les massifs de la ferme se recouvrent
+largement, et c'est voulu : c'est ce chevauchement qui fait une chaîne de crêtes continue
+plutôt qu'un chapelet de buttes. Les immeubles, eux, se **posent bout à bout** en
+alternant les deux dessins : un pâté de maisons est une suite de façades, pas un massif
+derrière un autre — superposés, on ne lisait plus qu'une bouillie de tours. Il ne reste
+qu'une soudure, juste de quoi éviter une fente de ciel entre deux bases.
+
+| | recouvrement moyen | en part de la plus étroite |
+| --- | --- | --- |
+| la ferme | 468 unités | 42,6 % |
+| la ville | **14 unités** | **1,3 %** |
+
+Vérifié aussi qu'aucune fente ne s'ouvre : sur dix minutes de course dans la ville, pas
+un trou dans la ligne de crête, pas une silhouette recyclée à vue.
+
 ### Trois choses que ces dessins-là avaient en plus
 
 Les cinq obstacles de la ville ne se détourent pas comme ceux de la ferme.
