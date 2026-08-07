@@ -2378,6 +2378,79 @@ fois alors qu'il n'y en a qu'une poignée à l'écran : le minimum portait sur s
 pas six cents, et tombait 19 % au-dessus de la vraie taille de base. Une fois l'échelle
 figée, la taille est déterministe et se relève sans ambiguïté.
 
+### La taille des pixels, mesurée sur le jeu et non tenue à la main
+
+Chaque planche pixel est fabriquée à sa **taille d'affichage divisée par PX_JEU** :
+c'est ce qui fait qu'un pixel d'art vaut la même chose partout. Cette taille
+d'affichage vivait dans un fichier tenu à la main, `tailles.json`, et chaque fois qu'un
+dessin grossissait il fallait penser à l'y reporter. Une fois sur deux ça tenait.
+
+Elle se **mesure** maintenant. Une sonde espionne tous les appels à `drawImage` pendant
+qu'on promène le jeu dans tous ses états — menu, chaque obstacle, chaque silhouette de
+fond posée une par une, les oiseaux sur un cycle d'ailes entier, la poule qui court,
+saute, vole, gobe et panique, la chute, le K.-O., le relevage, la pierre tombale, le
+panneau de fin — et retient pour chaque planche la **plus grande** taille à laquelle
+elle est posée, ramenée en pixels CSS sur l'écran de référence.
+
+Trois précautions, apprises en la construisant :
+
+- **En mode pixel seulement.** C'est le seul style qui se sert de ces planches. Au
+  trait, les arbres tirent en plus une échelle au hasard jusqu'à un tiers de plus :
+  mesurer là-dedans fabriquait des planches d'arbre un tiers trop fines, pour une
+  variation qui n'existe pas en pixel. La page s'ouvrant au trait, on efface aussi ce
+  qui a été relevé avant la bascule.
+- **Le décor est posé teinté**, c'est-à-dire non pas la planche mais une copie
+  coloriée, que la table des clés ne connaît pas. Le temps de la mesure, la teinture
+  devient transparente.
+- **Une planche posée en tranches** — la queue du cerf-volant — ou déformée n'a pas de
+  taille lisible sur un seul appel. On la reconnaît à son rapport largeur/hauteur, qui
+  ne colle plus à celui de la planche, et on garde alors la valeur du fichier.
+
+La règle d'écriture est le **maximum** : on ne remplace la valeur du fichier que si la
+mesure est plus grande. Une planche plus fine que son usage ne gêne pas — elle a juste
+plus de détail que l'écran n'en montre ; plus grossière, ça se voit. Deux pièces du
+bandeau, la plume et la coupe, sont taillées pour un écran plus large que celui de
+référence et mesurent donc 6 et 11 % de moins ici : elles gardent leur valeur.
+
+Le passage en revue a trouvé, au-delà des agrandissements voulus, que la **pierre
+tombale** était posée 7 % plus grande que ce que le fichier croyait — sa planche était
+donc 7 % trop grossière depuis toujours.
+
+Et un vrai défaut de jeu, celui-là : les arbres tirent leur échelle **à la plantation**,
+et seulement au trait. Ceux qui étaient déjà plantés gardaient leur coefficient au
+passage d'un style à l'autre — jusqu'à un tiers de trop pour leur planche — et ce
+jusqu'à la partie suivante. La bascule les retire maintenant.
+
+Après quoi, sur les 72 planches, une seule s'écarte de la grille : `fly_ico`, la mouche
+du panneau de fin, taillée exprès pour les 76 pixels qu'il lui donne sur grand écran.
+
+### Les obstacles ont pris 15 %
+
+La ferme est vue d'un peu plus près, décor compris : les sept obstacles suivent, et le
+creux sous la ligne d'horizon avec eux — sinon les gros objets flottent et les petits
+s'enterrent. Les boîtes de collision se lisent en fractions du dessin, elles suivent
+sans qu'on y touche.
+
+| | hauteur minimale pour franchir |
+| --- | --- |
+| ballot | −46 → **−56** |
+| seau | −48 → **−58** |
+| pneu | −81 → **−96** |
+| pile de ballots | −92 → **−109** |
+| brouette | −93 → **−110** |
+| barrière | −94 → **−111** |
+| fourche | −158 → **−184** |
+
+Le saut monte à 321 unités et le bas de la boîte de la poule dix de plus : tout reste
+franchissable d'un simple saut, avec 137 unités de marge sur la fourche.
+
+La sonde qui relève ces hauteurs a dû être réparée au passage. Elle posait l'objet à une
+abscisse écrite en dur, `hen.x+55` : les boîtes ne se recouvrent que si l'objet est assez
+large, et le seau agrandi passait désormais à côté de la poule sans jamais la toucher.
+Le test rendait alors zéro, ce qui se lit comme « infranchissable » alors que ça veut
+dire « jamais rencontré ». Elle cherche maintenant d'abord l'abscisse où les deux boîtes
+se recouvrent vraiment au sol, puis elle monte.
+
 Deux précautions dans la conversion : la **palette est relevée** sur chaque dessin,
 doublons fusionnés — il restait trois rouges de crête à deux unités d'écart — et le
 **trait d'encre est prioritaire** au vote de bloc. Une moyenne noie une ligne d'un
