@@ -1466,6 +1466,52 @@ compacte. On perce donc aussi ce qui est six fois plus long que large. La contre
 connue et assumée : le jour où un objet portera une rayure blanche peinte, il faudra la
 nommer.
 
+### La jungle : sa couleur d'abord
+
+Le troisième monde commence par sa palette, avant même que son décor existe. C'est le seul
+morceau qui ne dépende d'aucun dessin : le jeu range ses couleurs par **plans** — haut du
+ciel, bas du ciel, ligne de crête, second plan, terre — et ces cinq-là se déduisent d'une
+image de référence sans qu'aucune planche soit découpée.
+
+Relevée sur le dessin fourni, la jungle est **verte mais très peu saturée** — 13 à 23 —
+une jungle de brume et non d'émeraude :
+
+| plan | relevé sur l'image | clarté | saturation |
+| --- | --- | --- | --- |
+| ciel | `#FAFAF8` | 250 | 2 |
+| crête lointaine | `#C1C5B8` | 194 | 13 |
+| feuillage moyen | `#B3BAAB` | 182 | 15 |
+| feuillage proche | `#A7AF9F` | 171 | 16 |
+| terre | `#CAC9B3` | 199 | 23 |
+
+Même méthode que pour la ville, et pour la même raison : ce n'est pas une autre journée,
+c'est la même sous d'autres feuilles. **Chaque teinte garde sa clarté** — à trois dixièmes
+près, mesuré — si bien que le jeu se lit pareil et que les plans se détachent pareil.
+
+**Le vert s'ajoute à la couleur de l'heure, il ne la remplace pas.** Premier essai : poser
+la teinte de référence telle quelle. Les quatre heures sont sorties identiques, puisque
+seule leur clarté les distinguait alors — or un champ a un arc de journée (matin chaud,
+midi bleu, fin d'après-midi ambrée, crépuscule violet), et une jungle a le même ciel qu'un
+champ. On garde donc 60 % de ce qui écarte le champ du gris, greffé sur le vert de
+référence.
+
+| | deux heures diffèrent de | vert moyen | vert mini |
+| --- | --- | --- | --- |
+| le champ | 24,2 | 2,3 | −8,0 |
+| l'image de référence | — | 10,3 | — |
+| **la jungle** | **18,0** | **12,1** | **+4,0** |
+
+Le « vert » se mesure : de combien le canal vert dépasse la moyenne du rouge et du bleu.
+Positif partout, à chaque heure et sur chaque plan.
+
+Le bandeau ne se choisit pas non plus — ce qui compte n'est pas sa couleur mais son
+contraste avec le ciel qu'il surmonte. Il subit la même transformation, et l'écart est
+vérifié : **+3,4 au champ, +3,7 en ville, +3,6 en jungle** ; le filet à −28,5 / −28,3 /
+−28,7.
+
+Ces trois constantes attendent leur monde : le décor de la jungle n'existe pas encore, et
+rien ne les utilise tant qu'il n'est pas là.
+
 ### La poule descend, et le sol s'épaissit
 
 Deux réglages qui vont ensemble, et qui valent pour les deux mondes.
