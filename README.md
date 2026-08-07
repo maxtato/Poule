@@ -1855,16 +1855,30 @@ point de lâcher se calcule à chaque image, à partir de la vitesse du moment e
 hauteur de sa main — la chute est un mouvement uniformément accéléré dont on connaît tout
 d'avance, le temps de vol se résout exactement — et il recule quand la course accélère.
 
-Le bord droit de la boîte de la poule est à 268 unités ; la cible est posée à 380. Ce n'est
-pas une marge de temps mais de **géométrie** : la noix éclate, donc n'existe plus, avant
-d'atteindre sa colonne, quelle que soit la vitesse.
+Le bord droit de la boîte de la poule est à 268 unités. **La cible est posée aussi près
+d'elle que la mesure l'autorise**, parce qu'une noix qui éclate loin devant se lance loin
+devant, et qu'on veut voir le singe lancer plutôt que voir son bras sortir du cadre. Elle a
+d'abord été à 380, puis descendue par paliers — chacun mesuré sur quinze vitesses de 520 à
+900 et quatre formes d'écran, soit soixante cas :
 
-| écran | chute | plus petite marge, sur 15 vitesses de 520 à 900 | morts |
-| --- | --- | --- | --- |
-| 390 × 844 | 0,53 s | 92 unités | 0 |
-| 820 × 1180 | 0,37 s | 84 unités | 0 |
-| 1440 × 900 | 0,35 s | 91 unités | 0 |
-| 1180 × 700 | 0,33 s | 93 unités | 0 |
+| cible | la noix éclate avant la poule de | morts |
+| --- | --- | --- |
+| 380 | 80 à 91 unités | 0 |
+| 340 | 37 à 50 | 0 |
+| 330 | 31 à 42 | 0 |
+| **320** | **22 à 32** | **0** |
+| 310 | 8 à 21 | 0 |
+| 290 | de −13 à 4 | **4** |
+
+C'est à 290 que le plancher cède, et il cède d'un coup : la noix arrive dans la colonne de
+la poule avant d'avoir touché terre. On s'arrête donc deux paliers plus haut. Vingt-deux
+unités, ce n'est pas une marge de temps mais de **géométrie** — la noix n'existe plus à
+partir de là, quelle que soit la vitesse — et vingt-deux unités valent plus d'une largeur
+de noix.
+
+Ce que ça change à l'écran : au lâcher, on voit **57 %** du singe au début d'une course,
+contre 30 % quand la cible était à 380. On voit la tête, le bras tendu et la noix qui s'en
+va, au lieu d'un avant-bras qui dépasse du bord.
 
 **Elle tombe et elle éclate.** Une fiente posée reste et pâlit — une trace sur un trottoir
 a une raison d'être là ; une noix fendue n'en a aucune, et le sol de la jungle est déjà
@@ -1876,12 +1890,13 @@ La noix part de sa main, et cette main est dessinée — inutile de la placer à
 mesurée sur la planche de la pose armée, elle est à 156 pixels à gauche de l'œil et 23
 dessous, soit 79 et 12 unités de jeu.
 
-Un dernier point, honnête : **sur un téléphone, le lancer se fait au bord du cadre.** À
-520 unités par seconde la noix doit partir de x = 734 pour éclater à 380, et le singe fait
-193 unités de large — on voit son bras tendu et la noix qui s'en va, pas son corps. Il entre
-ensuite tout entier dans la seconde qui suit, bras encore tendu et main ouverte, et reste en
-vue jusqu'à sa sortie : on voit qui a lancé. Sur un écran de bureau, où le ciel est deux
-fois moins haut et la chute deux fois plus courte, tout le lancer est dans le cadre.
+Un dernier point, honnête : **au-delà de 700 unités par seconde, le lâcher se fait hors du
+cadre**, et aucun réglage n'y peut rien. Le monde défile alors de 900 unités par seconde et
+la noix met une demi-seconde à tomber du plafond : elle doit partir de plus loin que la
+largeur de l'écran. Le singe entre tout entier dans la demi-seconde qui suit, bras encore
+tendu et main ouverte, et reste en vue jusqu'à sa sortie — on voit qui a lancé, à défaut de
+le voir lancer. Sur un écran de bureau, où le ciel est deux fois moins haut et la chute deux
+fois plus courte, tout le lancer est dans le cadre à toutes les vitesses.
 
 #### Un seul du ciel à la fois
 
