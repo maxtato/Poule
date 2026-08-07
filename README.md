@@ -1121,27 +1121,37 @@ moment. La teinte est arrondie par paliers et sert de clé de cache : sur une
 journée entière elle ne prend qu'une trentaine de valeurs, soit une repeinte
 par seconde environ au lieu de dix-huit par image.
 
-### Tout l'arrière-plan a grossi d'un cinquième et demi
+### Tout l'arrière-plan a grossi, et le deuxième plan deux fois
 
-Les silhouettes du fond ont été **agrandies d'un facteur 1,4**, arbres, tracteur, moulin,
-panneaux, collines et massifs compris. Le plus haut massif passe de 484 à 678 unités de
-monde, le moulin de 328 à 459, le plus petit panneau de 78 à 109.
+Les silhouettes du fond ont d'abord été **agrandies d'un facteur 1,4**, arbres, tracteur,
+moulin, panneaux, collines et massifs compris. Puis le **deuxième plan seul** a repris
+1,35 par-dessus, les massifs restant où ils étaient. Soit **1,89 depuis le départ** pour
+les arbres et le moulin — c'est une campagne vue de plus près, pas une campagne plus
+lointaine.
 
-Les **écarts** ont suivi le même facteur — 45 → 63 et 150 → 210 entre deux silhouettes du
-deuxième plan, 250 → 350 de chevauchement entre deux massifs. Sans cela, la campagne
-n'aurait pas été la même en plus grand mais la même en plus serré : des arbres à taille
-double collés les uns aux autres, et une ligne de crête où les sommets se succèdent deux
-fois trop vite. Les planches pixel ont été refaites au nouveau grain — vérifié sur les
-dix-huit silhouettes, chacune a exactement le nombre de colonnes que sa taille
-d'affichage demande, à zéro près.
+| | au départ | ×1,4 | et le deuxième plan ×1,35 |
+| --- | --- | --- | --- |
+| plus haut massif | 484 | **678** | 678 |
+| moulin | 328 | 459 | **620** |
+| chêne | 278 | 389 | **525** |
+| panneau flèche | 78 | 109 | **147** |
+
+Les **écarts** ont suivi les mêmes facteurs à chaque fois — 45 → 85 et 150 → 284 entre
+deux silhouettes du deuxième plan, 250 → 350 de chevauchement entre deux massifs. Sans
+cela, la campagne n'aurait pas été la même en plus grand mais la même en plus serré : des
+arbres à taille double collés les uns aux autres, et une ligne de crête où les sommets se
+succèdent deux fois trop vite. Les planches pixel ont été refaites au nouveau grain à
+chaque fois — vérifié sur les dix-huit silhouettes, chacune a le nombre de colonnes que
+sa taille d'affichage demande, à un pixel près sur une seule d'entre elles (arrondi).
 
 Ce grossissement a réveillé une valeur écrite en dur. Une silhouette est recyclée quand
 son bord **gauche** passe un seuil de sortie ; il faut donc que ce seuil soit plus loin
 que la plus large des silhouettes, sinon on en voit une disparaître en plein écran. Les
 seuils valaient 600 et 1 100 quand le massif le plus large en faisait déjà 987 : la marge
 tenait à treize unités, et elle serait tombée du mauvais côté. Ils se **calculent**
-maintenant sur les tables de hauteurs, une fois les planches chargées — 640 et 1 572
-aujourd'hui — et ils suivront tout seuls la prochaine fois. Vérifié sur dix minutes de
+maintenant sur les tables de hauteurs, une fois les planches chargées, et ils ont suivi
+tout seuls au deuxième agrandissement : 640 puis 836 pour le deuxième plan, 1 572 pour
+les massifs. Vérifié sur dix minutes de
 course, image par image : aucun recyclage à vue, et aucun trou dans la ligne de crête.
 
 Les massifs du fond forment une chaîne continue : chacun est placé à partir du
