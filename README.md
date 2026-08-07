@@ -1575,17 +1575,25 @@ soit la richesse des dessins.
 | étage | hauteur | ce qu'il y a | poids |
 | --- | --- | --- | --- |
 | les arbres | 830 à 950 | l'arbre à couronne ronde, le même drapé de lianes, un palmier, deux palmiers | 30 % |
-| les plantes | 485 et 535 | les grandes palmes dressées, la touffe en éventail | 29 % |
-| le sous-bois | 295 et 330 | le monstera, le buisson large | 38 % |
+| les plantes | 340 et 375 | les grandes palmes dressées, la touffe en éventail | 29 % |
+| le sous-bois | 205 et 230 | le monstera, le buisson large | 38 % |
 
-Les trois étages grandissent **ensemble**. Ce sont les rapports entre eux qui font la forêt,
-pas leurs tailles absolues : n'agrandir que les arbres donnerait des fougères de poupée sous
-des géants.
+Les trois étages ont d'abord grandi **ensemble** : ce sont les rapports entre eux qui font
+la forêt, pas leurs tailles absolues, et n'agrandir que les arbres donnerait des fougères de
+poupée sous des géants.
 
-Une seule exception, et c'est un réglage d'œil : **les plantes ont baissé seules**, de
-570-630 à 485-535. À deux tiers d'arbre elles pesaient comme des arbres, et la forêt n'avait
-plus que deux étages au lieu de trois. À six dixièmes, l'étage du milieu redevient un étage
-du milieu, et le fond se voit par-dessus.
+Puis les deux étages du bas ont **baissé seuls**, en deux fois, quand les arbres n'ont plus
+bougé :
+
+| | d'abord | puis | enfin | rapport à un arbre |
+| --- | --- | --- | --- | --- |
+| les plantes | 570–630 | 485–535 | **340–375** | 0,70 → 0,60 → **0,40** |
+| le sous-bois | 295–330 | — | **205–230** | 0,36 → **0,25** |
+
+C'est un réglage d'œil et non de mesure, et la raison est toujours la même : à deux tiers
+d'arbre, une plante *pèse* comme un arbre, et la forêt n'a plus que deux étages au lieu de
+trois. À quatre dixièmes, l'écart se voit, le fond passe par-dessus, et les arbres
+redeviennent ce qui domine.
 
 #### Huit dessins, seize silhouettes
 
@@ -1633,7 +1641,7 @@ monde :
 | la ville | 68 % | 362 |
 | la jungle, 40–230 | 73 % | 235 |
 | la jungle, 10–120 | 85 % | 124 |
-| **la jungle** | **93 %** | **95** |
+| **la jungle** | **92 %** | **94** |
 
 Il en reste assez pour que la canopée se voie par les trouées — sans elles, le second plan
 la cacherait tout entière et le monde n'aurait plus qu'un plan. Sur ces dix minutes :
