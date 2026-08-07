@@ -1092,7 +1092,8 @@ ville de **6,0**, soit **un quart** de la couleur de la ferme.
 Trois choses ne se transposaient pas, et appartiennent maintenant au monde.
 
 **L'herbe et les cailloux.** Ce sont ceux d'un champ ; un trottoir n'a ni touffes ni
-gravier. Le semis du premier plan est simplement sauté quand le monde n'en veut pas.
+gravier. Le premier plan appartient donc au monde lui aussi — la ville a depuis reçu les
+siens, quatre fissures et un papier froissé, décrits plus bas.
 
 **Le bandeau du haut.** Il était crème comme la ferme. Celui de la ville est gris — mais
 à la **même clarté**, si bien que le contraste avec la scène ne bouge pas. Mesuré, écart
@@ -1161,6 +1162,95 @@ creuse et l'autre borgne.
 La sonde qui mesure la taille des pixels visite maintenant **tous les mondes**, joués ou
 non : leurs planches vivent dans le même fichier et partagent la même grille. C'est elle
 qui a donné aux deux silhouettes leur taille d'affichage, 530×312 et 649×273.
+
+### Un dessin qui n'est pas posé sur le sol, mais dedans
+
+La ville a reçu de quoi habiller son trottoir : quatre **fissures** et un **papier
+froissé**, à la place de l'herbe et des cailloux du champ.
+
+Les quatre fissures ne sont pas des objets posés sur le sol. Chacune est dessinée **avec
+le bout de trottoir qu'elle traverse** : une longue ligne d'horizon, et la fente qui en
+part. Une touffe d'herbe se cale par son bas, elle pousse au-dessus de la ligne ; une
+fissure se cale par **la ligne qui est dans le dessin**, et cette ligne tombe où elle veut
+— au tiers de la hauteur pour l'une, tout en haut pour une autre, à 95 % du haut pour
+celle dont la fente monte.
+
+Chaque dessin porte donc son **ancrage** : la hauteur, dans le dessin, de la ligne à
+poser sur celle du jeu. Par défaut c'est le bas — l'herbe, les cailloux et le papier n'ont
+rien eu à changer. Il se mesure et ne se choisit pas : rangée la plus chargée en encre,
+puis centre de gravité des rangées voisines qui pèsent au moins 40 % d'elle, pour tomber
+au **milieu** du trait et non sur son bord.
+
+| dessin | planche | ancrage | ce qu'on voit |
+| --- | --- | --- | --- |
+| `ville_sol0` | 336×92 | 35 % du haut | une étoile de fentes, à cheval sur la ligne |
+| `ville_sol1` | 495×126 | 50 % | une fente qui remonte, deux qui descendent |
+| `ville_sol2` | 660×89 | 4 % | deux longues fentes, sous la ligne |
+| `ville_sol3` | 1025×161 | 95 % | une seule, qui monte haut |
+| `ville_papier` | 226×144 | le bas | il est posé dessus, comme une touffe |
+
+**Une seule échelle pour les quatre fissures**, 0,31 unité par pixel de dessin, et elle
+n'est pas choisie au jugé : le trait de crayon mesure de 5 à 8 pixels selon la planche, et
+0,31 le ramène sur les **2 unités de la ligne d'horizon du jeu**. C'est ce qui fait que la
+couture ne se voit pas — la planche pose son propre bout de ligne par-dessus celle du jeu,
+et les deux ont la même épaisseur.
+
+**Le trottoir est plat, et pas seulement par goût du béton.** La ferme se donne une ligne
+d'horizon qui ondule de trois unités. Une planche droite posée dessus s'en écarte aux deux
+bouts, d'à peu près une largeur de trait : la marche se voit. À plat, les deux se
+confondent exactement, et l'irrégularité ne vient plus du calcul mais du dessin lui-même,
+qui est tremblé à la main. C'est mieux. L'amplitude est donc devenue une propriété du
+monde : 1 pour le champ, 0 pour la rue.
+
+**Vérifié avec un témoin, parce que trois sondes de suite avaient menti.** La première
+lisait une bande de canevas calculée à partir de `groundY` sans le facteur d'échelle ; la
+deuxième cherchait « la rangée la plus chargée en encre » et tombait sur la **barre de vie
+du bandeau**, qui traverse aussi tout l'écran ; la troisième divisait par un `dpr` codé en
+dur à 3 alors que la page tourne à 2,5 au trait. Les trois annonçaient un décalage de
+0,00 unité — c'est-à-dire rien du tout, ce qui était exactement le résultat espéré. C'est
+le témoin qui les a démasquées : on refait la mesure avec les ancrages **volontairement
+faux de quatre unités**, et si le chiffre ne bouge pas, ce n'est pas la couture qui est
+parfaite, c'est la sonde qui est aveugle. Une fois corrigée, la comparaison est visible à
+l'œil au zoom : ancrage juste, la ligne du dessin recouvre celle du jeu sans une marche ;
+ancrage +4, elle passe quatre unités au-dessus et laisse voir celle du jeu en dessous.
+
+**Le détourage n'est pas celui des obstacles.** Deux natures de dessin, deux recettes :
+
+- les fissures sont du **trait**. Rien n'est plein, tout est enfermé par le fond : on perce
+  tout ce que l'inondation venue du bord n'atteint pas, comme pour les fenêtres des
+  immeubles. On ne garde pas non plus « la plus grosse tache » — une fissure a des éclats
+  détachés, et ce sont eux qui la font vivre. Le seuil de poussière descend à 10 pixels ;
+  le retrait tombe à **zéro**, parce qu'un trait de quatre pixels de large ne survivrait
+  pas aux deux qu'on enlève ailleurs pour manger le halo de compression d'un aplat.
+- le papier est une **surface**. Son intérieur presque blanc est voulu — une feuille claire
+  sur un trottoir gris — et on ne perce donc rien.
+
+Dans les deux cas l'encre est **désaturée** comme le reste de la ville : le crayon tire sur
+le beige, et ces planches-là ne servent qu'à un monde gris. Même règle que la palette des
+heures — on garde la clarté, on ne garde que 22 % du chroma.
+
+**Le recyclage se compte enfin par le bord droit.** Tant qu'un détail faisait quarante
+unités, la marge de soixante suffisait ; une fissure de trois cent dix-huit disparaissait
+en plein écran. La chaîne se mesure aussi de bord à bord pour replanter, sinon deux
+dessins se seraient recouverts. Vérifié sur dix minutes de course dans chaque monde :
+
+| | détails replantés | disparu à vue | recouvrements | plus grand vide |
+| --- | --- | --- | --- | --- |
+| la ferme | 3 411 | 0 | 0 | 450 unités |
+| la ville | 1 063 | 0 | 0 | 505 unités |
+
+Ce dernier chiffre a demandé un réglage. Les écarts de la ville sont plus larges que ceux
+du champ — ses marques le sont aussi — mais son vide franc laissait **788 unités de
+trottoir nu pour un écran de 800**. Le champ garde son ondulation et ses touffes, son vide
+de 450 ne se voit pas ; la rue n'a plus ni herbe, ni caillou, ni relief, et un écran entier
+sans une seule marque ne défile plus, il glisse. Le vide franc a donc été raccourci
+jusqu'à ce que les deux mondes se tiennent.
+
+Enfin la nature du détail suivant appartient elle aussi au monde : le champ **alterne
+strictement** herbe et caillou — tirée au hasard, la nature faisait des plages de trois ou
+quatre touffes d'affilée et l'alternance ne se lisait plus — tandis que la rue glisse un
+papier **une fois sur cinq** entre ses fissures. Mesuré sur mille détails, le papier sort à
+19,6 % et chaque fissure entre 18,7 et 21,1 %.
 
 ### Le corbeau, mis à l'échelle sur trois repères
 
