@@ -1670,37 +1670,47 @@ Elles descendent **179 unités sous le plafond de vol** — leurs brins les plus
 dans la zone où la poule vole. C'est voulu, et ça ne coûte rien : le second plan est peint
 avant le premier, la poule passe donc *devant* les lianes. Elle vole sous la voûte.
 
-#### Les six obstacles du sous-bois
+#### Les sept obstacles du sous-bois
 
-Un enchevêtrement de racines, une souche, un tronc couché, un serpent lové, un champignon,
-une plante carnivore. Les ballots de paille empruntés au champ sont partis avec eux ; il ne
-reste plus rien d'emprunté que les touffes d'herbe et les cailloux du sol, qui sont à leur
-place sous les arbres.
+Ce que la forêt a laissé — un enchevêtrement de racines, un tronc couché, une souche — et
+ce qu'une expédition y a abandonné : un sac, un jerrican, une cage vide. Plus la plante
+carnivore, qui n'est à personne. Les ballots de paille empruntés au champ sont partis
+depuis longtemps ; il ne reste plus rien d'emprunté que les touffes d'herbe et les cailloux
+du sol, qui sont à leur place sous les arbres.
 
 | | dessin | boîte | il faut monter de | il tue |
 | --- | --- | --- | --- | --- |
 | les racines | 369 × 100 | 90 % de la largeur | 63 | oui |
 | le tronc couché | 221 × 115 | 93 % | 80 | oui |
-| le champignon | 151 × 130 | 92 % | 95 | oui |
+| le jerrican | 182 × 125 | 92 % | 86 | oui |
+| le sac | 207 × 140 | 92 % | 99 | oui |
 | la souche | 201 × 150 | 92 % | 109 | oui |
-| le serpent | 138 × 144 | 88 % | 111 | oui |
 | la plante carnivore | 184 × 175 | 93 % | 131 | oui |
+| la cage | 244 × 180 | 93 % | 135 | oui |
 
 Pour un sommet de saut à 321 : les racines sont ce qu'on enjambe — le plus bas obstacle du
-jeu, tous mondes confondus, et de loin le plus large — et la plante carnivore ce qui se
-mérite. Le champignon et la plante ont été **réduits d'un cinquième** après coup, à la
-demande ; la jungle plafonne donc à 131 là où le champ demande 183 pour son épouvantail et
-184 pour sa fourche. C'est le monde le plus indulgent des trois au sol, et celui qui a le
-plus de choses au ciel.
+jeu, tous mondes confondus, et de loin le plus large — et la cage ce qui se mérite. La
+jungle plafonne à 135 là où le champ demande 183 pour son épouvantail et 184 pour sa
+fourche : c'est le monde le plus indulgent des trois au sol, et celui qui a le plus de
+choses au ciel.
 
-**Le serpent et le champignon ont été redessinés**, et leurs nouvelles feuilles sont plus
-sombres que les premières : papier à 240, 224, 217 et 241, 230, 224, contre 247, 236, 230.
-Celui du serpent passe même **sous le seuil du papier** — 227,6 de clarté pour un seuil à
-232. Rien ne casse pour autant, et c'est le détour par l'ombre portée qui les sauve :
-l'inondation venue du bord avance aussi dans ce qui est clair et peu saturé (185 de clarté,
-34 de saturation), et ces deux papiers-là y tombent largement. La règle écrite pour manger
-les ombres mange aussi les papiers gris. Le nouvel œil du serpent, lui, se sépare tout
-seul : 26 unités du papier contre 7 pour l'ancien. Les boîtes ne sont pas écrites à la main — elles sont
+Le champignon et le serpent ont été dessinés, redessinés une fois, puis **retirés** au
+profit des trois objets d'expédition. Leurs planches ne sont pas restées dans le fichier :
+un dessin remplacé et non complété ne pèse plus que du poids, et les ôter des deux tables a
+rendu 0,9 Mo.
+
+**Ce que ces trois feuilles-là avaient de facile.** Leur papier est blanc — 253 à 255 —
+quand celui des plantes tirait sur le rose et descendait jusqu'à 227, sous le seuil. Et
+aucun de leurs vides enfermés n'est ambigu : ils sont tous à une à cinq unités du papier.
+
+| | vides enfermés | ce que c'est |
+| --- | --- | --- |
+| la cage | 8, de 1 894 à 5 937 px, écarts 1 à 4 | **les jours entre ses barreaux** — une cage dont on ne voit pas au travers est une caisse |
+| le jerrican | 2, de 470 et 708 px, écart 5 | les deux fentes de sa **poignée** |
+| le sac | 1, de 3 696 px, écart 3 | l'arche de sa **bretelle** |
+
+Les petits amas qui tombent avec la poussière sont les cailloux dessinés à côté d'eux : le
+jeu a les siens, à sa propre échelle. Les boîtes ne sont pas écrites à la main — elles sont
 mesurées sur chaque dessin au démarrage, en ignorant la frange basse où vivent les
 racines, l'herbe et les feuilles.
 
@@ -1714,20 +1724,20 @@ tombaient les taches pour s'en apercevoir :
 | --- | --- | --- |
 | les racines | 10 taches, de 214 à 2 712 px, écarts 5 à 10 | **les arches entre deux racines** — toutes percées |
 | la souche | 1 768 px, écart 0 | le jour sous la racine — **percé** |
-| le serpent | 1 238 px, écart 7 | **son œil** — gardé |
 | la plante carnivore | 8 taches, de 49 à 6 382 px, écarts 3 à 9 | **le reflet du bulbe et les dents** — gardées |
+| le serpent (retiré depuis) | 1 238 px, écart 7 | **son œil** — gardé |
 
-L'enchevêtrement de racines demande son propre écart : **14**, quand les cinq autres
-tiennent à 8. La raison se lit dans les chiffres : **son papier est plus sombre** —
+L'enchevêtrement de racines demande son propre écart : **14**, quand les autres tiennent
+à 8. La raison se lit dans les chiffres : **son papier est plus sombre** —
 245, 233, 228 contre 251, 250, 248 — alors que le liseré blanc qui borde l'encre est le
 même partout. Une petite arche, faite pour moitié de ce liseré, tombe donc à 10 du papier
 là où une grande tombe à 6. À 8, les deux plus petites restaient bouchées : deux taches
 roses de sept unités sur un enchevêtrement brun, et ça se voyait.
 
-Le papier du serpent est chaud, le blanc de son œil aussi, et sept unités les séparent : la
-couleur ne peut pas trancher. Ni la taille, ni l'allongement non plus. Ce qui sépare, c'est
-de savoir ce que le dessin représente, et ça ne se mesure pas — on l'écrit donc feuille par
-feuille, comme le seuil du papier ou la taille de la poussière.
+Le papier du serpent était chaud, le blanc de son œil aussi, et sept unités les séparaient :
+la couleur ne pouvait pas trancher. Ni la taille, ni l'allongement non plus. Ce qui sépare,
+c'est de savoir ce que le dessin représente, et ça ne se mesure pas — on l'écrit donc
+feuille par feuille, comme le seuil du papier ou la taille de la poussière.
 
 **La plante carnivore est retournée**, et c'est la seule. Question de sens plutôt que de
 dessin : la poule arrive par la gauche, le serpent la regarde venir, et une gueule ouverte
@@ -1740,7 +1750,7 @@ partagent leur espacement (600 unités garanties, 1 s d'attente) :
 | --- | --- | --- | --- |
 | le champ | 11,2 | 611 | 603 |
 | la ville | 8,8 | 870 | 862 |
-| **la jungle** | **11,1** | **611** | **604** |
+| **la jungle** | **11,0** | **611** | **603** |
 
 Le plus petit écart mesuré y descend à 467 quand le champ tient 600 : la jungle a trois
 choses au ciel là où le champ n'en a qu'une, et un obstacle de sol qui suit un vol garde
