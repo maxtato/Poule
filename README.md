@@ -1039,9 +1039,8 @@ monde, parmi ce qui entre dans le tirage dès le premier mètre.
 
 Le monde **ville** se construit. Son fond est en place — deux silhouettes d'immeubles,
 posées et recouvertes exactement comme les massifs de la ferme, même mécanique de chaîne
-continue, seuls les dessins changent — et ses **cinq obstacles** aussi. Son plan
-intermédiaire reste vide : une ville n'a pas d'arbres de campagne, et il vaut mieux le
-laisser vide que lui emprunter les siens.
+continue, seuls les dessins changent — ses **cinq obstacles** aussi, et depuis, son plan
+intermédiaire : la rue qu'on longe (voir plus bas).
 
 | Objet | Part | Pourquoi |
 |---|---|---|
@@ -1283,6 +1282,65 @@ strictement** herbe et caillou — tirée au hasard, la nature faisait des plage
 quatre touffes d'affilée et l'alternance ne se lisait plus — tandis que la rue glisse un
 papier **une fois sur cinq** entre ses fissures. Mesuré sur mille détails, le papier sort à
 17,6 % et chaque fissure entre 19,9 et 21,1 %.
+
+### La rue qu'on longe
+
+Le plan intermédiaire de la ville — celui qui défile au tiers de la vitesse — était resté
+vide. Il a maintenant sept silhouettes : quatre immeubles, un réverbère, une voiture, une
+benne. Même mécanique que la campagne, silhouettes pleines dont le jeu ne garde que la
+découpe pour les repeindre à la couleur de l'heure.
+
+**Deux feuilles, deux échelles, un seul repère pour les relier.** Les quatre immeubles ont
+été tracés sur la même feuille : ils gardent entre eux les hauteurs de leurs dessins, et
+c'est ce rapport qui fait une rue plutôt qu'un alignement. Le réverbère, la voiture et la
+benne viennent d'une autre feuille, et leur échelle ne se déduit donc pas de la première.
+Elle se pose sur le seul repère qui vaille entre les deux : un immeuble de cinq étages fait
+une quinzaine de mètres, un lampadaire de rue en fait huit. Les trois gardent ensuite entre
+eux les rapports de leur propre feuille.
+
+| | hauteur | part |
+| --- | --- | --- |
+| `ville_imm0` … `ville_imm3` | 807, 891, 580, 554 | 9 chacun |
+| `ville_lampe` | 475 | 8 |
+| `ville_auto` | 210 | 5 |
+| `ville_benne` | 198 | 3 |
+
+Les immeubles dépassent la ligne de crête lointaine, qui plafonne à 640 : c'est ce qui les
+met **devant** elle. Et l'écart entre deux silhouettes est devenu une propriété du monde —
+la campagne laisse respirer ses arbres (85 à 369 unités), la rue serre ses façades (40 à
+220). Il en reste juste assez pour que le fond se voie par les interstices ; sans un seul
+trou, les immeubles proches le cacheraient tout entier. Mesuré, la part de largeur d'écran
+couverte par ce plan : **64 % à la ferme, 82 % à la ville**.
+
+**Les silhouettes sont aplaties à un gris unique.** Le jeu ne lit que leur alpha — il
+repeint tout — donc leur intérieur n'a aucune raison de transporter le grain du papier ni
+le bruit du JPEG. Aplaties et ramenées à 640 pixels comme les silhouettes lointaines, les
+sept pèsent 119 Ko au lieu de 2 Mo, sans qu'un pixel affiché change.
+
+**Les trous sont percés**, comme les fenêtres du fond : l'escalier de secours, les pieds du
+château d'eau, la boucle du réverbère. Le plan est peint en aplat ; un vide non percé
+disparaîtrait dans la masse. 19 trous sur le grand immeuble, 1 sur le réverbère.
+
+**Et la chaîne était trop courte.** Une silhouette vit jusqu'à ce que son bord gauche
+franchisse le seuil de sortie, calculé sur la plus large du monde : −1543 pour la ville,
+dont les immeubles font jusqu'à 1108 unités de large. Semée depuis −400 comme avant, la rue
+n'avait que **trois** silhouettes pour couvrir tout cet intervalle : quand la plus à gauche
+repartait, il arrivait que les deux autres soient déjà sorties par la gauche elles aussi,
+et la replanteuse butait alors sur son garde-fou — elle reposait la silhouette au bord
+droit de l'écran en laissant derrière elle un trou de 800 unités, une rue vide. **22 % des
+replantations.** La chaîne part maintenant du seuil de sortie lui-même, et se sème un écran
+plus loin sur la droite : elle garde un nombre fixe de silhouettes, chaque replantation lui
+reprend à gauche ce qu'elle lui rend à droite, et comme ni la largeur ni l'écart tirés ne
+sont les mêmes, sa longueur dérive au hasard — l'écran d'avance encaisse la dérive.
+
+| | chaîne | garde-fou utilisé | plus grand trou | écart maximal demandé |
+| --- | --- | --- | --- | --- |
+| avant, la ville | 3 | 22 % des replantations | 799 | 220 |
+| après, la ville | 5 | **jamais** | **224** | 220 |
+| après, la ferme | 7 | **jamais** | **369** | 369 |
+
+Le plus grand trou vaut désormais exactement l'écart maximal du monde : il n'y a plus
+d'autre trou que ceux qu'on a demandés.
 
 ### Le corbeau, mis à l'échelle sur trois repères
 
