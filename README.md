@@ -1009,6 +1009,35 @@ L'oiseau de la ferme est le **corbeau**. L'aigle et le cerf-volant sortent du ti
 mais rien de ce qui les concerne n'est retiré : planches, vol, ondulation du vent,
 boîtes, tout reste là. Ils ne sont simplement pas de ce monde-ci.
 
+### Un monde porte aussi son décor
+
+Les deux plans de fond appartiennent au monde au même titre que la liste des obstacles :
+`fond` pour la ligne d'horizon, `plan2` pour le plan intermédiaire, avec ses poids et sa
+règle de variation de taille. Le semis, le défilement et le tracé lisent ces tables-là et
+non plus les constantes de la ferme. `choisirMonde()` change les tables, oublie le seuil
+de sortie — qui se déduit des largeurs — et resème.
+
+Un monde peut n'avoir **aucun** plan intermédiaire : sans garde-fou, le semis tournait
+sans fin sur une table vide.
+
+### La ville : la ligne d'horizon d'abord
+
+Le monde **ville** se construit. Son fond est en place — deux silhouettes d'immeubles,
+posées et recouvertes exactement comme les massifs de la ferme, même mécanique de chaîne
+continue, seuls les dessins changent. Son plan intermédiaire est vide et ses obstacles
+sont encore ceux de la ferme, faute d'autres : ils attendent leurs dessins.
+
+Leurs **fenêtres sont percées**, et c'est ce qui fait la ville. Le fond est repeint en
+aplat à la couleur de l'heure : une fenêtre laissée pleine disparaîtrait dans la masse,
+percée elle laisse passer le ciel — ce que fait une ville lointaine au crépuscule. 83
+fenêtres percées sur la première silhouette, 41 sur la seconde. C'est la règle des trous
+dans son sens normal, à l'inverse de la poule et du corbeau, où percer aurait rendu l'une
+creuse et l'autre borgne.
+
+La sonde qui mesure la taille des pixels visite maintenant **tous les mondes**, joués ou
+non : leurs planches vivent dans le même fichier et partagent la même grille. C'est elle
+qui a donné aux deux silhouettes leur taille d'affichage, 530×312 et 649×273.
+
 ### Le corbeau, mis à l'échelle sur trois repères
 
 Trois dessins, un seul canevas, comme l'aigle. Mais l'échelle de chaque pose n'est pas
