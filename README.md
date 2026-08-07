@@ -1300,10 +1300,10 @@ eux les rapports de leur propre feuille.
 
 | | hauteur | poids | part mesurée |
 | --- | --- | --- | --- |
-| `ville_imm0` … `ville_imm3` | 378, 840, 880, 440 | 9 chacun | 12 à 17 % |
-| `ville_lampe` | 475 | 22 | **27 %** |
-| `ville_auto` | 210 | 5 | 9 % |
-| `ville_benne` | 198 | 3 | 6 % |
+| `ville_imm0` … `ville_imm3` | 565, 624, 406, 388 | 9 chacun | 12 à 17 % |
+| `ville_lampe` | 333 | 22 | **27 %** |
+| `ville_auto` | 147 | 5 | 9 % |
+| `ville_benne` | 139 | 3 | 6 % |
 
 Le **lampadaire** est de loin le plus fréquent, et c'est voulu : dans une rue il en passe
 un tous les vingt mètres, plus souvent qu'aucune façade en particulier.
@@ -1313,60 +1313,61 @@ met **devant** elle. Et l'écart entre deux silhouettes est devenu une propriét
 la campagne laisse respirer ses arbres (85 à 369 unités), la rue les siennes un peu moins
 (95 à 360). Il en reste assez pour que le fond se voie par les interstices ; sans un seul
 trou, les immeubles proches le cacheraient tout entier. Mesuré, la part de largeur d'écran
-couverte par ce plan : **64 % à la ferme, 68 % à la ville**.
+couverte par ce plan : **64 % à la ferme, 67 % à la ville**.
 
-**Les silhouettes sont aplaties à un gris unique** — le réverbère, la voiture, la benne.
-Le jeu ne lit que leur alpha, donc leur intérieur n'a aucune raison de transporter le grain
-du papier ni le bruit du JPEG.
+**Les silhouettes sont aplaties à un gris unique.** Le jeu ne lit que leur alpha, donc leur
+intérieur n'a aucune raison de transporter le grain du papier ni le bruit du JPEG.
 
-**Les quatre immeubles, eux, ont gardé leur relief.** Ils portent leurs fenêtres, leurs
-corniches, un rideau de fer, un château d'eau, un escalier de secours — et un aplat aurait
-tout effacé. Leur clarté est donc conservée, rangée sur une rampe connue (le plus sombre du
-dessin à 0,62, le plus clair à 1), et le jeu **multiplie** cette rampe par une couleur
-tirée de l'heure. Trois passes, toutes faites par la toile — coucher la couleur, la
-multiplier par le gris, découper sur l'alpha — et aucune boucle sur les pixels : la teinte
-est refaite à chaque changement d'heure, et l'heure change à chaque image.
+**Les trous sont percés**, comme les fenêtres du fond : l'escalier de secours, les pieds du
+château d'eau, la boucle du réverbère. Le plan est peint en aplat ; un vide non percé
+disparaîtrait dans la masse. 19 trous sur le grand immeuble, 1 sur le réverbère.
 
-**Le plafond a demandé une correction, et la mesure l'a trouvée.** Une multiplication ne
-sait que descendre : la couleur qu'on lui donne est le plafond du bâti, ce que vaudra son
-point le plus clair. Premier réglage : caler la **moyenne** du bâti sur la couleur de
-l'heure, pour qu'il pèse ce que pesaient les silhouettes. Relevé à l'écran, son point le
-plus clair montait alors à **248 quand le ciel plafonne à 244** — les fenêtres ne se
-lisaient plus comme des vitres mais comme des trous dans la façade.
+### Un passage par le relief, et le retour à l'aplat
 
-Le plafond vaut donc 1,15 fois la couleur du second plan, et pas davantage : c'est ce qui
-laisse la fenêtre la plus claire sous la crête lointaine **aux quatre heures du jeu**.
+Les quatre immeubles ont porté un temps **leur relief** : quatre autres dessins, avec
+fenêtres, corniches, rideau de fer, château d'eau et escalier de secours. Le second plan se
+peignant en aplat, il avait fallu tout un mécanisme — la clarté de chaque dessin rangée sur
+une rampe, le jeu multipliant cette rampe par une couleur tirée de l'heure, et un plafond
+réglé à 1,15 fois la couleur du plan pour que la fenêtre la plus claire reste sous la crête
+lointaine aux quatre heures du jour.
 
-| | ciel | crête lointaine | second plan (mini → maxi) |
-| --- | --- | --- | --- |
-| matin | 244 | 217 | 128 → **206** |
-| midi | 247 | 219 | 128 → **206** |
-| après-midi | 242 | 211 | 129 → **208** |
-| crépuscule | 236 | 200 | 121 → **195** |
+C'est revenu à l'aplat : des silhouettes pleines se lisent mieux à cette distance, et un
+second plan n'a pas à retenir l'œil. Le dégradé, sa rampe et son plafond mesuré sont partis
+avec. Ce qui reste de ce passage, c'est la **dalle** — les immeubles de cette série-là en
+portaient une, ceux d'aujourd'hui aussi — et le trottoir qu'elle a fait naître.
 
-Le bâti y perd un rien de sa présence d'aplat — et c'est tant mieux : il est plus loin que
-le trottoir, il doit peser moins.
+### Le second plan recule, le fond avance
 
-**Les quatre s'accordent sur leurs fenêtres.** Ils ne sont pas dessinés à la même échelle :
-chacun remplit sa feuille, si bien que l'atelier d'un seul niveau occupe autant de pixels
-que le trois-étages. Les poser à la même hauteur de planche aurait fait une rue de jouets.
-Une fenêtre, elle, fait la même taille d'un immeuble à l'autre — c'est la seule chose dont
-on soit sûr. Mesurées (112, 107, 124 pixels selon la planche), elles valent toutes **116
-unités** une fois les hauteurs posées : 378 pour l'atelier, 840 et 880 pour les
-trois-étages, 440 pour le petit.
+Deux réglages en sens contraire, pour creuser la profondeur.
 
-Deux pièges dans cette mesure, tous deux corrigés. Les vitres de trois dessins sur quatre
-ont une **traverse** : mesurées telles quelles, les fenêtres valaient une demi-fenêtre ici
-et une entière là, et l'échelle en sortait fausse du simple au double — on dilate donc le
-masque verticalement pour franchir la traverse avant de mesurer. Et c'est le **mode** qu'il
-faut prendre, pas la médiane : une façade porte six à neuf fenêtres identiques et deux ou
-trois accidents, et la médiane se laisse déplacer par les accidents. À égalité de fréquence
-on garde la plus grande — un accident est un fragment, il est plus petit que ce qu'il
-fragmente, jamais plus grand. Sans cette règle, l'atelier s'était vu attribuer une fenêtre
-de 42 pixels qui était un bout de bandeau.
+**Le second plan a reculé d'un tiers.** Tout y est réduit dans le même rapport — les
+immeubles, mais aussi le réverbère, la voiture et la benne. N'avoir réduit que le bâti
+aurait donné un lampadaire aux trois quarts de la hauteur d'un immeuble de trois étages.
 
-**Les trous sont percés**, comme les fenêtres du fond : l'escalier de secours, la boucle du
-réverbère. 18 trous sur l'immeuble au château d'eau, 1 sur le réverbère.
+| | avant | après |
+| --- | --- | --- |
+| les quatre immeubles | 807, 891, 580, 554 | **565, 624, 406, 388** |
+| réverbère | 475 | **333** |
+| voiture, benne | 210, 198 | **147, 139** |
+
+**La ligne de crête lointaine a grandi d'un quart** : 640 → 800, 560 → 700, 494 → 618. Elle
+domine maintenant le bâti proche, ce qui donne une grande ville au loin et une rue basse
+devant.
+
+**Et elle a été retaillée deux fois plus fine.** Sa source n'a que six cents rangées ;
+affichée plus grande, chaque marche d'escalier de son contour se serait vue. Un
+agrandissement d'image ne peut rien inventer — mais ici on n'agrandit pas une image, on
+**rééchantillonne une forme**. La distance au bord est une grandeur continue, connue en
+tout point : on la lit *entre* les pixels de la source, à la maille deux fois plus fine, et
+le contour qui en sort est exact au demi-pixel près. Ce n'est pas du flou ajouté, c'est le
+même bord décrit deux fois mieux. La pente du seuil suit l'échelle, sans quoi
+l'adoucissement du bord vaudrait deux pixels au lieu d'un et la silhouette paraîtrait molle.
+
+| | avant | après |
+| --- | --- | --- |
+| `ville_fond0` | 1013×596, 22 Ko | **2024×1191, 70 Ko** |
+| `ville_fond1` | 1099×462, 20 Ko | **2196×922, 64 Ko** |
+| `ville_fond2` | 1082×432, 19 Ko | **2162×862, 61 Ko** |
 
 ### Le trottoir, lu sur les dessins
 
@@ -1375,18 +1376,10 @@ sur toute leur largeur, en bas. Chacun apportait donc son bout de trottoir, et l
 réverbère, la voiture et la benne se tenaient à côté, plus bas, dans le vide.
 
 La dalle est **mesurée sur les quatre planches** — la bande du bas dont l'encre couvre
-toute la largeur — et non choisie :
-
-| | épaisseur | clarté sur la rampe |
-| --- | --- | --- |
-| `ville_imm0` | 29,9 unités | 0,73 |
-| `ville_imm1` | 34,3 | 0,76 |
-| `ville_imm2` | 33,6 | 0,77 |
-| `ville_imm3` | 31,4 | 0,73 |
-
-Soit **33 unités** et une clarté de **0,73**, ce qui donne la couleur de la bande sans avoir
-à l'inventer : le plafond du bâti multiplié par cette clarté. Les quatre ne s'accordent pas
-au pixel près, mais quatre unités d'écart valent deux pixels d'écran à cette échelle.
+toute la largeur — et non choisie : **25,9 / 28,7 / 37,1 / 35,0 unités**, soit **32** en
+moyenne. Les quatre ne s'accordent pas au pixel près, mais cinq unités d'écart valent deux
+pixels d'écran à cette échelle. Sa couleur ne se mesure pas : les silhouettes étant peintes
+en aplat, la dalle est exactement la couleur du second plan.
 
 La bande est peinte **avant** les silhouettes, d'un bord à l'autre : les immeubles posent
 leur propre dalle par-dessus, du même ton, et la rue est continue. Ce qui n'a pas de dalle
