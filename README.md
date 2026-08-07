@@ -1169,40 +1169,66 @@ La ville a reçu de quoi habiller son trottoir : quatre **fissures** et un **pap
 froissé**, à la place de l'herbe et des cailloux du champ.
 
 Les quatre fissures ne sont pas des objets posés sur le sol. Chacune est dessinée **avec
-le bout de trottoir qu'elle traverse** : une longue ligne d'horizon, et la fente qui en
-part. Une touffe d'herbe se cale par son bas, elle pousse au-dessus de la ligne ; une
-fissure se cale par **la ligne qui est dans le dessin**, et cette ligne tombe où elle veut
-— au tiers de la hauteur pour l'une, tout en haut pour une autre, à 95 % du haut pour
-celle dont la fente monte.
+le bout de trottoir qu'elle traverse** : une longue ligne de sol, et la fente qui en part.
+Une touffe d'herbe se cale par son bas, elle pousse au-dessus du sol ; une fissure se cale
+par **la ligne qui est dans le dessin**, et cette ligne tombe où elle veut — au tiers de la
+hauteur pour l'une, tout en haut pour une autre, à 95 % du haut pour celle dont la fente
+monte. Une fissure calée par son bas serait suspendue par sa fente la plus profonde, et
+deux fissures voisines ne seraient jamais à la même profondeur.
 
-Chaque dessin porte donc son **ancrage** : la hauteur, dans le dessin, de la ligne à
-poser sur celle du jeu. Par défaut c'est le bas — l'herbe, les cailloux et le papier n'ont
-rien eu à changer. Il se mesure et ne se choisit pas : rangée la plus chargée en encre,
-puis centre de gravité des rangées voisines qui pèsent au moins 40 % d'elle, pour tomber
-au **milieu** du trait et non sur son bord.
+Chaque dessin porte donc son **ancrage** : la hauteur, dans le dessin, du point qui se pose
+sur le sol. Par défaut c'est le bas — l'herbe, les cailloux et le papier n'ont rien eu à
+changer. Il se mesure et ne se choisit pas : rangée la plus chargée en encre, puis centre
+de gravité des rangées voisines qui pèsent au moins 40 % d'elle, pour tomber au **milieu**
+du trait et non sur son bord.
 
 | dessin | planche | ancrage | ce qu'on voit |
 | --- | --- | --- | --- |
-| `ville_sol0` | 336×92 | 35 % du haut | une étoile de fentes, à cheval sur la ligne |
+| `ville_sol0` | 336×92 | 35 % du haut | une étoile de fentes, à cheval sur le joint |
 | `ville_sol1` | 495×126 | 50 % | une fente qui remonte, deux qui descendent |
-| `ville_sol2` | 660×89 | 4 % | deux longues fentes, sous la ligne |
+| `ville_sol2` | 660×89 | 4 % | deux longues fentes, sous le joint |
 | `ville_sol3` | 1025×161 | 95 % | une seule, qui monte haut |
 | `ville_papier` | 226×144 | le bas | il est posé dessus, comme une touffe |
 
 **Une seule échelle pour les quatre fissures**, 0,31 unité par pixel de dessin, et elle
 n'est pas choisie au jugé : le trait de crayon mesure de 5 à 8 pixels selon la planche, et
-0,31 le ramène sur les **2 unités de la ligne d'horizon du jeu**. C'est ce qui fait que la
-couture ne se voit pas — la planche pose son propre bout de ligne par-dessus celle du jeu,
-et les deux ont la même épaisseur.
+0,31 le ramène sur les **2 unités de la ligne d'horizon du jeu**. Les cinq dessins gardent
+ainsi entre eux les rapports de taille qu'ils ont sur le papier, et leur trait pèse le même
+poids d'encre que celui du sol.
 
-**Le trottoir est plat, et pas seulement par goût du béton.** La ferme se donne une ligne
-d'horizon qui ondule de trois unités. Une planche droite posée dessus s'en écarte aux deux
-bouts, d'à peu près une largeur de trait : la marche se voit. À plat, les deux se
-confondent exactement, et l'irrégularité ne vient plus du calcul mais du dessin lui-même,
-qui est tremblé à la main. C'est mieux. L'amplitude est donc devenue une propriété du
-monde : 1 pour le champ, 0 pour la rue.
+### Sur la ligne, ou dans la bande qui est dessous
 
-**Vérifié avec un témoin, parce que trois sondes de suite avaient menti.** La première
+Premier essai : les fissures collées à la ligne d'horizon, au motif qu'une fente est
+*dans* le trottoir et pas ailleurs. C'était le mauvais raisonnement. La bande qui compte
+n'est pas la ligne, c'est **le sol qui s'étend en dessous** — c'est là que vivaient les
+touffes et les cailloux, et c'est là que doivent vivre les marques qui les remplacent.
+
+Les cinq dessins prennent donc le **même enfoncement que le champ**, celui à trois
+paliers : le plus souvent 7 à 20 unités sous la ligne, une fois sur trois 21 à 35, une
+fois sur sept 36 à 47, tout devant. Une fissure posée plus bas est une fissure plus proche
+de nous, exactement comme une touffe posée plus bas. Relevé sur quatre mille détails de
+chaque monde, la distance entre la ligne du jeu et l'ancrage posé :
+
+| | mini | quart | médiane | trois-quarts | maxi |
+| --- | --- | --- | --- | --- | --- |
+| la ferme | 7,1 | 10,3 | 14,7 | 26,3 | 45,6 |
+| la ville | 7,2 | 9,8 | 17,1 | 27,4 | 41,8 |
+
+Les deux bandes se superposent, ce qui était le but. Et le bout de trottoir que chaque
+dessin porte avec lui ne fait plus doublon avec la ligne d'horizon : à trente unités en
+dessous, il se lit pour ce qu'il est, le joint d'une dalle.
+
+**Le trottoir reste plat.** L'amplitude du relief était devenue une propriété du monde —
+1 pour le champ, 0 pour la rue — d'abord pour une raison qui n'a plus cours : tant que les
+planches se calaient *sur* la ligne, une planche droite posée sur une ligne qui ondule s'en
+écartait aux deux bouts d'à peu près une largeur de trait, et la marche se voyait. Les
+planches n'y sont plus, la raison est tombée, mais le réglage est resté après comparaison
+des deux : avec l'ondulation du champ, la rue redevient un pré — c'est la ligne droite qui
+fait le béton. L'irrégularité vient maintenant des dessins, qui sont tremblés à la main.
+
+**Vérifié avec un témoin, parce que trois sondes de suite avaient menti.** C'était du temps
+où les planches se posaient *sur* la ligne, et il fallait alors prouver que le raccord ne
+faisait pas de marche ; la leçon, elle, ne dépend pas de cet état-là. La première
 lisait une bande de canevas calculée à partir de `groundY` sans le facteur d'échelle ; la
 deuxième cherchait « la rangée la plus chargée en encre » et tombait sur la **barre de vie
 du bandeau**, qui traverse aussi tout l'écran ; la troisième divisait par un `dpr` codé en
@@ -1236,13 +1262,13 @@ dessins se seraient recouverts. Vérifié sur dix minutes de course dans chaque 
 
 | | détails replantés | disparu à vue | recouvrements | plus grand vide |
 | --- | --- | --- | --- | --- |
-| la ferme | 3 411 | 0 | 0 | 450 unités |
-| la ville | 1 063 | 0 | 0 | 505 unités |
+| la ferme | 3 392 | 0 | 0 | 464 unités |
+| la ville | 1 042 | 0 | 0 | 490 unités |
 
 Ce dernier chiffre a demandé un réglage. Les écarts de la ville sont plus larges que ceux
 du champ — ses marques le sont aussi — mais son vide franc laissait **788 unités de
 trottoir nu pour un écran de 800**. Le champ garde son ondulation et ses touffes, son vide
-de 450 ne se voit pas ; la rue n'a plus ni herbe, ni caillou, ni relief, et un écran entier
+de 464 ne se voit pas ; la rue n'a plus ni herbe, ni caillou, ni relief, et un écran entier
 sans une seule marque ne défile plus, il glisse. Le vide franc a donc été raccourci
 jusqu'à ce que les deux mondes se tiennent.
 
@@ -1250,7 +1276,7 @@ Enfin la nature du détail suivant appartient elle aussi au monde : le champ **a
 strictement** herbe et caillou — tirée au hasard, la nature faisait des plages de trois ou
 quatre touffes d'affilée et l'alternance ne se lisait plus — tandis que la rue glisse un
 papier **une fois sur cinq** entre ses fissures. Mesuré sur mille détails, le papier sort à
-19,6 % et chaque fissure entre 18,7 et 21,1 %.
+17,6 % et chaque fissure entre 19,9 et 21,1 %.
 
 ### Le corbeau, mis à l'échelle sur trois repères
 
