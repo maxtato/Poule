@@ -1694,8 +1694,8 @@ du sol, qui sont à leur place sous les arbres.
 | --- | --- | --- | --- | --- |
 | les racines | 369 × 100 | 90 % de la largeur | 63 | oui |
 | le tronc couché | 221 × 115 | 93 % | 80 | oui |
-| le jerrican | 182 × 125 | 92 % | 86 | oui |
-| le sac | 207 × 140 | 92 % | 99 | oui |
+| le jerrican | 133 × 125 | 74 % | 84 | oui |
+| le sac | 153 × 140 | 88 % | 97 | oui |
 | la souche | 201 × 150 | 92 % | 109 | oui |
 | la cage | 244 × 180 | 93 % | 135 | oui |
 
@@ -1718,11 +1718,21 @@ aucun de leurs vides enfermés n'est ambigu : ils sont tous à une à cinq unit�
 | | vides enfermés | ce que c'est |
 | --- | --- | --- |
 | la cage | 8, de 1 894 à 5 937 px, écarts 1 à 4 | **les jours entre ses barreaux** — une cage dont on ne voit pas au travers est une caisse |
-| le jerrican | 2, de 470 et 708 px, écart 5 | les deux fentes de sa **poignée** |
-| le sac | 1, de 3 696 px, écart 3 | l'arche de sa **bretelle** |
+| le jerrican | 2, de 588 et 879 px, écarts 3 et 4 | les deux fentes de sa **poignée** |
+| le sac | 1, de 5 736 px, écart 2 | l'arche de sa **bretelle**, la gourde logée dedans |
 
 Les petits amas qui tombent avec la poussière sont les cailloux dessinés à côté d'eux : le
-jeu a les siens, à sa propre échelle. Les boîtes ne sont pas écrites à la main — elles sont
+jeu a les siens, à sa propre échelle.
+
+**Le sac et le jerrican ont été redessinés une fois** — sac bleu au lieu de brun, jerrican
+sans ses touffes d'herbe — et rien n'a bougé dans la chaîne : même papier blanc, mêmes vides
+au même endroit. Seules leurs **proportions** ont changé, et beaucoup : de 1,46 à 1,06 pour
+le jerrican, de 1,48 à 1,09 pour le sac, parce que l'herbe qui les élargissait n'y est plus.
+Les largeurs de jeu suivent — 182 → 133 et 207 → 153 — et les hauteurs ne bougent pas, ce
+qui laisse ce qu'il faut monter pour les franchir à deux unités près : 84 au lieu de 86, 97
+au lieu de 99. La boîte du jerrican ne fait plus que 74 % de sa planche, contre 88 à 93 %
+pour les cinq autres : ce sont les cailloux dessinés de part et d'autre du bidon, que la
+mesure ne prend pas pour du bidon. Les boîtes ne sont pas écrites à la main — elles sont
 mesurées sur chaque dessin au démarrage, en ignorant la frange basse où vivent les
 racines, l'herbe et les feuilles.
 
