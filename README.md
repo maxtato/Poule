@@ -1394,23 +1394,26 @@ Une feuille de papier dans le vent, ce n'est pas un oiseau : ça ne va pas quelq
 périodes qui ne retombent jamais ensemble, donc une trajectoire qui ne se répète pas.
 
 **La bourrasque.** Il ne dérive pas à vitesse constante : le vent le pousse, mollit, le
-reprend. Mesuré sur une traversée, sa vitesse horizontale va de **119 à 546 unités par
+reprend. Mesuré sur une traversée, sa vitesse horizontale va de **121 à 546 unités par
 seconde** — il stalle presque, puis il file plus vite que le décor.
 
-**La portance.** Il monte et redescend en larges courbes : 181 unités d'amplitude sur une
-traversée de 3,4 secondes. Deux souffles, l'un lent et ample — le vol plané — l'autre bref
+**La portance.** Il monte et redescend en larges courbes : 168 unités d'amplitude sur une
+traversée de 3,3 secondes. Deux souffles, l'un lent et ample — le vol plané — l'autre bref
 et court — le tremblement de la feuille.
 
 **La vrille.** C'est elle qui dit « papier » plutôt que « pierre », et elle fait deux
-choses à la fois. Le journal **s'incline** — de −22° à +21°, son balancement propre plus la
+choses à la fois. Le journal **s'incline** — de −28° à +17°, son balancement propre plus la
 pente de sa trajectoire : nez en bas quand il tombe, nez en l'air quand il remonte. Et il
-**tourne sur lui-même** autour de son axe vertical, en passant par la tranche : c'est ce
-passage par la tranche qui fait la feuille plutôt que la carte. On l'obtient en écrasant sa
-largeur par un cosinus, sans jamais l'annuler tout à fait — à zéro exact il disparaît une
-image, et le clignotement se voit.
+**gauchit**, sa largeur respirant entre elle-même et **86 %** d'elle-même, juste de quoi
+suggérer que la feuille n'est pas plate.
+
+Ce gauchissement-là était d'abord un tour complet : le journal passait par la tranche, se
+réduisait à un fil, puis reparaissait retourné. C'était juste, physiquement, et c'était
+trop — à cette échelle on ne lisait plus un journal, on lisait une carte qui tourne. Il ne
+se retourne donc plus, et l'écrasement reste discret.
 
 Vérifié qu'aucune traversée n'en répète une autre : sur dix journaux tirés au hasard, leurs
-courbes de hauteur diffèrent de 141 unités en moyenne, et de 15 pour les deux plus proches.
+courbes de hauteur diffèrent de 187 unités en moyenne, et de 19 pour les deux plus proches.
 
 **L'altitude est écrite en position, pas intégrée d'une vitesse.** C'est la correction qui
 comptait. Intégrer une vitesse en sinus ne revient pas au point de départ : sur une
