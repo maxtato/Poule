@@ -1386,6 +1386,14 @@ leur propre dalle par-dessus, du même ton, et la rue est continue. Ce qui n'a p
 — réverbère, voiture, benne — monte alors de l'épaisseur du trottoir au lieu de flotter à
 côté. Le champ, lui, a un trottoir de zéro.
 
+**Et ce qui se tient sur le trottoir y entre un peu.** Posé pile sur la dalle, un réverbère
+flotte : son pied est une coupe nette, rien ne le retient. Les obstacles du premier plan
+ont ce creux depuis longtemps ; le second plan en manquait. Il vaut **8 unités** — un quart
+de l'épaisseur du trottoir — et c'est le même nombre d'unités pour les trois, non la même
+part de leur hauteur : ils se tiennent sur la *même* dalle, et une dalle recouvre le bas de
+ce qui s'y plante sans regarder sa taille. La benne l'a reçu comme les deux autres, pour la
+même raison.
+
 Le seuil de cette mesure a demandé deux corrections : à 88 % de couverture il avalait aussi
 le corps de l'atelier, qui est large et bas ; et il faut partir de la première rangée
 pleine et non du bord de la planche, la dernière rangée d'une planche redimensionnée étant
