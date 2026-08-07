@@ -1053,8 +1053,15 @@ laisser vide que lui emprunter les siens.
 | Boîte aux lettres | 10 % | Une par quartier |
 
 Mesuré sur vingt parties de quatre mille mètres. Chacun tue, chacun se franchit d'un
-simple saut : de 113 unités pour la bouche d'incendie à 146 pour la boîte aux lettres,
+simple saut : de 107 unités pour la bouche d'incendie à 132 pour la boîte aux lettres,
 quand le saut en monte 321.
+
+Ils flottaient un rien au-dessus du sol. Le creux sous la ligne d'horizon les enfonce
+maintenant d'un dixième de leur hauteur — et la **trottinette** et la **boîte aux
+lettres** du double : la première n'est posée que sur deux roues, la seconde sur quatre
+pieds fins, et une base étroite a besoin d'être plus enfoncée qu'une base large pour se
+poser vraiment. La boîte de collision suit le dessin, les hauteurs à franchir ont baissé
+d'autant.
 
 ### Trois choses que ces dessins-là avaient en plus
 
