@@ -1417,10 +1417,28 @@ au contour noir.
 
 *Le blanc peint.* Premier essai, on perçait tout vide enfermé par le contour — et
 l'enveloppe blanche de la boîte aux lettres a disparu avec les fentes entre les lattes du
-banc. Les deux sont du fond enfermé ; ils se séparent à la couleur. Un vide, c'est
-exactement le papier ; un blanc peint, c'est du blanc — plus clair et moins chaud. Mesuré,
-l'écart au papier vaut **4 à 8** pour les vrais vides et **9 à 13** pour les blancs peints.
-On ne perce qu'en dessous de 8.
+banc. Les deux sont du fond enfermé. Deuxième essai, on les a séparés à la couleur : un
+vide, c'est le papier ; un blanc peint, c'est du blanc, plus clair et moins chaud. Ça a
+marché pour quatre fentes sur six.
+
+**Les deux qui restaient étaient les plus étroites**, entre les lattes du dossier, et la
+mesure dit pourquoi. Chaque objet est dessiné avec un **liseré blanc** autour de son
+contour noir ; une fente de dix pixels de haut est faite pour moitié de ce liseré, si bien
+que sa couleur moyenne est celle du liseré et non du papier.
+
+| | forme | écart au papier | cœur, bord rogné |
+| --- | --- | --- | --- |
+| fentes larges du banc | 1,4 à 8,3 | 4 à 6 | 3 à 4 |
+| **fente 267×10** | **26,7** | **9** | 5 |
+| **fente 216×14** | **15,4** | **13** | 10 |
+| enveloppe de la boîte | 1,2 | 11 | 9 |
+
+Aucun seuil ne pouvait séparer 9 et 13 de 11. Rogner la tache de son bord pour n'en garder
+que le cœur n'y suffisait pas non plus — 5 et 10 contre 9. Ce qui les sépare vraiment,
+c'est qu'une fente entre deux lattes parallèles est une **bande** quand une enveloppe est
+compacte. On perce donc aussi ce qui est six fois plus long que large. La contrepartie est
+connue et assumée : le jour où un objet portera une rayure blanche peinte, il faudra la
+nommer.
 
 **Et la chaîne était trop courte.** Une silhouette vit jusqu'à ce que son bord gauche
 franchisse le seuil de sortie, calculé sur la plus large du monde : −1543 pour la ville,
