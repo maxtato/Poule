@@ -1466,6 +1466,39 @@ compacte. On perce donc aussi ce qui est six fois plus long que large. La contre
 connue et assumée : le jour où un objet portera une rayure blanche peinte, il faudra la
 nommer.
 
+### La poule descend, et le sol s'épaissit
+
+Deux réglages qui vont ensemble, et qui valent pour les deux mondes.
+
+**Le plan de la poule est passé de 14 à 30 unités sous la ligne d'horizon.** C'est un
+décalage de *rendu* : le premier plan est translaté d'un bloc au moment de le dessiner —
+la poule, ses ombres, ses particules, les obstacles, les mouches et les oiseaux — et pas
+une seule boîte de collision ne bouge. La preuve est dans les mesures qui n'ont pas changé
+d'une unité : le ballot demande toujours 56 unités pour être franchi, la fourche 184,
+l'épouvantail 183.
+
+Elle y gagne au passage un peu d'air sous le bandeau : sur 50 relevés — deux styles, cinq
+écrans, toutes les poses de vol et de saut — la plus petite marge entre le haut de sa tête
+et le bas du bandeau est de **14,3 pixels**.
+
+**Les détails du sol formaient trois rangées.** L'enfoncement se tirait par paliers — le
+plus souvent 7 à 20 unités sous la ligne, une fois sur trois 21 à 35, une fois sur sept 36
+à 47 — et le résultat se voyait pour ce qu'il était : trois rangées, toutes serrées contre
+l'horizon. Un sol n'a pas de rangées. Le tirage est maintenant **uniforme sur toute la
+bande**, et cette bande descend deux fois plus bas : de 7 à 90 unités.
+
+Relevé sur quatre mille détails de chaque monde, où vit l'encre (positif = sous la ligne) :
+
+| | haut du dessin | bas du dessin |
+| --- | --- | --- |
+| la ferme | de −12,3 à +66,3 (médiane +30,5) | de +10,4 à +86,3 |
+| la ville | de +8,6 à +83,4 (médiane +45,7) | de +46,6 à +133,4 |
+
+La bande passe ainsi **de part et d'autre du plan de la poule**, qui est à 30 : il y a des
+touffes derrière elle et des touffes devant, et c'est ce qui donne au sol son épaisseur.
+Le champ garde ses touffes qui dépassent au-dessus de la ligne — l'herbe pousse — et la
+ville reste entièrement dessous, comme il se doit pour une fente dans un trottoir.
+
 ### Une barrique et un épouvantail pour la ferme
 
 Les deux premiers obstacles neufs de ce monde-là depuis longtemps. La barrique monte à
