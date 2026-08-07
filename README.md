@@ -1509,8 +1509,105 @@ contraste avec le ciel qu'il surmonte. Il subit la même transformation, et l'é
 vérifié : **+3,4 au champ, +3,7 en ville, +3,6 en jungle** ; le filet à −28,5 / −28,3 /
 −28,7.
 
-Ces trois constantes attendent leur monde : le décor de la jungle n'existe pas encore, et
-rien ne les utilise tant qu'il n'est pas là.
+### La jungle : ses deux plans
+
+Douze dessins sont arrivés, groupés par plan : trois pour « l'arrière-plan du fond tout au
+fond », cinq pour « le premier arrière-plan », et quatre sans étiquette. Les quatre sont
+des arbres et des palmiers posés sur une touffe d'herbe, exactement comme les cinq du
+premier arrière-plan : ils y ont été versés. Onze planches en tout — le douzième dessin
+est **la photo d'une carte** montrant une plante déjà fournie en PNG propre, bords
+arrondis, cadre blanc et grain d'appareil compris. C'est le PNG qui a été gardé.
+
+**Un seuil pour les douze.** Deux familles très différentes à l'œil — le vert de sauge
+pâle du fond, le vert franc du second plan — mais un seul chiffre suffit à les séparer
+toutes deux de leur papier :
+
+| | clarté relevée | papier |
+| --- | --- | --- |
+| les trois massifs du fond | 183 à 194 | 253 à 255 |
+| les huit plantes du second plan | 92 à 110 | 253 à 255 |
+
+Le seuil est posé à **224**, à mi-chemin du cas le plus serré : trente unités de marge
+sous le papier des massifs, vingt-six au-dessus de leur vert. Les cent trente unités de
+marge du second plan viennent en prime.
+
+**Les trous sont percés** — les boucles de lianes de l'arbre, les fenestrations du
+monstera, les vides entre deux palmes : sept, neuf et cinq respectivement. Le plan est
+repeint en aplat à la couleur de l'heure, un vide non percé disparaîtrait dans la masse.
+Aucune poussière n'a été jetée : les douze dessins sont propres.
+
+**Le fond est rééchantillonné, le second plan non.** Les massifs s'affichent à 736, 749 et
+833 unités de large, c'est-à-dire près de deux mille pixels d'écran sur un téléphone,
+quand leur dessin n'en a que treize cents : agrandi, l'escalier du contour se verrait. On
+ne peut pas inventer des pixels, mais on peut **rééchantillonner une forme** — la distance
+signée au bord est une grandeur continue, connue partout, qu'on relit à une maille plus
+fine. Les trois sortent à 2 200 pixels de large, la taille des autres planches de fond.
+Les huit plantes, elles, s'affichent à moins de la moitié de leur définition : elles
+restent telles quelles.
+
+#### Une canopée n'est pas une chaîne de montagnes
+
+Le fond de la jungle est **plus bas** que celui des deux autres mondes — 450 à 560 unités,
+contre 678 au champ et 800 en ville. Ce n'est pas de la modestie : dans une jungle on ne
+voit pas loin, et ce qui ferme l'horizon n'est pas un relief à l'horizon mais le feuillage
+d'à peine cent mètres plus loin. Les arbres du second plan, hauts de 520 à 600 unités et
+qui poussent d'un tiers de plus, passent donc **devant elle et au-dessus** — c'est de là
+que vient la profondeur, et non d'un écart de teinte.
+
+Ils sont aussi plus **étroits** : 736 à 833 unités contre près de quinze cents au champ.
+Trois crêtes par écran plutôt qu'une seule. Une canopée est une suite de bouquets, pas une
+ligne de partage des eaux. Le chevauchement suit — de 250 à 410 unités, contre 350 à 644
+au champ : à l'échelle du champ, des massifs de cette taille ne se seraient jamais quittés
+et le plafond des 45 % aurait figé la chaîne.
+
+Premier essai à 380–470 : les frames où le hasard ne donnait pas d'arbre montraient un
+ciel vide sur les deux tiers de la hauteur. Remonté à 450–560, la ligne de feuillage tient
+l'horizon d'un bord à l'autre sans jamais cacher ce qui est devant.
+
+#### Trois étages, et pas une haie
+
+Les huit plantes du second plan sont rangées par taille, et c'est cet étagement qui fait
+la forêt. Un rideau d'éléments tous de la même taille se lit comme une clôture, quelle que
+soit la richesse des dessins.
+
+| étage | hauteur | ce qu'il y a | poids |
+| --- | --- | --- | --- |
+| les arbres | 520 à 600 | l'arbre à couronne ronde, le même drapé de lianes, un palmier, deux palmiers | 30 % |
+| les plantes | 360 et 400 | les grandes palmes dressées, la touffe en éventail | 29 % |
+| le sous-bois | 190 et 210 | le monstera, le buisson large | 38 % |
+
+Les huit **poussent**, comme les arbres du champ : chacune tire son échelle à la
+plantation, entre un et un tiers de plus. Dans une jungle il n'y a rien qui ait une raison
+de garder sa taille — pas de panneau, pas de tracteur, pas de façade. La liste de ce qui
+pousse est devenue commune aux trois mondes ; les clés sont uniques d'un monde à l'autre,
+une seule suffit.
+
+**Une jungle est dense.** Quarante unités de terre entre deux plantes, deux cent trente au
+plus : deux fois plus serré que le verger du champ, qui va de 85 à 369. Mesuré sur dix
+minutes de course dans chaque monde :
+
+| | écran couvert par le second plan | plus grand trou |
+| --- | --- | --- |
+| le champ | 65 % | 373 |
+| la ville | 66 % | 362 |
+| **la jungle** | **73 %** | **235** |
+
+Il en reste assez pour que la canopée se voie par les trouées — sans elles, le second plan
+la cacherait tout entière et le monde n'aurait plus qu'un plan. Sur ces dix minutes :
+aucune silhouette ne disparaît à vue, aucune ne se pose sur sa voisine, et la ligne de
+crête ne s'ouvre pas une seule image.
+
+#### Ce que la jungle emprunte encore
+
+Deux choses n'ont pas été dessinées pour elle, et sont reprises du champ :
+
+- **Le sol** — les touffes d'herbe et les cailloux. Un sous-bois n'est pas un trottoir,
+  herbe et pierre y sont à leur place ; ça restera peut-être.
+- **Les obstacles** — un tonneau, un seau, un pneu, un ballot, une barrière, une fourche,
+  et le corbeau au ciel. Ceux-là sont provisoires : ils rendent le monde jouable, pas
+  crédible. Les six sont franchissables (de 56 à 184 unités, pour un sommet de saut à 321)
+  et les six tuent, vérifié un par un.
+
 
 ### La poule descend, et le sol s'épaissit
 
