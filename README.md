@@ -1577,9 +1577,13 @@ soit la richesse des dessins.
 
 | étage | hauteur | ce qu'il y a | poids |
 | --- | --- | --- | --- |
-| les arbres | 520 à 600 | l'arbre à couronne ronde, le même drapé de lianes, un palmier, deux palmiers | 30 % |
-| les plantes | 360 et 400 | les grandes palmes dressées, la touffe en éventail | 29 % |
-| le sous-bois | 190 et 210 | le monstera, le buisson large | 38 % |
+| les arbres | 660 à 760 | l'arbre à couronne ronde, le même drapé de lianes, un palmier, deux palmiers | 30 % |
+| les plantes | 450 et 500 | les grandes palmes dressées, la touffe en éventail | 29 % |
+| le sous-bois | 235 et 260 | le monstera, le buisson large | 38 % |
+
+Les trois étages ont grandi **d'un quart d'un coup**, ensemble. Ce sont les rapports entre
+eux qui font la forêt, pas leurs tailles absolues : n'agrandir que les arbres aurait donné
+des fougères de poupée sous des géants.
 
 Les huit **poussent**, comme les arbres du champ : chacune tire son échelle à la
 plantation, entre un et un tiers de plus. Dans une jungle il n'y a rien qui ait une raison
@@ -1587,23 +1591,52 @@ de garder sa taille — pas de panneau, pas de tracteur, pas de façade. La list
 pousse est devenue commune aux trois mondes ; les clés sont uniques d'un monde à l'autre,
 une seule suffit.
 
-**Une jungle est dense.** Dix unités de terre entre deux plantes, cent vingt au plus :
-quatre fois plus serré que le verger du champ, qui va de 85 à 369, et les feuillages se
-touchent presque. C'est le second réglage, après un premier passage à 40–230 qui laissait
-encore de la terre nue entre les touffes. Mesuré sur dix minutes de course dans chaque
+**Une jungle est dense.** Les plantes se touchent maintenant bord à bord : **zéro** unité
+de terre entre deux voisines, quatre-vingt-dix au plus, quand le verger du champ va de 85 à
+369. Trois réglages ont été nécessaires. Mesuré sur dix minutes de course dans chaque
 monde :
 
 | | écran couvert par le second plan | plus grand trou |
 | --- | --- | --- |
 | le champ | 65 % | 373 |
 | la ville | 66 % | 362 |
-| la jungle, premier réglage | 73 % | 235 |
-| **la jungle** | **85 %** | **124** |
+| la jungle, 40–230 | 73 % | 235 |
+| la jungle, 10–120 | 85 % | 124 |
+| **la jungle** | **91 %** | **92** |
 
 Il en reste assez pour que la canopée se voie par les trouées — sans elles, le second plan
 la cacherait tout entière et le monde n'aurait plus qu'un plan. Sur ces dix minutes :
 aucune silhouette ne disparaît à vue, aucune ne se pose sur sa voisine, et la ligne de
 crête ne s'ouvre pas une seule image.
+
+#### La voûte de lianes
+
+Un troisième plan, et le premier du jeu qui **pend au lieu de se poser**. Le sol et les
+deux plans de décor sont tous calés sur la ligne d'horizon ; ces guirlandes-là sont calées
+sur le **haut du cadre**, et leur bord supérieur passe derrière le bandeau de scores. C'est
+ce qui fait la voûte : on ne voit pas d'où elles partent, donc elles partent d'une canopée
+qui déborde de l'écran.
+
+Elles appartiennent au **second plan** — même couleur, même parallaxe que les arbres — et
+c'est voulu : ce sont les lianes de ces arbres-là, pas d'un plan plus lointain. Elles se
+suivent bout à bout avec un recouvrement franc, comme la ligne de crête, parce qu'une voûte
+trouée ne serait plus une voûte. Sur dix minutes de course, **553 guirlandes replantées,
+aucune disparue à vue, la voûte ne s'ouvre pas une seule image**, et les trois dessins
+tombent à 32, 34 et 34 %.
+
+**Il n'y avait rien à détourer.** Les trois fichiers arrivent avec un fond *transparent* —
+94 à 95 % de leurs pixels sont à alpha zéro — et non sur du papier blanc comme tous les
+dessins précédents. Le masque est donc déjà fait : le seuil, l'inondation depuis les bords
+et le champ de distance signée n'ont plus rien à décider, et les appliquer serait refaire
+moins bien ce que le fichier donne exactement. La première tentative les a quand même
+passés par la chaîne habituelle, et le résultat était une planche pleine de 1 024 sur
+1 024 : le test de clarté lit un pixel transparent comme du noir, et toute la feuille était
+devenue de l'encre. Il ne reste donc qu'à rogner sur l'encre (elles n'occupent que 5 % de
+leur feuille) et à jeter la poussière.
+
+Elles descendent **179 unités sous le plafond de vol** — leurs brins les plus longs pendent
+dans la zone où la poule vole. C'est voulu, et ça ne coûte rien : le second plan est peint
+avant le premier, la poule passe donc *devant* les lianes. Elle vole sous la voûte.
 
 #### Ce que la jungle emprunte encore
 
