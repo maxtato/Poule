@@ -1522,6 +1522,50 @@ Il ne touche à rien : ce n'est pas un obstacle, c'est du vent qu'on voit. Il pa
 les immeubles et derrière la poule, il n'existe que dans la ville, et il disparaît dès
 qu'on change de monde.
 
+### Le pigeon de la ville, et pourquoi sa chaîne est plus courte
+
+Le ciel de la ville revient au **pigeon** ; le corbeau reste l'oiseau de la ferme. Même
+poids (19), même distance d'entrée (170 m), seul le dessin change.
+
+Sa préparation a demandé beaucoup moins de travail que celle du corbeau, et pour une raison
+qui compte : **ses trois poses sont sur la même feuille**. Le corbeau venait de trois
+fichiers séparés, et il fallait donc estimer l'échelle de chaque pose sur des repères
+indépendants — le bec, l'œil, le corps — puis vérifier que les trois s'accordaient. Ici il
+n'y a rien à estimer : la main qui a dessiné les trois les a dessinées à la même taille. Le
+seul travail était de les **découper sans perdre cette taille**.
+
+D'où la règle du découpage : la boîte d'encre de chaque pose est mesurée *par rapport à son
+œil*, on prend l'union des trois, et les trois sont taillées avec cette même boîte. Les
+planches sortent identiques au pixel près et calées sur l'œil — l'oiseau ne saute pas d'une
+image à l'autre, seules ses ailes bougent. L'œil, parce que c'est le seul fond **enfermé**
+de chaque pose, donc trouvable sans rien deviner, et parce que c'est le point de la tête
+qui ne bouge pas.
+
+Les trois yeux font **684, 684 et 653 pixels**. C'est une vérification et non une
+hypothèse : trois yeux de la même taille, c'est trois poses à la même échelle.
+
+**L'échelle de jeu se pose sur le corps, pas sur la planche.** Le corps du pigeon fait 76
+unités de long, un peu moins que les 82 du corbeau — un pigeon est plus petit. Mais son
+envergure ailes hautes est plus ample, si bien que sa planche (167×198) est plus grande que
+celle du corbeau (132×143) alors que son corps est plus petit. C'est le corps qui commande.
+
+Sa boîte de collision n'est pas écrite à la main : c'est l'**intersection** du corps épais
+de ses trois poses. Ce que les trois ont en commun est exactement ce qui ne bouge pas, et
+c'est la seule part de l'oiseau qu'une boîte fixe puisse suivre honnêtement. Mesuré, ce
+qu'elle couvre d'encre sur chaque pose :
+
+| | ailes hautes | milieu | ailes basses |
+| --- | --- | --- | --- |
+| aigle | 74 % | 83 % | 82 % |
+| corbeau | 83 % | 88 % | 77 % |
+| **pigeon** | **96 %** | **97 %** | 78 % |
+
+**Un piège d'essai au passage.** Le premier contrôle disait « le pigeon ne tue pas ». Il
+était faux : il posait l'oiseau à un endroit choisi au jugé, et l'ancre du pigeon n'est pas
+au même endroit dans sa planche que celle du corbeau — la boîte ne touchait tout simplement
+pas. Le contrôle balaie maintenant tout le voisinage de la poule et cherche un recouvrement
+réel au lieu de le supposer. Les trois oiseaux tuent.
+
 ### Le corbeau, mis à l'échelle sur trois repères
 
 Trois dessins, un seul canevas, comme l'aigle. Mais l'échelle de chaque pose n'est pas
