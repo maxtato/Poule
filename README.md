@@ -1466,6 +1466,31 @@ compacte. On perce donc aussi ce qui est six fois plus long que large. La contre
 connue et assumée : le jour où un objet portera une rayure blanche peinte, il faudra la
 nommer.
 
+### Une barrique et un épouvantail pour la ferme
+
+Les deux premiers obstacles neufs de ce monde-là depuis longtemps. La barrique monte à
+**155 unités** — 120 à franchir — et l'épouvantail à **235**, soit 183 à franchir : à une
+unité près, c'est la fourche qu'il égale, et les deux restent loin des 321 du saut. Les
+neuf obstacles de la ferme tuent et se franchissent tous d'un seul saut.
+
+| | part mesurée |
+| --- | --- |
+| ballot | 23 % |
+| corbeau | 17 % |
+| barrière, seau | 13 et 12 % |
+| pneu, **barrique** | 9 % chacun |
+| pile de ballots | 7 % |
+| fourche | 4 % |
+| **épouvantail** | 3 % |
+| brouette | 2 % |
+
+**La règle de la bande a montré sa limite.** Elle avait été faite pour les fentes du
+dossier du banc, qui pèsent mille pixels ; lâchée sans plancher, elle a percé trois **éclats
+de lumière** sur les cerclages de la barrique — 45 à 119 pixels, longs et minces comme une
+fente mais qui sont du métal qui brille. Une fente entre deux lattes est une ouverture :
+elle a une taille. La règle ne s'applique donc plus qu'au-dessus de 500 pixels, ce qui laisse
+les fentes du banc (1015 et 1339) et écarte les éclats.
+
 ### La fiente du pigeon
 
 Un pigeon sur trois en lâche une, et elle tombe. Elle n'est pas envoyée par le semeur
