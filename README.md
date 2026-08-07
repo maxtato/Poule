@@ -1507,20 +1507,47 @@ la **dérivée exacte** de cette position : elle ne peut plus la contredire.
 **Sa bande d'entrée se calcule, elle non plus ne peut pas être écrite en dur.** Le bandeau
 du haut descend d'autant plus bas, *en unités de monde*, que l'écran est court : 123 unités
 sur un téléphone, 190 sur une fenêtre de bureau couchée. Calé sur une bande fixe, le
-journal passait derrière lui. Il part maintenant entre le plafond de vol — celui-là même
-qui empêche la poule d'aller sous le bandeau — et le sol, avec de quoi loger le dessin
-entier plus toute son ondulation aux deux bouts.
+journal passait derrière lui.
 
-| écran | le plus bas (le sol est à 0) | le plus haut | bas du bandeau |
+### Le journal devient un obstacle
+
+Il était du décor. Il tue maintenant, et le passage a demandé trois choses.
+
+**Un seul test pour ce qui vole.** Trois endroits du jeu posaient la même question — qui
+n'a pas d'ombre, sur quoi une mouche ne se pose pas, quel espace garantir derrière le
+dernier obstacle — et chacun l'écrivait à sa manière en citant le cerf-volant par son nom.
+Le journal aurait été un quatrième nom à ajouter aux trois. Il y a une seule question, il
+n'y a plus qu'un seul test : `enVol`.
+
+**Une boîte de collision qui ne peut pas épouser la planche.** Le journal tourne de trente
+degrés et sa largeur respire jusqu'à 86 % : une boîte calée sur le dessin mordrait le ciel
+dès qu'il s'incline. Elle est donc prise au cœur, et ce qu'elle vaut est mesuré et non
+deviné — on dessine le journal seul sur une toile vide à vingt-quatre instants du cycle et
+on compte. Elle couvre **96 % d'encre en moyenne, 91 % au pire**, et jusqu'à 48 % du dessin
+lui échappe : c'est le bon sens de l'erreur, on est parfois frôlé sans mourir, jamais tué
+par du vide.
+
+**Un plancher, et c'est une question de justice.** La poule ne sait pas se baisser : tout
+ce qui passe à hauteur de course est un obstacle qu'elle ne peut ni franchir ni éviter. Les
+oiseaux ont toujours eu ce plancher — ils n'entrent jamais plus bas que 190 — et le journal
+en avait d'autant plus besoin qu'il dérive au hasard : on ne peut pas demander d'anticiper
+une trajectoire qu'on ne devine pas. Mesuré sur trois cents envois avant correction, il
+descendait à **54 unités du trottoir**. Il en est maintenant à 200 au moins.
+
+Sur un écran court la place manque pour tout loger — le ciel d'une fenêtre de bureau
+couchée ne fait que 475 unités. C'est alors **l'amplitude qui cède, pas les gardes** : le
+journal y flotte moins, mais il ne passe ni derrière le bandeau ni à hauteur de course.
+
+| écran | le plus bas (plancher −200) | le plus haut | bas du bandeau |
 | --- | --- | --- | --- |
-| 390×844 | −33 | −991 | −1137 |
-| 360×640 | −30 | −682 | −828 |
-| 430×932 | −54 | −993 | −1145 |
-| 820×420 | −29 | −513 | −656 |
+| 390×844 | −230 | −961 | −1137 |
+| 360×640 | −228 | −659 | −828 |
+| 430×932 | −246 | −972 | −1145 |
+| 820×420 | −208 | −488 | −656 |
 
-Il ne touche à rien : ce n'est pas un obstacle, c'est du vent qu'on voit. Il passe devant
-les immeubles et derrière la poule, il n'existe que dans la ville, et il disparaît dès
-qu'on change de monde.
+Il suit enfin la règle du cerf-volant : jamais deux à la fois, jamais deux d'affilée. Il
+dérive lentement et reste longtemps en vue — deux de suite, c'est le même obstacle deux
+fois. Sa largeur est passée de 96 à **150 unités**, à peu près celle de la poule.
 
 ### Le pigeon de la ville, et pourquoi sa chaîne est plus courte
 
@@ -1544,10 +1571,11 @@ qui ne bouge pas.
 Les trois yeux font **684, 684 et 653 pixels**. C'est une vérification et non une
 hypothèse : trois yeux de la même taille, c'est trois poses à la même échelle.
 
-**L'échelle de jeu se pose sur le corps, pas sur la planche.** Le corps du pigeon fait 76
-unités de long, un peu moins que les 82 du corbeau — un pigeon est plus petit. Mais son
-envergure ailes hautes est plus ample, si bien que sa planche (167×198) est plus grande que
-celle du corbeau (132×143) alors que son corps est plus petit. C'est le corps qui commande.
+**L'échelle de jeu se pose sur le corps, pas sur la planche.** Le corps du pigeon fait 62
+unités de long, contre 82 au corbeau et 102 à l'aigle : c'est le plus petit des trois, et de
+loin. Son envergure ailes hautes est pourtant plus ample que celle du corbeau, si bien que
+sa planche (136×161) reste plus haute que la sienne (132×143) alors que son corps ne fait
+que les trois quarts. C'est le corps qui commande, jamais la planche.
 
 Sa boîte de collision n'est pas écrite à la main : c'est l'**intersection** du corps épais
 de ses trois poses. Ce que les trois ont en commun est exactement ce qui ne bouge pas, et
@@ -1558,7 +1586,7 @@ qu'elle couvre d'encre sur chaque pose :
 | --- | --- | --- | --- |
 | aigle | 74 % | 83 % | 82 % |
 | corbeau | 83 % | 88 % | 77 % |
-| **pigeon** | **96 %** | **97 %** | 78 % |
+| **pigeon** | **96 %** | **96 %** | 77 % |
 
 **Un piège d'essai au passage.** Le premier contrôle disait « le pigeon ne tue pas ». Il
 était faux : il posait l'oiseau à un endroit choisi au jugé, et l'ancre du pigeon n'est pas
