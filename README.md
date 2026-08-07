@@ -90,11 +90,14 @@ bruitage monte. Le combo ne paie rien d'autre — c'est le compte de mouches qui
 fait le score, et une chaîne rapporte simplement plus de mouches en moins de
 temps.
 
-Un aigle traverse le ciel à contre-sens, à hauteur constante : il tire sa hauteur
+Un **corbeau** traverse le ciel à contre-sens, à hauteur constante : il tire sa hauteur
 à la naissance, n'importe où entre le ras du sol et le plafond de vol, et la tient
 jusqu'au bord de l'écran. Il a un temps ondulé sur une sinusoïde ; la vague est
-retirée. Vérifié sur 73 aigles suivis chacun sur 900 pas : pas une unité d'écart
+retirée. Vérifié sur 73 oiseaux suivis chacun sur 900 pas : pas une unité d'écart
 de hauteur, boîte de collision comprise.
+
+*Ce qui suit — l'aigle et le cerf-volant — ne vole plus dans la ferme mais reste dans le
+jeu, en attente d'un autre monde. Voir « Les mondes, et l'oiseau de la ferme ».*
 
 Un **cerf-volant** traverse lui aussi le ciel. Il file dans le **même sens que la
 poule**, du bas à gauche vers le haut à droite : il avance et il monte. Mais il vole
@@ -146,27 +149,30 @@ de brouettes.
 
 | Objet | Part | Pourquoi |
 |---|---|---|
-| Ballot de paille | 27 % | C'est *l'*objet du champ |
-| Seau | 14 % | Il en traîne toujours un |
-| Aigle | 14 % | Le ciel en a toujours un qui tourne |
+| Ballot de paille | 29 % | C'est *l'*objet du champ |
+| Seau | 17 % | Il en traîne toujours un |
+| Corbeau | 15 % | Le ciel en a toujours un qui tourne |
+| Pneu | 12 % | Quelques-uns, pour tenir les bâches |
 | Barrière | 12 % | Une par clôture |
-| Pneu | 10 % | Quelques-uns, pour tenir les bâches |
 | Pile de ballots | 9 % | Plus rare qu'un ballot seul |
-| Fourche | 5 % | On n'en croise pas dix |
-| Cerf-volant | 5 % | C'est un événement |
-| Brouette | 3 % | Une seule pour toute la ferme |
+| Fourche | 4 % | On n'en croise pas dix |
+| Brouette | 2 % | Une seule pour toute la ferme |
+
+*L'aigle et le cerf-volant tenaient 14 % et 5 % : sortis du tirage de la ferme, leurs
+parts se sont redistribuées sur les autres.*
 
 Chaque objet entre dans le tirage à partir d'une certaine distance — le début de la
-course reste volontairement pauvre, le temps d'apprendre à sauter. Mesuré sur une heure
-de jeu simulée, 3 990 obstacles : les parts tombent à un dixième de point des poids.
+course reste volontairement pauvre, le temps d'apprendre à sauter. Mesuré sur vingt
+parties de quatre mille mètres, 900 obstacles : ce sont les parts ci-dessus.
 
 ### Deux règles d'espacement pour le ciel
 
 Deux oiseaux côte à côte ne se lisent plus comme deux obstacles mais comme un mur.
 
-**L'aigle** : on n'en lance pas un tant que le précédent n'a pas quitté l'écran par la
-gauche, plus une marge. Il vole à contre-sens, donc il traverse vite et l'attente est
-courte — il garde 14 % du tirage malgré la règle.
+**L'oiseau**, quel qu'il soit : on n'en lance pas un tant que le précédent n'a pas
+quitté l'écran par la gauche, plus une marge — mesurée sur son propre canevas, pas sur
+celui d'un autre. Il vole à contre-sens, donc il traverse vite et l'attente est courte —
+le corbeau garde 15 % du tirage malgré la règle.
 
 **Le cerf-volant** : jamais deux d'affilée, et jamais un second tant que le premier est
 en vue. Lui fuit dans le **même sens** que la poule et reste longtemps à l'écran ; deux
@@ -174,7 +180,7 @@ de suite, c'est le même obstacle deux fois.
 
 Les deux règles ne rejettent pas le tirage pour le refaire : l'objet interdit est
 **retiré du chapeau** avant de tirer, et son poids est redistribué sur les autres. Une
-heure de jeu simulée, image par image : pas une seule image avec deux aigles à l'écran,
+heure de jeu simulée, image par image : pas une seule image avec deux oiseaux à l'écran,
 pas une avec deux cerfs-volants, pas un cerf-volant suivi d'un cerf-volant.
 
 ## La mouche dorée
@@ -853,8 +859,8 @@ Le résultat, mesuré sur cinq écrans et dans les deux styles : la crête s'arr
 pixels sous le bandeau**, jamais dessous. Le second terme du `min` garde toujours de
 quoi voler, même sur une fenêtre si basse que le bandeau mangerait tout le ciel.
 
-L'aigle et le cerf-volant tirent leur hauteur à partir de `flyCeil` : ils redescendent
-avec lui, sans une ligne à changer.
+Les oiseaux et le cerf-volant tirent leur hauteur à partir de `flyCeil` : ils
+redescendent avec lui, sans une ligne à changer.
 
 ### Le bec de dessous, deuxième prise
 
@@ -985,7 +991,75 @@ Ce qui donne vraiment de la continuité, faute de pouvoir en calculer, c'est d'a
 plus de positions dessinées : trois au lieu de deux réduit de moitié l'écart d'une
 image à la suivante. C'est la voie qui a été prise.
 
-## L'aigle
+## Les mondes, et l'oiseau de la ferme
+
+Le jeu n'a qu'un monde pour l'instant — **la ferme** — mais il ne le sait plus par
+accident. Tout ce qui distingue un monde d'un autre est rassemblé dans une seule table,
+`MONDES`, et nulle part ailleurs : ce qu'on y croise, et dans quelle proportion. Un
+autre monde n'aura qu'à poser sa propre liste.
+
+Un **oiseau**, dans ce jeu, est un rôle : un obstacle qui traverse le ciel à
+contre-sens, qu'on ne peut pas prendre par le dessus, sur lequel rien ne se pose et qui
+ne porte pas d'ombre au sol. Chacun apporte son canevas, ses poses, sa cadence de
+battement, sa vitesse propre et sa boîte de collision. Le reste du jeu ne demande plus
+« est-ce l'aigle ? » mais « est-ce un oiseau ? » — six endroits qui posaient la question
+par son nom la posent maintenant par son rôle.
+
+L'oiseau de la ferme est le **corbeau**. L'aigle et le cerf-volant sortent du tirage,
+mais rien de ce qui les concerne n'est retiré : planches, vol, ondulation du vent,
+boîtes, tout reste là. Ils ne sont simplement pas de ce monde-ci.
+
+### Le corbeau, mis à l'échelle sur trois repères
+
+Trois dessins, un seul canevas, comme l'aigle. Mais l'échelle de chaque pose n'est pas
+devinée : elle est lue sur trois repères indépendants, et c'est leur accord qui la
+valide.
+
+| pose | longueur du bec | épaisseur du bec | √ aire de l'œil | retenue |
+| --- | --- | --- | --- | --- |
+| ailes hautes | 1,100 | 1,115 | 1,094 | **1,103** |
+| ailes tendues | 1 | 1 | 1 | **1** |
+| ailes basses | 1,248 | 1,236 | 1,265 | **1,250** |
+
+Trois mesures qui ne se parlent pas, d'accord à un centième près : les dessins sont bien
+le même oiseau à trois tailles.
+
+Le bec ne se relève pas si facilement. C'est la seule matière grise du dessin —
+`rgb(88,88,88)`, entre le noir du corps à 40 et le papier à 246 — mais entre l'encre et
+le papier le lissage passe par **tous** les gris, et le liseré du contour entier répond
+au test. On ouvre donc le masque d'un rayon proportionnel à la taille du dessin — le
+liseré fait deux ou trois pixels, le bec en fait des dizaines — et on garde la plus
+grosse tache qui survit. Les serres, grises elles aussi mais fines, tombent avec le
+liseré. La bande mangée par l'ouverture est ensuite rendue, pour que la mesure soit
+celle du dessin et non celle du noyau.
+
+Le point d'ancrage est le **centre de l'œil**, point fixe de la tête. Une fois les trois
+poses mises à l'échelle et calées dessus, les trois pointes de bec tombent à moins de
+deux pixels et demi les unes des autres, sur huit cent soixante-treize de large.
+
+### Le corps, c'est ce qui ne bouge pas
+
+La boîte de collision ne doit contenir que le corps, jamais l'envergure. Relevée sur la
+seule pose du milieu — « ce qui est épais », par opposition aux ailes qui sont minces —
+elle contenait encore la racine de l'aile, qui remonte dans le dos : mesurée en jeu, la
+boîte flottait **huit unités trop haut**, au-dessus du dos plutôt que sur le corps.
+
+Le vrai corps, c'est **ce qui ne bouge pas quand les ailes battent** : l'intersection
+des trois poses, une fois calées sur le même canevas. Elle donne la tête, le bec, le
+tronc, la queue et les serres, sans une plume d'aile. On en garde la partie épaisse —
+110 unités sur 32 — et la boîte se centre dessus.
+
+Elle garde la **longueur** de celle de l'aigle, 102 unités, pour que l'obstacle se
+franchisse pareil, mais pas sa hauteur : le corbeau a le tronc plus mince, 40 contre 48.
+
+Le corbeau sort au poids de l'aigle, 16 sur cent. Mesuré sur vingt parties de quatre
+mille mètres : 14,9 % de ce que la ferme lance, aucun aigle, aucun cerf-volant, jamais
+deux oiseaux à l'écran en dix minutes de course.
+
+## L'aigle, mis de côté
+
+*Il ne vole plus dans la ferme — c'est le corbeau qui y tourne. Tout ce qui suit reste
+vrai et reste dans le fichier : il attend son monde.*
 
 Trois dessins, **posés tels quels**, affichés l'un à la suite de l'autre. Pas de
 corps commun ici : les trois dessins partagent déjà corps, tête et queue, et une
