@@ -1020,12 +1020,77 @@ de sortie — qui se déduit des largeurs — et resème.
 Un monde peut n'avoir **aucun** plan intermédiaire : sans garde-fou, le semis tournait
 sans fin sur une table vide.
 
-### La ville : la ligne d'horizon d'abord
+### Choisir son monde
+
+Le panneau des réglages a une troisième section, entre le style et la langue : **le
+monde**. Le choix est gardé dans le carnet et rouvre le jeu là où on l'avait laissé ; un
+nom inconnu — le carnet d'une version qui connaissait un monde de plus — retombe sur la
+ferme au lieu de tout casser. Changer de monde relance une partie neuve : les deux ne
+partagent ni le décor ni les obstacles, et les mélanger en pleine course n'aurait aucun
+sens.
+
+Un détail écrit en dur a sauté au passage. Les cent soixante-dix premiers mètres ne
+lancent que des objets « faciles », le temps d'apprendre à sauter, et cette liste-là était
+un couple écrit en clair : `bale` ou `bucket`. La ville lançait donc des ballots de paille
+pendant ses cent soixante-dix premiers mètres. Elle se tire maintenant de la liste du
+monde, parmi ce qui entre dans le tirage dès le premier mètre.
+
+### La ville : la ligne d'horizon, puis la rue
 
 Le monde **ville** se construit. Son fond est en place — deux silhouettes d'immeubles,
 posées et recouvertes exactement comme les massifs de la ferme, même mécanique de chaîne
-continue, seuls les dessins changent. Son plan intermédiaire est vide et ses obstacles
-sont encore ceux de la ferme, faute d'autres : ils attendent leurs dessins.
+continue, seuls les dessins changent — et ses **cinq obstacles** aussi. Son plan
+intermédiaire reste vide : une ville n'a pas d'arbres de campagne, et il vaut mieux le
+laisser vide que lui emprunter les siens.
+
+| Objet | Part | Pourquoi |
+|---|---|---|
+| Banc | 24 % | Il y en a à tous les coins |
+| Corbeau | 20 % | L'oiseau des villes autant que des champs |
+| Bouche d'incendie | 17 % | Une par pâté de maisons |
+| Barrière de chantier | 16 % | Une rue barrée, ça se croise |
+| Trottinette | 12 % | Laissée en travers du trottoir |
+| Boîte aux lettres | 10 % | Une par quartier |
+
+Mesuré sur vingt parties de quatre mille mètres. Chacun tue, chacun se franchit d'un
+simple saut : de 113 unités pour la bouche d'incendie à 146 pour la boîte aux lettres,
+quand le saut en monte 321.
+
+### Trois choses que ces dessins-là avaient en plus
+
+Les cinq obstacles de la ville ne se détourent pas comme ceux de la ferme.
+
+**Une ombre portée.** Un gris clair posé sur le papier. À la clarté où s'arrêtait le fond
+de la ferme — 228 — l'ombre passait pour de l'encre et l'objet arrivait avec une flaque
+grise sous lui. Le seuil descend à 190 : le papier est à 237 et plus, l'ombre à 198-206,
+et l'objet n'a rien entre les deux. Ses parties très claires — les pieds blancs de la
+barrière, l'enveloppe de la boîte — sont **enfermées** par le trait d'encre : l'inondation
+venue du bord ne les atteint pas, elles restent.
+
+**Des cailloux et des touffes d'herbe** autour d'eux, dont le jeu ne veut pas — il pose sa
+propre ombre et son propre sol. On ne garde que la plus grosse tache d'encre : l'objet.
+Cinquante-six taches jetées sur la barrière, trente-deux sur la bouche d'incendie.
+
+**Des vides à percer et des réserves à garder**, et les deux font la même taille. Le ciel
+doit passer entre les deux lisses de la barrière et entre les lattes du banc ; l'enveloppe
+de la boîte doit rester blanche. Ça ne se décide pas à la surface — 5,2 % pour le vide de
+la barrière, 2 % pour l'enveloppe — mais à la **couleur** : un vide, c'est le papier qu'on
+voit au travers, il en a exactement la teinte ; une réserve dessinée est un blanc, plus
+clair et plus froid. Mesuré, distance au papier :
+
+| | distance au papier |
+| --- | --- |
+| les vrais vides — lattes du banc, lisses de la barrière | 3 à 5 |
+| l'enveloppe de la boîte aux lettres | 9 |
+| les pieds blancs de la barrière | 36 |
+| les reflets de la trottinette et de la borne | 18 à 100 |
+
+Le seuil est posé à 8, entre les vides et l'enveloppe.
+
+Les planches sont enfin ramenées sous 640 pixels. Elles s'affichent autour de 75 pixels
+CSS, soit 227 cases de grille : à 640 le dessin reste deux fois et demie plus fin que la
+grille — ce qu'il faut pour que le contour tombe au pixel près, comme on vient de
+l'apprendre — et le fichier ne porte pas quatre mégaoctets pour rien.
 
 Leurs **fenêtres sont percées**, et c'est ce qui fait la ville. Le fond est repeint en
 aplat à la couleur de l'heure : une fenêtre laissée pleine disparaîtrait dans la masse,
