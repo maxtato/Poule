@@ -1300,7 +1300,7 @@ eux les rapports de leur propre feuille.
 
 | | hauteur | poids | part mesurée |
 | --- | --- | --- | --- |
-| `ville_imm0` … `ville_imm3` | 807, 891, 580, 554 | 9 chacun | 12 à 17 % |
+| `ville_imm0` … `ville_imm3` | 378, 840, 880, 440 | 9 chacun | 12 à 17 % |
 | `ville_lampe` | 475 | 22 | **27 %** |
 | `ville_auto` | 210 | 5 | 9 % |
 | `ville_benne` | 198 | 3 | 6 % |
@@ -1313,16 +1313,60 @@ met **devant** elle. Et l'écart entre deux silhouettes est devenu une propriét
 la campagne laisse respirer ses arbres (85 à 369 unités), la rue les siennes un peu moins
 (95 à 360). Il en reste assez pour que le fond se voie par les interstices ; sans un seul
 trou, les immeubles proches le cacheraient tout entier. Mesuré, la part de largeur d'écran
-couverte par ce plan : **64 % à la ferme, 74 % à la ville**.
+couverte par ce plan : **64 % à la ferme, 68 % à la ville**.
 
-**Les silhouettes sont aplaties à un gris unique.** Le jeu ne lit que leur alpha — il
-repeint tout — donc leur intérieur n'a aucune raison de transporter le grain du papier ni
-le bruit du JPEG. Aplaties et ramenées à 640 pixels comme les silhouettes lointaines, les
-sept pèsent 119 Ko au lieu de 2 Mo, sans qu'un pixel affiché change.
+**Les silhouettes sont aplaties à un gris unique** — le réverbère, la voiture, la benne.
+Le jeu ne lit que leur alpha, donc leur intérieur n'a aucune raison de transporter le grain
+du papier ni le bruit du JPEG.
 
-**Les trous sont percés**, comme les fenêtres du fond : l'escalier de secours, les pieds du
-château d'eau, la boucle du réverbère. Le plan est peint en aplat ; un vide non percé
-disparaîtrait dans la masse. 19 trous sur le grand immeuble, 1 sur le réverbère.
+**Les quatre immeubles, eux, ont gardé leur relief.** Ils portent leurs fenêtres, leurs
+corniches, un rideau de fer, un château d'eau, un escalier de secours — et un aplat aurait
+tout effacé. Leur clarté est donc conservée, rangée sur une rampe connue (le plus sombre du
+dessin à 0,62, le plus clair à 1), et le jeu **multiplie** cette rampe par une couleur
+tirée de l'heure. Trois passes, toutes faites par la toile — coucher la couleur, la
+multiplier par le gris, découper sur l'alpha — et aucune boucle sur les pixels : la teinte
+est refaite à chaque changement d'heure, et l'heure change à chaque image.
+
+**Le plafond a demandé une correction, et la mesure l'a trouvée.** Une multiplication ne
+sait que descendre : la couleur qu'on lui donne est le plafond du bâti, ce que vaudra son
+point le plus clair. Premier réglage : caler la **moyenne** du bâti sur la couleur de
+l'heure, pour qu'il pèse ce que pesaient les silhouettes. Relevé à l'écran, son point le
+plus clair montait alors à **248 quand le ciel plafonne à 244** — les fenêtres ne se
+lisaient plus comme des vitres mais comme des trous dans la façade.
+
+Le plafond vaut donc 1,15 fois la couleur du second plan, et pas davantage : c'est ce qui
+laisse la fenêtre la plus claire sous la crête lointaine **aux quatre heures du jeu**.
+
+| | ciel | crête lointaine | second plan (mini → maxi) |
+| --- | --- | --- | --- |
+| matin | 244 | 217 | 128 → **206** |
+| midi | 247 | 219 | 128 → **206** |
+| après-midi | 242 | 211 | 129 → **208** |
+| crépuscule | 236 | 200 | 121 → **195** |
+
+Le bâti y perd un rien de sa présence d'aplat — et c'est tant mieux : il est plus loin que
+le trottoir, il doit peser moins.
+
+**Les quatre s'accordent sur leurs fenêtres.** Ils ne sont pas dessinés à la même échelle :
+chacun remplit sa feuille, si bien que l'atelier d'un seul niveau occupe autant de pixels
+que le trois-étages. Les poser à la même hauteur de planche aurait fait une rue de jouets.
+Une fenêtre, elle, fait la même taille d'un immeuble à l'autre — c'est la seule chose dont
+on soit sûr. Mesurées (112, 107, 124 pixels selon la planche), elles valent toutes **116
+unités** une fois les hauteurs posées : 378 pour l'atelier, 840 et 880 pour les
+trois-étages, 440 pour le petit.
+
+Deux pièges dans cette mesure, tous deux corrigés. Les vitres de trois dessins sur quatre
+ont une **traverse** : mesurées telles quelles, les fenêtres valaient une demi-fenêtre ici
+et une entière là, et l'échelle en sortait fausse du simple au double — on dilate donc le
+masque verticalement pour franchir la traverse avant de mesurer. Et c'est le **mode** qu'il
+faut prendre, pas la médiane : une façade porte six à neuf fenêtres identiques et deux ou
+trois accidents, et la médiane se laisse déplacer par les accidents. À égalité de fréquence
+on garde la plus grande — un accident est un fragment, il est plus petit que ce qu'il
+fragmente, jamais plus grand. Sans cette règle, l'atelier s'était vu attribuer une fenêtre
+de 42 pixels qui était un bout de bandeau.
+
+**Les trous sont percés**, comme les fenêtres du fond : l'escalier de secours, la boucle du
+réverbère. 18 trous sur l'immeuble au château d'eau, 1 sur le réverbère.
 
 **Et la chaîne était trop courte.** Une silhouette vit jusqu'à ce que son bord gauche
 franchisse le seuil de sortie, calculé sur la plus large du monde : −1543 pour la ville,
