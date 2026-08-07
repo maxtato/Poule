@@ -1638,18 +1638,61 @@ Elles descendent **179 unités sous le plafond de vol** — leurs brins les plus
 dans la zone où la poule vole. C'est voulu, et ça ne coûte rien : le second plan est peint
 avant le premier, la poule passe donc *devant* les lianes. Elle vole sous la voûte.
 
-#### Ce que la jungle emprunte encore
+#### Les cinq obstacles du sous-bois
 
-Deux choses n'ont pas été dessinées pour elle, et sont reprises du champ :
+Une souche, un tronc couché, un serpent lové, un champignon, une plante carnivore. Les
+ballots de paille empruntés au champ sont partis avec eux ; il ne reste plus rien
+d'emprunté que les touffes d'herbe et les cailloux du sol, qui sont à leur place sous les
+arbres.
 
-- **Le sol** — les touffes d'herbe et les cailloux. Un sous-bois n'est pas un trottoir,
-  herbe et pierre y sont à leur place ; ça restera peut-être.
-- **Les obstacles au sol** — un tonneau, un seau, un pneu, un ballot, une barrière, une
-  fourche. Ceux-là sont provisoires : ils rendent le monde jouable, pas crédible. Les six
-  sont franchissables (de 56 à 184 unités, pour un sommet de saut à 321) et les six tuent,
-  vérifié un par un.
+| | dessin | boîte | il faut monter de | il tue |
+| --- | --- | --- | --- | --- |
+| le tronc couché | 221 × 115 | 93 % de la largeur | 80 | oui |
+| la souche | 201 × 150 | 92 % | 109 | oui |
+| le serpent | 138 × 145 | 88 % | 112 | oui |
+| le champignon | 196 × 165 | 92 % | 126 | oui |
+| la plante carnivore | 226 × 215 | 93 % | 166 | oui |
 
-Son **ciel**, lui, est à elle : le toucan et le singe qui jette sa noix de coco.
+Pour un sommet de saut à 321 : le tronc est celui qu'on apprend à sauter, la plante
+carnivore celle qui se mérite. Les boîtes ne sont pas écrites à la main — elles sont
+mesurées sur chaque dessin au démarrage, en ignorant la frange basse où vivent les
+racines, l'herbe et les feuilles.
+
+**Ce qui se perce, et ce qui ne se perce pas.** La règle ordinaire dit qu'une tache de fond
+enfermée dont la couleur est celle du papier est un vide. Elle est bonne pour la souche,
+dont le pied droit forme une arche : 1 768 pixels à **zéro** d'écart du papier, c'est le
+jour sous la racine. Elle est fausse pour deux des cinq, et il a fallu regarder *où*
+tombaient les taches pour s'en apercevoir :
+
+| | taches enfermées | ce que c'est |
+| --- | --- | --- |
+| la souche | 1 768 px, écart 0 | le jour sous la racine — **percé** |
+| le serpent | 1 238 px, écart 7 | **son œil** — gardé |
+| la plante carnivore | 8 taches, de 49 à 6 382 px, écarts 3 à 9 | **le reflet du bulbe et les dents** — gardées |
+
+Le papier du serpent est chaud, le blanc de son œil aussi, et sept unités les séparent : la
+couleur ne peut pas trancher. Ni la taille, ni l'allongement non plus. Ce qui sépare, c'est
+de savoir ce que le dessin représente, et ça ne se mesure pas — on l'écrit donc feuille par
+feuille, comme le seuil du papier ou la taille de la poussière.
+
+**La plante carnivore est retournée**, et c'est la seule. Question de sens plutôt que de
+dessin : la poule arrive par la gauche, le serpent la regarde venir, et une gueule ouverte
+du côté opposé se lit comme du décor et non comme une menace.
+
+Le rythme de la jungle est celui du champ, et ce n'est pas un hasard — les deux mondes
+partagent leur espacement (600 unités garanties, 1 s d'attente) :
+
+| | obstacles par km | sol libre médian | un sur dix sous |
+| --- | --- | --- | --- |
+| le champ | 11,2 | 611 | 603 |
+| la ville | 8,8 | 870 | 862 |
+| **la jungle** | **11,3** | **614** | **604** |
+
+Le plus petit écart mesuré y descend à 467 quand le champ tient 600 : la jungle a trois
+choses au ciel là où le champ n'en a qu'une, et un obstacle de sol qui suit un vol garde
+moins d'air devant lui. C'est la queue de la distribution, pas son corps.
+
+Son **ciel** est à elle aussi : le toucan et le singe qui jette sa noix de coco.
 
 ### Le toucan
 
