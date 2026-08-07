@@ -1046,11 +1046,27 @@ boîte flottait **huit unités trop haut**, au-dessus du dos plutôt que sur le 
 
 Le vrai corps, c'est **ce qui ne bouge pas quand les ailes battent** : l'intersection
 des trois poses, une fois calées sur le même canevas. Elle donne la tête, le bec, le
-tronc, la queue et les serres, sans une plume d'aile. On en garde la partie épaisse —
-110 unités sur 32 — et la boîte se centre dessus.
+tronc, la queue et les serres, sans une plume d'aile. On en garde la partie épaisse et
+la boîte se centre dessus.
 
-Elle garde la **longueur** de celle de l'aigle, 102 unités, pour que l'obstacle se
-franchisse pareil, mais pas sa hauteur : le corbeau a le tronc plus mince, 40 contre 48.
+### Plus petit, et il bat plus vite
+
+Monté à la taille de l'aigle, le corbeau pesait autant que lui à l'écran — or c'est un
+corbeau, pas un rapace. Tout a été **réduit d'un cinquième**, et du même facteur : la
+planche, l'ancre, la boîte. Rien ne se décale, et les planches pixel ont été refaites au
+nouveau grain (193 colonnes pour 64,4 pixels CSS, soit un pixel d'art par pixel d'écran).
+
+| | aigle | corbeau, premier montage | corbeau |
+| --- | --- | --- | --- |
+| planche | 319 × 171 | 165 × 178 | **132 × 143** |
+| corps mesuré | — | 110 × 32 | **88 × 26** |
+| boîte de collision | 102 × 48 | 102 × 40 | **82 × 32** |
+
+Le battement, lui, **accélère** : un petit oiseau bat plus vite qu'un grand. Quatre
+images par cycle à douze images par seconde, soit **trois battements complets par
+seconde** contre 1,9 auparavant. Compté sur le vrai dessin, en espionnant les planches
+posées pendant deux secondes de jeu : 24 changements d'image, exactement les trois
+battements attendus. Pour comparer, la poule en fait 3,25 et l'aigle 1,9.
 
 Le corbeau sort au poids de l'aigle, 16 sur cent. Mesuré sur vingt parties de quatre
 mille mètres : 14,9 % de ce que la ferme lance, aucun aigle, aucun cerf-volant, jamais
