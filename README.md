@@ -1575,12 +1575,17 @@ soit la richesse des dessins.
 | étage | hauteur | ce qu'il y a | poids |
 | --- | --- | --- | --- |
 | les arbres | 830 à 950 | l'arbre à couronne ronde, le même drapé de lianes, un palmier, deux palmiers | 30 % |
-| les plantes | 570 et 630 | les grandes palmes dressées, la touffe en éventail | 29 % |
+| les plantes | 485 et 535 | les grandes palmes dressées, la touffe en éventail | 29 % |
 | le sous-bois | 295 et 330 | le monstera, le buisson large | 38 % |
 
-Les trois étages grandissent toujours **ensemble**. Ce sont les rapports entre eux qui font
-la forêt, pas leurs tailles absolues : n'agrandir que les arbres donnerait des fougères de
-poupée sous des géants.
+Les trois étages grandissent **ensemble**. Ce sont les rapports entre eux qui font la forêt,
+pas leurs tailles absolues : n'agrandir que les arbres donnerait des fougères de poupée sous
+des géants.
+
+Une seule exception, et c'est un réglage d'œil : **les plantes ont baissé seules**, de
+570-630 à 485-535. À deux tiers d'arbre elles pesaient comme des arbres, et la forêt n'avait
+plus que deux étages au lieu de trois. À six dixièmes, l'étage du milieu redevient un étage
+du milieu, et le fond se voit par-dessus.
 
 #### Huit dessins, seize silhouettes
 
