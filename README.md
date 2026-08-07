@@ -1170,25 +1170,29 @@ froissé**, à la place de l'herbe et des cailloux du champ.
 
 Les quatre fissures ne sont pas des objets posés sur le sol. Chacune est dessinée **avec
 le bout de trottoir qu'elle traverse** : une longue ligne de sol, et la fente qui en part.
-Une touffe d'herbe se cale par son bas, elle pousse au-dessus du sol ; une fissure se cale
-par **la ligne qui est dans le dessin**, et cette ligne tombe où elle veut — au tiers de la
-hauteur pour l'une, tout en haut pour une autre, à 95 % du haut pour celle dont la fente
-monte. Une fissure calée par son bas serait suspendue par sa fente la plus profonde, et
-deux fissures voisines ne seraient jamais à la même profondeur.
 
-Chaque dessin porte donc son **ancrage** : la hauteur, dans le dessin, du point qui se pose
-sur le sol. Par défaut c'est le bas — l'herbe, les cailloux et le papier n'ont rien eu à
-changer. Il se mesure et ne se choisit pas : rangée la plus chargée en encre, puis centre
-de gravité des rangées voisines qui pèsent au moins 40 % d'elle, pour tomber au **milieu**
-du trait et non sur son bord.
+Chaque détail du sol porte donc un **ancrage** : la hauteur, dans le dessin, du point qui
+se pose à la profondeur tirée. Par défaut c'est le bas, et c'est ce que veut une touffe
+d'herbe — elle pousse, son pied touche le sol et sa pointe monte au-dessus de la ligne.
 
-| dessin | planche | ancrage | ce qu'on voit |
-| --- | --- | --- | --- |
-| `ville_sol0` | 336×92 | 35 % du haut | une étoile de fentes, à cheval sur le joint |
-| `ville_sol1` | 495×126 | 50 % | une fente qui remonte, deux qui descendent |
-| `ville_sol2` | 660×89 | 4 % | deux longues fentes, sous le joint |
-| `ville_sol3` | 1025×161 | 95 % | une seule, qui monte haut |
-| `ville_papier` | 226×144 | le bas | il est posé dessus, comme une touffe |
+**Rien de ce qui habille le trottoir ne passe au-dessus de la ligne**, et c'est l'inverse.
+Une fente et un papier sont à plat ; un trottoir s'étend vers nous, pas vers le ciel. Leur
+ancrage est donc **zéro — le bord haut du dessin** : ce bord se pose à la profondeur tirée
+et tout le reste tombe plus bas.
+
+| dessin | planche | ce qu'on voit |
+| --- | --- | --- |
+| `ville_sol0` | 336×92 | une étoile de fentes autour de son joint |
+| `ville_sol1` | 495×126 | une fente qui remonte, deux qui descendent |
+| `ville_sol2` | 660×89 | le joint en haut, deux longues fentes dessous |
+| `ville_sol3` | 1025×161 | une seule fente, qui file vers l'horizon |
+| `ville_papier` | 226×144 | à plat, jamais dans le ciel |
+
+L'essai précédent les calait par **le joint qu'elles portent**, mesuré sur chaque dessin —
+au tiers de la hauteur pour l'une, tout en haut pour une autre, à 95 % du haut pour celle
+dont la fente monte. Le joint tombait bien où il fallait, mais chaque dessin remontait
+alors de tout ce qu'il a **au-dessus** de son joint : 47 unités pour la fente qui monte, 38
+pour le papier. Les fissures partaient dans le ciel.
 
 **Une seule échelle pour les quatre fissures**, 0,31 unité par pixel de dessin, et elle
 n'est pas choisie au jugé : le trait de crayon mesure de 5 à 8 pixels selon la planche, et
@@ -1204,19 +1208,21 @@ n'est pas la ligne, c'est **le sol qui s'étend en dessous** — c'est là que v
 touffes et les cailloux, et c'est là que doivent vivre les marques qui les remplacent.
 
 Les cinq dessins prennent donc le **même enfoncement que le champ**, celui à trois
-paliers : le plus souvent 7 à 20 unités sous la ligne, une fois sur trois 21 à 35, une
-fois sur sept 36 à 47, tout devant. Une fissure posée plus bas est une fissure plus proche
-de nous, exactement comme une touffe posée plus bas. Relevé sur quatre mille détails de
-chaque monde, la distance entre la ligne du jeu et l'ancrage posé :
+paliers : le plus souvent 7 à 20 unités sous la ligne, une fois sur trois 21 à 35, une fois
+sur sept 36 à 47, tout devant. Une fissure posée plus bas est une fissure plus proche de
+nous, exactement comme une touffe posée plus bas. Et le bout de trottoir que chaque dessin
+porte avec lui ne fait plus doublon avec la ligne d'horizon : trente unités plus bas, il se
+lit pour ce qu'il est, le joint d'une dalle.
 
-| | mini | quart | médiane | trois-quarts | maxi |
-| --- | --- | --- | --- | --- | --- |
-| la ferme | 7,1 | 10,3 | 14,7 | 26,3 | 45,6 |
-| la ville | 7,2 | 9,8 | 17,1 | 27,4 | 41,8 |
+Relevé sur quatre mille détails de chaque monde, où vit l'encre — positif = sous la ligne :
 
-Les deux bandes se superposent, ce qui était le but. Et le bout de trottoir que chaque
-dessin porte avec lui ne fait plus doublon avec la ligne d'horizon : à trente unités en
-dessous, il se lit pour ce qu'il est, le joint d'une dalle.
+| | haut du dessin | bas du dessin |
+| --- | --- | --- |
+| la ferme | de **−9,0** à +24,0 (médiane +2,2) | de +7,9 à +45,0 |
+| la ville | de **+7,0** à +42,4 (médiane +17,3) | de +35,0 à +82,4 |
+
+Le champ passe au-dessus de la ligne et c'est ce qu'on lui demande : une touffe pousse. La
+ville n'y passe jamais — son détail le plus haut s'arrête sept unités sous la ligne.
 
 **Le trottoir reste plat.** L'amplitude du relief était devenue une propriété du monde —
 1 pour le champ, 0 pour la rue — d'abord pour une raison qui n'a plus cours : tant que les
@@ -1262,13 +1268,13 @@ dessins se seraient recouverts. Vérifié sur dix minutes de course dans chaque 
 
 | | détails replantés | disparu à vue | recouvrements | plus grand vide |
 | --- | --- | --- | --- | --- |
-| la ferme | 3 392 | 0 | 0 | 464 unités |
-| la ville | 1 042 | 0 | 0 | 490 unités |
+| la ferme | 3 429 | 0 | 0 | 458 unités |
+| la ville | 1 032 | 0 | 0 | 491 unités |
 
 Ce dernier chiffre a demandé un réglage. Les écarts de la ville sont plus larges que ceux
 du champ — ses marques le sont aussi — mais son vide franc laissait **788 unités de
 trottoir nu pour un écran de 800**. Le champ garde son ondulation et ses touffes, son vide
-de 464 ne se voit pas ; la rue n'a plus ni herbe, ni caillou, ni relief, et un écran entier
+de 458 ne se voit pas ; la rue n'a plus ni herbe, ni caillou, ni relief, et un écran entier
 sans une seule marque ne défile plus, il glisse. Le vide franc a donc été raccourci
 jusqu'à ce que les deux mondes se tiennent.
 
