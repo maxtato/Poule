@@ -1670,11 +1670,10 @@ Elles descendent **179 unités sous le plafond de vol** — leurs brins les plus
 dans la zone où la poule vole. C'est voulu, et ça ne coûte rien : le second plan est peint
 avant le premier, la poule passe donc *devant* les lianes. Elle vole sous la voûte.
 
-#### Les sept obstacles du sous-bois
+#### Les six obstacles du sous-bois
 
 Ce que la forêt a laissé — un enchevêtrement de racines, un tronc couché, une souche — et
-ce qu'une expédition y a abandonné : un sac, un jerrican, une cage vide. Plus la plante
-carnivore, qui n'est à personne. Les ballots de paille empruntés au champ sont partis
+ce qu'une expédition y a abandonné : un sac, un jerrican, une cage vide. Les ballots de paille empruntés au champ sont partis
 depuis longtemps ; il ne reste plus rien d'emprunté que les touffes d'herbe et les cailloux
 du sol, qui sont à leur place sous les arbres.
 
@@ -1685,7 +1684,6 @@ du sol, qui sont à leur place sous les arbres.
 | le jerrican | 182 × 125 | 92 % | 86 | oui |
 | le sac | 207 × 140 | 92 % | 99 | oui |
 | la souche | 201 × 150 | 92 % | 109 | oui |
-| la plante carnivore | 184 × 175 | 93 % | 131 | oui |
 | la cage | 244 × 180 | 93 % | 135 | oui |
 
 Pour un sommet de saut à 321 : les racines sont ce qu'on enjambe — le plus bas obstacle du
@@ -1694,10 +1692,11 @@ jungle plafonne à 135 là où le champ demande 183 pour son épouvantail et 184
 fourche : c'est le monde le plus indulgent des trois au sol, et celui qui a le plus de
 choses au ciel.
 
-Le champignon et le serpent ont été dessinés, redessinés une fois, puis **retirés** au
-profit des trois objets d'expédition. Leurs planches ne sont pas restées dans le fichier :
-un dessin remplacé et non complété ne pèse plus que du poids, et les ôter des deux tables a
-rendu 0,9 Mo.
+Trois dessins y sont passés et n'y sont plus : le champignon et le serpent, dessinés puis
+redessinés une fois, et la plante carnivore. **Leurs planches ne sont pas restées dans le
+fichier** — un dessin remplacé et non complété ne pèse plus que du poids, et les ôter des
+deux tables a rendu 1,5 Mo. C'est un outil qui manquait : jusque-là on ne savait
+qu'ajouter et remplacer.
 
 **Ce que ces trois feuilles-là avaient de facile.** Leur papier est blanc — 253 à 255 —
 quand celui des plantes tirait sur le rose et descendait jusqu'à 227, sous le seuil. Et
@@ -1724,7 +1723,7 @@ tombaient les taches pour s'en apercevoir :
 | --- | --- | --- |
 | les racines | 10 taches, de 214 à 2 712 px, écarts 5 à 10 | **les arches entre deux racines** — toutes percées |
 | la souche | 1 768 px, écart 0 | le jour sous la racine — **percé** |
-| la plante carnivore | 8 taches, de 49 à 6 382 px, écarts 3 à 9 | **le reflet du bulbe et les dents** — gardées |
+| la plante carnivore (retirée depuis) | 8 taches, de 49 à 6 382 px, écarts 3 à 9 | **le reflet du bulbe et les dents** — gardées |
 | le serpent (retiré depuis) | 1 238 px, écart 7 | **son œil** — gardé |
 
 L'enchevêtrement de racines demande son propre écart : **14**, quand les autres tiennent
@@ -1750,7 +1749,7 @@ partagent leur espacement (600 unités garanties, 1 s d'attente) :
 | --- | --- | --- | --- |
 | le champ | 11,2 | 611 | 603 |
 | la ville | 8,8 | 870 | 862 |
-| **la jungle** | **11,0** | **611** | **603** |
+| **la jungle** | **10,9** | **609** | **603** |
 
 Le plus petit écart mesuré y descend à 467 quand le champ tient 600 : la jungle a trois
 choses au ciel là où le champ n'en a qu'une, et un obstacle de sol qui suit un vol garde
@@ -1794,31 +1793,38 @@ liane, il défile à la vitesse du décor comme tout ce qui appartient au monde,
 poule qui vient à lui. Ses quatre poses ne sont donc pas un battement mais une **séquence**,
 jouée une fois : il tient la noix, il arme, il lâche, il retombe bras ballant.
 
-#### Sa liane est prolongée par le jeu
+#### Il est collé au plafond, et sa liane est celle du dessin
 
-Le dessin la coupe net en haut de la planche. Posée telle quelle en plein ciel, elle
-ressemblerait à un bâton flottant.
+Le dessin la coupe net en haut de la planche. On pose donc ce haut-là **derrière le
+bandeau** de scores, et la liane semble descendre d'une canopée qu'on ne voit pas. Rien
+n'est ajouté au dessin, rien n'est prolongé — c'est la planche telle qu'elle a été taillée,
+et elle se confond avec les guirlandes de lianes qui pendent au même endroit.
 
-Première version : pendre le singe **au bandeau**, planche collée sous lui, la liane
-disparaissant derrière le HUD. Le calcul a dit pourquoi ça ne pouvait pas marcher. La
-poule, au plafond de vol, occupe une bande de 58 unités qui s'arrête 73 unités sous le
-bandeau ; le tronc du singe, lui, pend 110 unités sous le haut de sa planche. **Son tronc
-tombait donc 13 unités sous la boîte de la poule la plus haute** — hors d'atteinte pour
-toujours — tandis que son bras, lui, la traversait sans la tuer. Un obstacle qu'on ne peut
-pas toucher et qu'on traverse quand même n'est pas un obstacle. Aucun réglage n'en sortait :
-le grossir descend son tronc, le rapetisser le rend minuscule, le remonter avale la main
-qui tient la liane.
+Une version intermédiaire le faisait pendre plus bas, à une hauteur tirée comme celle d'un
+oiseau, avec une liane prolongée par un trait relevé sur les quatre planches — où elle
+passe en haut, de combien elle penche, quelle épaisseur, quelle couleur. Elle marchait ;
+elle a été retirée, parce que le dessin suffit.
 
-Il n'y avait rien à redessiner : **une liane, à cette échelle, est un trait.** On a relevé
-sur les quatre planches où elle passe en haut (centrée 7,3 unités à gauche de l'œil), de
-combien elle penche (un tiers d'unité par unité de descente), quelle épaisseur elle a
-(4 unités) et quelle couleur — les quatre poses s'accordent au pixel près, la liane ne
-saute pas d'une image à l'autre. Le jeu tire le même trait jusqu'au bandeau.
+**Et il reste atteignable, ce qui n'allait pas de soi.** Une première mesure avait conclu
+l'inverse : la poule, au plafond de vol, occupe une bande de 58 unités qui s'arrête
+73 unités sous le bandeau, et le tronc du singe pend 110 unités sous le haut de sa planche
+— *donc* 13 unités trop bas. Ce raisonnement est faux, et c'est une erreur de question
+plutôt que de calcul : il demandait « **au plus haut**, se touchent-ils ? » quand il fallait
+demander « existe-t-il **une** hauteur où ils se touchent ? ». Au plafond, le corps de la
+poule passe entièrement au-dessus du singe ; quelques dizaines d'unités plus bas, il tombe
+dedans.
 
-Le singe peut alors pendre où l'on veut. Il pend dans les 260 unités sous le plafond de
-vol, à une hauteur tirée comme celle d'un oiseau : c'est là que la poule vole quand elle
-vole haut. Vérifié — il tue, et il est à portée quand elle vole entre −732 et −844 sur un
-téléphone dont le plafond est à −1 022.
+En balayant tout le vol, la réponse est oui, et sur les quatre formes d'écran :
+
+| écran | plafond de vol | il attrape quand elle vole entre |
+| --- | --- | --- |
+| 390 × 844 | −1 022 | **−896 et −1 008** |
+| 820 × 1180 | −597 | −470 et −582 |
+| 1440 × 900 | −576 | −450 et −562 |
+| 1180 × 700 | −551 | −424 et −536 |
+
+Il faut voler haut sans voler au plafond — un cheveu au-dessous — et le singe attrape.
+C'est le seul obstacle du jeu qu'on évite en montant *plus*.
 
 #### La noix, et la seule règle qui compte
 
