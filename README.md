@@ -1298,19 +1298,22 @@ Elle se pose sur le seul repère qui vaille entre les deux : un immeuble de cinq
 une quinzaine de mètres, un lampadaire de rue en fait huit. Les trois gardent ensuite entre
 eux les rapports de leur propre feuille.
 
-| | hauteur | part |
-| --- | --- | --- |
-| `ville_imm0` … `ville_imm3` | 807, 891, 580, 554 | 9 chacun |
-| `ville_lampe` | 475 | 8 |
-| `ville_auto` | 210 | 5 |
-| `ville_benne` | 198 | 3 |
+| | hauteur | poids | part mesurée |
+| --- | --- | --- | --- |
+| `ville_imm0` … `ville_imm3` | 807, 891, 580, 554 | 9 chacun | 12 à 17 % |
+| `ville_lampe` | 475 | 22 | **27 %** |
+| `ville_auto` | 210 | 5 | 9 % |
+| `ville_benne` | 198 | 3 | 6 % |
+
+Le **lampadaire** est de loin le plus fréquent, et c'est voulu : dans une rue il en passe
+un tous les vingt mètres, plus souvent qu'aucune façade en particulier.
 
 Les immeubles dépassent la ligne de crête lointaine, qui plafonne à 640 : c'est ce qui les
 met **devant** elle. Et l'écart entre deux silhouettes est devenu une propriété du monde —
-la campagne laisse respirer ses arbres (85 à 369 unités), la rue serre ses façades (40 à
-220). Il en reste juste assez pour que le fond se voie par les interstices ; sans un seul
+la campagne laisse respirer ses arbres (85 à 369 unités), la rue les siennes un peu moins
+(95 à 360). Il en reste assez pour que le fond se voie par les interstices ; sans un seul
 trou, les immeubles proches le cacheraient tout entier. Mesuré, la part de largeur d'écran
-couverte par ce plan : **64 % à la ferme, 82 % à la ville**.
+couverte par ce plan : **64 % à la ferme, 74 % à la ville**.
 
 **Les silhouettes sont aplaties à un gris unique.** Le jeu ne lit que leur alpha — il
 repeint tout — donc leur intérieur n'a aucune raison de transporter le grain du papier ni
@@ -1333,14 +1336,51 @@ plus loin sur la droite : elle garde un nombre fixe de silhouettes, chaque repla
 reprend à gauche ce qu'elle lui rend à droite, et comme ni la largeur ni l'écart tirés ne
 sont les mêmes, sa longueur dérive au hasard — l'écran d'avance encaisse la dérive.
 
+**Et surtout, c'est le NOMBRE de silhouettes qu'il faut fixer, pas jusqu'où on sème.** La
+chaîne garde jusqu'à la fin de la partie le nombre qu'on lui donne au départ : chaque
+replantation lui reprend à gauche ce qu'elle lui rend à droite. Semée « jusqu'à telle
+abscisse », ce nombre était tiré au hasard avec les premières largeurs — quatre si le sort
+avait donné des immeubles, et ces quatre-là ne couvraient plus rien le jour où ils
+devenaient des lampadaires de 80 unités de large. Le trou revenait. Le compte se calcule
+donc sur le **pire cas** : assez de silhouettes pour tenir de bout en bout même si toutes
+étaient la plus étroite du monde, collées à l'écart minimal. Quand elles sont larges, les
+dernières attendent loin à droite, ce qui ne coûte rien.
+
 | | chaîne | garde-fou utilisé | plus grand trou | écart maximal demandé |
 | --- | --- | --- | --- | --- |
-| avant, la ville | 3 | 22 % des replantations | 799 | 220 |
-| après, la ville | 5 | **jamais** | **224** | 220 |
-| après, la ferme | 7 | **jamais** | **369** | 369 |
+| semée depuis −400 | 3 | 22 % des replantations | 799 | 220 |
+| semée depuis le seuil | 5 | jamais… puis 4 % | 753 | 220 |
+| comptée sur le pire cas, la ville | 15 | **jamais** | **360** | 360 |
+| comptée sur le pire cas, la ferme | 10 | **jamais** | **367** | 369 |
 
 Le plus grand trou vaut désormais exactement l'écart maximal du monde : il n'y a plus
 d'autre trou que ceux qu'on a demandés.
+
+### La rue paraissait plus chargée, et le compte disait le contraire
+
+Impression à l'usage : trop d'obstacles en ville. Mesuré sur douze cents obstacles par
+monde, c'était **faux au sens strict** — les deux mondes étaient réglés à l'identique :
+
+| | obstacles par km | sol libre entre deux (médiane) | au minimum |
+| --- | --- | --- | --- |
+| la ferme | 11,1 | 611 | 600 |
+| la ville, avant | 11,4 | 614 | 600 |
+
+Mais l'impression avait raison d'une façon que le compte ne dit pas : **les obstacles de la
+ville sont hauts et étroits** — borne, boîte aux lettres, trottinette — là où ceux du champ
+sont larges et bas. Ils se lisent comme des murs et non comme des choses posées. On a donc
+donné plus d'air à la rue pour de bon, et l'espacement est devenu une propriété du monde,
+comme le reste.
+
+Deux termes montent ensemble, parce qu'ils ne commandent pas au même moment : **l'espace
+garanti** derrière le précédent (600 → 860 unités), qui décide quand on va vite, et
+**l'attente** en secondes (×1,28), qui décide quand on va doucement. N'en relever qu'un
+aurait desserré le début de partie sans rien changer à la fin, ou l'inverse.
+
+| la ville, après | 8,7 | **869** | **862** |
+| --- | --- | --- | --- |
+
+La ferme n'a pas bougé d'une unité.
 
 ### La ligne de crête, refaite à pleine résolution
 
