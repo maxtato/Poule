@@ -1368,6 +1368,60 @@ de 42 pixels qui était un bout de bandeau.
 **Les trous sont percés**, comme les fenêtres du fond : l'escalier de secours, la boucle du
 réverbère. 18 trous sur l'immeuble au château d'eau, 1 sur le réverbère.
 
+### Le trottoir, lu sur les dessins
+
+Les quatre immeubles sont dessinés **posés sur une dalle** : une bande horizontale qui court
+sur toute leur largeur, en bas. Chacun apportait donc son bout de trottoir, et le
+réverbère, la voiture et la benne se tenaient à côté, plus bas, dans le vide.
+
+La dalle est **mesurée sur les quatre planches** — la bande du bas dont l'encre couvre
+toute la largeur — et non choisie :
+
+| | épaisseur | clarté sur la rampe |
+| --- | --- | --- |
+| `ville_imm0` | 29,9 unités | 0,73 |
+| `ville_imm1` | 34,3 | 0,76 |
+| `ville_imm2` | 33,6 | 0,77 |
+| `ville_imm3` | 31,4 | 0,73 |
+
+Soit **33 unités** et une clarté de **0,73**, ce qui donne la couleur de la bande sans avoir
+à l'inventer : le plafond du bâti multiplié par cette clarté. Les quatre ne s'accordent pas
+au pixel près, mais quatre unités d'écart valent deux pixels d'écran à cette échelle.
+
+La bande est peinte **avant** les silhouettes, d'un bord à l'autre : les immeubles posent
+leur propre dalle par-dessus, du même ton, et la rue est continue. Ce qui n'a pas de dalle
+— réverbère, voiture, benne — monte alors de l'épaisseur du trottoir au lieu de flotter à
+côté. Le champ, lui, a un trottoir de zéro.
+
+Le seuil de cette mesure a demandé deux corrections : à 88 % de couverture il avalait aussi
+le corps de l'atelier, qui est large et bas ; et il faut partir de la première rangée
+pleine et non du bord de la planche, la dernière rangée d'une planche redimensionnée étant
+un bord adouci qui ne couvre rien.
+
+### Le banc, la boîte aux lettres et la trottinette, redessinés
+
+Trois nouveaux dessins sur une seule feuille, à la place des précédents. Ce sont des
+obstacles et non des silhouettes : ils gardent leurs couleurs. Leurs proportions ont à
+peine bougé — le banc passe de 248 à 246 unités de large, la boîte de 136 à 130, la
+trottinette de 181 à 180 — et les hauteurs ne changent pas, donc la difficulté non plus.
+
+**Deux choses à séparer dans ces dessins, et les deux se règlent à la couleur.**
+
+*L'ombre portée.* Chaque objet en traîne une, et le jeu pose la sienne. Le seuil ordinaire
+ne l'emporte pas : son cœur descend à 205 de clarté, sous le seuil du papier, et elle
+**touche** l'objet — elle entre donc dans le même amas et le découpage la garde. On élargit
+l'inondation : elle avance aussi dans ce qui est clair et peu saturé, ce qu'est une ombre
+grise sur du papier crème, et ce que ne sont ni le bleu de la boîte, ni le bois du banc, ni
+le vert de la trottinette. Venant du bord, elle mange l'ombre par l'extérieur et s'arrête
+au contour noir.
+
+*Le blanc peint.* Premier essai, on perçait tout vide enfermé par le contour — et
+l'enveloppe blanche de la boîte aux lettres a disparu avec les fentes entre les lattes du
+banc. Les deux sont du fond enfermé ; ils se séparent à la couleur. Un vide, c'est
+exactement le papier ; un blanc peint, c'est du blanc — plus clair et moins chaud. Mesuré,
+l'écart au papier vaut **4 à 8** pour les vrais vides et **9 à 13** pour les blancs peints.
+On ne perce qu'en dessous de 8.
+
 **Et la chaîne était trop courte.** Une silhouette vit jusqu'à ce que son bord gauche
 franchisse le seuil de sortie, calculé sur la plus large du monde : −1543 pour la ville,
 dont les immeubles font jusqu'à 1108 unités de large. Semée depuis −400 comme avant, la rue
