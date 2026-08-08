@@ -1048,6 +1048,43 @@ Ce qui donne vraiment de la continuité, faute de pouvoir en calculer, c'est d'a
 plus de positions dessinées : trois au lieu de deux réduit de moitié l'écart d'une
 image à la suivante. C'est la voie qui a été prise.
 
+## On choisit son terrain avant de courir
+
+L'accueil montre les trois mondes, chacun sur une carte : une fenêtre sur son décor, son
+nom, et **son** record dessous. On en choisit un, puis on lance.
+
+**Un record est le record de quelque chose.** Il était unique pour les trois mondes, et il
+ne voulait rien dire : le champ, la rue et le sous-bois n'ont ni les mêmes obstacles ni les
+mêmes silhouettes, et un seul chiffre pour les trois dit surtout dans lequel on a le plus
+joué. Le carnet porte donc une ligne par monde — meilleur score, meilleures mouches,
+meilleure distance, parties — et garde en commun ce qui compte une vie de jeu et non une
+performance : le total des mouches gobées et le nombre de parties.
+
+**La reprise d'un carnet ancien** ne peut pas deviner dans quel monde les anciens records
+ont été faits. Elle sait en revanche lequel était choisi : c'est celui-là qui les reçoit.
+Les deux autres partent à zéro, ce qui est vrai.
+
+### La fenêtre est peinte, pas photographiée
+
+Chaque vignette est un **canevas** rempli avec les planches du jeu et la palette du *matin*
+du monde — la première de ses quatre heures. Deux conséquences qui valent la peine :
+
+- elle ne peut pas mentir sur ce qu'on va trouver, puisqu'elle tire des mêmes tables que la
+  course : si un dessin change, la vignette change avec lui ;
+- elle suit le style, trait ou pixel, sans une ligne de plus.
+
+**On n'y met ni obstacle ni détail de sol** : le fond, le deuxième plan, l'oiseau du monde.
+Un banc ou un ballot dans une fenêtre de trois cents points de large ne se lit pas — il fait
+une tache — là où une crête, deux arbres et un oiseau disent immédiatement de quel endroit
+il s'agit. Les clés sont tirées des tables du monde et non écrites à la main : les deux
+premières silhouettes de crête, **les deux plus hautes** du deuxième plan (ce sont les
+arbres, jamais les panneaux) et le premier oiseau.
+
+**La phrase d'accroche s'efface sous 900 points de haut.** Elle explique le jeu en quatre
+lignes ; les cartes le montrent en trois images, et c'est aux cartes qu'on vient. Vérifié
+sur trois formats de téléphone — 360×640, 390×844, 414×896 — les trois cartes tiennent
+entières et le bouton de lancement reste dans le cadre.
+
 ## Les mondes, et l'oiseau de la ferme
 
 Le jeu n'a qu'un monde pour l'instant — **la ferme** — mais il ne le sait plus par
@@ -3162,6 +3199,90 @@ plutôt que de laisser le sol sortir de l'écran ; sur un téléphone couché, i
 demande de redresser l'appareil, où l'image serait réduite à une bande étroite.
 
 ## La finesse des dessins
+
+### Toutes les planches au même niveau de réserve
+
+La question se pose comme un rapport : **pixels de planche divisés par pixels d'écran
+demandés**, à la plus grande taille où le jeu pose le dessin, sur l'écran le plus exigeant
+qu'on vise — un téléphone de 414 points à densité 3, soit 1,29 pixel par unité de monde.
+Au-dessus de 1 la planche a de la réserve et le navigateur la réduit ; en dessous, elle est
+**étirée**, et la marche d'escalier de son contour se voit.
+
+Mesuré sur les 60 planches de décor, d'obstacles et d'oiseaux, la réserve allait de **0,45 à
+5,97** — un facteur treize. Douze planches étaient étirées :
+
+| | réserve | pourquoi |
+| --- | --- | --- |
+| `bg_coll0..3`, les collines du champ | **0,45 à 0,49** | elles poussent jusqu'au double depuis peu, et personne n'avait retaillé les planches |
+| `jung_liane`, `jung_palmiers`, `jung_palmier`, `jung_arbre` | 0,59 à 0,72 | les quatre grandes plantes de la jungle, posées à plus de 1 200 pixels |
+| `ville_imm0..3` | 0,84 | les immeubles du deuxième plan |
+
+**On ne peut pas inventer des pixels, mais on peut rééchantillonner une forme.** Le contour
+d'une planche est un champ de distance signée : une grandeur continue, connue partout,
+qu'on relit à une maille plus fine. C'est ce qui enlève la marche d'escalier — et la marche
+d'escalier est tout ce qui se voit quand une silhouette est agrandie, parce qu'une
+silhouette n'a que son contour. La pente du seuil suit l'échelle, sans quoi l'adoucissement
+du bord vaudrait autant de fois plus qu'on agrandit et la silhouette paraîtrait molle.
+
+Trois chemins, selon ce qu'on avait :
+
+- les quatre **plantes de la jungle** sont retaillées depuis leur dessin d'origine, avec un
+  rééchantillonnage visé à 1,3 — le même traitement que les massifs de canopée ;
+- les **collines** n'ont plus de source utilisable (elles sont découpées dans une feuille
+  commune par un script d'une autre époque) : leur champ de distance est relu depuis la
+  planche en place ;
+- les **immeubles** de même, et leur intérieur en niveaux de gris est jeté au passage — ils
+  ont porté un temps leur relief, le jeu ne garde plus que leur alpha, et ces 215 Ko ne
+  servaient plus à rien.
+
+Puis tout ce qui restait sous **1,30** est passé au même outil, en visant 1,35 : vingt-quatre
+planches de plus. Le résultat, remesuré :
+
+| | avant | après |
+| --- | --- | --- |
+| plancher | **0,45** | **1,30** |
+| planches étirées (sous 1) | 12 | **0** |
+| poids de la table trait | 26,6 Mo | 27,5 Mo |
+
+Neuf cents kilo-octets pour que plus aucun dessin ne soit agrandi.
+
+### Un seul grain pour tout ce qui est à l'écran
+
+En pixel, chaque planche est fabriquée à sa taille d'affichage divisée par `PX_JEU` : c'est
+ce qui fait qu'un pixel d'art vaut partout la même chose. La taille d'affichage est
+**mesurée sur le jeu** — on espionne tous les appels à `drawImage` en promenant le jeu dans
+ses états — et rangée dans une table.
+
+**La règle de mise à jour de cette table était fausse.** Elle disait : « on ne garde la
+mesure que si elle est plus grande », l'idée étant qu'une planche taillée pour plus que sa
+taille d'affichage a juste plus de détail que l'écran n'en montre. Ce n'est pas sans danger.
+Une taille surévaluée de moitié donne des pixels d'art **deux fois plus petits** que ceux de
+ses voisines, et le mode pixel n'a plus un grain mais plusieurs. Et rien ne faisait jamais
+redescendre une valeur périmée : `ville_imm2` portait encore 781 quand le jeu le pose à 361.
+
+La mesure gagne maintenant dans les deux sens, et sept entrées mortes — les dessins retirés
+du jeu — ont été purgées de la table. Six planches restaient hors grille après ça, jamais
+posées pendant la promenade de la sonde et gardant donc une valeur périmée : la coupe et la
+plume des trophées, le cadre de la pierre tombale, la mouche du bandeau. Leur taille réelle
+a été relevée par une sonde qui, elle, joue vraiment.
+
+**Le résultat, mesuré en espionnant `drawImage` sur les trois mondes puis sur l'écran de
+fin :**
+
+| | avant | après |
+| --- | --- | --- |
+| planches posées | 115 | 114 |
+| grain mesuré | 0,149 à 0,488 | **0,32711 à 0,33583** |
+| hors grille (plus de 3 %) | 6 | **0** |
+
+Soit ±0,8 % autour de `PX_JEU`. Un pixel d'art vaut la même chose partout.
+
+**Un piège de sonde au passage.** Elle comptait aussi les blits que le jeu fait dans des
+toiles **hors champ** — la mouche dorée est dorée dans l'une, son reflet balaye dans une
+autre — et ces préparations copient l'image à sa taille de pixels, pas à sa taille
+d'affichage. Comptées, elles rendaient un grain égal à `scale` et faisaient croire à deux
+planches hors grille qui n'y étaient pas. La sonde ne regarde plus que ce qui va aux deux
+contextes du jeu.
 
 Deux pertes distinctes, à ne pas confondre.
 
