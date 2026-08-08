@@ -1954,17 +1954,18 @@ et s'écrase derrière elle, dans le coin bas gauche.
 la tenir qui a changé. Avant, la noix n'existait plus quand la colonne de la poule
 arrivait. Maintenant elle la traverse, et c'est la **hauteur** qui protège : la chute est
 un mouvement uniformément accéléré, elle est lente en haut et rapide en bas, et la colonne
-de la poule est franchie dans le **premier tiers** du vol. Mesuré sur quinze vitesses de
-520 à 900 et cinq formes d'écran — soixante-quinze cas — voici le plus bas que le bas de la
-noix descende entre x = 200 et x = 262 :
+de la poule est franchie dans le **premier tiers** du vol. Mesuré sur sept angles, quatre
+points de chute, quinze vitesses et six formes d'écran — **2 520 jets** — voici le plus bas
+que le bas de la noix descende entre x = 200 et x = 262 :
 
-| | à 520 u/s | à 900 u/s | la tête de la poule |
-| --- | --- | --- | --- |
-| téléphone (plafond −1022) | −572 | −430 | −98 |
-| bureau (plafond −551) | −393 | **−303** | −98 |
+| | le plus bas | au-dessus de sa tête (−98) |
+| --- | --- | --- |
+| téléphone (plafond −1022) | −328 | 230 |
+| fenêtre de bureau (plafond −551) | −178 | 80 |
+| fenêtre très basse (plafond −541) | −173 | **75** |
 
-Le pire cas — une fenêtre de bureau à pleine vitesse — laisse **205 unités**, soit plus de
-deux hauteurs de sa boîte. **Zéro mort sur les soixante-quinze cas.**
+Le pire cas laisse **75 unités** — quatre hauteurs de la boîte de la noix. **Zéro mort sur
+les 2 520 jets.**
 
 **Et ce que ça fait gagner.** Une noix qui traverse au lieu de disparaître devient un vrai
 obstacle pour la poule qui **vole** : entre 300 et 570 selon la vitesse, il faut lui céder
@@ -1988,17 +1989,16 @@ Les deux moments sont donc **séparés**, et aucun des deux n'est un compte à r
 | il arme | quand sa planche entre dans le cadre | le dessin : `VIEW_W + oeilX` |
 | il lâche | à l'abscisse que la visée demande | la physique du jet |
 
-L'armement dure ce qu'il reste entre les deux : **de 0,14 à 1,18 s** selon la vitesse et
+L'armement dure ce qu'il reste entre les deux : **de 0,04 à 0,89 s** selon la vitesse et
 l'angle. Ce n'est pas un défaut, c'est la même chose qu'un lanceur qui prend son élan plus
 longtemps pour lancer plus loin — et ça supprime le temps mort, puisqu'il entre dans le
 cadre déjà armé. Vérifié sur 90 jets et deux formes d'écran : le lâcher tombe toujours
-**après** son entrée (au plus tôt x = 773, quand il apparaît à 896), donc on le voit
+**après** son entrée (au plus tôt x = 856, quand il apparaît à 896), donc on le voit
 toujours lancer.
 
 Le terme de compensation `vitesse × armement` disparaît de la visée du même coup : il rendait
 le déplacement du singe *pendant* son armement, or le lâcher se déclenche maintenant sur sa
-position et non sur une durée. Le point de chute, lui, ne bouge pas — re-mesuré sur les 675
-jets : zéro mort, 119 unités de garde au pire.
+position et non sur une durée.
 
 #### Il ne lance plus toujours pareil
 
@@ -2031,23 +2031,73 @@ plus la noix vise près de la poule, moins il lui reste de chute *après* sa col
 bas elle y passe. L'angle ne fait que dix pour cent de différence — un jet rasant arrive de
 plus loin, mais avec la même géométrie d'arrivée.
 
-Le point de chute reste donc serré, **entre 20 et 80** : c'est le bord bas gauche, comme
-demandé. L'angle, lui, s'ouvre en grand — **quarante degrés, de 25 à 65** — puisqu'il ne
+Le point de chute reste donc serré, **entre 20 et 50** : c'est le bord bas gauche, comme
+demandé. L'angle, lui, porte toute la variété — **trente degrés, de 8 à 38** — puisqu'il ne
 coûte presque rien à la garantie. Et c'est bien l'angle qu'on voit :
 
 | angle | lâchée en x | images de vol | éclate en x |
 | --- | --- | --- | --- |
-| 25° | 521 | 36 | 25 |
-| 45° | 509 | 31 | 84 |
-| 65° | 334 | 23 | 23 |
+| 8° | 591 | 46 | 21 |
+| 23° | 544 | 42 | 25 |
+| 38° | 498 | 38 | 29 |
 
-Deux cent vingt unités d'écart sur le point de lâcher, et treize images d'écart sur la durée
-du vol : d'un singe qui lance à peine entré dans le cadre à un singe qui lance au milieu.
+Presque cent unités d'écart sur le point de lâcher, et huit images d'écart sur la durée du
+vol. Le cône était d'abord ouvert de 25 à 65 degrés — deux fois plus large — et c'est la
+mesure de jouabilité de la section suivante qui l'a incliné vers le haut et refermé.
 
-Le cône retenu, re-mesuré entier — neuf jets par vitesse, quinze vitesses, cinq formes
-d'écran, **675 jets** : la noix descend au plus bas à −307 sur un téléphone et à −220 sur une
-fenêtre de bureau, quand la tête de la poule qui court est à −98. **122 unités de garde au
-pire**, une hauteur et demie de sa boîte, et **zéro mort** sur les 675.
+#### Elle était quasi inévitable, et le compte le disait
+
+La noix était un piège. Deux mesures, sur huit vitesses et six jets :
+
+| | téléphone | fenêtre de bureau |
+| --- | --- | --- |
+| délai entre sa naissance et la boîte de la poule | 0,25 s (médiane) | **0,09 s, et négatif au pire** |
+| hauteurs de vol mortelles pour une poule qui plane | 52 % | 66 % |
+
+Un délai négatif veut dire ce qu'il dit : sur une fenêtre de bureau, la noix naissait **déjà
+au-delà** de la poule. Personne ne joue contre ça.
+
+**Les deux viennent de la même cause : elle tombait trop vite.** Le lâcher se calcule depuis
+le point de chute — plus la chute est brève, moins la noix parcourt d'abscisse, donc plus
+tard elle part et plus près de la poule elle naît. Et plus elle tombe vite, plus elle descend
+pendant qu'elle traverse la colonne de la poule, donc plus large est la bande de hauteurs
+qu'elle interdit.
+
+**La pesanteur ne se fixe donc plus : c'est la durée qui se fixe.** Une pesanteur constante
+ne peut pas convenir aux deux écrans, parce que la hauteur de chute varie du simple au
+double — mille unités sous le bandeau d'un téléphone, cinq cent soixante dans une fenêtre de
+bureau. À 4 200 partout, la même noix mettait 0,62 s à tomber sur l'un et 0,40 s sur l'autre,
+et c'est exactement pour ça que la fenêtre de bureau était deux fois plus injuste. On pose
+donc la durée — **0,80 s** — et on en déduit la pesanteur, chute par chute : `g = 2h/T²`.
+Mesuré : le vol dure maintenant 0,60 à 0,72 s partout.
+
+Trois autres réglages vont dans le même sens :
+
+| | avant | après | pourquoi |
+| --- | --- | --- | --- |
+| cône | 25° à 65° | **8° à 38°** | un jet plus rasant arrive moins vite, donc descend moins en traversant sa colonne |
+| vitesse propre | 150 | **60** | le délai vaut `(cible + abscisse − 268)/W` : il grandit quand `W` diminue |
+| boîte de la noix | 80 % du dessin | **62 %** | la même part que la fiente : une chute d'en haut doit pardonner le frôlement |
+
+**Ce que ça donne.** La bonne mesure n'est pas « combien de hauteurs sont mortelles » — une
+noix qui traverse le ciel en occupe forcément une tranche, et c'est ce qui en fait un
+obstacle. C'est **combien restent mortelles quand la poule réagit**. On rejoue donc chaque
+hauteur trois fois — elle ne fait rien, elle monte, elle descend — avec 0,20 s de délai de
+réaction humaine, et on ne compte que les hauteurs où les trois finissent mal :
+
+| hauteurs mortelles quoi qu'elle fasse | avant | après |
+| --- | --- | --- |
+| téléphone | 23,1 % | **4,2 %** |
+| fenêtre de bureau | **40,1 %** | **10,2 %** |
+
+Quarante pour cent du ciel sans parade sur une fenêtre de bureau : « quasi inévitable »
+était la description exacte. Le reste — 4 % et 10 % — se tient tout en haut du ciel, là où
+la poule vole au ras du singe et n'a plus de place pour descendre devant une noix qui
+descend aussi. Voler au plafond pendant qu'un singe arme reste un mauvais choix, et c'est
+très bien.
+
+Le délai, lui, passe de 0,25 à **0,39 s** en médiane sur un téléphone et de 0,09 à **0,33 s**
+sur une fenêtre de bureau — et il n'est plus jamais négatif.
 
 #### Le choc, maintenant qu'il se voit
 
