@@ -1973,6 +1973,33 @@ la mort de la poule au sol n'en avait aucune. Le singe lâche aussi plus tard : 
 de x = 300 à 630 selon la vitesse, au lieu de 760. C'est-à-dire **en plein cadre au lieu du
 bord droit** : on le voit lancer.
 
+#### Il commence dès qu'il apparaît
+
+La séquence se déclenchait à une abscisse calculée — celle qui, l'armement décompté, mettait
+le lâcher au bon endroit — et l'armement durait **0,16 s fixe**. Conséquence mesurée : selon
+la vitesse et l'angle tiré, ce déclic tombait entre **470 et 917** sur un téléphone. Au mieux
+il armait en entrant ; au pire il restait pendu une demi-seconde en pleine vue, bras
+ballant, avant de se décider.
+
+Les deux moments sont donc **séparés**, et aucun des deux n'est un compte à rebours :
+
+| | quand | ce qui le décide |
+| --- | --- | --- |
+| il arme | quand sa planche entre dans le cadre | le dessin : `VIEW_W + oeilX` |
+| il lâche | à l'abscisse que la visée demande | la physique du jet |
+
+L'armement dure ce qu'il reste entre les deux : **de 0,14 à 1,18 s** selon la vitesse et
+l'angle. Ce n'est pas un défaut, c'est la même chose qu'un lanceur qui prend son élan plus
+longtemps pour lancer plus loin — et ça supprime le temps mort, puisqu'il entre dans le
+cadre déjà armé. Vérifié sur 90 jets et deux formes d'écran : le lâcher tombe toujours
+**après** son entrée (au plus tôt x = 773, quand il apparaît à 896), donc on le voit
+toujours lancer.
+
+Le terme de compensation `vitesse × armement` disparaît de la visée du même coup : il rendait
+le déplacement du singe *pendant* son armement, or le lâcher se déclenche maintenant sur sa
+position et non sur une durée. Le point de chute, lui, ne bouge pas — re-mesuré sur les 675
+jets : zéro mort, 119 unités de garde au pire.
+
 #### Il ne lance plus toujours pareil
 
 Un seul angle et un seul point de chute, et le troisième singe rejouait exactement le
