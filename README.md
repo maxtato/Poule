@@ -1875,9 +1875,8 @@ donc pas sur la planche mais sur le corps. Le toucan est le plus **grand**, l'ar
 
 | | toucan | ara |
 | --- | --- | --- |
-| planche | 180 × 210 | 175 × 213 |
-| corps (la boîte) | 65,1 × 41,3 | **80,9 × 41,7** |
-| encre couverte par la boîte | 97 / 95 / 85 % | 86 / 81 / 74 % |
+| planche | 180 × 210 | 175 × 209 |
+| corps (la boîte) | 65,1 × 41,3 | **88,7 × 47,4** |
 | vitesse, battement | 140, 9/s | 195, 13/s |
 
 L'aller-retour n'a rien coûté que du calcul : la fenêtre de vol où il est atteignable se
