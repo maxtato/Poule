@@ -138,50 +138,107 @@ moitié il reste réduit de 4,6 fois à l'écran, jamais étiré.
 Les autres obstacles sont au sol et arrivent d'autant plus vite que la course
 dure.
 
-### Ce qu'on croise, et à quelle fréquence
+### Ce qu'on croise, et à quelle fréquence : trois flux, pas une table
 
-Le tirage n'est pas uniforme, et il ne l'est pas pour une raison qui n'a rien à voir
-avec la difficulté : **un champ n'est pas rempli en parts égales**. Il y a des ballots
-de paille partout, une barrière par clôture, une fourche ou deux plantées quelque part,
-et une seule brouette pour toute la ferme. Les poids disent ce rapport-là et rien
-d'autre — la difficulté se règle par la cadence et la vitesse, pas en inondant le champ
-de brouettes.
+Il n'y en avait qu'**un** : une table pondérée par monde, où les obstacles au sol, l'oiseau
+et les événements étaient tirés ensemble, chacun avec un poids et une distance d'entrée. Les
+poids disaient un rapport de vraisemblance — des ballots de paille partout, une seule
+brouette pour toute la ferme. C'était joli sur le papier, et trois choses ne tenaient pas,
+toutes mesurées :
 
-| Objet | Part | Pourquoi |
-|---|---|---|
-| Ballot de paille | 30 % | C'est *l'*objet du champ |
-| Corbeau | 17 % | Le ciel en a toujours un qui tourne |
-| Seau | 16 % | Il en traîne toujours un |
-| Barrière | 12 % | Une par clôture |
-| Pneu | 10 % | Quelques-uns, pour tenir les bâches |
-| Pile de ballots | 7 % | Plus rare qu'un ballot seul |
-| Fourche | 5 % | On n'en croise pas dix |
-| Brouette | 2 % | Une seule pour toute la ferme |
+| | mesuré avant |
+| --- | --- |
+| le ballot revenait 9 fois pour 1 brouette | 26 de poids contre 3 |
+| les mondes n'avaient pas la même cadence | 11,1 /km au champ, **8,8 en ville**, 11,0 en jungle |
+| le ciel volait sa part au sol | tout sortait du même chapeau à somme constante |
 
-*L'aigle et le cerf-volant tenaient 14 % et 5 % : sortis du tirage de la ferme, leurs
-parts se sont redistribuées sur les autres.*
+Le troisième est le plus vicieux. Un monde qui ajoute un journal ou un singe le fait **au
+détriment** de ses obstacles au sol, puisque le poids total est le même. La ville, qui a un
+journal en plus, avait donc moins de bancs et de poubelles que le champ n'avait de ballots.
+C'est le contraire de ce qu'on veut : un monde qui a plus de choses doit être **plus
+chargé**, pas aussi chargé autrement.
 
-Chaque objet entre dans le tirage à partir d'une certaine distance — le début de la
-course reste volontairement pauvre, le temps d'apprendre à sauter. Mesuré sur vingt
-parties de quatre mille mètres, 900 obstacles : ce sont les parts ci-dessus.
+**Trois flux indépendants**, chacun avec son propre compteur :
+
+| flux | ce qu'il pose | tirage | cadence |
+| --- | --- | --- | --- |
+| le sol | les obstacles à sauter du monde | **uniforme**, jamais deux fois de suite le même | 88 à 134 m |
+| le ciel | l'oiseau du monde, ou l'un des deux | uniforme, jamais deux fois de suite | 420 à 740 m |
+| les événements | ce que le monde a **en plus** | uniforme, jamais deux fois de suite | 700 à 1 200 m |
+
+Plus aucun poids, plus aucune distance d'entrée. **La seule règle est « jamais deux fois de
+suite le même ».** Une liste d'un seul élément le rend forcément — c'est le cas de l'oiseau
+de deux mondes sur trois.
+
+**Les trois comptent en mètres, pas en secondes.** Une cadence en secondes donne plus
+d'obstacles au kilomètre quand on va doucement, et la course accélère du simple au double :
+la fréquence n'aurait été comparable ni d'un bout de partie à l'autre, ni d'un monde à
+l'autre. En mètres, elle est la même du premier mètre au dernier.
+
+Mesuré sur 134 km par monde, en espionnant les trois semeurs :
+
+| | champ | ville | jungle |
+| --- | --- | --- | --- |
+| au sol | **8,92 /km** | **8,95 /km** | **8,90 /km** |
+| au ciel | 1,73 | 1,70 | 1,63 |
+| événements | 0 | 1,07 (journal) | 1,05 (singe) |
+| **total** | **10,66** | **11,72** | **11,58** |
+| part de chaque dessin au sol | 10,5 à 11,8 % (idéal 11,1) | 13,3 à 15,4 % (idéal 14,3) | 15,5 à 18,5 % (idéal 16,7) |
+| deux fois de suite le même | 0 | 0 | 0 |
+| sol libre entre deux, mini | 602 | 609 | 604 |
+
+Le sol est à la même cadence partout, au centième près. Les écarts de part sont du bruit
+d'échantillonnage — dix tirages par dessin sur 134 km. Et le champ, qui n'a aucun événement,
+est le plus léger des trois : c'est ce qui fait qu'un monde est plus dur qu'un autre.
+
+**Ce que ça coûte, honnêtement :** l'épouvantail — le plus haut obstacle du jeu — n'attend
+plus 800 mètres pour entrer, il peut tomber au cinquantième. Le début de course n'est plus
+protégé. C'était le prix du « vraiment aléatoire ».
+
+### Un oiseau ne se pose jamais au-dessus d'un obstacle
+
+Trois flux indépendants ouvrent une porte que le flux unique tenait fermée. Tout sortant du
+même chapeau, l'espacement séparait aussi le ciel du sol : un oiseau et un banc ne pouvaient
+pas arriver ensemble. Séparés, ils le peuvent — et un oiseau **bas** posé pile au-dessus
+d'un obstacle ne laisse aucune issue : la poule n'a pas le choix de sauter, et elle saute
+dedans.
+
+La règle tient en une hauteur. Au sommet de son saut, le haut de la boîte de la poule monte
+à **419**. Au-dessus de ça, un oiseau ne peut plus être rencontré par une poule qui saute,
+seulement par une poule qui **vole** — et voler est un choix.
+
+Elle s'applique dans les deux sens, parce que les deux cas existent :
+
+- l'oiseau qui arrive quand un obstacle est déjà semé → sa hauteur est tirée **dans la bande
+  haute seulement** ;
+- l'obstacle qui serait semé sous un oiseau bas déjà en vol → il est **décalé de douze
+  mètres**. À 700 unités par seconde, un obstacle qui part en même temps qu'un corbeau
+  arrive un dixième de seconde après lui : sans ça, la moitié des cas passaient au travers.
+
+Vérifié sur 234 km par monde, image par image, plus de 6 000 obstacles au sol : **zéro**
+obstacle survolé par un oiseau bas.
 
 ### Deux règles d'espacement pour le ciel
 
-Deux oiseaux côte à côte ne se lisent plus comme deux obstacles mais comme un mur.
+Deux choses du ciel côte à côte ne se lisent plus comme deux obstacles mais comme un mur.
 
-**L'oiseau**, quel qu'il soit : on n'en lance pas un tant que le précédent n'a pas
-quitté l'écran par la gauche, plus une marge — mesurée sur son propre canevas, pas sur
-celui d'un autre. Il vole à contre-sens, donc il traverse vite et l'attente est courte —
-le corbeau garde 15 % du tirage malgré la règle.
+**L'oiseau**, quel qu'il soit : on n'en lance pas un tant que le précédent n'a pas quitté
+l'écran par la gauche, plus une marge — mesurée sur son propre canevas, pas sur celui d'un
+autre. Le singe compte avec eux : il tient le même étage.
 
-**Le cerf-volant** : jamais deux d'affilée, et jamais un second tant que le premier est
-en vue. Lui fuit dans le **même sens** que la poule et reste longtemps à l'écran ; deux
-de suite, c'est le même obstacle deux fois.
+**Le cerf-volant et le journal** : jamais deux **à la fois**. Ils dérivent lentement et
+restent longtemps en vue ; deux ensemble ne se lisent plus comme deux obstacles mais comme
+un rideau.
 
-Les deux règles ne rejettent pas le tirage pour le refaire : l'objet interdit est
-**retiré du chapeau** avant de tirer, et son poids est redistribué sur les autres. Une
-heure de jeu simulée, image par image : pas une seule image avec deux oiseaux à l'écran,
-pas une avec deux cerfs-volants, pas un cerf-volant suivi d'un cerf-volant.
+La règle disait aussi « jamais deux **de suite** », et elle avait un sens tant que tout
+sortait d'un chapeau commun où d'autres obstacles s'intercalaient. Depuis que les événements
+ont leur propre flux, la ville n'y met **que** des journaux : la règle bloquait alors tous
+les suivants pour de bon — **0,09 journal au kilomètre au lieu de 1,05**, mesuré. Et deux
+journaux espacés de sept cents mètres ne sont pas « deux de suite ».
+
+Les règles ne rejettent pas le tirage pour le refaire : quand le ciel est pris, le flux
+repasse **vingt-cinq mètres plus loin**. Une heure de jeu simulée, image par image : pas une
+seule image avec deux oiseaux à l'écran, pas une avec deux journaux.
 
 ## La mouche dorée
 
@@ -1546,6 +1603,40 @@ fine. Les trois sortent à 2 200 pixels de large, la taille des autres planches 
 Les huit plantes, elles, s'affichent à moins de la moitié de leur définition : elles
 restent telles quelles.
 
+#### Elle laissait passer du blanc au-dessus de l'horizon
+
+Une silhouette de crête ne descend pas jusqu'au bas de sa planche à toutes les colonnes : le
+feuillage de la jungle est **échancré par en bas** — ce sont des bouquets, pas des blocs. Là
+où deux échancrures se superposent, le ciel se voit jusqu'à la ligne d'horizon, et le ciel de
+la jungle est presque blanc.
+
+| échancrure sous le pied de la planche | pire | moyenne |
+| --- | --- | --- |
+| `jung_fond0` | 88 unités | 15 |
+| `jung_fond1` | **122** | 4 |
+| `jung_fond2` | 35 | 5 |
+| les collines du champ | 3 à 7 | 0 à 3 |
+| les tours de la ville | 3 à 8 | 0 à 1 |
+
+Mesuré colonne par colonne sur six cents images : **29 % des colonnes de la jungle**
+laissaient passer du ciel, la pire sur 17 unités, et **aucune image n'en était exempte**. Le
+champ ouvrait quelques colonnes de 5 unités au plus. La ville, elle, n'a jamais rien laissé
+voir : son `fondLevee` peint un aplat sous la crête qui bouche tout.
+
+`fondEnfonce` descend la crête de ce qu'il faut pour que les échancrures passent sous
+l'horizon. C'est le contraire de `fondLevee`, et les deux se cumulent :
+
+| enfoncement de la jungle | colonnes ouvertes | la pire |
+| --- | --- | --- |
+| 0 | 29,2 % | 14 unités |
+| 8 | 0,52 % | 7 |
+| 16 | **0 %** | 0 |
+| **24** (retenu) | **0 %** | 0 |
+
+Seize suffisait ; on en met vingt-quatre, ce qui laisse huit unités de marge pour le jour où
+un dessin de canopée de plus arrivera avec une échancrure plus creuse. Le champ prend le même
+traitement à 8.
+
 #### Une canopée n'est pas une chaîne de montagnes
 
 Le fond de la jungle monte de **720 à 900 unités**, quand le champ plafonne à 440 et la
@@ -1868,15 +1959,16 @@ l'échelle de son dessin, l'ara était le plus gros des deux, planche de 175 sur
 180 sur 210 au toucan et surtout un corps de 81 unités contre 65, alors que dans la nature
 le rapport est inverse — un toco fait quarante-cinq centimètres de plus qu'un ararauna.
 
-**Il est revenu à sa taille.** C'est le dessin qui a le dernier mot : un perroquet est trapu
-là où un toucan est surtout un bec et une envergure, et le rapport entre les deux ne se lit
-donc pas sur la planche mais sur le corps. Le toucan est le plus **grand**, l'ara le plus
-**gros**.
+**Il est revenu à sa taille, puis raboté d'un dixième.** C'est le dessin qui a le dernier
+mot : un perroquet est trapu là où un toucan est surtout un bec et une envergure, et le
+rapport entre les deux ne se lit donc pas sur la planche mais sur le corps. Le toucan est le
+plus **grand**, l'ara le plus **gros**. Sa taille a fait l'aller-retour — 175, puis les trois
+quarts, puis 175, puis 160.
 
 | | toucan | ara |
 | --- | --- | --- |
-| planche | 180 × 210 | 175 × 209 |
-| corps (la boîte) | 65,1 × 41,3 | **88,7 × 47,4** |
+| planche | 180 × 210 | 160 × 191 |
+| corps (la boîte) | 65,1 × 41,3 | **81,1 × 43,3** |
 | vitesse, battement | 140, 9/s | 195, 13/s |
 
 L'aller-retour n'a rien coûté que du calcul : la fenêtre de vol où il est atteignable se
@@ -2530,7 +2622,7 @@ fois. Sa largeur est passée de 96 à **150 unités**, à peu près celle de la 
 ### Le pigeon de la ville, et pourquoi sa chaîne est plus courte
 
 Le ciel de la ville revient au **pigeon** ; le corbeau reste l'oiseau de la ferme. Même
-poids (19), même distance d'entrée (170 m), seul le dessin change.
+cadence — le flux du ciel est le même dans les trois mondes — seul le dessin change.
 
 Sa préparation a demandé beaucoup moins de travail que celle du corbeau, et pour une raison
 qui compte : **ses trois poses sont sur la même feuille**. Le corbeau venait de trois
@@ -2633,30 +2725,16 @@ battements attendus. Pour comparer, la poule en fait 3,25 et l'aigle 1,9.
 
 ### Un poids plus fort pour la même présence
 
-Le corbeau est d'abord sorti au poids exact de l'aigle, 16 sur cent. Et il paraissait
-plus rare. Mesuré sur cinq courses de dix minutes, il ne l'était pas : il était **lancé
-un peu plus souvent** que l'aigle — 9,2 oiseaux par minute contre 8,8 — puisque le
-cerf-volant avait quitté le chapeau et que sa part s'était redistribuée.
+*Ce réglage n'existe plus : le ciel a maintenant son propre flux, à cadence fixe en mètres,
+et il n'y a plus de poids à équilibrer. La mesure qui l'avait motivé reste vraie et vaut
+d'être gardée.*
 
-Ce qui avait baissé, c'est le **temps de présence** : un oiseau à l'écran 13,3 % du temps
-contre 15,3 % pour l'aigle d'avant. La raison est mécanique. Le corbeau est plus petit,
-donc il dégage le cadre plus tôt ; la règle qui interdit deux oiseaux à la fois le remet
-plus vite dans le chapeau, et on le relance sans l'avoir vu davantage. Plus de départs,
-moins de ciel occupé.
-
-C'est la présence qui se remarque, pas le compte des départs. Son poids passe donc à
-**19** :
-
-| | lancés par minute | un oiseau à l'écran |
-| --- | --- | --- |
-| aigle d'avant (16, avec le cerf-volant) | 8,8 | **15,3 %** du temps |
-| corbeau à 16 | 9,2 | 13,3 % |
-| corbeau à 19 | 10,9 | **15,8 %** |
-
-Moyennes de cinq courses de dix minutes chacune : une seule course bouge d'un point et
-demi d'une fois sur l'autre, et le poids se serait choisi sur du bruit. Vérifié au
-passage, sur vingt parties de quatre mille mètres : 17,4 % de ce que la ferme lance,
-aucun aigle, aucun cerf-volant, jamais deux oiseaux à l'écran en dix minutes de course.
+Le corbeau est d'abord sorti au poids exact de l'aigle, 16 sur cent. Et il paraissait moins
+présent — parce qu'il l'était. **C'est la présence qui se remarque, pas le compte des
+départs :** plus petit que l'aigle, il dégageait le cadre plus tôt, et la règle qui interdit
+deux oiseaux à la fois le remettait donc plus vite dans le chapeau sans qu'on l'ait vu
+davantage. Mesuré sur cinq courses de dix minutes, en **temps de présence à l'écran** :
+13,3 % à poids 16, contre 15,3 % pour l'aigle d'avant. À 19, 15,4 %.
 
 ## L'aigle, mis de côté
 
