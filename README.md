@@ -1548,7 +1548,7 @@ restent telles quelles.
 
 #### Une canopée n'est pas une chaîne de montagnes
 
-Le fond de la jungle monte de **720 à 900 unités**, quand le champ plafonne à 678 et la
+Le fond de la jungle monte de **720 à 900 unités**, quand le champ plafonne à 440 et la
 ville à 800 : c'est le fond le plus haut des trois mondes. Il n'est pas loin pour autant :
 dans une jungle on ne voit pas loin, et ce qui bouche la vue n'est pas un relief à
 l'horizon, c'est le feuillage d'à peine cent mètres plus loin. Les arbres du second plan
@@ -1922,36 +1922,68 @@ point de lâcher se calcule à chaque image, à partir de la vitesse du moment e
 hauteur de sa main — la chute est un mouvement uniformément accéléré dont on connaît tout
 d'avance, le temps de vol se résout exactement — et il recule quand la course accélère.
 
-Le bord droit de la boîte de la poule est à 268 unités. **La cible est posée aussi près
-d'elle que la mesure l'autorise**, parce qu'une noix qui éclate loin devant se lance loin
-devant, et qu'on veut voir le singe lancer plutôt que voir son bras sortir du cadre. Elle a
-d'abord été à 380, puis descendue par paliers — chacun mesuré sur quinze vitesses de 520 à
-900 et quatre formes d'écran, soit soixante cas :
+#### Elle va maintenant jusqu'au bord bas gauche
 
-| cible | la noix éclate avant la poule de | morts |
+La cible a longtemps été à 320, c'est-à-dire **cinquante unités devant la poule**, dont la
+boîte s'arrête à 268. La noix n'entrait donc jamais dans sa colonne : elle éclatait avant,
+et tout se jouait au-dessus du quart droit de l'écran. C'était sûr, et c'était étriqué.
+
+Elle est maintenant à **34**. La noix fait 42 de large : son bord gauche vient lécher le
+bord du cadre. Elle traverse toute la scène en descendant, passe **au-dessus de la poule**
+et s'écrase derrière elle, dans le coin bas gauche.
+
+**Ce qui garantit encore la poule qui court.** La règle n'a pas changé ; c'est la façon de
+la tenir qui a changé. Avant, la noix n'existait plus quand la colonne de la poule
+arrivait. Maintenant elle la traverse, et c'est la **hauteur** qui protège : la chute est
+un mouvement uniformément accéléré, elle est lente en haut et rapide en bas, et la colonne
+de la poule est franchie dans le **premier tiers** du vol. Mesuré sur quinze vitesses de
+520 à 900 et cinq formes d'écran — soixante-quinze cas — voici le plus bas que le bas de la
+noix descende entre x = 200 et x = 262 :
+
+| | à 520 u/s | à 900 u/s | la tête de la poule |
+| --- | --- | --- | --- |
+| téléphone (plafond −1022) | −572 | −430 | −98 |
+| bureau (plafond −551) | −393 | **−303** | −98 |
+
+Le pire cas — une fenêtre de bureau à pleine vitesse — laisse **205 unités**, soit plus de
+deux hauteurs de sa boîte. **Zéro mort sur les soixante-quinze cas.**
+
+**Et ce que ça fait gagner.** Une noix qui traverse au lieu de disparaître devient un vrai
+obstacle pour la poule qui **vole** : entre 300 et 570 selon la vitesse, il faut lui céder
+le passage. Cette mort-là a une parade, deux même — monter au-dessus ou redescendre — là où
+la mort de la poule au sol n'en avait aucune. Le singe lâche aussi plus tard : sa main part
+de x = 300 à 630 selon la vitesse, au lieu de 760. C'est-à-dire **en plein cadre au lieu du
+bord droit** : on le voit lancer.
+
+#### Le choc, maintenant qu'il se voit
+
+Tant que la noix éclatait à 320, en l'air et au milieu du cadre, neuf grains de poussière
+suffisaient. Elle touche terre au coin de l'écran : le choc mérite d'être vu. Trois choses,
+toutes empruntées à des effets qui existaient déjà — on ne fabrique pas un vocabulaire pour
+une noix :
+
+| | quoi | combien |
 | --- | --- | --- |
-| 380 | 80 à 91 unités | 0 |
-| 340 | 37 à 50 | 0 |
-| 330 | 31 à 42 | 0 |
-| **320** | **22 à 32** | **0** |
-| 310 | 8 à 21 | 0 |
-| 290 | de −13 à 4 | **4** |
+| poussière | les ronds pâles des appuis de la poule | 12 grains |
+| mottes | la giclée de terre de la pierre tombale qui s'enfonce | 12, contre 24 pour la pierre |
+| secousse | la même que la mort, en bien plus court | 7, contre 22 à la mort et 6 à un appui |
 
-C'est à 290 que le plancher cède, et il cède d'un coup : la noix arrive dans la colonne de
-la poule avant d'avoir touché terre. On s'arrête donc deux paliers plus haut. Vingt-deux
-unités, ce n'est pas une marge de temps mais de **géométrie** — la noix n'existe plus à
-partir de là, quelle que soit la vitesse — et vingt-deux unités valent plus d'une largeur
-de noix.
+Deux réglages ont demandé une mesure plutôt qu'un choix.
 
-Ce que ça change à l'écran : au lâcher, on voit **57 %** du singe au début d'une course,
-contre 30 % quand la cible était à 380. On voit la tête, le bras tendu et la noix qui s'en
-va, au lieu d'un avant-bras qui dépasse du bord.
+**La poussière monte au lieu de fuir.** Elle partait avec l'élan de la noix — vitesse
+horizontale entre −40 et −190 — ce qui la sortait du cadre par la gauche **en trois
+images**, maintenant qu'elle éclate au bord. Elle ne file plus qu'à peine, et de préférence
+vers la droite : le nuage reste sur le point de chute, et on a le temps de le voir.
 
-**Elle tombe et elle éclate.** Une fiente posée reste et pâlit — une trace sur un trottoir
-a une raison d'être là ; une noix fendue n'en a aucune, et le sol de la jungle est déjà
-chargé. Il n'en reste que neuf grains de poussière et un claquement sec, très haut de
-spectre : rien à voir avec le choc de la poule, qui est long et grave. Celui-ci ne doit pas
-se lire comme une mort mais comme un objet qui tombe à côté.
+**Les mottes défilent avec le sol.** Celles de la pierre tombale ne le font pas, et elles
+ont raison : quand la pierre se plante, la course est finie et le monde ne bouge plus.
+Celles de la noix tombent sur un sol qui glisse encore vers la gauche — posées dessus sans
+le suivre, elles resteraient plantées en l'air à l'échelle du décor. Le même générateur
+sert aux deux, avec un drapeau de plus.
+
+Le claquement, lui, n'a pas changé : sec et très haut de spectre, rien à voir avec le choc
+de la poule qui est long et grave. Il ne doit pas se lire comme une mort mais comme un
+objet qui tombe à côté.
 
 La noix part de sa main, et cette main est dessinée — inutile de la placer à l'estime :
 mesurée sur la planche de la pose armée, elle est à 156 pixels à gauche de l'œil et 23
@@ -2485,12 +2517,14 @@ profondeur :
 | Plan | Contenu | Vitesse |
 |---|---|---|
 | Premier | Sol, obstacles à sauter, herbe et cailloux | pleine |
-| Deuxième | Arbres, sapin, cyprès, tracteur, moulin, panneaux | un tiers |
-| Fond | Massifs montagneux et collines | un dixième |
+| Deuxième | Arbres, sapin, cyprès, tracteur, moulin, grange, panneaux | un tiers |
+| Au loin | L'éolienne de pompage, posée sur la crête | un dixième |
+| Fond | Collines rondes | un dixième |
 
-Trois valeurs étagent la profondeur : la plus claire pour les massifs du fond,
+Trois valeurs étagent la profondeur : la plus claire pour les collines du fond,
 une plus foncée pour les arbres du deuxième plan, et l'encre des dessins de
-devant. La ligne d'horizon prend la teinte des arbres — elle marque le fond du
+devant. Une quatrième s'en déduit — le tiers du chemin entre les deux premières —
+pour ce qui se tient *sur* la crête sans lui appartenir. La ligne d'horizon prend la teinte des arbres — elle marque le fond du
 champ, elle n'y appartient pas.
 
 Ce sont des aplats opaques : rien ne se voit au travers. Ils suivent quand même
@@ -2556,6 +2590,102 @@ ou un moulin de loin en loin.
 | Tracteur | 6 % |
 | Moulin | 6 % |
 
+### Le champ n'a plus de montagnes
+
+Le fond du champ tenait sur deux familles : quatre **massifs à arêtes**, de 412 à 678
+unités, et quatre **collines rondes**, de 146 à 221. C'était l'écart entre les deux qui
+faisait le relief — et c'était une chaîne alpine derrière une ferme.
+
+Les quatre massifs sont retirés, planches comprises : le fichier perd 400 Ko. Il ne reste
+que les collines, et le relief vient maintenant d'ailleurs — de leur **taille, tirée à la
+plantation**, comme un arbre du deuxième plan. Deux exemplaires du même dessin ne font plus
+le même volume, et la crête monte et descend au lieu d'onduler à hauteur constante.
+
+Ce n'est pas la perte de hauteur qu'on pourrait croire. On perd le sommet, on garde la
+gamme — et on la garde **continue**, là où huit dessins ne donnaient que huit hauteurs :
+
+| | avant | après |
+| --- | --- | --- |
+| dessins sur la crête | 8 | 4 |
+| hauteurs possibles | 8, fixes | continues |
+| gamme mesurée sur 58 km | 146 à 678 | **150 à 440** (médiane 254) |
+| silhouettes distinctes vues | 8 | **39** |
+
+**C'est la largeur qui plafonne la pousse, pas la hauteur.** Ces dessins-là sont très
+larges pour ce qu'ils sont hauts — 867 à 1 236 unités de large pour 146 à 221 de haut, ce
+sont des houles et non des buttes. Une colline au double fait donc déjà deux mille cinq
+cents unités, soit **plus de trois écrans**. Au-delà, la crête n'aurait plus qu'une
+silhouette à l'écran à la fois et ne varierait plus du tout. Le coefficient est donc arrêté
+au double, et pas plus.
+
+**En pixel, la taille ne varie pas** — la règle vaut ici comme pour les arbres : une
+planche unique ne peut pas suivre une échelle continue sans changer la taille de ses
+pixels, et c'est la seule chose du jeu qui n'ait pas le droit de bouger. Ce qui varie la
+crête en pixel, c'est le **miroir** : quatre dessins, huit silhouettes, et pas un pixel
+déplacé sur la grille. Vérifié en mesurant, pour les seize planches du champ, la largeur
+d'affichage en pixels CSS divisée par la largeur de planche — ce quotient *est* la taille
+d'un pixel d'art. En pixel, mille échelles tirées donnent toutes 1,00, et le grain va de
+**0,33177 à 0,33415** pour un `PX_JEU` de 0,33333 : zéro planche hors grille, l'éolienne et
+la grange comprises.
+
+**Et la chaîne a dû être resemée.** Elle était semée « depuis −900 jusqu'à passer
+VIEW_W + 1600 », ce qui tenait tant que le seuil de sortie valait −1 067 et que toutes les
+silhouettes se ressemblaient. Depuis que les collines tirent leur taille, ce seuil est
+descendu à −2 552 : la chaîne partait donc **mille six cents unités après son propre point
+de recyclage**, et elle gardait ce retard toute la partie — chaque replantation lui reprend
+à gauche exactement ce qu'elle lui rend à droite, le nombre ne bouge plus. Le garde-fou
+reposait alors la colline au bord droit du cadre en laissant un trou derrière elle : **1 821
+images** de ciel ouvert jusqu'à l'horizon sur dix minutes, la pire béante sur 188 unités.
+Elle se sème maintenant comme le deuxième plan — sur un **nombre** calculé au pire cas
+(toutes à la plus étroite, à leur plus petite taille, au chevauchement maximal), et depuis
+le seuil de sortie. Zéro trou sur dix minutes, dans les trois mondes.
+
+### L'éolienne, et pourquoi elle a sa propre bande
+
+Une éolienne de pompage se tient au loin sur les collines. Elle n'est **ni sur la crête ni
+au deuxième plan** : c'est une troisième bande, à la parallaxe de la crête — elle en fait
+partie — mais **semée** et non chaînée. Ces objets-là ne se recouvrent pas, ils se croisent
+de loin en loin.
+
+Elle existe parce que la crête ne pouvait pas la porter. Mise dans la chaîne des collines,
+l'éolienne se faisait **avaler** : la chaîne place chaque silhouette à partir du bord droit
+de la plus avancée, en la reculant de son chevauchement, et une colline de mille unités
+recule de quatre cents — c'est-à-dire qu'elle recouvre entièrement une éolienne de cent
+soixante de large plantée juste avant.
+
+**Et elle ne peut pas être de la couleur des collines.** Première version, peinte au ton de
+la crête comme tout ce qui s'y trouve : elle disparaissait purement et simplement. Un objet
+de la même couleur que le fond sur lequel il se détache n'a pas de contour, et une éolienne
+de 260 unités plantée devant une colline qui en fait 300 n'existe plus — ce n'était pas un
+cas rare, les collines vont jusqu'à 442.
+
+Sa teinte ne se choisit donc pas, elle se **déduit de sa profondeur** : elle est sur la
+crête, donc devant elle, et derrière le deuxième plan. On prend le tiers du chemin qui va de
+l'une à l'autre. Assez pour qu'elle se lise sur n'importe quelle colline, assez loin du
+deuxième plan pour qu'on ne la confonde pas avec un arbre du bord de route.
+
+**Combien souvent.** L'écart se compte en unités de crête, et la crête ne va qu'au dixième
+de la course : deux mille unités de fond valent vingt mille unités de terrain, soit une
+bonne demi-minute à pleine vitesse. Posé entre 1 800 et 3 600, il laisse une éolienne à
+l'écran **32,1 % du temps**, mesuré sur 58 km — assez pour que le champ en ait une, trop peu
+pour qu'on croie à une ligne électrique.
+
+Un défaut de tirage est tombé avec elle. Le tireur de clés interdit de sortir deux fois de
+suite le même dessin ; sur une table qui n'en contient **qu'un**, cette règle n'a pas de
+réponse et il rendait `undefined`. De là une largeur `NaN` qui contaminait toute la chaîne :
+l'éolienne, seule de sa bande, partait à l'abscisse `NaN` dès le deuxième tirage et ne se
+repeignait plus jamais. Une seule clé, c'est forcément celle-là.
+
+### La grange
+
+Elle est plus **basse** que les arbres — 330 contre 480 à 570 — et de loin la plus
+**large** : son dessin fait une fois et demie sa hauteur, ce qui lui donne 520 unités,
+presque les deux tiers de l'écran. C'est voulu, et c'est ce qui la distingue de tout le
+reste du plan. Un chêne est un trait vertical ; une grange est une masse horizontale, et
+c'est le seul objet du champ qui pose une longue horizontale derrière la course. Le moulin
+domine par le haut, la grange par le côté. Au poids du tracteur et du moulin — quatre sur
+cent — elle est passée **91 fois sur 58 km**, soit une fois et demie par kilomètre.
+
 ## Perspective
 
 Le sol n'est pas vu de face : la ligne d'horizon est le fond du champ, et ce qui
@@ -2564,7 +2694,7 @@ lointain au plus proche :
 
 | Élément | Appui sous la ligne |
 |---|---|
-| Massifs et collines du fond | 2 |
+| Collines du fond, éolienne | 2 |
 | Arbres, tracteur, panneaux, moulin | 4 |
 | Herbe et cailloux | 7 à 47, tiré au hasard |
 | Poule, aigles, mouches, particules | 14 |
