@@ -1786,25 +1786,43 @@ Même chaîne que le pigeon, et pour la même raison : ses trois poses sont sur 
 feuille, calées sur son **œil** — le seul fond enfermé de sa tête, donc trouvable sans
 rien deviner, et le point qui ne bouge pas quand les ailes battent.
 
-Avec une différence : **les trois n'étaient pas de la même taille.** La main a dérivé en
-traversant la feuille, et quatre mesures indépendantes le disent d'une seule voix.
+Avec une différence : **les trois ne sont pas de la même taille.** La main dérive en
+traversant la feuille. C'est la **joue crème** qui le dit — le plus gros fond enfermé de
+chaque pose, une pièce rigide de la tête qui ne dépend ni des ailes ni du pli du cou :
 
-| | aire du bec | largeur du bec | hauteur du bec | aire de l'œil | **taille retenue** |
-| --- | --- | --- | --- | --- | --- |
-| ailes hautes | 2 929 | 102 | 45 | 245 | **1,048** |
-| ailes au milieu | 2 667 | 95 | 43 | 211 | **0,988** |
-| ailes basses | 2 445 | 93 | 43 | 197 | **0,964** |
+| | joue crème | **taille** | encre |
+| --- | --- | --- | --- |
+| ailes hautes | 4 336 px | **1,044** | 514 × 463 |
+| ailes au milieu | 3 954 px | **0,997** | 479 × 231 |
+| ailes basses | 3 669 px | **0,960** | 470 × 360 |
 
-Le bec est la mesure qui compte : c'est une pièce rigide, elle ne dépend ni de la pose des
-ailes ni du pli du cou. Sept pour cent d'écart entre la première et la dernière, ça se voit
-au battement — l'oiseau respire au rythme de ses ailes. Les trois sont donc ramenées à leur
-taille moyenne **autour de l'œil**, si bien que le point fixe le reste.
+**Huit pour cent** entre la plus grande et la plus petite, et huit pour cent au battement,
+ça se voit comme une respiration — l'oiseau enflerait au rythme de ses ailes. Les trois sont
+donc ramenées à leur taille moyenne **autour de l'œil**, si bien que le point fixe le reste.
 
-Sa taille de jeu se pose sur le **corps**, comme celle des trois autres oiseaux : 66 unités,
+**Et la boîte commune se mesure après la mise à l'échelle, pas avant.** Les boîtes sont
+écrites depuis l'œil, qui est justement le centre de l'homothétie : les mettre à l'échelle
+revient à multiplier leurs quatre bornes par le facteur de la pose. Prise sur les boîtes
+brutes, l'union coupait la pose agrandie de 4 % — **47 pixels d'encre sur le bord gauche de
+la troisième planche**, c'est-à-dire la pointe de son bec. Vérifié après correction : zéro
+pixel d'encre sur les quatre bords des trois planches.
+
+**Son bec est passé en couleur.** La feuille d'origine lui donnait un bec orange uni ; la
+nouvelle lui donne celui d'un toco — vert, orange, rouge et bleu. Le détourage n'en sait
+rien et n'a pas à le savoir : il ne sépare que l'encre du papier, et un bec bariolé est de
+l'encre comme un bec orange.
+
+Sa taille de jeu se pose sur le **corps**, comme celle des trois autres oiseaux : 65 unités,
 à peine plus que le pigeon (62), moins que le corbeau (82). Sa planche, elle, est la plus
 grande des quatre — **trois fois son corps**, quand celle du corbeau n'en fait qu'une fois
 trois quarts. Un toucan est surtout un bec et une envergure, et se caler sur la planche
 l'aurait fait entrer dans le ciel comme un aigle.
+
+**Le bec est coupé à l'œil, et ce n'est pas la mesure qui le décide.** L'intersection des
+trois corps remonte jusqu'au milieu du bec — un bec de toucan est épais, il pèse donc dans
+le compte des colonnes denses. Mais il ne tue pas : c'est une lame de corne creuse, et une
+boîte qui l'aurait avalé aurait tué **23 unités avant l'oiseau**. On garde donc le bord
+droit mesuré et on ramène le bord gauche à l'œil.
 
 Il vole plus lentement (140 contre 175 et 165) et bat plus lentement (9 images par seconde
 contre 12 et 14) : c'est un gros oiseau au vol lourd, pas un pigeon de ville.
@@ -1842,29 +1860,30 @@ qu'un éventail de plumes. C'est ce qui fait tomber sa part d'encre couverte à 
 Il vole plus vite et bat plus vite : **195 contre 140**, treize battements par seconde contre
 neuf. Le toucan est lourd, l'ara file.
 
-#### Il est plus petit que le toucan, et c'est mesuré
+#### Il a rétréci, puis il est revenu
 
-Sorti à l'échelle de son dessin, l'ara était le **plus gros** des deux : planche de 175 sur
-213 contre 180 sur 212 au toucan, et surtout un corps de **81 unités** contre 66. Le rapport
-est inverse dans la nature — un toco fait quarante-cinq centimètres de plus qu'un ararauna —
-et il l'était aussi à l'écran : le second oiseau écrasait le premier.
+Il est passé un temps aux **trois quarts** de sa taille : planche de 135 sur 165, corps de
+62 unités — exactement celui du pigeon. La raison tenait en une comparaison : sorti à
+l'échelle de son dessin, l'ara était le plus gros des deux, planche de 175 sur 213 contre
+180 sur 210 au toucan et surtout un corps de 81 unités contre 65, alors que dans la nature
+le rapport est inverse — un toco fait quarante-cinq centimètres de plus qu'un ararauna.
 
-Il est ramené aux **trois quarts** : planche de 135 sur 165, corps de **62 unités**, boîte de
-62,4 × 32,1. Ce chiffre n'est pas arrondi au hasard, c'est exactement celui du pigeon de la
-ville : la plus petite boîte d'oiseau du jeu, et l'ara la partage désormais.
+**Il est revenu à sa taille.** C'est le dessin qui a le dernier mot : un perroquet est trapu
+là où un toucan est surtout un bec et une envergure, et le rapport entre les deux ne se lit
+donc pas sur la planche mais sur le corps. Le toucan est le plus **grand**, l'ara le plus
+**gros**.
 
-Ce que la réduction ne change pas, vérifié après coup :
-
-| | avant | après |
+| | toucan | ara |
 | --- | --- | --- |
-| il tue | oui | oui |
-| atteignable en volant entre | −368 et −456 | −368 et −456 |
-| encre couverte par la boîte | 86 / 81 / 74 % | 86 / 81 / 74 % |
-| planches pixel | ×0,77 du trait | déjà plus fines, rien à regénérer |
+| planche | 180 × 210 | 175 × 213 |
+| corps (la boîte) | 65,1 × 41,3 | **80,9 × 41,7** |
+| encre couverte par la boîte | 97 / 95 / 85 % | 86 / 81 / 74 % |
+| vitesse, battement | 140, 9/s | 195, 13/s |
 
-La fenêtre de vol ne bouge pas parce qu'elle se mesure depuis la **boîte**, pas depuis la
-planche, et que la boîte descend avec elle. La part d'encre couverte ne bouge pas non plus :
-c'est un rapport, et on a réduit le numérateur et le dénominateur du même coup.
+L'aller-retour n'a rien coûté que du calcul : la fenêtre de vol où il est atteignable se
+mesure depuis la **boîte** et non depuis la planche, elle suit donc toute seule — −360 à
+−456 avant comme après. La part d'encre couverte non plus ne bouge pas : c'est un rapport,
+et l'échelle en change les deux termes du même coup.
 
 ### Le singe, et sa noix
 
@@ -1954,6 +1973,55 @@ le passage. Cette mort-là a une parade, deux même — monter au-dessus ou rede
 la mort de la poule au sol n'en avait aucune. Le singe lâche aussi plus tard : sa main part
 de x = 300 à 630 selon la vitesse, au lieu de 760. C'est-à-dire **en plein cadre au lieu du
 bord droit** : on le voit lancer.
+
+#### Il ne lance plus toujours pareil
+
+Un seul angle et un seul point de chute, et le troisième singe rejouait exactement le
+premier : la trajectoire était bonne, mais elle était **une**. Chaque singe tire donc son jet
+**en entrant**, deux nombres qui vivent sur lui jusqu'à ce qu'il lâche — un **angle** dans un
+cône, et un **point de chute** dans une bande.
+
+**L'angle, et non la vitesse de jet.** C'est le point qui fait tout tenir. À vitesse de jet
+fixe, l'angle du départ vaut `atan(vy0 / (vitesse du sol + 150))` : 36 degrés au démarrage de
+la course, 25 à pleine vitesse. Le cône se refermait donc tout seul à mesure que le monde
+accélérait. En tirant l'**angle** et en en déduisant la vitesse, le cône est le même du
+premier mètre au dernier — c'est bien un cône, pas une conséquence de la vitesse du sol.
+
+**Où poser les bornes.** On a relevé, pour onze angles et six points de chute, le plus bas
+que la noix descende dans la colonne de la poule qui court, au pire de quinze vitesses et de
+trois formes d'écran. La carte est nette, et sa leçon n'est pas celle qu'on attendait :
+
+| point de chute | le plus bas dans sa colonne | |
+| --- | --- | --- |
+| 20 | −302 à −520 selon l'angle | |
+| 50 | −251 à −436 | |
+| 80 | −213 à −340 | ← borne retenue |
+| 110 | −160 à −260 | la marge tombe sous une hauteur de poule |
+| 150 | −80 à −141 | **elle meurt** à tous les angles sous 46° |
+| 200 | −42 à −57 | **elle meurt partout** |
+
+C'est le **point de chute** qui commande, presque pas l'angle. La raison est géométrique :
+plus la noix vise près de la poule, moins il lui reste de chute *après* sa colonne, donc plus
+bas elle y passe. L'angle ne fait que dix pour cent de différence — un jet rasant arrive de
+plus loin, mais avec la même géométrie d'arrivée.
+
+Le point de chute reste donc serré, **entre 20 et 80** : c'est le bord bas gauche, comme
+demandé. L'angle, lui, s'ouvre en grand — **quarante degrés, de 25 à 65** — puisqu'il ne
+coûte presque rien à la garantie. Et c'est bien l'angle qu'on voit :
+
+| angle | lâchée en x | images de vol | éclate en x |
+| --- | --- | --- | --- |
+| 25° | 521 | 36 | 25 |
+| 45° | 509 | 31 | 84 |
+| 65° | 334 | 23 | 23 |
+
+Deux cent vingt unités d'écart sur le point de lâcher, et treize images d'écart sur la durée
+du vol : d'un singe qui lance à peine entré dans le cadre à un singe qui lance au milieu.
+
+Le cône retenu, re-mesuré entier — neuf jets par vitesse, quinze vitesses, cinq formes
+d'écran, **675 jets** : la noix descend au plus bas à −307 sur un téléphone et à −220 sur une
+fenêtre de bureau, quand la tête de la poule qui court est à −98. **122 unités de garde au
+pire**, une hauteur et demie de sa boîte, et **zéro mort** sur les 675.
 
 #### Le choc, maintenant qu'il se voit
 
@@ -2090,13 +2158,44 @@ dans la boîte de la poule. C'est la mesure qui l'a dit, pas le raisonnement. El
 maintenant écartée explicitement de la boucle : savoir si quelque chose blesse est une
 autre question que savoir quelle forme il a.
 
-Elle est dessinée **en code**, comme le cœur et l'étoile : quinze unités de haut n'ont pas
-besoin d'une planche, et une goutte qui s'écrase demande de toute façon deux formes et non
-deux images. Deux corrections en la dessinant — une forme pointue aux deux bouts se lisait
-comme un grain de riz et ne tombait pas (c'est une **larme** : pointue en haut, par où elle
-est partie, ronde en bas où le poids l'a rassemblée) ; et les deux éclaboussures de la
-trace, enchaînées dans un seul chemin, se reliaient par une droite qui barrait la tache en
-diagonale.
+#### Elle est dessinée, depuis
+
+Les deux états étaient tracés **en code** — une larme cerclée d'encre en vol, trois ellipses
+au sol — parce qu'un dessin de quinze unités n'a pas besoin d'une planche. Ce sont maintenant
+deux planches, et elles disent chacune plus que le tracé ne pouvait : la goutte est
+**étirée**, avec trois traits de vitesse au-dessus d'elle et deux gouttelettes qui la
+suivent ; la tache est une **éclaboussure à huit branches**, avec ses éclats détachés. Ni
+l'une ni l'autre ne se décrivent en trois courbes de Bézier.
+
+**Leur détourage est l'inverse de tous les autres.** Partout ailleurs le fond est ce qui est
+clair et l'objet ce qui est sombre. Ici l'objet est **blanc** — c'est une fiente — posé sur
+un papier crème à peine plus sombre : neuf unités de clarté les séparent, aucun seuil ne les
+séparera jamais. Ce qui les sépare est le **trait noir** du contour. On seuille donc très
+haut, ce qui met le papier *et* l'intérieur du même côté, puis on inonde depuis les quatre
+bords : l'inondation couvre le papier et **bute sur le trait**. Ce qu'elle n'atteint pas est
+la fiente, intérieur compris. Aucun trou n'est percé — une fiente n'en a pas, et
+l'enfermement est justement ce qui la définit ici.
+
+**Les traits de vitesse restent sur celle qui tombe et disparaissent de celle qui est
+posée.** Ils disent exactement ce que fait la première ; sur une tache immobile qui reste
+deux secondes à l'écran en pâlissant, ils se liraient comme un défaut. On les reconnaît sans
+les nommer : ce sont les amas entièrement **au-dessus** du plus gros.
+
+**Ce qui tue, c'est la goutte, pas ses traits de vitesse.** La planche en vol les porte en
+plus d'elle, et la goutte n'occupe que la tranche 0,225 à 0,845 de sa hauteur — mesurée sur
+la planche, pas estimée. La boîte de collision est rendue à cette tranche-là ; sans quoi elle
+aurait tué quatorze unités trop tôt. Et la fiente se pose quand le **bas de la goutte** touche
+terre, pas quand le milieu de sa planche l'atteint : sinon elle s'enfonçait de sept unités
+dans le trottoir avant de devenir une tache.
+
+Les deux photos font 1 254 rangées et s'affichent à une soixantaine d'unités : elles sont
+**ramenées à 320 et 220 rangées** — encore le double de ce que l'écran demande — ce qui fait
+tomber les 342 Ko de départ à 117, et moyenne au passage le grain du JPEG.
+
+Un dernier détail de méthode : la tache au sol ne se posait dans **aucun état visité** par la
+sonde qui mesure les tailles d'affichage — il faut un pigeon, de la chance et du temps — de
+sorte qu'elle sortait absente du fichier des tailles et que le mode pixel n'avait pas de
+planche à lui donner. Les deux états sont maintenant posés à la main dans la promenade.
 
 ### Une poubelle, un cône, et le jour où il a fallu la nommer
 
