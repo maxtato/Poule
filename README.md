@@ -1842,6 +1842,30 @@ qu'un éventail de plumes. C'est ce qui fait tomber sa part d'encre couverte à 
 Il vole plus vite et bat plus vite : **195 contre 140**, treize battements par seconde contre
 neuf. Le toucan est lourd, l'ara file.
 
+#### Il est plus petit que le toucan, et c'est mesuré
+
+Sorti à l'échelle de son dessin, l'ara était le **plus gros** des deux : planche de 175 sur
+213 contre 180 sur 212 au toucan, et surtout un corps de **81 unités** contre 66. Le rapport
+est inverse dans la nature — un toco fait quarante-cinq centimètres de plus qu'un ararauna —
+et il l'était aussi à l'écran : le second oiseau écrasait le premier.
+
+Il est ramené aux **trois quarts** : planche de 135 sur 165, corps de **62 unités**, boîte de
+62,4 × 32,1. Ce chiffre n'est pas arrondi au hasard, c'est exactement celui du pigeon de la
+ville : la plus petite boîte d'oiseau du jeu, et l'ara la partage désormais.
+
+Ce que la réduction ne change pas, vérifié après coup :
+
+| | avant | après |
+| --- | --- | --- |
+| il tue | oui | oui |
+| atteignable en volant entre | −368 et −456 | −368 et −456 |
+| encre couverte par la boîte | 86 / 81 / 74 % | 86 / 81 / 74 % |
+| planches pixel | ×0,77 du trait | déjà plus fines, rien à regénérer |
+
+La fenêtre de vol ne bouge pas parce qu'elle se mesure depuis la **boîte**, pas depuis la
+planche, et que la boîte descend avec elle. La part d'encre couverte ne bouge pas non plus :
+c'est un rapport, et on a réduit le numérateur et le dénominateur du même coup.
+
 ### Le singe, et sa noix
 
 Ce n'est pas un oiseau : il ne traverse pas le ciel, **il y est accroché**. Pendu à sa
