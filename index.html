@@ -1987,8 +1987,17 @@ const VILLE_DECOR = {ville_imm0:565, ville_imm1:624, ville_imm2:406, ville_imm3:
    du premier plan, sans quoi leurs pixels seraient deux fois plus fins que ceux de leurs
    voisins. */
 const VILLE_MILIEU = {ville_bloc0:376, ville_bloc1:374, ville_bloc2:549,
-                      ville_bloc3:352, ville_bloc4:335};
-const VILLE_MILIEU_LAMPE = {ville_lampe_loin:200};
+                      ville_bloc3:352, ville_bloc4:335, ville_lampe_loin:200};
+/* LE REVERBERE EST DANS LA CHAINE, PAS SEME A COTE. Il l'etait — une rangee independante,
+   posee devant la bande — et cela avait un sens tant que le pate etait un mur continu :
+   un reverbere pris dans ce mur s'y serait fait ensevelir. Depuis que les immeubles
+   RESPIRENT, la place entre deux est justement celle qu'il lui faut, et c'est la qu'on le
+   demande. Un maillon de chaine tombe forcement entre ses deux voisins.
+   SON POIDS VAUT DIX CONTRE QUINZE, soit deux tirages sur cinq ; la regle du « jamais deux
+   fois de suite », qui vaut pour toute chaine, interdit d'en aligner deux et ramene le
+   compte reel a un intervalle sur deux ou trois. */
+const VILLE_MILIEU_POIDS = {ville_bloc0:3, ville_bloc1:3, ville_bloc2:3,
+                            ville_bloc3:3, ville_bloc4:3, ville_lampe_loin:10};
 /* QUI PORTE SA PROPRE DALLE. Les quatre immeubles sont dessines poses sur un bout de
    trottoir ; le reverbere, la voiture et la benne n'ont rien sous eux. Les premiers se
    posent donc au sol du plan, les seconds SUR la dalle — voir TROTTOIR plus bas.
@@ -4195,14 +4204,17 @@ function reset(depuis){
     let court=Infinity;
     for(const k of cles){
       const w=largeurDe(k,B.cles);
-      court=Math.min(court, w - Math.min(ec+je, w*CHEVAUCHE_MAX));
+      court=Math.min(court, B.espace ? w+ec : w - Math.min(ec+je, w*CHEVAUCHE_MAX));
     }
     const combien=Math.ceil(((VIEW_W+1600)-sortieFond.bandes[i])/court)+1;
     let p=null, x=sortieFond.bandes[i];
     for(let n=0;n<combien;n++){
-      p=tireCle(cles,p); ch.push({k:p, x, mir:B.miroir?miroirDe():false});
-      x += largeurDe(p,B.cles) - Math.min(ec+Math.random()*je,
-                                          largeurDe(p,B.cles)*CHEVAUCHE_MAX);
+      p=tireCle(cles,p,B.poids); ch.push({k:p, x, mir:B.miroir?miroirDe():false});
+      /* `espace` laisse de l'air entre deux pieces au lieu de les faire se recouvrir —
+         voir le defilement, qui applique la meme regle. */
+      x += B.espace ? largeurDe(p,B.cles) + ec + Math.random()*je
+                    : largeurDe(p,B.cles) - Math.min(ec+Math.random()*je,
+                                                     largeurDe(p,B.cles)*CHEVAUCHE_MAX);
     }
   });
   /* ce qui pousse sur chaque bande : seme, jamais chaine */
@@ -4396,7 +4408,10 @@ function avanceFond(dt, v){
     defile(bandes[i], Object.keys(B.cles),
            v*(PARA_COLL+(PARA_DECOR-PARA_COLL)*B.ton)*dt, sortieFond.bandes[i],
            B.ecart[0], B.ecart[1], B.cles,
-           {continu:true, miroir:B.miroir ? miroirDe : null});
+           /* `espace` chaine avec de l'air entre les pieces au lieu de les faire se
+              recouvrir : une chaine de montagnes est un massif continu, une rue laisse
+              voir le ciel entre ses immeubles. */
+           {continu:!B.espace, poids:B.poids, miroir:B.miroir ? miroirDe : null});
     /* ce qui pousse dessus va au train de SON ton, un peu plus vif que celui de la bande,
        puisqu'il se tient devant elle */
     if(B.semis && semis[i])
@@ -6189,8 +6204,15 @@ const MONDES = {
        auraient pris un creneau dans le mur de facades et se seraient fait ensevelir sous
        le chevauchement de leurs voisins. Semes, ils se posent devant, espaces, et `ausol`
        les plante sur le trottoir au lieu des toits. */
-    bandes:[{cles:VILLE_MILIEU, ecart:[8,12], ton:0.5,
-             semis:{cles:VILLE_MILIEU_LAMPE, ecart:[520,760], ton:0.5, ausol:true}}],
+    /* `descend` COMPTE DEPUIS LA LIGNE DE CRETE, PAS DEPUIS L'HORIZON, et les deux se sont
+       croises : la ligne de crete est remontee avec `fondLevee`, de 71 a 125 unites
+       au-dessus de l'horizon, et un `descend` calcule avant ce changement laissait le pate
+       cinquante unites trop haut. Il vaut donc 101, ce qui pose son pied a 24 sous la ligne
+       de crete d'origine — c'est-a-dire exactement sur le HAUT DU TROTTOIR, huit unites
+       au-dessus du pied du second plan, qui lui s'y enfonce. Les trois plans s'etagent
+       ainsi par le pied autant que par la hauteur. */
+    bandes:[{cles:VILLE_MILIEU, ecart:[46,120], ton:0.5,
+             espace:true, poids:VILLE_MILIEU_POIDS, descend:101}],
     /* Une rue serre ses facades : quarante unites de trottoir entre deux immeubles, deux
        cent vingt au plus. Le champ en met de quatre-vingt-cinq a trois cent soixante-neuf,
        et une rue trouee comme un verger ne serait plus une rue. Il en reste assez pour que
@@ -6201,9 +6223,16 @@ const MONDES = {
        ne defilent pas dedans — voir teinter(). C'est le seul monde dans ce cas. */
     fenetres:true,
     trottoir:TROTTOIR,
-    /* Le pied de la ligne de crete passe ainsi a 73 unites au-dessus de l'horizon, quand
-       le haut du trottoir est a 24 : le sol lointain est bien au-dessus du sol proche. */
-    fondLevee:76,
+    /* CE NOMBRE FAIT DEUX CHOSES A LA FOIS, et c'est pour cela qu'il est monte de 76 a
+       130 : il REMONTE la ligne de crete d'autant, et il comble d'un aplat de la couleur du
+       fond tout ce qui reste dessous, du pied de la crete jusqu'au sol. La ville gagne donc
+       en hauteur au fond sans que ses immeubles lointains grandissent — ce sont les memes
+       dessins, poses plus haut, sur un socle de couleur.
+       Le pied de la crete passe ainsi a 128 unites au-dessus de l'horizon. Les trois plans
+       s'etagent alors aussi PAR LE PIED et non plus seulement par la hauteur : le second
+       plan se tient a 16, le pate du milieu a 24 — le haut du trottoir — et la crete
+       lointaine a 128. */
+    fondLevee:130,
     /* ET LA CRETE MORD DE DEUX UNITES DANS L'APLAT QUI LA PORTE. Les deux se rejoignaient
        exactement, bord a bord : le bas de la silhouette est anticrenele, celui de l'aplat
        aussi, et deux bords adoucis qui se touchent sans se recouvrir laissent passer un fil
@@ -6224,8 +6253,8 @@ const MONDES = {
       graine:19,
       hills:[{k:"ville_sky1", c:0.24}, {k:"ville_sky3", c:0.82}],
       /* le pate du milieu, et un reverbere devant lui */
-      bandes:[[{k:"ville_bloc2", c:0.18}, {k:"ville_bloc3", c:0.62}, {k:"ville_bloc0", c:0.95}]],
-      semis:[[{k:"ville_lampe_loin", c:0.40}]],
+      bandes:[[{k:"ville_bloc2", c:0.16}, {k:"ville_lampe_loin", c:0.40},
+                {k:"ville_bloc3", c:0.63}, {k:"ville_bloc0", c:0.96}]],
       /* L'immeuble fait 684 unites de large sur une carte qui en compte 662 : a sa taille
          il n'y aurait que lui. Reduit a 0,62 il en occupe les deux tiers gauches et laisse
          la rue s'ouvrir a droite — le reverbere puis la voiture, chacun a l'air libre.
@@ -8648,6 +8677,12 @@ function peintBandes(c, m, jour, ch, larg, hautGuir, nuages, bd, sm){
     for(const o of ch2){
       const im=SPR[o.k]; if(!im || !im.naturalHeight) continue;
       const bh2=B.cles[o.k], bw2=bh2*im.naturalWidth/im.naturalHeight;
+      /* SON PIED N'EST PAS FORCEMENT CELUI DE LA CRETE. Une bande se pose par defaut sur la
+         ligne d'horizon, comme les reliefs ; mais une rue vue de loin se tient sur le
+         TROTTOIR, qui est plus bas de plusieurs dizaines d'unites, et un pate d'immeubles
+         cale sur l'horizon flotte au-dessus de la chaussee. `descend` dit de combien la
+         bande passe sous cette ligne. */
+      const bpied = cretePied + (B.descend||0);
       /* CE QUI SE POSE PAR-DESSUS, quand la bande en a : les neiges des sommets. Un aplat
          n'a qu'une couleur, donc une neige peinte dans la meme silhouette disparaitrait.
          Elle fait sa propre planche, calee au meme cadre, et se pose dans une teinte tiree
@@ -8655,10 +8690,10 @@ function peintBandes(c, m, jour, ch, larg, hautGuir, nuages, bd, sm){
          doit l'etre a toute heure et non d'un blanc fixe. */
       const sur=B.sur && B.sur[o.k] && SPR[B.sur[o.k]];
       const poseUn=(x2)=>{
-        c.drawImage(teinter(o.k, coul), x2, cretePied-bh2, bw2, bh2);
+        c.drawImage(teinter(o.k, coul), x2, bpied-bh2, bw2, bh2);
         if(sur && sur.naturalHeight)
           c.drawImage(teinter(B.sur[o.k], mixCss(coul, jour.bas, B.surTon||0.6)),
-                      x2, cretePied-bh2, bw2, bh2);
+                      x2, bpied-bh2, bw2, bh2);
       };
       if(o.mir){
         c.save(); c.translate(o.x+bw2/2, 0); c.scale(-1,1);
@@ -8682,13 +8717,9 @@ function peintBandes(c, m, jour, ch, larg, hautGuir, nuages, bd, sm){
          gauche pencherait dans la descente. Et il s'y enfonce un peu, sans quoi il aurait
          l'air pose en equilibre sur un trait au lieu d'y avoir pousse. */
       /* l'enfoncement commun, plus celui qui n'appartient qu'a cette piece-la */
-      /* SAUF QUAND CE QUI POUSSE SE TIENT AU SOL ET NON SUR LA BANDE. Un sapin pousse sur
-         le vallon, un reverbere est plante sur le trottoir DEVANT les immeubles — pas sur
-         leurs toits. C'est la meme rangee semee, attachee a la meme bande et peinte de la
-         meme couleur ; seule la ligne sur laquelle elle se pose change. */
-      const pied = S.ausol ? cretePied + (S.enfonce||0)
-                 : cretePied - ligneBande(B, ch2, o.x+sw/2) + (S.enfonce||0)
-                   + sh*((S.enfoui && S.enfoui[o.k]) || 0);
+      const pied = cretePied + (B.descend||0)
+                 - ligneBande(B, ch2, o.x+sw/2) + (S.enfonce||0)
+                 + sh*((S.enfoui && S.enfoui[o.k]) || 0);
       const poseUn=(x2)=>{
         c.drawImage(teinter(o.k, scoul), x2, pied-sh, sw, sh);
         if(ni && ni.naturalHeight) c.drawImage(teinter(nk, sneige), x2, pied-sh, sw, sh);
