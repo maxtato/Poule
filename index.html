@@ -3401,6 +3401,7 @@ const TEXTES={
   /* Sans cette ligne, T() ne trouvait rien et rendait la CLE elle-meme : la carte du
      carrousel s'intitulait « Mondedesert ». Le nom suit la forme des trois autres. */
   mondedesert:["Le désert", "The desert"],
+  mondemontagne:["La montagne", "The mountain"],
   choisis:    ["Choisis ton terrain", "Pick your ground"],
   pasencore:  ["Jamais couru", "Never run"],
   mouches:    ["Mouches", "Flies"],
@@ -6202,16 +6203,14 @@ const MONDES = {
     },
   },
   /* ---------- LA MONTAGNE ----------
-     BROUILLON : elle n'a encore que ses fonds. Tant que la cle brouillon est vraie, le
-     carrousel l'ignore et personne ne peut y jouer — le monde existe, on peut le
-     regarder, mais il n'est pas propose. C'est ainsi que le desert est venu au monde.
-     ELLE N'A PAS DE SECOND PLAN, et ce n'est pas un oubli : ses quatre plans de fond sont
-     des CHAINES, parce que les feuilles ne se raboutent pas bord a bord. Le second plan,
-     lui, se seme avec des ecarts et ne sait pas chainer. Ce qui viendra s'y planter — des
-     sapins, des rochers — sera du semis, et c'est une autre livraison. */
+     Cinquieme monde, et le premier froid. Elle est complete : trois plans de fond chaines,
+     deux vallons boises, six obstacles au sol, un sol de congeres et un aigle dans le ciel.
+     ELLE N'A PAS DE SECOND PLAN, et ce n'est pas un oubli : ses plans de fond sont des
+     CHAINES, parce que les feuilles ne se raboutent pas bord a bord, quand le second plan
+     se seme avec des ecarts et ne sait pas chainer. Ce qui devait s'y planter — sapins et
+     rochers — s'est finalement plante sur les vallons, ou il suit leur ligne. */
   montagne: {
     nom:"montagne",
-    brouillon:true,
     heures:HEURES_MONTAGNE,
     bandeau:BANDEAU_MONTAGNE, filet:FILET_MONTAGNE,
     /* Un nevé ondule a peine : c'est de la neige tassee, pas un champ laboure. */
@@ -6246,7 +6245,16 @@ const MONDES = {
        de rochers — et les skis plantes, entre les deux. */
     obstacles:["mont_arbre","mont_luge","mont_panneau","mont_skis","mont_rochers",
                "mont_bonhomme"],
-    oiseaux:[], evenements:[],
+    /* L'AIGLE, QUI N'AVAIT PLUS DE CIEL. C'est le premier oiseau dessine pour le jeu, du
+       temps ou le champ n'en avait qu'un ; le corbeau l'y a remplace et il dormait depuis
+       dans les planches, complet — trois poses, une quatrieme pour l'aile haute, sa boite
+       et sa vitesse — mais appele par aucun monde. La montagne est son pays : c'est le
+       plus grand oiseau du jeu, et le seul dont l'envergure ait l'air juste au-dessus
+       d'une chaine enneigee.
+       ELLE N'A PAS D'EVENEMENT, et ce n'est pas un oubli : le champ n'en a pas non plus.
+       Un evenement est une piece a part — le singe et sa noix, le journal, le vire-vent —
+       et un monde se tient sans. */
+    oiseaux:["eagle"], evenements:[],
     carte:{
       graine:71,
       hills:[{k:"mont_pointe", c:0.5}],
