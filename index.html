@@ -4904,9 +4904,31 @@ function semeVignette(m, larg){
   for(const o of C.loin||[]){
     ch.loin.push({k:o.k, x:gauche(o.c, largeurDe(o.k,m.loin))});
   }
-  /* Les bandes supplementaires de la carte : une liste par bande, dans le meme ordre. */
-  ch.bandes=(m.bandes||[]).map((B,i)=>((C.bandes&&C.bandes[i])||[]).map(o=>
-    ({k:o.k, x:gauche(o.c, largeurDe(o.k,B.cles)), mir:!!o.mir})));
+  /* LES BANDES SE CHAINENT SUR LA CARTE COMME ELLES SE CHAINENT EN COURSE.
+     La carte posait UNE copie par bande, a l'endroit choisi. Cela marche tant que la
+     silhouette est plus large que la carte — et les monts le sont largement — mais le
+     vallon de devant ne fait que six cents unites pour une carte qui en compte six cent
+     soixante-deux : il laissait un trou de soixante-deux unites sur la droite, et l'on
+     voyait le plan d'en dessous par la fente.
+     ON NE RATTRAPE PAS LE CAS PAR UNE SECONDE COPIE POSEE A LA MAIN : ce serait juste
+     aujourd'hui et faux au premier changement de taille. La copie choisie sert d'ANCRE —
+     c'est elle qui decide quelle part de la silhouette on voit au milieu — puis la rangee
+     s'etend a gauche et a droite, du meme pas de chaine que la course, jusqu'a couvrir la
+     carte entiere avec de la marge. La continuite ne depend donc plus d'un accord de
+     tailles, mais de la construction. */
+  ch.bandes=(m.bandes||[]).map((B,i)=>{
+    const liste=(C.bandes&&C.bandes[i])||[];
+    const rang=[];
+    for(const o of liste){
+      const w=largeurDe(o.k, B.cles);
+      const pas=w - Math.min(B.ecart[0], w*CHEVAUCHE_MAX);
+      const x0=gauche(o.c, w);
+      /* vers la gauche jusqu'a sortir du cadre, puis vers la droite */
+      for(let x=x0-pas; x+w > -pas; x-=pas) rang.push({k:o.k, x, mir:!!o.mir});
+      for(let x=x0; x < larg+pas; x+=pas) rang.push({k:o.k, x, mir:!!o.mir});
+    }
+    return rang;
+  });
   ch.semis=(m.bandes||[]).map((B,i)=>!B.semis ? [] :
     ((C.semis&&C.semis[i])||[]).map(o=>
       ({k:o.k, x:gauche(o.c, largeurDe(o.k,B.semis.cles)), mir:!!o.mir})));
@@ -6260,6 +6282,11 @@ const MONDES = {
       hills:[{k:"mont_pointe", c:0.5}],
       bandes:[[{k:"mont_neige", c:0.5}], [{k:"mont_vallon2", c:0.5}],
               [{k:"mont_vallon", c:0.5}]],
+      /* Au sol, le bonhomme a gauche et les skis a droite : les deux pieces qui disent la
+         montagne d'un coup d'oeil. Le tas de rochers n'y est pas — il ressemble trop aux
+         cailloux qui habillent deja le sol — ni la luge, qui est basse et se perdrait
+         contre le vallon. */
+      obs:[{k:"mont_bonhomme", c:0.28}, {k:"mont_skis", c:0.74}],
     },
   },
 };
