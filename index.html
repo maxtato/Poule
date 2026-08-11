@@ -6278,10 +6278,33 @@ const MONDES = {
        et un monde se tient sans. */
     oiseaux:["eagle"], evenements:[],
     carte:{
-      graine:71,
+      /* LA GRAINE NE TIRE PLUS QUE LES BOULES DE NEIGE DU SOL — monts, vallons, bois et
+         obstacles sont ecrits a la main juste en dessous. On peut donc la choisir sur ce
+         seul critere, et il le fallait : la precedente posait ses quatre pieces derriere
+         le bonhomme et derriere les skis, et le sol de la carte se lisait comme une plaque
+         de neige nue. Celle-ci en met une a gauche, deux au milieu — un bouquet, comme la
+         chaine de la course en fait un tiers du temps — et une a droite, toutes dans les
+         vides que les obstacles laissent.
+         ET TOUTES LES QUATRE SONT DE LA NEIGE. Le sol de la montagne alterne boules de
+         neige et cailloux ; une graine qui remplit les vides avec deux cailloux les
+         remplit mal, parce qu'un caillou gris sur un sol blanc se lit comme une salissure
+         et non comme du relief. Le choix s'est donc fait sur la nature autant que sur la
+         place. */
+      graine:1074,
       hills:[{k:"mont_pointe", c:0.5}],
       bandes:[[{k:"mont_neige", c:0.5}], [{k:"mont_vallon2", c:0.5}],
               [{k:"mont_vallon", c:0.5}]],
+      /* ET CE QUI POUSSE SUR LES VALLONS, comme en course : une liste par bande, dans le
+         meme ordre, et vide pour celles qui n'ont pas de bois. Ils se posent sur la LIGNE
+         de leur vallon et non sur l'horizon — c'est le trace qui s'en charge, la carte n'a
+         qu'a dire lesquels et ou.
+         ILS SE RANGENT ENTRE LES DEUX OBSTACLES ET NON DERRIERE EUX. Le bonhomme tient le
+         quart gauche et les skis le trois-quarts droit ; les sapins prennent les bords et
+         le milieu, ou personne ne se tient. */
+      semis:[[],
+             [{k:"sapin_m", c:0.20}, {k:"sapin_p", c:0.45},
+              {k:"roche_p", c:0.62}, {k:"sapin_p", c:0.88}],
+             [{k:"sapin_g", c:0.06}, {k:"roche_g", c:0.50}, {k:"sapin_m", c:0.95}]],
       /* Au sol, le bonhomme a gauche et les skis a droite : les deux pieces qui disent la
          montagne d'un coup d'oeil. Le tas de rochers n'y est pas — il ressemble trop aux
          cailloux qui habillent deja le sol — ni la luge, qui est basse et se perdrait
