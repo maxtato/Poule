@@ -3196,12 +3196,22 @@ const BANDEAU_DESERT = "#F5EAD9", FILET_DESERT = "#DCCEB7";
    la ou cet ecart reste franc, ce qui interdit le blanc pur et donne un sol tres clair
    mais nettement bleute.
    LE CIEL, LUI, EST PRESQUE BLANC. C'est de la que vient l'impression de froid — un ciel
-   d'altitude est plus pale que la terre, l'inverse de partout ailleurs. */
+   d'altitude est plus pale que la terre, l'inverse de partout ailleurs.
+   `dec` EST LE BAS DE L'ECHELLE DES PLANS, ET RIEN D'AUTRE ICI. Les quatre plans se
+   rangent sur une echelle lineaire qui va de `coll` — la crete, la plus lointaine — a
+   `dec`. Dans les autres mondes `dec` peint aussi le second plan et les silhouettes du
+   loin ; la montagne n'a ni l'un ni l'autre, et cette couleur ne sert donc qu'a dire ou
+   s'arrete l'echelle. C'est ce qui permet de l'ELARGIR PAR LE BAS : les trois bandes
+   s'ecartent les unes des autres sans que le ciel ni la crete bougent d'un point, donc
+   sans rien perdre du blanc. L'echelle a ete portee de 36 a 47 unites de clarte — un
+   tiers de plus — parce que le plan le plus lointain et celui qui le suit ne se
+   separaient que de dix unites, le plus faible ecart des quatre, et deux plans a dix
+   unites l'un de l'autre se lisent comme un seul. */
 const HEURES_MONTAGNE=[
-  {haut:"#F0F6FD", bas:"#FAFEFF", coll:"#E8F2FD", terre:"#F6FAFE", dec:"#C6CDD7"},  // matin
-  {haut:"#EFF6FF", bas:"#F9FEFF", coll:"#E7F2FF", terre:"#F5FAFF", dec:"#C2CCD7"},  // plein midi
-  {haut:"#F5F7FC", bas:"#FDFEFF", coll:"#EEF1F8", terre:"#F9FAFD", dec:"#CACDD3"},  // fin d'apres-midi
-  {haut:"#E1E9F4", bas:"#F0F6FE", coll:"#D5E2F3", terre:"#E8EEF6", dec:"#B2BDCB"}  // crepuscule
+  {haut:"#F0F6FD", bas:"#FAFEFF", coll:"#E8F2FD", terre:"#F6FAFE", dec:"#BBC2CB"},  // matin
+  {haut:"#EFF6FF", bas:"#F9FEFF", coll:"#E7F2FF", terre:"#F5FAFF", dec:"#B7C1CB"},  // plein midi
+  {haut:"#F5F7FC", bas:"#FDFEFF", coll:"#EEF1F8", terre:"#F9FAFD", dec:"#BFC2C8"},  // fin d'apres-midi
+  {haut:"#E1E9F4", bas:"#F0F6FE", coll:"#D5E2F3", terre:"#E8EEF6", dec:"#A8B2BF"}  // crepuscule
 ];
 const BANDEAU_MONTAGNE = "#F7F9FC", FILET_MONTAGNE = "#E2E8F0";
 /* `pas` arrondit chaque canal : les teintes du fond et du second plan servent de
