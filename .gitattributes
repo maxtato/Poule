@@ -1,3 +1,6 @@
 # Le jeu tient dans un seul fichier : les sprites y sont encodes en base64.
 # Git ne doit pas tenter de fusionner ces lignes-la.
 index.html -diff
+# Les dessins d'origine, sortis du jeu mais gardes pour refabriquer les planches pixel.
+# Meme raison : une seule ligne de base64 de trente-deux mega-octets.
+dessins-trait.js -diff
