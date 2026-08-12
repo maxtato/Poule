@@ -9975,7 +9975,7 @@ const FILET_HUD="#D8CBB4";          // les filets du bloc de droite, verticaux e
    records, la ligne du haut ne l'atteint plus jamais ; il ne sert qu'a la ligne du bas, sur
    un record de score a huit chiffres. */
 const ECH_MIN_HUD=0.60;
-const SCORE_PART=0.46;              // la part de la hauteur du bandeau que prend le score
+const SCORE_PART=0.38;              // la part de la hauteur du bandeau que prend le score
 /* DEUX TAILLES, ET CHACUNE A TOUTE SA LIGNE. Les compteurs prennent 0,185 de la hauteur du
    bandeau et ne se serrent plus jamais — meme a 999 mouches et 199 999 metres. Le score
    prend toute la sienne, ou il est seul depuis que son record en est sorti. */
@@ -9986,8 +9986,8 @@ const SCORE_PART=0.46;              // la part de la hauteur du bandeau que pren
    creux se resserrent. Sur une ligne qui touche deja le bord, chaque unite rendue est une
    unite de chiffre en plus. */
 const SEP_PART=0.18;                // le filet vertical et ses marges, en parts du bandeau
-const FILET_Y=0.505;                // le filet horizontal, au creux mesure entre les deux lignes
-const COMPTEUR_PART=0.185;          // les mouches et les metres, seuls sur leur ligne
+const FILET_Y=0.533;                // le filet horizontal, au creux mesure entre les deux lignes
+const COMPTEUR_PART=0.200;          // les mouches et les metres, seuls sur leur ligne
 /* L'epaisseur du trait de TOUT ce que le bandeau trace en code — coeur, etoile,
    couronnes, contour des jauges. Elle n'est pas choisie : c'est celle du trait des
    DESSINS poses a cote, mesuree a la taille ou le bandeau les pose. La plume donne
@@ -10332,7 +10332,7 @@ function drawHUD(){
   /* SA HAUTEUR EST MESUREE, PAS CHOISIE. Le « milieu » que txtP accepte n'est pas le milieu
      de l'encre — il pose son tampon a y moins 0,72 fois le corps — et un filet place au
      jugé passait a cinq pixels du haut des chiffres du score. Releve sur l'image : l'encre
-     des compteurs s'arrete a 0,45 de la hauteur du bandeau, celle du score commence a 0,57.
+     des compteurs s'arrete a 0,47 de la hauteur du bandeau, celle du score commence a 0,60.
      Le filet se pose au milieu de ce creux, et le score a ete descendu d'un poil pour que
      le creux existe. */
   ctx.fillRect(xD, Math.round(top+u*FILET_Y)+0.5, largeD, Math.max(1,u*0.016));
