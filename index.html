@@ -9180,19 +9180,19 @@ function lunettes(jitter, cale, bob, clignote, tete){
    meme rebond qu'a la poule, et elles restent accrochees a elle.
    ELLES S'OUVRENT ET SE FERMENT comme le pouvoir : apparaitre d'un coup se lirait comme un
    defaut d'affichage, et disparaitre d'un coup ne previendrait pas que c'est fini. */
-const ECHO_COUL="#3BC9FF";           // le bleu du pouvoir, celui du halo de la jauge
-/* TROIS COPIES, ET TROIS BLEUS. Elles etaient cinq, toutes de la meme couleur, et ne se
-   distinguaient que par leur transparence : on voyait une tache bleue qui s'estompait, pas
-   une trace. Elles sont trois, chacune de SA teinte — le bleu profond juste derriere elle,
-   puis le bleu du pouvoir, puis un bleu de ciel presque blanc pour la plus lointaine — et
-   c'est le passage d'un bleu a l'autre qui donne la profondeur, non l'effacement.
-   ET LA TRACE ONDULE. Chaque copie se souleve et retombe a son propre rythme, un peu plus
-   ample a mesure qu'elle s'eloigne : un sillage n'est pas un empilement de copies figees,
-   c'est quelque chose qui vit derriere. */
-const ECHO_TEINTES=["#1F7FD8", "#3BC9FF", "#9EE7FF"];
-const ECHO_ALPHA=[0.58, 0.42, 0.28];
-const ECHO_PAS=20, ECHO_CHUTE=1.2;
-const ECHO_ONDE=2.4, ECHO_CADENCE=5.2;      // l'amplitude du sillage, et ses vagues par seconde
+const ECHO_COUL="#3BC9FF";           // le bleu du pouvoir, celui de la jauge
+/* CINQ COPIES, ET NON TROIS. A trois, la trainee se lisait comme trois poules pales plutot
+   que comme une trace : on comptait les copies. A cinq, avec un pas plus court et un
+   effacement geometrique — chacune garde six dixiemes de la precedente — l'oeil ne compte
+   plus, il voit une queue. La derniere est presque invisible, et c'est ce qui donne la
+   pointe : une trainee qui s'arrete net est un empilement. */
+const ECHO_N=5, ECHO_PAS=16, ECHO_CHUTE=1.0;
+const ECHO_A=0.34, ECHO_Q=0.60;
+/* Les trois contours de la jauge, du plus lointain au plus proche : c'est dans cet ordre
+   qu'ils se tracent, le plus large d'abord, pour que le plus fonce reste dessus. */
+const JAUGE_TEINTES=["#9EE7FF", "#3BC9FF", "#1F7FD8"];
+const JAUGE_LARGE=[6.2, 4.0, 2.2];          // en parts du trait du bandeau
+const JAUGE_ALPHA=[0.34, 0.46, 0.60];
 function echos(w, h, jitter, bob, cle){
   if(!festin()) return;
   const im=SPR[cle]; if(!im || !im.naturalWidth) return;
@@ -9202,12 +9202,10 @@ function echos(w, h, jitter, bob, cle){
   if(a<=0.01) return;
   const cale = hen.ground && FOOT_POSE[cle]!=null ? (FOOT_Y-FOOT_POSE[cle])*sc() : 0;
   const y = hen.y-footOff()+cale-bob;
-  /* la plus lointaine d'abord : la plus proche doit passer par-dessus les autres */
-  for(let i=ECHO_TEINTES.length;i>=1;i--){
-    const onde=Math.sin(t*ECHO_CADENCE - i*0.85)*ECHO_ONDE*i;
-    ctx.globalAlpha=ECHO_ALPHA[i-1]*a;
-    ctx.drawImage(silhouette(im, ECHO_TEINTES[i-1]),
-                  hen.x+jitter-ECHO_PAS*i, y+ECHO_CHUTE*i+onde, w, h);
+  const sil = silhouette(im, ECHO_COUL);
+  for(let i=ECHO_N;i>=1;i--){
+    ctx.globalAlpha=ECHO_A*Math.pow(ECHO_Q,i-1)*a;
+    ctx.drawImage(sil, hen.x+jitter-ECHO_PAS*i, y+ECHO_CHUTE*i, w, h);
   }
   ctx.globalAlpha=1;
 }
@@ -10292,21 +10290,28 @@ function drawHUD(){
   /* ---- la plume et la jauge de vol ---- */
   ctx.drawImage(SPR.feather, gx, top+u*0.32-fh/2, fw, fh);
   const r2=jh/2;
-  /* SOUS LE FESTIN, LA JAUGE S'ENTOURE DE BLEU. Le pouvoir fait durer le vol deux fois
-     plus — la jauge descend deux fois moins vite — mais rien ne le disait a l'endroit ou
-     ca se joue : on voyait la trainee bleue derriere la poule sans faire le lien avec
-     l'energie. Le meme bleu que la trainee, pose autour de la capsule, fait ce lien.
-     IL EST LARGE ET FAIBLE, ET NON FIN ET FRANC : un trait net de plus autour de la jauge
-     se serait lu comme une seconde bordure, donc comme une information de forme ; un halo
-     large se lit comme un etat. Sa moitie interieure passe sous le blanc de la jauge, qui
-     est peint juste apres — seule la moitie qui deborde se voit. */
+  /* SOUS LE COMBO, LA JAUGE S'ENTOURE DE TROIS CONTOURS EN ECHO. Le pouvoir fait durer le
+     vol deux fois plus — la jauge descend deux fois moins vite — mais rien ne le disait a
+     l'endroit ou ca se joue. Un seul halo bleu l'avait dit ; trois le disent mieux, parce
+     qu'ils font une ONDE et non une bordure.
+     LE PLUS PROCHE EST LE PLUS FONCE, LE PLUS LOIN LE PLUS CLAIR : c'est ce qui donne le
+     sens de propagation, comme une ride qui part de la capsule et s'eteint en s'eloignant.
+     Chacun est un trait centre sur le meme contour, de plus en plus large — la moitie
+     interieure de chacun passe sous le blanc de la jauge, peint juste apres, si bien que
+     seul ce qui deborde se voit : trois anneaux emboites, et non trois traits empiles.
+     ET ILS RESPIRENT EN DECALE. Un tiers de seconde separe la vague de l'un de celle du
+     suivant : le mouvement va du dedans vers le dehors, et le pouvoir a l'air de rayonner
+     plutot que de clignoter. */
   if(festin()){
     const ouvre=Math.min(1,(t-festinDepuis)/0.35);
     const ferme=Math.max(0,Math.min(1,(festinJusqu-t)/0.6));
-    ctx.save();
-    ctx.globalAlpha=0.45*ouvre*ferme*(0.78+0.22*Math.sin(t*4));
-    ctx.strokeStyle=ECHO_COUL; ctx.lineWidth=trait*3.6; ctx.lineJoin="round";
-    rr(bx,jy,gw,jh,r2); ctx.stroke();
+    ctx.save(); ctx.lineJoin="round";
+    for(let i=0;i<JAUGE_TEINTES.length;i++){
+      ctx.globalAlpha=JAUGE_ALPHA[i]*ouvre*ferme;
+      ctx.strokeStyle=JAUGE_TEINTES[i];
+      ctx.lineWidth=trait*JAUGE_LARGE[i]*(1+0.14*Math.sin(t*4-i*0.9));
+      rr(bx,jy,gw,jh,r2); ctx.stroke();
+    }
     ctx.restore();
   }
   ctx.lineWidth=trait; ctx.strokeStyle=INK; ctx.lineJoin="round";
