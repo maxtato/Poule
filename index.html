@@ -9116,62 +9116,6 @@ function lunettes(jitter, cale, bob, clignote, tete){
   ctx.drawImage(clignote ? silhouette(im, clignote) : im,
     hen.x+jitter+(LUN_X+d[0])*k, hen.y-footOff()+cale-bob+(LUN_Y+d[1])*k, LUN_W*k, LUN_H*k);
 }
-/* ---------- LA LUMIERE DU FESTIN ----------
-   Trois cones de couleur tombent du bandeau et se croisent sur la poule, lentement et
-   chacun a son rythme. RIEN NE PEND DANS LE CADRE : une boule a facettes aurait demande de
-   la place en haut de l'ecran, la ou passent les oiseaux et la voute de la montagne.
-   ILS SE POSENT PAR-DESSUS LA POULE ET NON DERRIERE ELLE. Peints derriere, ils faisaient
-   un decor : la poule restait blanche au milieu d'une fete qui ne la touchait pas. Peints
-   devant, en produit, la couleur tombe sur elle, sur le sol et sur ce qui passe — c'est ce
-   que fait une lumiere, et c'est aussi ce qui garde les obstacles lisibles, puisqu'un
-   produit assombrit sans rien cacher.
-   ILS S'OUVRENT ET SE FERMENT. Une lumiere qui apparait d'un coup se lit comme un defaut
-   d'affichage ; celle-ci monte en un demi-tiers de seconde et redescend dans la derniere,
-   ce qui previent que le pouvoir s'acheve. */
-const DISCO_COUL=["#FF3B6B","#FFC93C","#3BE0FF"];
-function voileCoul(hex, a){
-  const v=parseInt(hex.slice(1),16);
-  return "rgba("+((v>>16)&255)+","+((v>>8)&255)+","+(v&255)+","+a.toFixed(3)+")";
-}
-function disco(){
-  if(!festin()) return;
-  const ouvre=Math.min(1,(t-festinDepuis)/0.45);
-  const ferme=Math.max(0,Math.min(1,(festinJusqu-t)/0.7));
-  const a0=0.30*ouvre*ferme;
-  if(a0<=0.002) return;
-  /* LE CIEL EST HAUT ET L'ECRAN EST ETROIT : un cone dessine ici comme il l'etait sur la
-     maquette — large de deux cents unites pour douze cents de haut — se lisait comme une
-     rayure verticale et non comme un faisceau. Il est donc quatre fois plus evase, et il
-     s'eteint aux deux bouts : transparent au ras du bandeau, plein au tiers, et encore
-     bien present au sol, la ou il faut qu'on voie la lumiere se poser sur elle. */
-  const cx=hen.x+80, haut=bandBas, bas=40;
-  ctx.save();
-  ctx.globalCompositeOperation="multiply";
-  for(let i=0;i<3;i++){
-    const ph=t*(0.7+i*0.25)+i*2.1;
-    /* Chacun a SA lampe : sans un ecart fixe entre les trois sommets, les trois cones se
-       superposaient presque exactement et l'on ne voyait qu'un seul faisceau bord de deux
-       couleurs. L'ecart les separe, le balancement les fait vivre. */
-    const px=cx+(i-1)*90+Math.sin(ph)*36, ox=cx+(i-1)*150+Math.sin(ph+0.9)*110;
-    ctx.beginPath();
-    ctx.moveTo(px-16,haut); ctx.lineTo(px+16,haut);
-    ctx.lineTo(ox+210,bas); ctx.lineTo(ox-210,bas); ctx.closePath();
-    const g=ctx.createLinearGradient(px,haut,ox,bas);
-    g.addColorStop(0,    voileCoul(DISCO_COUL[i], 0));
-    g.addColorStop(0.34, voileCoul(DISCO_COUL[i], a0));
-    g.addColorStop(1,    voileCoul(DISCO_COUL[i], a0*0.75));
-    ctx.fillStyle=g; ctx.fill();
-  }
-  /* ET LA FLAQUE SOUS SES PATTES. Sans elle les faisceaux traversaient l'image sans rien
-     y poser : c'est la tache au sol qui dit ou la lumiere arrive, et qui fait de la poule
-     le centre de la scene plutot qu'un passant sous des rayures. */
-  const fl=ctx.createRadialGradient(cx,0,4,cx,0,300);
-  fl.addColorStop(0, "rgba(255,190,90,"+(0.30*ouvre*ferme).toFixed(3)+")");
-  fl.addColorStop(1, "rgba(255,190,90,0)");
-  ctx.fillStyle=fl;
-  ctx.beginPath(); ctx.ellipse(cx, 0, 300, 78, 0, 0, 7); ctx.fill();
-  ctx.restore();
-}
 function henFrame(){
   if(hen.dead){
     const rp=relevePose(); if(rp) return SPR[rp.k];
@@ -9795,7 +9739,6 @@ function draw(){
              bob, clignote, tete);
   }
   ctx.globalAlpha=1;
-  disco();                          // la lumiere du festin, par-dessus elle et le decor
 
   /* Le nuage de la fin, par-dessus tout : c'est lui qui cache l'echange de la poule
      contre la pierre. Un gris un peu plus soutenu que la poussiere des appuis — il
