@@ -4074,7 +4074,7 @@ function resize(){
      voler, meme sur une fenetre si basse que le bandeau mangerait tout le ciel.
      ELLE MONTE MAINTENANT JUSQU'AU BANDEAU, ET PLUS TRENTE PIXELS EN DESSOUS : le compte
      n'a pas change, c'est la hauteur de sa tete qui etait fausse — voir HEN_TETE. */
-  const bandU=Math.min(64, bandW*0.155)/scale;
+  const bandU=hautBandeau()/scale;
   bandBas=-skyH+bandU;
   flyCeil=Math.min(-320, -(skyH-HEN_TETE-bandU-PLAF_MARGE));
 }
@@ -6108,7 +6108,7 @@ const JALON_MARGE=90;
 function jalonBas(){
   const im=SPR.jalon;
   if(!im || !im.naturalWidth) return -1e9;
-  const bh=Math.min(64, bandW*0.155)/scale;
+  const bh=hautBandeau()/scale;
   return -groundY+bh+JALON_SOUS + JALON_W*im.naturalHeight/im.naturalWidth;
 }
 /* le haut du dessin de chaque chose, telle qu'elle est POSEE — la meme regle que le
@@ -6240,7 +6240,7 @@ function dessineJalons(){
   if(!im || !im.naturalHeight || !jalons.length) return;
   const h=JALON_W*im.naturalHeight/im.naturalWidth;
   /* le bandeau du haut est mesure en pixels d'ecran ; ici tout est en unites de monde */
-  const bh=Math.min(64, bandW*0.155)/scale;
+  const bh=hautBandeau()/scale;
   const haut=-groundY+bh+JALON_SOUS;
   const ax=JALON_ATTACHE*JALON_W;
   for(const j of jalons){
@@ -9946,8 +9946,24 @@ function coulPres(v, rec){
   return INK;
 }
 const REC_GRIS="#A79A88";
+/* LA HAUTEUR DU BANDEAU, EN UN SEUL ENDROIT. Elle etait recopiee a quatre — le trace, le
+   plafond de vol et deux fois les jalons — et une hauteur changee ici mais pas la-bas
+   ferait mentir le plafond ou poserait les jalons sous le bandeau.
+   ELLE A GRANDI D'UN CINQUIEME, ET LE CIEL A RECULE D'AUTANT. Les nombres du bloc de
+   droite ne se lisaient pas assez vite : c'etait le prix a payer, et il est petit — la
+   poule vole toujours jusqu'au bandeau, qui commence simplement un cran plus bas. */
+const BANDE_PART=0.185, BANDE_MAX=76;
+function hautBandeau(){ return Math.min(BANDE_MAX, bandW*BANDE_PART); }
 const FILET_HUD="#D8CBB4";          // les filets du bloc de droite, verticaux et horizontal
 const ECH_MIN_HUD=0.72;             // on ne serre pas les nombres plus que ca : illisible
+const SCORE_PART=0.40;              // la part de la hauteur du bandeau que prend le score
+/* LES PETITS NE GRANDISSENT PAS AVEC LE BANDEAU. Ils valaient 0,147 d'un bandeau plus
+   mince, et ils s'y lisaient bien ; gardee telle quelle, la fraction leur aurait fait
+   prendre un cinquieme de plus, c'est-a-dire toute la place que la hauteur venait de
+   donner — et la ligne du haut, qui porte quatre nombres et deux couronnes, se serait
+   serree davantage qu'avant. Ils gardent donc leur taille, ecrite dans les fractions du
+   nouveau bandeau : 0,147 fois 0,155 sur 0,185. Toute la hauteur gagnee va au score. */
+const PETIT_PART=0.123;             // les compteurs et les records, a leur taille d'avant
 /* L'epaisseur du trait de TOUT ce que le bandeau trace en code — coeur, etoile,
    couronnes, contour des jauges. Elle n'est pas choisie : c'est celle du trait des
    DESSINS poses a cote, mesuree a la taille ou le bandeau les pose. La plume donne
@@ -10079,7 +10095,7 @@ function drawHUD(){
      compas sur le visuel de reference : la bande y fait 285 de haut pour 1 840 de large,
      soit 6,46 fois sa hauteur, et chaque element y occupe la part notee en commentaire.
      Le bandeau garde donc ses proportions du telephone de 360 au bureau. */
-  const u=Math.min(64, VW*0.155);
+  const u=hautBandeau();
   const pad=Math.max(9, u*0.22);             // marge de gauche
   const padD=Math.max(7, u*0.16);            // marge de droite, plus serree
   const top=Math.max(4, u*0.10);
@@ -10114,9 +10130,14 @@ function drawHUD(){
      par un filet vertical ; en dessous, sous un filet horizontal, le score et le sien. Les
      deux traits disent la meme chose : au-dessus ce qui se compte, en dessous ce que ca
      fait. */
-  const bw=u*0.84, bh=u*0.60;                // la pastille du festin
+  /* LA PASTILLE NE SUIT PAS LE BANDEAU. Elle valait 0,84 sur 0,60 quand le bandeau etait
+     plus mince ; gardees telles quelles, ces fractions lui auraient fait prendre un
+     cinquieme de plus — c'est-a-dire tout ce que la moitie droite venait de gagner, et
+     davantage. Elle garde donc sa taille d'avant, ecrite dans les fractions du nouveau
+     bandeau, et le gain de hauteur va aux nombres. */
+  const bw=u*0.70, bh=u*0.50;                // la pastille du festin, a sa taille d'avant
   const bcx=L+VW*0.5, bcy=top+u*0.44;        // au milieu, et elle n'en bouge plus
-  const xMax=R-padD, xMin=bcx+bw/2+u*0.20;
+  const xMax=R-padD, xMin=bcx+bw/2+u*0.16;
 
   const recMou = carnet().bestMou>0  ? String(carnet().bestMou) : null;
   /* Le record des metres perd son « m » : la couronne dit deja que c'en est un, et l'unite
@@ -10138,13 +10159,13 @@ function drawHUD(){
   const lBas=[];
   if(recSc) lBas.push({cour:1}, nbP(recSc, REC_GRIS), {creux:CREUX_REC});
   lBas.push(nbP(chiffre(score()), coulPres(score(), carnet().best), true));
-  const LIGNES=[{y:0.29, gros:0, parts:lHaut}, {y:0.71, gros:0.33, parts:lBas}];
+  const LIGNES=[{y:0.29, parts:lHaut}, {y:0.71, parts:lBas}];
 
   /* LE MOTEUR. Une ligne est une suite de morceaux — la mouche, un nombre, une couronne,
      un creux, le filet — et la meme fonction sait les mesurer et les poser. Les nombres se
      mesurent sur un GABARIT DE ZEROS : la fonte n'a pas des chiffres de largeur egale, et
      mesuree sur le texte reel la ligne changeait de largeur a chaque metre parcouru. */
-  const corps=(p,l,e)=>Math.round(u*(p.gros?l.gros:0.147)*e);
+  const corps=(p,l,e)=>p.gros ? l.tGros : Math.round(u*PETIT_PART*e);
   const mesLigne=(l,e)=>{
     let w=0;
     for(const p of l.parts){
@@ -10156,21 +10177,32 @@ function drawHUD(){
     }
     return w;
   };
-  const largeLignes=e=>Math.max(mesLigne(LIGNES[0],e), mesLigne(LIGNES[1],e));
+  const place=xMax-xMin;
   /* LA PLUS GRANDE ECHELLE DONT LA LARGEUR MESUREE TIENT, PAR DICHOTOMIE. Un simple
      rapport de largeurs ne suffit pas : les corps sont arrondis au pixel, la largeur ne
      descend donc pas doucement mais PAR MARCHES — un corps qui passe de 8 a 7 perd un
      huitieme d'un coup. Le rapport laissait le bloc deborder de quelques unites, assez
      pour passer sous la pastille, et applique deux fois il faisait perdre dix-huit pour
-     cent la ou dix suffisaient. Douze tours donnent le meilleur cran. */
-  const place=xMax-xMin;
+     cent la ou dix suffisaient. Douze tours donnent le meilleur cran.
+     ELLE NE SE MESURE QUE SUR LA LIGNE DU HAUT, qui est la longue : quatre nombres et deux
+     couronnes. Serrer le score parce que les compteurs sont longs revenait a punir le
+     nombre qu'on regarde pour la faute de ceux qu'on survole. */
   let ech=1;
-  if(largeLignes(1)>place){
+  if(mesLigne(LIGNES[0],1)>place){
     let bs=ECH_MIN_HUD, ht=1; ech=bs;
     for(let i=0;i<12;i++){ const m=(bs+ht)/2;
-      if(largeLignes(m)<=place){ ech=m; bs=m; } else ht=m; }
+      if(mesLigne(LIGNES[0],m)<=place){ ech=m; bs=m; } else ht=m; }
   }
-  const largeD=largeLignes(ech);
+  /* ET LE SCORE PREND TOUT CE QUI RESTE SUR SA LIGNE. Sa couronne et son record se posent
+     a la taille des autres petits ; le nombre, lui, monte jusqu'a ce qu'il touche le bord,
+     sans depasser la part qu'on lui accorde dans la hauteur du bandeau. */
+  LIGNES[1].tGros=1;
+  const petitBas=mesLigne(LIGNES[1],ech)-largeurP(lBas[lBas.length-1].gab,1,"900");
+  const gabSc=lBas[lBas.length-1].gab, tMax=Math.round(u*SCORE_PART);
+  let tGros=tMax;
+  while(tGros>8 && petitBas+largeurP(gabSc,tGros,"900")>place) tGros--;
+  LIGNES[1].tGros=tGros;
+  const largeD=Math.max(mesLigne(LIGNES[0],ech), mesLigne(LIGNES[1],ech));
   const xD=xMax-largeD;                      // bord gauche du bloc, une fois serre
 
   /* ---- la jauge de vol : elle prend ce qui reste ---- */
@@ -10326,8 +10358,10 @@ function drawHUD(){
     ctx.fillStyle = festin() ? "#E09A18"
                   : mixHex("#D6342B", "#F07020", Math.max(0, (av-0.55)/0.45));
     ctx.fill();
-    txtP("×"+combo, bcx, by0+h*0.36, Math.round(u*0.29*pop), "#FFFFFF", "center", "middle");
-    txtP(T("festin").toUpperCase(), bcx, by0+h*0.68, Math.round(u*0.105*pop),
+    /* les corps de la pastille se mesurent sur ELLE et non sur le bandeau : c'est ce qui
+       lui permet de garder ses proportions maintenant qu'elle ne le suit plus */
+    txtP("×"+combo, bcx, by0+h*0.36, Math.round(bh*0.483*pop), "#FFFFFF", "center", "middle");
+    txtP(T("festin").toUpperCase(), bcx, by0+h*0.68, Math.round(bh*0.175*pop),
          "#FFFFFF", "center", "middle");
     /* le temps qu'il reste pour entretenir la chaine, dans le bas de la pastille */
     const tw=w*0.72, th=Math.max(1.6,h*0.075), tx0=bcx-tw/2, ty0=by0+h*0.82;
