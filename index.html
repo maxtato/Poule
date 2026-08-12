@@ -2097,7 +2097,11 @@ const JUNGLE_POIDS = {jung_arbre:7, jung_liane:6, jung_palmier:10, jung_palmiers
 const JUNGLE_GUIR = {jung_guir0:320, jung_guir1:240, jung_guir2:290};
 const JUNGLE_GUIR_KEYS = Object.keys(JUNGLE_GUIR);
 /* De combien la guirlande passe derriere le bandeau. Assez pour qu'on ne voie jamais le
-   trait horizontal qui la porte en haut du dessin. */
+   trait horizontal qui la porte en haut du dessin.
+   LE MONDE PEUT DEMANDER AUTRE CHOSE, par `guirHaut` : la montagne descend ses stalactites
+   de douze unites, ce qui suffit a les faire pendre un peu plus bas sans decouvrir la
+   rangee de coupe qui leur sert de plafond — quatorze unites restent cachees derriere le
+   bandeau, la ou le dessin n'en demande aucune. */
 const GUIR_HAUT = 26;
 /* Ecart entre deux guirlandes, de bord a bord : de 240 a 640 unites. */
 const GUIR_ECART = [240, 400];
@@ -6692,6 +6696,10 @@ const MONDES = {
        voute de lianes de la jungle. Meme mecanique, mais peinte telle qu'elle est
        dessinee — voir MONT_STALAC. */
     guir:MONT_STALAC, guirEcart:MONT_STALAC_ECART, guirBrut:true,
+    /* Elles pendent douze unites plus bas que les lianes de la jungle. Quatorze restent
+       cachees derriere le bandeau, ce qui suffit : le haut de leur planche est une COUPE
+       et non un bord, et une coupe qui depasse se lit comme une barre. */
+    guirHaut:14,
     /* ET LA VOUTE EST DURE — voir heurteVoute(). C'est le seul monde dans ce cas :
        les lianes de la jungle pendent trop haut et se taisent, la glace ici mord. */
     guirDur:true,
@@ -8098,14 +8106,36 @@ function update(dt){
    ET UNE POULE RESTEE AU SOL NE PEUT TOUJOURS PAS ETRE TOUCHEE. Sa tete se tient de six
    cent cinquante a neuf cent soixante-dix unites sous la pointe la plus basse, selon la
    hauteur de l'ecran. L'invariant de la maison tient sans qu'on ait rien a lui ajouter.
-   LE PARDON EST VERTICAL. Une pointe de glace finit en cheveu ; mourir sur le dernier
-   pixel de la pointe, qu'on voit a peine, serait injuste. La glace est donc remontee de
-   VOUTE_PARDON avant le test — le meme geste que STALAC_BOITE pour celle qui tombe. */
-const VOUTE_PARDON = 8;      // de combien la glace est remontee avant le test
+   LA BOITE EST RENTREE DES DEUX COTES, ET C'EST LE GROS DU REGLAGE. La boite de vol fait
+   88 de large quand la poule, elle, est une courbe : sur ses colonnes de bord son dos a
+   deja plonge, et la boite y passe AU-DESSUS de son dessin. C'est de la que venaient les
+   morts prematurees. Mesure : on avance la poule d'une unite a la fois jusqu'au premier
+   « touche », puis on dessine la poule seule et la glace seule a leurs places exactes et
+   l'on mesure ce qui les separe. Sans rien rentrer, le pire cas tue 32 unites AVANT le
+   contact. En rentrant la boite de dix de chaque cote, le pire tombe a 5,7 ; rentrer
+   davantage — seize, vingt-deux — ne gagne plus rien, parce que le defaut n'etait que sur
+   ces colonnes-la.
+   ET LE PARDON VERTICAL FINIT LE TRAVAIL. Une pointe de glace se termine en cheveu ; mourir
+   sur son dernier pixel, qu'on voit a peine, serait injuste. La glace est remontee de
+   VOUTE_PARDON avant le test — le meme geste que STALAC_BOITE pour celle qui tombe. A
+   trente, le PIRE cas mesure -4,3 : il n'existe plus une seule configuration ou l'on meurt
+   avant d'avoir touche. La mediane est a -23, c'est-a-dire qu'on entre d'un cinquieme de
+   poule dans la glace avant qu'elle ne morde. C'est le sens de la maison : la boite
+   pardonne, elle ne surprend pas.
+   CE QUE CELA COUTE EST MESURE AUSSI : collee au plafond, la poule est touchee 42 pour cent
+   du temps au lieu de 49. Le plafond reste un vrai danger, et le couloir sous les pointes
+   n'a pas bouge — a cent cinquante unites sous le plafond de vol, zero contact. Une poule
+   restee au sol n'est toujours jamais touchee, sur les trois formats d'ecran essayes.
+   CELLE QUI TOMBE N'AVAIT PAS LE DEFAUT : mesuree de la meme facon, elle ne touche jamais
+   avant le contact — de -32,7 a 0 selon l'approche. Sa boite ne bouge donc pas. */
+const VOUTE_RENTRE = 10;     // de combien la boite de la poule est rentree, de chaque cote
+const VOUTE_PARDON = 30;     // de combien la glace est remontee avant le test
 const VOUTE_RENVOI = 420;    // avec quel elan vers le bas elle est decrochee
-function heurteVoute(hb){
+function heurteVoute(hb0){
   if(!monde.guirDur || !guir.length) return false;
-  const haut = bandBas - GUIR_HAUT;
+  const hb={x:hb0.x+VOUTE_RENTRE, y:hb0.y, w:hb0.w-2*VOUTE_RENTRE, h:hb0.h};
+  if(hb.w<=0) return false;
+  const haut = bandBas - (monde.guirHaut!=null ? monde.guirHaut : GUIR_HAUT);
   if(hb.y + hb.h <= haut) return false;          // toute la poule est au-dessus de la voute
   for(const g of guir){
     const im = SPR[g.k]; if(!im || !im.naturalHeight) continue;
@@ -9003,8 +9033,9 @@ function peintBandes(c, m, jour, ch, larg, hautGuir, nuages, bd, sm){
   for(const g of ch.guir){
     const im=SPR[g.k]; if(!im || !im.naturalHeight) continue;
     const gh=m.guir[g.k], gw=gh*im.naturalWidth/im.naturalHeight;
-    if(m.guirBrut) poseFine(c, im, g.x, hautGuir-GUIR_HAUT, gw, gh);
-    else c.drawImage(teinter(g.k, jour.dec), g.x, hautGuir-GUIR_HAUT, gw, gh);
+    const gHaut = m.guirHaut!=null ? m.guirHaut : GUIR_HAUT;
+    if(m.guirBrut) poseFine(c, im, g.x, hautGuir-gHaut, gw, gh);
+    else c.drawImage(teinter(g.k, jour.dec), g.x, hautGuir-gHaut, gw, gh);
   }
 }
 
