@@ -3926,8 +3926,13 @@ const SFX={
      0,20 : le signal qui demande de se tenir pret passait sous celui qui recompense. */
   tic:   ()=>{ tone(820,.13,{type:"square",vol:.22}); },
   depart:()=>{ tone(1240,.45,{type:"square",vol:.22}); },
-  /* Le gobage monte d'un demi-ton par mouche du combo : la chaine s'entend. */
-  gobe:  n=>{ const f=620*Math.pow(1.0595,Math.min(n,12));
+  /* Le gobage monte d'un demi-ton par mouche du combo : la chaine s'entend, et elle monte
+     JUSQU'AU FESTIN. Le plafond etait a douze mouches — la moitie du chemin : passe la
+     treizieme, la chaine continuait de compter mais le son ne bougeait plus, et les sept
+     dernieres, les plus difficiles, se gobaient dans le silence de la note precedente. Il
+     est desormais cale sur la longueur qui donne les lunettes : la derniere mouche du
+     festin est aussi la plus aigue, une octave et demie au-dessus de la premiere. */
+  gobe:  n=>{ const f=620*Math.pow(1.0595,Math.min(n,FESTIN_N-1));
                tone(f,.06,{vol:.20,to:f*1.5}); tone(f*1.5,.09,{vol:.16,at:.05}); },
   choc:  ()=>{ souffle(.30,{vol:.30,cut:700}); tone(280,.38,{type:"sawtooth",vol:.26,to:52}); },
   palier:()=>{ tone(880,.09,{type:"triangle",vol:.16}); tone(1320,.13,{type:"triangle",vol:.13,at:.07}); },
