@@ -4109,6 +4109,13 @@ function traverse(){ return t<orJusqu && !hen.dead; }
    il dit toujours la meme chose, et il reste dore tant que le pouvoir dure. */
 const FESTIN_N=20;          // la longueur de chaine qui donne les lunettes
 const FESTIN_DUREE=6;       // ce que durent les lunettes, comme le pouvoir de la doree
+/* ET PENDANT CE TEMPS, ELLE PLANE. Les lunettes ne se voyaient que sur elle ; le pouvoir
+   ne se SENTAIT pas dans la main. Deux choses changent donc pendant qu'il dure, et elles
+   vont dans le meme sens : chaque seconde de vol coute moins de plumes, et la pesanteur
+   s'allege. La premiere fait durer le vol, la seconde fait planer — on tombe plus
+   doucement quand on cesse de battre, et le moindre coup d'aile porte plus loin. */
+const FESTIN_PLUME=0.45;    // ce qu'une seconde de vol coute en plumes, pendant le festin
+const FESTIN_CHUTE=0.75;    // ce que pese la pesanteur, pendant le festin
 let festinJusqu=-9, festinDepuis=-9, festinArme=true;
 function festin(){ return t<festinJusqu && !hen.dead; }
 let deadLand=-9;      // instant du contact au sol
@@ -7984,7 +7991,8 @@ function update(dt){
   const fly=flying();
   if(fly){
     hen.vy=Math.max(hen.vy-4400*dt, -310);
-    hen.feathers-=dt*0.24;      // ~4,2 s de vol continu a jauge pleine
+    /* ~4,2 s de vol continu a jauge pleine, et plus de neuf pendant le festin */
+    hen.feathers-=dt*0.24*(festin()?FESTIN_PLUME:1);
     hen.flap+=dt*13;                    // 3,25 battements complets par seconde
     /* Une plume toutes les trois dixiemes de seconde environ, contre sept par
        seconde avant : a ce rythme-la elle laissait une trainee continue derriere
@@ -7993,7 +8001,7 @@ function update(dt){
     if(Math.random()<dt*3) feather(hen.x+30, hen.y-62);
   }else hen.flap += (t<flapUntil ? dt*13 : dt*5);
 
-  hen.vy=Math.min(hen.vy+3500*dt, 1800);
+  hen.vy=Math.min(hen.vy+3500*dt*(festin()?FESTIN_CHUTE:1), 1800);
   hen.y+=hen.vy*dt;
   if(enSaut && hen.vy>=0) enSaut=false;      // sommet du saut atteint : le vol peut prendre
 
@@ -9136,7 +9144,13 @@ function lunettes(jitter, cale, bob, clignote, tete){
    ELLES S'OUVRENT ET SE FERMENT comme le pouvoir : apparaitre d'un coup se lirait comme un
    defaut d'affichage, et disparaitre d'un coup ne previendrait pas que c'est fini. */
 const ECHO_COUL="#3BC9FF";
-const ECHO_N=3, ECHO_PAS=18, ECHO_CHUTE=1.2;
+/* CINQ COPIES, ET NON TROIS. A trois, la trainee se lisait comme trois poules pales plutot
+   que comme une trace : on comptait les copies. A cinq, avec un pas plus court et un
+   effacement geometrique — chacune garde six dixiemes de la precedente — l'oeil ne compte
+   plus, il voit une queue. Le dernier est presque invisible, et c'est ce qui donne la
+   pointe : une trainee qui s'arrete net est un empilement. */
+const ECHO_N=5, ECHO_PAS=16, ECHO_CHUTE=1.0;
+const ECHO_A=0.34, ECHO_Q=0.60;
 function echos(w, h, jitter, bob, cle){
   if(!festin()) return;
   const im=SPR[cle]; if(!im || !im.naturalWidth) return;
@@ -9148,7 +9162,7 @@ function echos(w, h, jitter, bob, cle){
   const y = hen.y-footOff()+cale-bob;
   const sil = silhouette(im, ECHO_COUL);
   for(let i=ECHO_N;i>=1;i--){
-    ctx.globalAlpha=(0.10+0.22/i)*a;
+    ctx.globalAlpha=ECHO_A*Math.pow(ECHO_Q,i-1)*a;
     ctx.drawImage(sil, hen.x+jitter-ECHO_PAS*i, y+ECHO_CHUTE*i, w, h);
   }
   ctx.globalAlpha=1;
