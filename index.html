@@ -5305,9 +5305,11 @@ function dessineVignette(cvs, nom){
      tout le reste de la composition. */
   const A=(m.carte&&m.carte.oiseau) || {k:m.oiseaux[0], c:VIG_OISEAU[1], h:VIG_OISEAU[0]};
   if(A.k && OISEAUX[A.k]){ const b=OISEAUX[A.k], im=SPR[b.poses[0]];
+    /* la carte pose une seule pose, figee : elle prend son cale comme le jeu */
+    const c2 = b.cale && b.cale[b.poses[0]];
     if(im && im.naturalHeight)
-      g.drawImage(im, larg*A.c-b.plan.bodyX,
-                  -VIG_CIEL*A.h-b.plan.bodyCY, b.plan.w, b.plan.h); }
+      g.drawImage(im, larg*A.c-b.plan.bodyX+(c2?c2[0]:0),
+                  -VIG_CIEL*A.h-b.plan.bodyCY+(c2?c2[1]:0), b.plan.w, b.plan.h); }
   g.restore();
 }
 /* ---------- LA TAILLE DES CARTES SE CALCULE, ELLE NE S'ECRIT PAS ----------
@@ -6162,6 +6164,24 @@ const VAUTOUR_SPEED = 150, VAUTOUR_BAT = 6.5;
 const CHOUETTE = {"w": 138.85, "h": 218.35, "bodyX": 1.61, "bodyCY": 133.08};
 const CHOUETTE_SPEED = 145, CHOUETTE_BAT = 9.0;
 const CHOUETTE_POSES = ["chouette_up","chouette_mid","chouette_down","chouette_mid"];
+/* ---------- SA TETE NE HOCHE PLUS ----------
+   LES TROIS POSES PARTAGENT UNE SEULE ANCRE, et tout decalage de la tete d'un dessin a
+   l'autre se lit comme un hochement a neuf battements par seconde. L'aigle n'en souffre
+   pas — sa tete ne bouge que de 3 pixels de planche d'une pose a l'autre — la chouette si :
+   17 pixels entre le milieu et les ailes hautes, 21 entre le milieu et les ailes basses.
+   Sur les 517 pixels de sa planche, cela fait pres de six unites de monde, et l'oeil suit
+   la tete d'un oiseau avant tout le reste.
+   LA MESURE NE VIENT PAS D'UN REPERE SIMPLE, et il a fallu s'y reprendre : le haut du
+   dessin, ailes hautes, est le bout de l'aile et non la tete, et les pixels sombres du haut
+   sont ses remiges noires. C'est de la RECONNAISSANCE DE MOTIF — on decoupe la tete dans la
+   pose du milieu, disque facial, oeil et bec, et on la cherche dans les deux autres en la
+   glissant partout — qui donne le vrai deplacement. Voir chouettecale.js.
+   ON CALE DONC CHAQUE POSE A PART, et sur la MOYENNE du cycle plutot que sur la pose du
+   milieu : cale a moyenne nulle, l'oiseau garde l'altitude qu'il avait, et sa boite de
+   collision comme l'invariant du ciel restent ce qu'ils etaient. C'est le corps qui monte
+   et descend maintenant, la tete tient sa ligne — ce que fait un oiseau. */
+const CHOUETTE_CALE = {chouette_up:[-0.20, 2.02], chouette_mid:[-0.20, -2.55],
+                       chouette_down:[0.61, 3.09]};
 /* ---------- les oiseaux du ciel ----------
    Un oiseau, ici, c'est un obstacle qui traverse le ciel a contre-sens, qu'on ne peut
    pas prendre par le dessus, sur lequel rien ne se pose et qui ne porte pas d'ombre au
@@ -6186,7 +6206,7 @@ const OISEAUX = {
      puisque les oiseaux ne le recoivent pas tout seuls. Reste 77 sur 51 : plus courte que
      l'aigle, plus haute que lui. C'est une chouette, elle est ronde. */
   chouette:{plan:CHOUETTE, poses:CHOUETTE_POSES, bat:CHOUETTE_BAT, vit:CHOUETTE_SPEED,
-            boite:{dx:5.8, dy:-25.7, w:76.9, h:51.3}},
+            cale:CHOUETTE_CALE, boite:{dx:5.8, dy:-25.7, w:76.9, h:51.3}},
   /* Le corbeau est plus petit que l'aigle et son tronc plus mince : 88 unites sur 26,
      contre une boite d'aigle de 82 sur 39. La sienne s'y ajuste — quelques unites
      d'air de chaque cote, comme celle de l'aigle en avait. */
@@ -9235,7 +9255,11 @@ function draw(){
       const ax = o.sens>0 ? 0 : o.x;
       cycle(oi.poses, t*oi.bat+o.ph, (k,a)=>{
         ctx.globalAlpha=a;
-        ctx.drawImage(SPR[k], ax-pl.bodyX, o.y-pl.bodyCY, pl.w, pl.h);
+        /* `cale` recale la pose sur sa tete — voir CHOUETTE_CALE. Elle s'applique dans le
+           repere du dessin, donc le miroir de celui qui double l'emporte avec le reste. */
+        const c2 = oi.cale && oi.cale[k];
+        ctx.drawImage(SPR[k], ax-pl.bodyX+(c2?c2[0]:0), o.y-pl.bodyCY+(c2?c2[1]:0),
+                      pl.w, pl.h);
       });
       ctx.globalAlpha=1;
       if(o.sens>0) ctx.restore();
