@@ -9971,28 +9971,25 @@ function hautBandeau(){ return Math.min(BANDE_MAX, bandW*BANDE_PART); }
 const FILET_HUD="#D8CBB4";          // les filets du bloc de droite, verticaux et horizontal
 /* LE PLANCHER DU SERRAGE. Il ne dit pas la taille des petits nombres — celle-la est fixee
    par la largeur disponible des que la ligne est pleine — il dit seulement jusqu'ou l'on
-   accepte de descendre avant de laisser deborder. Il a suivi PETIT_PART vers le bas : une
-   ligne dessinee un cinquieme plus grande a besoin d'un cinquieme de serrage en plus pour
-   tenir dans la meme place, et un plancher trop haut la ferait passer sous la pastille. */
+   accepte de descendre avant de laisser deborder. Depuis que les compteurs ont rendu leurs
+   records, la ligne du haut ne l'atteint plus jamais ; il ne sert qu'a la ligne du bas, sur
+   un record de score a huit chiffres. */
 const ECH_MIN_HUD=0.60;
 const SCORE_PART=0.40;              // la part de la hauteur du bandeau que prend le score
-/* LES PETITS AUSSI ONT GRANDI, MAIS PAS PARTOUT, ET C'EST DANS LA NATURE DU BLOC.
-   Ils avaient d'abord garde leur taille d'avant — 0,123 du nouveau bandeau, soit 0,147 de
-   l'ancien — pour que toute la hauteur gagnee aille au score. Ils remontent maintenant a
-   0,145, un cinquieme de plus.
-   CE CINQUIEME NE SE GAGNE QUE LA OU LA LIGNE A DE LA PLACE. Des que les quatre nombres et
-   les deux couronnes remplissent la moitie droite, c'est la LARGEUR qui fixe leur taille et
-   non la fraction : le serrage rend alors exactement ce que la fraction avait pris. Le gain
-   est donc entier en debut de partie et sur une partie ordinaire — la ou l'on joue — et nul
-   sur les nombres a six chiffres, ou il n'y avait de toute facon plus rien a prendre. */
-const PETIT_PART=0.145;             // les compteurs et les records
+/* TROIS TAILLES, ET CHACUNE A SA RAISON. Les compteurs sont seuls sur leur ligne depuis
+   qu'ils ont rendu leurs records : la place y est large, ils prennent donc 0,185 et ne se
+   serrent plus jamais. Le score prend tout ce qui reste sur la sienne. Et le record du
+   score, entre les deux, garde un corps modeste — c'est une reference, pas une mesure, et
+   chaque dixieme qu'on lui donnerait serait pris au grand nombre d'a cote. */
+const REC_SC_PART=0.120;            // le record du score : lisible, et pas davantage
 /* CE QUI ENTOURE LES NOMBRES A MAIGRI POUR EUX. La mouche, les couronnes et les creux
    prenaient ensemble une quinzaine d'unites sur la ligne du haut — dix pour cent de sa
    largeur — pour ne rien dire de plus. L'icone descend a la taille du texte qu'elle
    annonce (elle etait plus grande que lui), les couronnes perdent un vingtieme, et les
    creux se resserrent. Sur une ligne qui touche deja le bord, chaque unite rendue est une
    unite de chiffre en plus. */
-const ICO_PART=0.145, COUR_PART=0.12, SEP_PART=0.18;
+const COUR_RAP=0.83, SEP_PART=0.18;  // la couronne, en parts du texte de sa ligne
+const COMPTEUR_PART=0.185;          // les mouches et les metres, seuls sur leur ligne
 /* L'epaisseur du trait de TOUT ce que le bandeau trace en code — coeur, etoile,
    couronnes, contour des jauges. Elle n'est pas choisie : c'est celle du trait des
    DESSINS poses a cote, mesuree a la taille ou le bandeau les pose. La plume donne
@@ -10168,10 +10165,15 @@ function drawHUD(){
   const bcx=L+VW*0.5, bcy=top+u*0.44;        // au milieu, et elle n'en bouge plus
   const xMax=R-padD, xMin=bcx+bw/2+u*0.16;
 
-  const recMou = carnet().bestMou>0  ? String(carnet().bestMou) : null;
-  /* Le record des metres perd son « m » : la couronne dit deja que c'en est un, et l'unite
-     se lit sur le nombre d'a cote. Deux caracteres de gagnes sur la ligne la plus longue. */
-  const recDist= carnet().bestDist>0 ? chiffre(carnet().bestDist) : null;
+  /* LES COMPTEURS N'ONT PLUS LEUR RECORD, ET C'EST CE QUI LES REND LISIBLES. La ligne du
+     haut portait quatre nombres et deux couronnes pour une moitie d'ecran : chaque chiffre
+     y etait a l'etroit, et le serrage automatique passait son temps a les rapetisser.
+     Le record du score reste, lui : c'est celui qui se poursuit, et c'est le seul qu'on
+     regarde en jouant.
+     LES DEUX AUTRES N'ONT PAS DISPARU POUR AUTANT — ils sont toujours tenus, et ils se
+     LISENT encore, dans la couleur : un compteur vire a l'ambre aux trois quarts de son
+     record, au rouge dans les dix derniers pour cent, a l'or une fois passe. On sait donc
+     toujours qu'on approche du sien sans qu'un chiffre gris ait a le dire. */
   const recSc  = carnet().best>0     ? chiffre(carnet().best) : null;
   const nbP=(v,coul,gros)=>({txt:String(v), gab:String(v).replace(/\d/g,"0"), coul, gros:!!gros});
   /* LE MEME ORDRE POUR LES TROIS : la couronne, le record en gris, puis la valeur du
@@ -10180,26 +10182,31 @@ function drawHUD(){
      facons dans le meme bloc, c'etait une hesitation de plus a lire ; d'autant que l'ordre
      du score est le bon : on lit ce qu'il faut battre, puis ou l'on en est. */
   const CREUX_REC=0.11;                      // entre un record et la valeur qu'il precede
-  const lHaut=[{ico:1}];
-  if(recMou) lHaut.push({cour:1}, nbP(recMou, REC_GRIS), {creux:CREUX_REC});
-  lHaut.push(nbP(eaten, coulPres(eaten, carnet().bestMou)), {sep:1});
-  if(recDist) lHaut.push({cour:1}, nbP(recDist, REC_GRIS), {creux:CREUX_REC});
-  lHaut.push(nbP(chiffre(metres())+" m", coulPres(metres(), carnet().bestDist)));
+  const lHaut=[{ico:1}, nbP(eaten, coulPres(eaten, carnet().bestMou)), {sep:1},
+               nbP(chiffre(metres())+" m", coulPres(metres(), carnet().bestDist))];
   const lBas=[];
   if(recSc) lBas.push({cour:1}, nbP(recSc, REC_GRIS), {creux:CREUX_REC});
   lBas.push(nbP(chiffre(score()), coulPres(score(), carnet().best), true));
-  const LIGNES=[{y:0.29, parts:lHaut}, {y:0.71, parts:lBas}];
+  /* CHAQUE LIGNE A SON PETIT CORPS. Celle du haut n'a plus que deux nombres : la place y
+     est large, et ses chiffres montent donc d'un quart. Celle du bas garde le corps d'avant
+     pour son record — grossi, il aurait pris sa place au score, qui est le grand de la
+     famille. */
+  const LIGNES=[{y:0.29, petit:COMPTEUR_PART, parts:lHaut},
+                {y:0.71, petit:REC_SC_PART,   parts:lBas}];
 
   /* LE MOTEUR. Une ligne est une suite de morceaux — la mouche, un nombre, une couronne,
      un creux, le filet — et la meme fonction sait les mesurer et les poser. Les nombres se
      mesurent sur un GABARIT DE ZEROS : la fonte n'a pas des chiffres de largeur egale, et
      mesuree sur le texte reel la ligne changeait de largeur a chaque metre parcouru. */
-  const corps=(p,l,e)=>p.gros ? l.tGros : Math.round(u*PETIT_PART*e);
+  const corps=(p,l,e)=>p.gros ? l.tGros : Math.round(u*l.petit*e);
+  /* L'icone et la couronne se mesurent sur le texte de LEUR ligne, et non sur une taille
+     du bandeau : une mouche calee sur le bandeau serait plus grosse que le nombre qu'elle
+     annonce des que la ligne grandit. */
   const mesLigne=(l,e)=>{
     let w=0;
     for(const p of l.parts){
-      if(p.ico) w+=u*ICO_PART*e*MOU_W/MOU_H + u*0.05*e;
-      else if(p.cour) w+=couronneLarge(u*COUR_PART*e)+u*0.045*e;
+      if(p.ico) w+=u*l.petit*e*MOU_W/MOU_H + u*0.05*e;
+      else if(p.cour) w+=couronneLarge(u*l.petit*COUR_RAP*e)+u*0.045*e;
       else if(p.creux) w+=u*p.creux*e;
       else if(p.sep) w+=u*SEP_PART*e;
       else w+=largeurP(p.gab, corps(p,l,e), p.gros?"900":"700");
@@ -10309,7 +10316,7 @@ function drawHUD(){
      ce qui bouge, ce sont les chiffres, jamais la place de la couronne ni du filet. */
   const poseLigne=(l,y)=>{
     let x=xMax-mesLigne(l,ech);
-    const cw2=u*COUR_PART*ech, mh2=u*ICO_PART*ech, mw2=mh2*MOU_W/MOU_H;
+    const cw2=u*l.petit*COUR_RAP*ech, mh2=u*l.petit*ech, mw2=mh2*MOU_W/MOU_H;
     for(const p of l.parts){
       if(p.ico){
         /* fly_hud, pas fly_ico : la meme mouche, mais taillee pour le bandeau. La planche
