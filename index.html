@@ -10124,12 +10124,19 @@ function drawHUD(){
   const recDist= carnet().bestDist>0 ? chiffre(carnet().bestDist) : null;
   const recSc  = carnet().best>0     ? chiffre(carnet().best) : null;
   const nbP=(v,coul,gros)=>({txt:String(v), gab:String(v).replace(/\d/g,"0"), coul, gros:!!gros});
-  const lHaut=[{ico:1}, nbP(eaten, coulPres(eaten, carnet().bestMou))];
-  if(recMou) lHaut.push({creux:0.10},{cour:1}, nbP(recMou, REC_GRIS));
-  lHaut.push({sep:1}, nbP(chiffre(metres())+" m", coulPres(metres(), carnet().bestDist)));
-  if(recDist) lHaut.push({creux:0.10},{cour:1}, nbP(recDist, REC_GRIS));
+  /* LE MEME ORDRE POUR LES TROIS : la couronne, le record en gris, puis la valeur du
+     moment. Les compteurs le disaient a l'envers — la valeur d'abord, le record apres —
+     quand le score, lui, mettait deja son record devant. Trois mesures rangees de deux
+     facons dans le meme bloc, c'etait une hesitation de plus a lire ; d'autant que l'ordre
+     du score est le bon : on lit ce qu'il faut battre, puis ou l'on en est. */
+  const CREUX_REC=0.15;                      // entre un record et la valeur qu'il precede
+  const lHaut=[{ico:1}];
+  if(recMou) lHaut.push({cour:1}, nbP(recMou, REC_GRIS), {creux:CREUX_REC});
+  lHaut.push(nbP(eaten, coulPres(eaten, carnet().bestMou)), {sep:1});
+  if(recDist) lHaut.push({cour:1}, nbP(recDist, REC_GRIS), {creux:CREUX_REC});
+  lHaut.push(nbP(chiffre(metres())+" m", coulPres(metres(), carnet().bestDist)));
   const lBas=[];
-  if(recSc) lBas.push({cour:1}, nbP(recSc, REC_GRIS), {creux:0.16});
+  if(recSc) lBas.push({cour:1}, nbP(recSc, REC_GRIS), {creux:CREUX_REC});
   lBas.push(nbP(chiffre(score()), coulPres(score(), carnet().best), true));
   const LIGNES=[{y:0.29, gros:0, parts:lHaut}, {y:0.71, gros:0.33, parts:lBas}];
 
