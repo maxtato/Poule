@@ -639,10 +639,13 @@
   #pref h3::after{content:"";flex:1;height:2px;border-radius:1px;background:#E4D9C6}
   /* La ligne d'un interrupteur : l'etiquette a gauche, la bascule, le mot a droite. */
   #pref .ligne{display:flex;align-items:center;gap:clamp(8px,3vw,14px);width:100%;
-    padding:0 2px}
+    padding:0 2px;flex-wrap:wrap}
   #pref .etiq{font-size:clamp(12px,3.3vw,14px);font-weight:800;letter-spacing:.08em;
     text-transform:uppercase;color:#8B7C69;white-space:nowrap}
-  #pref .ligne .etiq{flex:1}
+  /* L'etiquette prend la place qui reste et sait se serrer. Sans `min-width:0` — elle est
+     en `nowrap` — une etiquette longue pousse l'interrupteur et le mot d'etat hors du
+     cadre au lieu de laisser la ligne passer a deux. */
+  #pref .ligne .etiq{flex:1 1 auto;min-width:0}
   /* L'INTERRUPTEUR SUIT LA MEME REGLE QUE LE RESTE DE LA FEUILLE. Il portait un contour
      d'ENCRE, celui des pastilles du jeu, quand tout ce qui l'entoure ici est cerne de beige
      au repos et de rouge quand c'est actif — les deux langues, le bouton d'effacement, le
@@ -830,6 +833,27 @@
     transition:transform .22s ease,opacity .22s ease,box-shadow .22s ease}
   .niv.actif{transform:scale(1);opacity:1;box-shadow:0 7px 22px rgba(26,22,20,.22)}
   .niv .vue{position:relative;display:block;border-radius:13px;overflow:hidden}
+  /* LE VERROU. La vignette passe au gris et s'assombrit, et le mot vient par-dessus. On
+     grise par un filtre plutot qu'en repeignant le canevas : le dessin reste ce qu'il est,
+     et l'ouverture d'un terrain n'a rien a refaire. */
+  .niv.bloque canvas{filter:grayscale(1) brightness(1.06) contrast(.72)}
+  .niv .verrou{position:absolute;inset:0;display:none;
+    flex-direction:column;align-items:center;justify-content:center;gap:6px;
+    padding:8px 10px;text-align:center;
+    background:rgba(38,33,30,.46);color:#FFFDF8}
+  .niv.bloque .verrou{display:flex}
+  .niv .verrou svg{width:clamp(18px,calc(var(--carte,220px)*.13),30px);height:auto;
+    flex:none;opacity:.95}
+  .niv .verrou .mot{font-size:clamp(9px,calc(var(--carte,220px)*.055),13px);
+    font-weight:800;line-height:1.25;text-wrap:balance;
+    text-shadow:0 1px 3px rgba(20,16,14,.5)}
+  .niv.bloque .ligne{opacity:.55}
+  /* Le bouton de depart devant un terrain ferme : eteint, mais toujours la. Le selecteur
+     porte l'identifiant parce que celui du bouton rouge le porte : sans lui, le rouge
+     l'emporte et le bouton reste allumant alors qu'il ne fait plus rien. */
+  #menu .jouer.bloque{background:#CFC6B8;border-color:#CFC6B8;color:#8B8175;
+    box-shadow:none;cursor:not-allowed}
+  #menu .jouer.bloque:active{background:#CFC6B8;border-color:#CFC6B8;color:#8B8175}
   /* LE RAPPORT EST DANS LA FEUILLE DE STYLE, pas seulement dans les attributs du
      canevas. Sans lui, la place que la carte occupe pendant qu'on calcule sa taille est
      celle du canevas VIDE — 300 sur 150 — c'est-a-dire la moitie de sa hauteur reelle :
@@ -1124,6 +1148,23 @@
     <div class="choix">
       <button class="opt mot" data-lang="fr">Français</button>
       <button class="opt mot" data-lang="en">English</button>
+    </div>
+    <!-- L'INTERRUPTEUR D'ESSAI. Les terrains s'ouvrent l'un apres l'autre, a un million
+         de points chacun ; celui-ci les ouvre tous d'un coup, pour pouvoir les essayer
+         sans les gagner. Il vit dans le carnet comme le son : c'est un reglage. -->
+    <h3>
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
+           stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4.6" y="10.4" width="14.8" height="9.6" rx="2.2"/>
+        <path d="M8.2 10.4V7.8a3.8 3.8 0 0 1 7.6 0"/>
+      </svg><span data-t="deblocage">Déblocage</span>
+    </h3>
+    <div class="ligne">
+      <span class="etiq" data-t="toutouvrir">Tout ouvrir</span>
+      <button class="bascule" id="basdebloc" role="switch" aria-checked="false">
+        <i></i>
+      </button>
+      <span class="oui" id="deblocmot" data-t="ouvertnon">Non</span>
     </div>
     <!-- EFFACER LA PROGRESSION, en derniere rubrique. Ce n'est pas un reglage — rien ne
          se choisit ici, quelque chose s'applique — et c'est pour cela qu'elle vient
@@ -3576,7 +3617,11 @@ const SAVE_KEY="poule.v3";
    dit seulement dans lequel on a le plus joue. `mondes` porte donc un carnet par monde ;
    `flies` et `runs`, qui comptent une vie de jeu et non une performance, restent communs. */
 const save={mondes:{}, flies:0, runs:0,
-            sound:true, pixel:true, lang:"", monde:"ferme", trophees:[]};
+            sound:true, pixel:true, lang:"", monde:"ferme", trophees:[],
+            /* L'INTERRUPTEUR D'ESSAI. Il ouvre tous les terrains d'un coup, et il vit dans
+               le carnet comme le son ou la langue : c'est un reglage, pas une progression,
+               donc l'effacement du carnet ne le touche pas. */
+            debloque:false};
 function carnetMonde(nom){
   let c=save.mondes[nom];
   if(!c) c=save.mondes[nom]={best:0, bestMou:0, bestDist:0, runs:0};
@@ -3617,6 +3662,7 @@ try{
     if(o.lang==="fr"||o.lang==="en") save.lang=o.lang;
     if(typeof o.monde==="string") save.monde=o.monde;   // verifie a l'ouverture
     if(Array.isArray(o.trophees)) save.trophees=o.trophees.filter(x=>typeof x==="string");
+    save.debloque = o.debloque===true;
   }
 }catch(e){}
 /* Rien de choisi : on suit la langue du navigateur. Le francais pour qui parle
@@ -3694,6 +3740,19 @@ const TEXTES={
      carrousel s'intitulait « Mondedesert ». Le nom suit la forme des trois autres. */
   mondedesert:["Le désert", "The desert"],
   mondemontagne:["La montagne", "The mountain"],
+  /* LE VERROU DES MONDES. Le texte porte le compte a atteindre et le nom du terrain ou
+     l'atteindre : sans le nom, un joueur qui regarde la troisieme carte ne sait pas ou
+     aller jouer. */
+  verrou:     ["Se débloque avec %1 points à %2", "Unlocks with %1 points in %2"],
+  verrouille: ["Verrouillé", "Locked"],
+  deblocage:  ["Déblocage", "Unlocking"],
+  /* COURT, PARCE QUE LA LIGNE EST COURTE. L'etiquette, l'interrupteur et le mot d'etat
+     tiennent sur une seule ligne : « Tout débloquer » suivi de « Dans l'ordre » debordait
+     du cadre sur un telephone etroit, et « Unlock everything / All open » plus encore. Le
+     titre de la rubrique dit deja « Déblocage ». */
+  toutouvrir: ["Tout ouvrir", "Unlock all"],
+  ouvertoui:  ["Oui", "Yes"],
+  ouvertnon:  ["Non", "No"],
   choisis:    ["Choisis ton terrain", "Pick your ground"],
   pasencore:  ["Jamais couru", "Never run"],
   mouches:    ["Mouches", "Flies"],
@@ -4885,6 +4944,9 @@ function accueil(){
 }
 
 function start(){
+  /* UN TERRAIN FERME NE SE JOUE PAS, quelle que soit la porte. Le bouton est deja eteint,
+     mais l'appui sur le terrain et les raccourcis du clavier passent aussi par ici. */
+  if(monde && !mondeOuvert(monde.nom)) return;
   /* Une partie neuve part de zero, points de controle compris : « Recommencer » est un
      recommencement, pas une reprise. */
   dernierPoint=null;
@@ -5485,6 +5547,18 @@ function suitCarrousel(){
   if(g) g.disabled = i<=0;
   if(d) d.disabled = i>=l.length-1;
   if(b.dataset.monde!==save.monde) choisirMonde(b.dataset.monde, true);
+  poseDepart(b.dataset.monde);
+}
+/* LE BOUTON DE DEPART DIT CE QU'IL PEUT FAIRE. Devant un terrain ferme il ne disparait
+   pas — un bouton qui s'en va laisse un trou et l'on cherche ce qu'on a casse — il
+   s'eteint et prend le mot « Verrouille ». */
+function poseDepart(nom){
+  const p=$("play"); if(!p) return;
+  const ouvert=mondeOuvert(nom);
+  p.disabled=!ouvert;
+  p.classList.toggle("bloque", !ouvert);
+  p.dataset.t = ouvert ? "start" : "verrouille";
+  p.textContent = T(p.dataset.t);
 }
 /* D'UNE CARTE A LA VOISINE. On ne choisit pas le monde ici : on amene la carte au centre
    et c'est le defilement qui, en arrivant, appelle suitCarrousel et fait le reste. Une
@@ -5519,7 +5593,15 @@ function poseNiveaux(){
       /* La couronne est celle de l'ecran de fin, au dessin pres : un record est un record,
          il ne se dessine pas de deux facons dans le meme jeu. Son image est posee par
          poseCouronnes(), qui passe aussi sur les cartes fabriquees a l'instant. */
-      b.innerHTML='<span class="vue"><canvas></canvas></span>'
+      /* LE VERROU EST DANS LA VIGNETTE, par-dessus le dessin, et non sous la carte : c'est
+         le dessin qu'il faut barrer, puisque c'est lui qui donne envie. La ligne du nom et
+         du record reste lisible dessous — un terrain ferme a le droit de dire son nom. */
+      b.innerHTML='<span class="vue"><canvas></canvas>'
+                + '<span class="verrou"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none"'
+                + ' stroke="currentColor" stroke-width="1.9" stroke-linecap="round"'
+                + ' stroke-linejoin="round"><rect x="4.6" y="10.4" width="14.8" height="9.6"'
+                + ' rx="2.2"/><path d="M8.2 10.4V7.8a3.8 3.8 0 0 1 7.6 0v2.6"/></svg>'
+                + '<span class="mot"></span></span></span>'
                 + '<span class="ligne"><span class="nom"></span><span class="score">'
                 + '<img class="couronne" alt="">'
                 + '<span class="rec"></span></span></span>';
@@ -5541,6 +5623,16 @@ function poseNiveaux(){
     const nom=b.dataset.monde, c=carnetMonde(nom);
     b.classList.toggle("actif", nom===save.monde);
     b.querySelector(".nom").textContent=T("monde"+nom);
+    /* Ouvert ou ferme, et ce qu'il faut faire pour l'ouvrir. */
+    const ouvert=mondeOuvert(nom), prec=mondePrecedent(nom);
+    b.classList.toggle("bloque", !ouvert);
+    const mot=b.querySelector(".verrou .mot");
+    /* LE NOMBRE NE SE COUPE PAS EN DEUX. Le creux des milliers est une espace ordinaire
+       partout ailleurs, ou le chiffre est pose par chiffreHTML et ne retourne jamais a la
+       ligne ; ici le texte est du texte, et « 1 000 000 » se cassait apres le premier
+       groupe. On lui donne donc une espace insecable etroite. */
+    if(mot) mot.textContent = ouvert ? ""
+      : T("verrou", chiffre(SEUIL_MONDE).split(MIL).join("\u202F"), T("monde"+prec));
     const r=b.querySelector(".rec");
     /* Le mot « Record » ne s'ecrit plus : la couronne le dit, et elle le dit mieux. */
     r.innerHTML = c.best>0 ? chiffreHTML(c.best) : "—";
@@ -5628,6 +5720,12 @@ function posePref(){
   const m=$("sonmot");
   if(m){ m.dataset.t = muted?"sonnon":"sonoui"; m.textContent=T(m.dataset.t);
          m.classList.toggle("non", muted); }
+  const d=$("basdebloc");
+  if(d){ d.classList.toggle("on", save.debloque);
+         d.setAttribute("aria-checked", String(save.debloque)); }
+  const dm=$("deblocmot");
+  if(dm){ dm.dataset.t = save.debloque?"ouvertoui":"ouvertnon";
+          dm.textContent=T(dm.dataset.t); dm.classList.toggle("non", !save.debloque); }
   /* « Reprendre » n'a de sens que s'il y a une course a reprendre : ouverte depuis
      l'accueil, la feuille n'affiche pas ce bouton. */
   $("pref").classList.toggle("encours", halted && state===S.PLAY);
@@ -5642,6 +5740,11 @@ function posePref(){
    compte encore. */
 function effaceProgression(){
   save.mondes={}; save.flies=0; save.runs=0; save.trophees=[];
+  /* LES TERRAINS SE REFERMENT AVEC LES RECORDS, puisque ce sont les records qui les
+     ouvraient. Si l'on etait sur l'un d'eux, on retombe sur le premier ouvert — sans quoi
+     l'accueil resterait sur une carte devenue injouable. L'interrupteur d'essai, lui, ne
+     bouge pas : c'est un reglage et non une progression. */
+  if(!mondeOuvert(save.monde)) choisirMonde(premierOuvert(), true);
   storeSave();
   if(typeof poseCarnet==="function") poseCarnet();
   if(typeof poseNiveaux==="function") poseNiveaux();
@@ -5673,6 +5776,13 @@ $("pref").addEventListener("pointerdown",e=>e.stopPropagation());
 $("pref").addEventListener("click",e=>{
   /* La bascule du son, avant tout le reste : elle n'est pas une `.opt`. */
   if(e.target.closest("#basson")){ audio(); setMute(!muted); posePref(); return; }
+  /* L'interrupteur d'essai : il ouvre ou referme tout, et les cartes se reposent aussitot.
+     Si le terrain choisi vient de se refermer, on retombe sur le premier ouvert. */
+  if(e.target.closest("#basdebloc")){
+    save.debloque=!save.debloque;
+    if(!mondeOuvert(save.monde)) choisirMonde(premierOuvert(), true);
+    storeSave(); posePref(); poseNiveaux(); return;
+  }
   /* Reprendre la course d'ici : la feuille se ferme ET la pause se leve, sinon on
      retomberait sur la carte de pause qu'on venait de quitter. */
   if(e.target.closest(".reprend")){ fermePref(); reprend(); return; }
@@ -6763,6 +6873,32 @@ const MONDES = {
     },
   },
 };
+/* ---------- LES MONDES SE GAGNENT, L'UN APRES L'AUTRE ----------
+   Au depart il n'y a que la ferme. Chaque terrain s'ouvre quand on a fait UN MILLION de
+   points sur celui qui le precede, dans l'ordre du carrousel — qui est l'ordre de la table
+   des mondes, et donc l'ordre ou ils ont ete faits.
+   LE SEUIL SE LIT SUR LE RECORD, et non sur la course en train de se jouer : un million
+   atteint puis perdu reste atteint. C'est deja ce que le carnet garde par terrain, il n'y
+   a rien a ajouter pour cela.
+   ET LES BROUILLONS NE COMPTENT PAS. Ils ne paraissent pas dans le carrousel ; s'ils
+   entraient dans l'ordre, ils y feraient un trou infranchissable. */
+const SEUIL_MONDE = 1000000;
+function ordreMondes(){ return Object.keys(MONDES).filter(n=>!MONDES[n].brouillon); }
+function mondePrecedent(nom){
+  const l=ordreMondes(), i=l.indexOf(nom);
+  return i>0 ? l[i-1] : null;
+}
+function mondeOuvert(nom){
+  if(save.debloque) return true;              // l'interrupteur d'essai ouvre tout
+  const p=mondePrecedent(nom);
+  return !p || carnetMonde(p).best >= SEUIL_MONDE;
+}
+/* Le premier terrain ouvert, pour y retomber quand celui du carnet ne l'est plus — un
+   carnet efface, par exemple, referme tout sauf la ferme. */
+function premierOuvert(){
+  for(const n of ordreMondes()) if(mondeOuvert(n)) return n;
+  return ordreMondes()[0];
+}
 /* Les listes de cles, une fois pour toutes : elles servent a chaque tirage. */
 for(const m of Object.values(MONDES)){
   m.fondKeys = Object.keys(m.fond);
@@ -6777,7 +6913,10 @@ let monde = MONDES.ferme;
    connaissait un monde de plus — retombe sur la ferme au lieu de tout casser. */
 function choisirMonde(nom, garde){
   if(!MONDES[nom] || MONDES[nom].brouillon) nom="ferme";
-  if(garde){ save.monde=nom; storeSave(); }
+  /* ON PEUT REGARDER UN TERRAIN FERME, PAS LE RETENIR. Le carrousel le montre — c'est a
+     cela qu'il sert, on doit voir ce qui vient — mais le carnet ne garde que des terrains
+     ouverts, sinon la prochaine ouverture du jeu commencerait sur une carte injouable. */
+  if(garde && mondeOuvert(nom)){ save.monde=nom; storeSave(); }
   posePastillesMonde();
   if(monde===MONDES[nom]) return;
   monde=MONDES[nom]; sortieFond=null; best=carnetMonde(nom).best; reset();
@@ -10112,8 +10251,12 @@ function demarre(){
   FONT=getComputedStyle(document.body).fontFamily;
   styleJeu(save.pixel, true);
   /* Le monde choisi la derniere fois, avant le premier semis : sinon la ferme se seme,
-     puis la ville se resemerait par-dessus a la premiere image. */
+     puis la ville se resemerait par-dessus a la premiere image.
+     ET IL DOIT ENCORE ETRE OUVERT. Un carnet efface, ou l'interrupteur d'essai remis a sa
+     place entre deux ouvertures, referme des terrains ou l'on etait : on retombe alors sur
+     le premier ouvert, qui est toujours la ferme. */
   monde = MONDES[save.monde] || MONDES.ferme;
+  if(!mondeOuvert(monde.nom)) monde = MONDES[premierOuvert()];
   save.monde = monde.nom; sortieFond=null; posePastillesMonde();
   montreVol(false);            // pose l'etat de depart des boutons de course
   setMute(muted,true); poseCarnet(); checkOrient();
