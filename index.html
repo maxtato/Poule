@@ -10028,7 +10028,7 @@ const SCORE_PART=0.33;              // la part de la hauteur du bandeau que pren
    creux se resserrent. Sur une ligne qui touche deja le bord, chaque unite rendue est une
    unite de chiffre en plus. */
 const SEP_PART=0.18;                // le filet vertical et ses marges, en parts du bandeau
-const FILET_Y=0.548;                // le filet horizontal, au creux mesure entre les deux lignes
+const FILET_Y=0.551;                // le filet horizontal, au creux mesure entre les deux lignes
 const COMPTEUR_PART=0.200;          // les mouches et les metres, seuls sur leur ligne
 /* L'epaisseur du trait de TOUT ce que le bandeau trace en code — coeur, etoile,
    couronnes, contour des jauges. Elle n'est pas choisie : c'est celle du trait des
@@ -10105,6 +10105,23 @@ function largeurP(txt, taille, poids){
   ctx.font=(poids||"900")+" "+taille+"px "+FONT;
   const m=String(txt).split(MIL);
   return m.reduce((a,b)=>a+ctx.measureText(b).width, 0) + taille*MIL_EM*(m.length-1);
+}
+/* OU COMMENCE ET OU FINIT L'ENCRE d'un texte, comptee depuis son bord gauche de calage.
+   La largeur d'un texte n'est pas celle de son encre : chaque signe porte ses marges, et
+   elles ne se valent pas d'un chiffre a l'autre — un « 1 » laisse a sa gauche trois fois
+   le blanc d'un « 0 ». Pour poser un filet AU MILIEU DE DEUX NOMBRES, c'est ce bord-la
+   qu'il faut, pas celui de la case. */
+function encreP(txt, taille, poids){
+  ctx.font=(poids||"900")+" "+taille+"px "+FONT;
+  ctx.textAlign="left";
+  const m=String(txt).split(MIL), fin=m[m.length-1];
+  const a=ctx.measureText(m[0]), z=ctx.measureText(fin);
+  const w=largeurP(txt, taille, poids);
+  ctx.font=(poids||"900")+" "+taille+"px "+FONT;
+  const g = a.actualBoundingBoxLeft===undefined ? 0 : -a.actualBoundingBoxLeft;
+  const d = z.actualBoundingBoxRight===undefined ? w
+          : w - ctx.measureText(fin).width + z.actualBoundingBoxRight;
+  return [g, d];
 }
 function txtP(txt, x, y, taille, coul, align, base){
   /* Un nombre groupe s'ecrit groupe par groupe, le creux pose entre deux. L'ensemble
@@ -10369,10 +10386,39 @@ function drawHUD(){
   /* ---- ce qui se compte, a droite ---- */
   /* Chaque ligne est posee CALEE A DROITE, et chaque nombre cale a droite de son gabarit :
      ce qui bouge, ce sont les chiffres, jamais la place de la couronne ni du filet. */
+  /* LE FILET VERTICAL SE POSE AU MILIEU DE L'ENCRE, ET NON AU MILIEU DE SA CASE. Les
+     nombres sont cales a droite d'un gabarit de zeros — c'est ce qui empeche la mouche et
+     le filet de respirer a chaque metre parcouru — mais un chiffre n'a pas la chair du
+     zero qui lui tient la place. Releve sur l'image : six pixels de blanc a gauche du
+     filet, onze a sa droite des que les metres commencent par un « 1 ». On mesure donc les
+     deux bords d'encre voisins et on pose le filet entre eux. LUI SEUL SE DEPLACE — d'un
+     pixel ou deux, et seulement quand un chiffre de tete change — la mouche, les chiffres
+     et le bord droit du bloc ne bougent pas d'un cheveu. */
+  const milieuFilet=(l,i,xc,ech2)=>{
+    const g=l.parts[i-1], d=l.parts[i+1], case2=u*SEP_PART*ech2;
+    if(!g || !d || g.ico || d.ico || g.sep || d.sep) return xc+case2*0.5;
+    const tg=corps(g,l,ech2), td=corps(d,l,ech2);
+    const pg=g.gros?"900":"700", pd=d.gros?"900":"700";
+    /* le nombre de gauche finit son avancee sur le bord de la case ; celui de droite
+       commence son gabarit apres elle, et se cale a droite de ce gabarit */
+    const bordG = xc - largeurP(g.txt,tg,pg) + encreP(g.txt,tg,pg)[1];
+    const oD = xc + case2 + largeurP(d.gab,td,pd) - largeurP(d.txt,td,pd);
+    const bordD = oD + encreP(d.txt,td,pd)[0];
+    /* LE DECALAGE DU TAMPON. Le texte du bandeau ne sort pas de fillText mais d'un tampon
+       a la grille : sa largeur est arrondie au pixel du dessus et bordee d'un pixel, si
+       bien que l'encre posee tombe un peu a droite de ce que la mesure annonce. Les deux
+       nombres se decalent ensemble, donc leur milieu aussi. Le decalage se releve sur
+       l'image : il vaut quatre cinquiemes d'un pixel de grille, et une fois retranche il
+       ne reste plus, entre les deux vides, que l'arrondi au pixel de l'ecran. */
+    const cale = save.pixel ? 0.8/kPix : 0;
+    /* et il reste dans sa case, quoi qu'il arrive */
+    return Math.max(xc+case2*0.2, Math.min(xc+case2*0.8, (bordG+bordD)/2 - cale));
+  };
   const poseLigne=(l,y)=>{
     let x=xMax-mesLigne(l,ech);
     const mh2=u*l.petit*ech, mw2=mh2*MOU_W/MOU_H;
-    for(const p of l.parts){
+    for(let iP=0; iP<l.parts.length; iP++){
+      const p=l.parts[iP];
       if(p.ico){
         /* fly_hud, pas fly_ico : la meme mouche, mais taillee pour le bandeau. La planche
            du panneau de fin, posee ici, sortait a trois fois le grain du jeu. */
@@ -10380,7 +10426,7 @@ function drawHUD(){
       }
       else if(p.sep){
         ctx.fillStyle=FILET_HUD;
-        ctx.fillRect(Math.round(x+u*SEP_PART*0.5*ech)+0.5, y-u*0.11*ech,
+        ctx.fillRect(Math.round(milieuFilet(l,iP,x,ech)*dpr)/dpr, y-u*0.11*ech,
                      Math.max(1,u*0.016), u*0.22*ech);
         x+=u*SEP_PART*ech;
       }
@@ -10398,7 +10444,7 @@ function drawHUD(){
   /* SA HAUTEUR EST MESUREE, PAS CHOISIE. Le « milieu » que txtP accepte n'est pas le milieu
      de l'encre — il pose son tampon a y moins 0,72 fois le corps — et un filet place au
      jugé passait a cinq pixels du haut des chiffres du score. Releve sur l'image : l'encre
-     des compteurs s'arrete a 0,47 de la hauteur du bandeau, celle du score commence a 0,63.
+     des compteurs s'arrete a 0,46 de la hauteur du bandeau, celle du score commence a 0,64.
      Le filet se pose au milieu de ce creux, et le score a ete descendu d'un poil pour que
      le creux existe. */
   ctx.fillRect(xD, Math.round(top+u*FILET_Y)+0.5, largeD, Math.max(1,u*0.016));
