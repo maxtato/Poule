@@ -9999,8 +9999,14 @@ function drawHUD(){
   const ph=u*0.133;                          // la barre de pouvoir
   const cvh=u*0.25;                          // le coeur
   const y2=top+u*0.65;                       // le milieu de la seconde ligne
-  const fbig=Math.round(u*0.27);             // les grands nombres
-  const fpet=Math.round(u*0.147);            // les records, en gris
+  /* LE SCORE EST LE GRAND NOMBRE, ET LES DEUX COMPTEURS SONT PASSES EN PETIT.
+     Tant que le score etait un produit — les mouches fois les metres — c'etaient ses deux
+     facteurs qu'il fallait lire, et le score se faisait de tete. Maintenant qu'il est une
+     somme, c'est LUI qu'on suit, et les compteurs ne sont plus que le detail de son calcul.
+     Ils prennent donc la taille de leur propre record et se rangent a cote de lui, sur une
+     seule ligne ; le score prend la ligne du dessous, en grand, avec son record a lui. */
+  const fsc=Math.round(u*0.33);              // le score
+  const fpet=Math.round(u*0.147);            // les compteurs et tous les records
   const trait=Math.max(0.6, u*TRAIT_HUD);    // le meme pour tout ce qui est trace ici
   const pouvoir=traverse(), chaine=(state===S.PLAY && combo>=2);
   motJalon(L, VW, u);
@@ -10016,18 +10022,26 @@ function drawHUD(){
      v:metres(), r:carnet().bestDist,
      rec:carnet().bestDist>0?chiffre(carnet().bestDist)+" m":null, ico:false},
   ];
-  const mh=u*0.21, mw=mh*MOU_W/MOU_H;        // l'icone de mouche
+  const mh=u*0.16, mw=mh*MOU_W/MOU_H;        // l'icone de mouche, a la taille du petit texte
   const cw=u*0.13;                           // la couronne des records
+  const AVCOUR=u*0.12, APCOUR=u*0.05;        // avant la couronne, et entre elle et son nombre
+  /* Chaque compteur tient sur une ligne AVEC son record : la valeur, la couronne, le record.
+     Les largeurs se prennent sur un GABARIT DE ZEROS et non sur le texte reel — la fonte n'a
+     pas des chiffres de largeur egale, et la colonne respirerait a chaque metre parcouru. */
   for(const m of MES){
-    ctx.font="900 "+fbig+"px "+FONT;
-    const g1=largeurP(m.gab, fbig, "900")+(m.ico?mw+u*0.09:0);
-    const g2=m.rec ? cw*1.25+u*0.07+largeurP(m.rec.replace(/\d/g,"0"), fpet, "700") : 0;
-    m.w=Math.max(g1,g2);
+    m.wv=largeurP(m.gab, fpet, "700");
+    m.wr=m.rec ? AVCOUR+couronneLarge(cw)+APCOUR+largeurP(m.rec.replace(/\d/g,"0"), fpet, "700") : 0;
+    m.w=(m.ico?mw+u*0.06:0)+m.wv+m.wr;
   }
-  /* L'ordonnee de la ligne des petits records — voir plus bas pourquoi elle descend. */
-  const YREC=top+u*0.775;
+  const Y1=top+u*0.30;                       // les compteurs et leurs records
+  const YSC=top+u*0.70;                      // le score et le sien
   const ecart=u*0.18;                        // entre une mesure et son filet
-  const largeD=MES.reduce((a,m)=>a+m.w,0)+ecart*2*MES.length;
+  /* La ligne du score se mesure de la meme facon, et le bloc de droite prend la plus large
+     des deux : les compteurs ne doivent pas deborder du score, ni le score des compteurs. */
+  const recSc=carnet().best>0 ? chiffre(carnet().best) : null;
+  const wSc=largeurP(chiffre(score()).replace(/\d/g,"0"), fsc, "900");
+  const wRecSc=recSc ? couronneLarge(cw)+APCOUR+largeurP(recSc.replace(/\d/g,"0"), fpet, "700")+u*0.16 : 0;
+  const largeD=Math.max(MES.reduce((a,m)=>a+m.w,0)+ecart*2*MES.length, wSc+wRecSc);
   const xD=R-padD-largeD;                    // bord gauche du bloc de droite
 
   /* ---- la chaine, au milieu : sa place lui est gardee meme eteinte ----
@@ -10113,43 +10127,49 @@ function drawHUD(){
   }
 
   /* ---- ce qui se compte, a droite ---- */
-  let x=xD;
+  /* Les deux compteurs sont ranges a DROITE du bloc, chacun colle a son record. La valeur
+     est calee sur la droite de son gabarit et le record sur la gauche du sien : ce qui bouge,
+     ce sont les chiffres, jamais la place de la couronne. */
+  let x=R-padD-(MES.reduce((a,m)=>a+m.w,0)+ecart*2*MES.length);
   for(let i=0;i<MES.length;i++){
     const m=MES[i];
     /* un filet vertical avant chaque mesure : il separe sans encadrer */
     ctx.fillStyle="#D8CBB4";
-    ctx.fillRect(Math.round(x)+0.5, top+u*0.16, Math.max(1,u*0.016), u*0.50);
+    ctx.fillRect(Math.round(x)+0.5, top+u*0.16, Math.max(1,u*0.016), u*0.28);
     x+=ecart;
-    const xg=x+m.w;                           // les deux lignes sont callees a DROITE
-    txtP(m.val, xg, top+u*0.31, fbig, coulPres(m.v,m.r), "right", "middle");
+    let xx=x;
     if(m.ico){
-      const lg=largeurP(m.val, fbig, "900");
       /* fly_hud, pas fly_ico : la meme mouche, mais taillee pour la taille du bandeau.
          La planche du panneau de fin, posee ici, sortait a trois fois le grain du jeu. */
-      ctx.drawImage(SPR.fly_hud, xg-lg-u*0.09-mw, top+u*0.31-mh/2, mw, mh);
+      ctx.drawImage(SPR.fly_hud, xx, Y1-mh/2, mw, mh);
+      xx+=mw+u*0.06;
     }
+    txtP(m.val, xx+m.wv, Y1, fpet, coulPres(m.v,m.r), "right", "middle");
     if(m.rec){
-      const lr=largeurP(m.rec, fpet, "700");
-      txtP(m.rec, xg, YREC, fpet, REC_GRIS, "right", "middle");
-      couronne(xg-lr-u*0.07-couronneLarge(cw), YREC-cw/2, cw, trait);
+      const xc=xx+m.wv+AVCOUR;
+      couronne(xc, Y1-cw/2, cw, trait);
+      txtP(m.rec, xc+couronneLarge(cw)+APCOUR, Y1, fpet, REC_GRIS, "left", "middle");
     }
     x+=m.w+ecart;
   }
-  /* ---- ET LE SCORE, SOUS LES DEUX COMPTEURS, SUR TOUTE LA LARGEUR DU BLOC ----
-     C'est lui qu'on suit maintenant qu'il est une somme : il monte tout seul avec les
-     metres et bondit de cinq mille a chaque mouche. Il prend donc la DEUXIEME ligne, la
-     plus large, et les deux petits records descendent d'un cran — le bandeau en a trois,
-     et c'est au score qu'il faut la place, pas a eux.
-     SA COULEUR DIT LE RECORD SANS L'ECRIRE. C'est le meme vocabulaire que les deux
-     compteurs — encre, ambre aux trois quarts, rouge dans les dix derniers pour cent, or
-     une fois passe — et cela evite d'ajouter une couronne et un second nombre sur une
-     ligne qui n'a deja pas trop de place.
-     LES TROIS LIGNES TIENNENT DANS LE BANDEAU, ET C'EST COMPTE. Sur une hauteur de un :
-     les compteurs occupent 0,275 a 0,545, le score 0,608 a 0,793, les records 0,802 a
-     0,949, et le filet qui ferme le bandeau est a 0,974. */
-  const fsc=Math.round(u*0.185);
-  txtP(chiffre(score()), R-padD, top+u*0.60, fsc,
+  /* ---- ET LE SCORE, EN GRAND, SUR TOUTE LA LARGEUR DU BLOC ----
+     Il monte tout seul avec les metres et bondit de cinq mille a chaque mouche : c'est le
+     nombre qu'on regarde en jouant, et il a maintenant la taille qui va avec.
+     SA COULEUR DIT DEJA OU L'ON EN EST DU RECORD — encre, ambre aux trois quarts, rouge dans
+     les dix derniers pour cent, or une fois passe — mais elle ne dit pas de COMBIEN. Le
+     record est donc ecrit lui aussi, en petit et sous sa couronne, a gauche du score : de
+     quoi savoir ce qu'il reste a faire sans quitter le nombre des yeux.
+     LES DEUX LIGNES TIENNENT DANS LE BANDEAU, ET C'EST COMPTE. Sur une hauteur de un : les
+     compteurs occupent 0,25 a 0,35, le score 0,58 a 0,82, et le filet qui ferme le bandeau
+     est a 0,974. */
+  txtP(chiffre(score()), R-padD, YSC, fsc,
        coulPres(score(), carnet().best), "right", "middle");
+  if(recSc){
+    const xr=R-padD-wSc-u*0.16;
+    txtP(recSc, xr, YSC, fpet, REC_GRIS, "right", "middle");
+    couronne(xr-largeurP(recSc.replace(/\d/g,"0"), fpet, "700")-APCOUR-couronneLarge(cw),
+             YSC-cw/2, cw, trait);
+  }
 
   /* ---- la chaine de mouches : une pastille rouge au milieu ----
      Elle ne compte pas de points — le score se fait aux mouches et aux metres — elle
