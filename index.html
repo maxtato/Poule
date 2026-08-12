@@ -3918,16 +3918,26 @@ const SFX={
      une mort mais comme un objet qui tombe a cote. */
   noix:  ()=>{ souffle(.09,{vol:.17,cut:2800});
                tone(300,.08,{type:"square",vol:.11,to:110}); },
-  /* Les trois coups du decompte. Les deux premiers sont sourds et courts, le dernier
-     monte : on entend que c'est parti sans avoir a regarder l'ecran. */
-  tic:   dernier=>{ dernier ? tone(660,.16,{type:"triangle",vol:.20,to:990})
-                            : tone(500,.09,{type:"triangle",vol:.14}); },
+  /* LE DECOMPTE SE FAIT ENTENDRE COMME UN DEPART DE COURSE : le meme bip sec sur trois,
+     deux, un, puis un autre, plus haut et plus long, au moment ou ca part. C'est la forme
+     qu'on connait du stade, et elle dit deux choses la ou une seule montee n'en disait
+     qu'une — que le compte tourne, puis qu'il est fini.
+     ET AU VOLUME DU GOBAGE. Les trois coups etaient a 0,14 quand une mouche avalee est a
+     0,20 : le signal qui demande de se tenir pret passait sous celui qui recompense. */
+  tic:   ()=>{ tone(820,.13,{type:"square",vol:.22}); },
+  depart:()=>{ tone(1240,.45,{type:"square",vol:.22}); },
   /* Le gobage monte d'un demi-ton par mouche du combo : la chaine s'entend. */
   gobe:  n=>{ const f=620*Math.pow(1.0595,Math.min(n,12));
                tone(f,.06,{vol:.20,to:f*1.5}); tone(f*1.5,.09,{vol:.16,at:.05}); },
   choc:  ()=>{ souffle(.30,{vol:.30,cut:700}); tone(280,.38,{type:"sawtooth",vol:.26,to:52}); },
   palier:()=>{ tone(880,.09,{type:"triangle",vol:.16}); tone(1320,.13,{type:"triangle",vol:.13,at:.07}); },
   record:()=>{ [660,880,1100,1320].forEach((f,i)=>tone(f,.14,{type:"triangle",vol:.18,at:i*.075})); },
+  /* LE FESTIN : vingt mouches de suite. Quatre notes qui montent en sautant, plus large
+     que la doree et plus court que la fanfare du record — c'est une recompense qu'on gagne
+     a la suite, pas une chance qu'on croise. */
+  festin:()=>{ [523,784,1047,1568].forEach((f,i)=>
+                 tone(f,.22,{type:"square",vol:.19,at:i*.075}));
+               souffle(.30,{vol:.12,cut:3200,at:.04}); },
   /* La doree : une montee plus longue et plus brillante que le record, pour qu'on
      n'hesite pas une seconde sur ce qui vient de se passer. */
   pouvoir:()=>{ [523,659,784,1047,1319].forEach((f,i)=>
@@ -4079,6 +4089,20 @@ const S={MENU:0,PLAY:1,DEAD:2};
 let state=S.MENU, best=0, deadAt=-9, overShown=false;
 let tOr=0, orJusqu=-9;      // prochaine mouche doree, et fin du pouvoir
 function traverse(){ return t<orJusqu && !hen.dead; }
+/* ---------- LE FESTIN : VINGT MOUCHES DE SUITE ----------
+   LES LUNETTES NE VIENNENT PLUS DE LA MOUCHE DOREE. Elles la doublaient : la doree se voit
+   deja de loin, elle fait clignoter la poule et elle remplit sa jauge — lui ajouter des
+   lunettes, c'etait mettre deux recompenses sur le meme evenement, et n'en laisser aucune
+   a ce qui se merite. Elles paient donc maintenant la CHAINE : vingt mouches gobees sans
+   laisser retomber le compteur, ce qui ne s'obtient pas par chance.
+   ET UNE FOIS LE FESTIN PRIS, IL FAUT LAISSER LA CHAINE MOURIR POUR EN REPRENDRE UN. Sans
+   cela, la vingt-et-unieme mouche redonnerait des lunettes, puis la vingt-deuxieme, et une
+   longue chaine tiendrait le pouvoir indefiniment. Le compteur, lui, continue de monter :
+   il dit toujours la meme chose, et il reste dore tant que le pouvoir dure. */
+const FESTIN_N=20;          // la longueur de chaine qui donne les lunettes
+const FESTIN_DUREE=6;       // ce que durent les lunettes, comme le pouvoir de la doree
+let festinJusqu=-9, festinDepuis=-9, festinArme=true;
+function festin(){ return t<festinJusqu && !hen.dead; }
 let deadLand=-9;      // instant du contact au sol
 /* D'ou vient le choc : en vol ou en course. Fige au moment du coup, sinon la pose
    changerait au premier dixieme de seconde, quand elle quitte le sol. */
@@ -4219,7 +4243,7 @@ function poseDecompte(n){
      celle qui tombe — et non le chiffre, dont la vibration ne doit pas s'interrompre. */
   const w=e.parentNode;
   w.style.animation="none"; void w.offsetWidth; w.style.animation="";
-  SFX.tic(n===1);
+  SFX.tic();
 }
 /* LE BOUTON DE VOL REPARAIT DES LE DEBUT DU COMPTE, et c'est la moitie de ce que le
    compte sert a faire. Se preparer, ce n'est pas seulement savoir quand ca repart : c'est
@@ -4236,6 +4260,7 @@ function decompteVers(fin){
   poseDecompte(DECOMPTE_DE);
 }
 function finDecompte(fin){
+  SFX.depart();          // l'autre bip : celui qui dit que c'est parti
   fin();
   if(fingers.size){ lastPress=-9; press(); }
 }
@@ -4367,6 +4392,7 @@ function reset(depuis){
      suivantes, et leur hauteur avec. */
   tFly=1.2+Math.random()*2.6;
   tOr=OR_PREM[0]+Math.random()*(OR_PREM[1]-OR_PREM[0]); orJusqu=-9;
+  festinJusqu=-9; festinDepuis=-9; festinArme=true;
   clouds=[]; for(let i=0;i<5;i++) clouds.push({x:Math.random()*VIEW_W*1.5, f:.15+Math.random()*.6,
                                                s:.55+Math.random()*.6, v:.5+Math.random()*.7,
                                                forme:nuageForme()});
@@ -8086,7 +8112,7 @@ function update(dt){
   }
   flies=flies.filter(f=>f.x>-90);
 
-  if(combo && t-lastEat>COMBO_T) combo=0;        // la chaine est retombee
+  if(combo && t-lastEat>COMBO_T){ combo=0; festinArme=true; }   // la chaine est retombee
   for(let i=flies.length-1;i>=0;i--){
     const f=flies[i];
     if(Math.abs(f.x-(hen.x+78))<52 && Math.abs(f.y-(hen.y-56))<54){
@@ -8096,6 +8122,13 @@ function update(dt){
       combo = (t-lastEat<COMBO_T) ? combo+1 : 1;
       if(combo>comboMax) comboMax=combo;
       lastEat=t;
+      if(combo===1) festinArme=true;              // une chaine neuve peut regagner le festin
+      if(combo>=FESTIN_N && festinArme){
+        festinArme=false;
+        festinDepuis=t; festinJusqu=t+FESTIN_DUREE;
+        SFX.festin();
+        eclat(hen.x+80, hen.y-90, 26);
+      }
       if(f.or){
         orGobees++;
         /* Le pouvoir ne s'additionne pas indefiniment : une doree gobee pendant qu'il
@@ -8103,6 +8136,8 @@ function update(dt){
         orJusqu=t+OR_DUREE;
         SFX.pouvoir();
         eclat(f.x, f.y, 22);
+        /* La doree pendant un festin ne coupe pas les lunettes : les deux pouvoirs se
+           superposent, et la silhouette doree les emporte avec elle. */
       }else{
         SFX.gobe(combo-1);
         /* Plus la chaine est longue, plus l'eclat est fourni : le gain se lit dans
@@ -9064,21 +9099,78 @@ function drawStars(g,cx,cy,e){
   }
 }
 /* ---------- LES LUNETTES, POSEES SUR LA POSE EN COURS ----------
-   Elles ne paraissent que sous pouvoir et suivent la poule dans tous ses etats : le
+   Elles ne paraissent que pendant le festin et suivent la poule dans tous ses etats : le
    tremblement de la panique, le recalage au sol de chaque pose de course, le rebond de la
    foulee. Les trois lui sont passes plutot que relus, parce que le trace les a deja
    calcules et qu'un second calcul finirait par diverger du premier.
-   ET ELLES CLIGNOTENT AVEC ELLE. Sous pouvoir la poule est posee en SILHOUETTE — blanche
-   puis doree — et une paire de lunettes noires restee noire sur une poule blanche se
-   verrait comme une piece rapportee. On leur applique donc la meme teinte, par le meme
-   mecanisme : la silhouette de leur planche. */
+   ET ELLES CLIGNOTENT AVEC ELLE QUAND LES DEUX POUVOIRS SE CROISENT. Une mouche doree
+   gobee pendant le festin met la poule en SILHOUETTE — blanche puis doree — et une paire
+   de lunettes noires restee noire sur une poule blanche se verrait comme une piece
+   rapportee. On leur applique donc la meme teinte, par le meme mecanisme : la silhouette
+   de leur planche. */
 function lunettes(jitter, cale, bob, clignote, tete){
-  if(!traverse()) return;
+  if(!festin()) return;
   const im=SPR.lunettes; if(!im || !im.naturalWidth) return;
   const k=sc(), d=LUN_CALE[tete] || LUN_DROIT;
   ctx.globalAlpha=1;
   ctx.drawImage(clignote ? silhouette(im, clignote) : im,
     hen.x+jitter+(LUN_X+d[0])*k, hen.y-footOff()+cale-bob+(LUN_Y+d[1])*k, LUN_W*k, LUN_H*k);
+}
+/* ---------- LA LUMIERE DU FESTIN ----------
+   Trois cones de couleur tombent du bandeau et se croisent sur la poule, lentement et
+   chacun a son rythme. RIEN NE PEND DANS LE CADRE : une boule a facettes aurait demande de
+   la place en haut de l'ecran, la ou passent les oiseaux et la voute de la montagne.
+   ILS SE POSENT PAR-DESSUS LA POULE ET NON DERRIERE ELLE. Peints derriere, ils faisaient
+   un decor : la poule restait blanche au milieu d'une fete qui ne la touchait pas. Peints
+   devant, en produit, la couleur tombe sur elle, sur le sol et sur ce qui passe — c'est ce
+   que fait une lumiere, et c'est aussi ce qui garde les obstacles lisibles, puisqu'un
+   produit assombrit sans rien cacher.
+   ILS S'OUVRENT ET SE FERMENT. Une lumiere qui apparait d'un coup se lit comme un defaut
+   d'affichage ; celle-ci monte en un demi-tiers de seconde et redescend dans la derniere,
+   ce qui previent que le pouvoir s'acheve. */
+const DISCO_COUL=["#FF3B6B","#FFC93C","#3BE0FF"];
+function voileCoul(hex, a){
+  const v=parseInt(hex.slice(1),16);
+  return "rgba("+((v>>16)&255)+","+((v>>8)&255)+","+(v&255)+","+a.toFixed(3)+")";
+}
+function disco(){
+  if(!festin()) return;
+  const ouvre=Math.min(1,(t-festinDepuis)/0.45);
+  const ferme=Math.max(0,Math.min(1,(festinJusqu-t)/0.7));
+  const a0=0.30*ouvre*ferme;
+  if(a0<=0.002) return;
+  /* LE CIEL EST HAUT ET L'ECRAN EST ETROIT : un cone dessine ici comme il l'etait sur la
+     maquette — large de deux cents unites pour douze cents de haut — se lisait comme une
+     rayure verticale et non comme un faisceau. Il est donc quatre fois plus evase, et il
+     s'eteint aux deux bouts : transparent au ras du bandeau, plein au tiers, et encore
+     bien present au sol, la ou il faut qu'on voie la lumiere se poser sur elle. */
+  const cx=hen.x+80, haut=bandBas, bas=40;
+  ctx.save();
+  ctx.globalCompositeOperation="multiply";
+  for(let i=0;i<3;i++){
+    const ph=t*(0.7+i*0.25)+i*2.1;
+    /* Chacun a SA lampe : sans un ecart fixe entre les trois sommets, les trois cones se
+       superposaient presque exactement et l'on ne voyait qu'un seul faisceau bord de deux
+       couleurs. L'ecart les separe, le balancement les fait vivre. */
+    const px=cx+(i-1)*90+Math.sin(ph)*36, ox=cx+(i-1)*150+Math.sin(ph+0.9)*110;
+    ctx.beginPath();
+    ctx.moveTo(px-16,haut); ctx.lineTo(px+16,haut);
+    ctx.lineTo(ox+210,bas); ctx.lineTo(ox-210,bas); ctx.closePath();
+    const g=ctx.createLinearGradient(px,haut,ox,bas);
+    g.addColorStop(0,    voileCoul(DISCO_COUL[i], 0));
+    g.addColorStop(0.34, voileCoul(DISCO_COUL[i], a0));
+    g.addColorStop(1,    voileCoul(DISCO_COUL[i], a0*0.75));
+    ctx.fillStyle=g; ctx.fill();
+  }
+  /* ET LA FLAQUE SOUS SES PATTES. Sans elle les faisceaux traversaient l'image sans rien
+     y poser : c'est la tache au sol qui dit ou la lumiere arrive, et qui fait de la poule
+     le centre de la scene plutot qu'un passant sous des rayures. */
+  const fl=ctx.createRadialGradient(cx,0,4,cx,0,300);
+  fl.addColorStop(0, "rgba(255,190,90,"+(0.30*ouvre*ferme).toFixed(3)+")");
+  fl.addColorStop(1, "rgba(255,190,90,0)");
+  ctx.fillStyle=fl;
+  ctx.beginPath(); ctx.ellipse(cx, 0, 300, 78, 0, 0, 7); ctx.fill();
+  ctx.restore();
 }
 function henFrame(){
   if(hen.dead){
@@ -9703,6 +9795,7 @@ function draw(){
              bob, clignote, tete);
   }
   ctx.globalAlpha=1;
+  disco();                          // la lumiere du festin, par-dessus elle et le decor
 
   /* Le nuage de la fin, par-dessus tout : c'est lui qui cache l'echange de la poule
      contre la pierre. Un gris un peu plus soutenu que la poussiere des appuis — il
@@ -10196,7 +10289,17 @@ function drawHUD(){
      tout autour ; ils encombraient plus qu'ils ne disaient, la tache rouge se voit
      toute seule. */
   if(chaine){
-    const pop=1+0.14*Math.max(0, 1-(t-lastEat)/0.18);
+    /* ELLE BAT DE PLUS EN PLUS FORT A MESURE QU'ON APPROCHE DE VINGT. La pastille disait
+       combien de mouches s'enchainent ; elle ne disait pas qu'il se prepare quelque chose.
+       Le battement s'accelere — d'une fois et demie par seconde a six — et s'amplifie avec
+       la chaine, et le rouge se rechauffe vers l'orange dans le dernier tiers. Rien de tout
+       cela n'est un chiffre de plus : c'est la meme pastille, qui se met a respirer.
+       LE REBOND DE LA MOUCHE RESTE PAR-DESSUS, ET LES DEUX SE MULTIPLIENT : l'un dit qu'on
+       vient d'en gober une, l'autre ou l'on en est. Additionnes, ils se seraient annules
+       une fois sur deux. */
+    const av=Math.min(1, Math.max(0, (combo-2)/(FESTIN_N-2)));
+    const bat=Math.max(0, Math.sin(t*(1.4+4.6*av)*Math.PI*2));
+    const pop=(1+0.14*Math.max(0, 1-(t-lastEat)/0.18))*(1+(0.02+0.10*av)*bat);
     const w=bw*pop, h=bh*pop, bx0=bcx-w/2, by0=bcy-h/2;
     ctx.save();
     /* La pastille est un NUAGE, pas un rectangle : une croix de deux rectangles et huit
@@ -10221,7 +10324,12 @@ function drawHUD(){
       ctx.moveTo(cxb+rb*kk, cyb);
       ctx.arc(cxb, cyb, rb*kk, 0, 7);
     }
-    ctx.fillStyle="#D6342B"; ctx.fill();
+    /* Et pendant le festin elle passe a l'ambre : le pouvoir est en cours, le compteur
+       continue de monter, mais il ne compte plus vers rien tant que la chaine n'est pas
+       retombee. La couleur le dit sans un mot de plus. */
+    ctx.fillStyle = festin() ? "#E09A18"
+                  : mixHex("#D6342B", "#F07020", Math.max(0, (av-0.55)/0.45));
+    ctx.fill();
     txtP("×"+combo, bcx, by0+h*0.36, Math.round(u*0.29*pop), "#FFFFFF", "center", "middle");
     txtP(T("festin").toUpperCase(), bcx, by0+h*0.68, Math.round(u*0.105*pop),
          "#FFFFFF", "center", "middle");
