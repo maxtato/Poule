@@ -9969,15 +9969,30 @@ const REC_GRIS="#A79A88";
 const BANDE_PART=0.185, BANDE_MAX=76;
 function hautBandeau(){ return Math.min(BANDE_MAX, bandW*BANDE_PART); }
 const FILET_HUD="#D8CBB4";          // les filets du bloc de droite, verticaux et horizontal
-const ECH_MIN_HUD=0.72;             // on ne serre pas les nombres plus que ca : illisible
+/* LE PLANCHER DU SERRAGE. Il ne dit pas la taille des petits nombres — celle-la est fixee
+   par la largeur disponible des que la ligne est pleine — il dit seulement jusqu'ou l'on
+   accepte de descendre avant de laisser deborder. Il a suivi PETIT_PART vers le bas : une
+   ligne dessinee un cinquieme plus grande a besoin d'un cinquieme de serrage en plus pour
+   tenir dans la meme place, et un plancher trop haut la ferait passer sous la pastille. */
+const ECH_MIN_HUD=0.60;
 const SCORE_PART=0.40;              // la part de la hauteur du bandeau que prend le score
-/* LES PETITS NE GRANDISSENT PAS AVEC LE BANDEAU. Ils valaient 0,147 d'un bandeau plus
-   mince, et ils s'y lisaient bien ; gardee telle quelle, la fraction leur aurait fait
-   prendre un cinquieme de plus, c'est-a-dire toute la place que la hauteur venait de
-   donner — et la ligne du haut, qui porte quatre nombres et deux couronnes, se serait
-   serree davantage qu'avant. Ils gardent donc leur taille, ecrite dans les fractions du
-   nouveau bandeau : 0,147 fois 0,155 sur 0,185. Toute la hauteur gagnee va au score. */
-const PETIT_PART=0.123;             // les compteurs et les records, a leur taille d'avant
+/* LES PETITS AUSSI ONT GRANDI, MAIS PAS PARTOUT, ET C'EST DANS LA NATURE DU BLOC.
+   Ils avaient d'abord garde leur taille d'avant — 0,123 du nouveau bandeau, soit 0,147 de
+   l'ancien — pour que toute la hauteur gagnee aille au score. Ils remontent maintenant a
+   0,145, un cinquieme de plus.
+   CE CINQUIEME NE SE GAGNE QUE LA OU LA LIGNE A DE LA PLACE. Des que les quatre nombres et
+   les deux couronnes remplissent la moitie droite, c'est la LARGEUR qui fixe leur taille et
+   non la fraction : le serrage rend alors exactement ce que la fraction avait pris. Le gain
+   est donc entier en debut de partie et sur une partie ordinaire — la ou l'on joue — et nul
+   sur les nombres a six chiffres, ou il n'y avait de toute facon plus rien a prendre. */
+const PETIT_PART=0.145;             // les compteurs et les records
+/* CE QUI ENTOURE LES NOMBRES A MAIGRI POUR EUX. La mouche, les couronnes et les creux
+   prenaient ensemble une quinzaine d'unites sur la ligne du haut — dix pour cent de sa
+   largeur — pour ne rien dire de plus. L'icone descend a la taille du texte qu'elle
+   annonce (elle etait plus grande que lui), les couronnes perdent un vingtieme, et les
+   creux se resserrent. Sur une ligne qui touche deja le bord, chaque unite rendue est une
+   unite de chiffre en plus. */
+const ICO_PART=0.145, COUR_PART=0.12, SEP_PART=0.18;
 /* L'epaisseur du trait de TOUT ce que le bandeau trace en code — coeur, etoile,
    couronnes, contour des jauges. Elle n'est pas choisie : c'est celle du trait des
    DESSINS poses a cote, mesuree a la taille ou le bandeau les pose. La plume donne
@@ -10149,7 +10164,7 @@ function drawHUD(){
      cinquieme de plus — c'est-a-dire tout ce que la moitie droite venait de gagner, et
      davantage. Elle garde donc sa taille d'avant, ecrite dans les fractions du nouveau
      bandeau, et le gain de hauteur va aux nombres. */
-  const bw=u*0.70, bh=u*0.50;                // la pastille du festin, a sa taille d'avant
+  const bw=u*0.64, bh=u*0.46;                // la pastille du festin, un peu plus petite
   const bcx=L+VW*0.5, bcy=top+u*0.44;        // au milieu, et elle n'en bouge plus
   const xMax=R-padD, xMin=bcx+bw/2+u*0.16;
 
@@ -10164,7 +10179,7 @@ function drawHUD(){
      quand le score, lui, mettait deja son record devant. Trois mesures rangees de deux
      facons dans le meme bloc, c'etait une hesitation de plus a lire ; d'autant que l'ordre
      du score est le bon : on lit ce qu'il faut battre, puis ou l'on en est. */
-  const CREUX_REC=0.15;                      // entre un record et la valeur qu'il precede
+  const CREUX_REC=0.11;                      // entre un record et la valeur qu'il precede
   const lHaut=[{ico:1}];
   if(recMou) lHaut.push({cour:1}, nbP(recMou, REC_GRIS), {creux:CREUX_REC});
   lHaut.push(nbP(eaten, coulPres(eaten, carnet().bestMou)), {sep:1});
@@ -10183,10 +10198,10 @@ function drawHUD(){
   const mesLigne=(l,e)=>{
     let w=0;
     for(const p of l.parts){
-      if(p.ico) w+=u*0.16*e*MOU_W/MOU_H + u*0.06*e;
-      else if(p.cour) w+=couronneLarge(u*0.13*e)+u*0.05*e;
+      if(p.ico) w+=u*ICO_PART*e*MOU_W/MOU_H + u*0.05*e;
+      else if(p.cour) w+=couronneLarge(u*COUR_PART*e)+u*0.045*e;
       else if(p.creux) w+=u*p.creux*e;
-      else if(p.sep) w+=u*0.24*e;
+      else if(p.sep) w+=u*SEP_PART*e;
       else w+=largeurP(p.gab, corps(p,l,e), p.gros?"900":"700");
     }
     return w;
@@ -10294,20 +10309,20 @@ function drawHUD(){
      ce qui bouge, ce sont les chiffres, jamais la place de la couronne ni du filet. */
   const poseLigne=(l,y)=>{
     let x=xMax-mesLigne(l,ech);
-    const cw2=u*0.13*ech, mh2=u*0.16*ech, mw2=mh2*MOU_W/MOU_H;
+    const cw2=u*COUR_PART*ech, mh2=u*ICO_PART*ech, mw2=mh2*MOU_W/MOU_H;
     for(const p of l.parts){
       if(p.ico){
         /* fly_hud, pas fly_ico : la meme mouche, mais taillee pour le bandeau. La planche
            du panneau de fin, posee ici, sortait a trois fois le grain du jeu. */
-        ctx.drawImage(SPR.fly_hud, x, y-mh2/2, mw2, mh2); x+=mw2+u*0.06*ech;
+        ctx.drawImage(SPR.fly_hud, x, y-mh2/2, mw2, mh2); x+=mw2+u*0.05*ech;
       }
-      else if(p.cour){ couronne(x, y-cw2/2, cw2, trait); x+=couronneLarge(cw2)+u*0.05*ech; }
+      else if(p.cour){ couronne(x, y-cw2/2, cw2, trait); x+=couronneLarge(cw2)+u*0.045*ech; }
       else if(p.creux){ x+=u*p.creux*ech; }
       else if(p.sep){
         ctx.fillStyle=FILET_HUD;
-        ctx.fillRect(Math.round(x+u*0.12*ech)+0.5, y-u*0.11*ech,
+        ctx.fillRect(Math.round(x+u*SEP_PART*0.5*ech)+0.5, y-u*0.11*ech,
                      Math.max(1,u*0.016), u*0.22*ech);
-        x+=u*0.24*ech;
+        x+=u*SEP_PART*ech;
       }
       else{
         const t=corps(p,l,ech), gw2=largeurP(p.gab, t, p.gros?"900":"700");
