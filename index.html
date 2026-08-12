@@ -5345,8 +5345,17 @@ function semeVignette(m, larg){
     const rang=[];
     for(const o of liste){
       const w=largeurDe(o.k, B.cles);
-      const pas=w - Math.min(B.ecart[0], w*CHEVAUCHE_MAX);
       const x0=gauche(o.c, w);
+      /* SAUF QUAND LA PIECE N'EST PAS UN RELIEF. La rangee ne se justifie que pour ce qui
+         doit couvrir la carte sans fente : une crete, un vallon, une ligne de monts. Un
+         IMMEUBLE n'est pas de ceux-la. Chaine, il se recopiait six fois en se recouvrant
+         d'un tiers, et les six copies identiques ne se lisaient plus comme des batiments
+         mais comme un seul mur gris d'un bord a l'autre — le meme reproche qu'avant, mais
+         venu du chainage et non de la liste. Le reverbere lointain, lui, s'en repetait
+         vingt-huit fois. `seul` dit qu'une piece se pose une fois, la ou on l'a mise, et
+         qu'on assume de voir le plan d'en dessous a cote : c'est ce qui donne l'air. */
+      if(o.seul){ rang.push({k:o.k, x:x0, mir:!!o.mir}); continue; }
+      const pas=w - Math.min(B.ecart[0], w*CHEVAUCHE_MAX);
       /* vers la gauche jusqu'a sortir du cadre, puis vers la droite */
       for(let x=x0-pas; x+w > -pas; x-=pas) rang.push({k:o.k, x, mir:!!o.mir});
       for(let x=x0; x < larg+pas; x+=pas) rang.push({k:o.k, x, mir:!!o.mir});
@@ -6617,16 +6626,22 @@ const MONDES = {
     carte:{
       graine:19,
       hills:[{k:"ville_sky1", c:0.24}, {k:"ville_sky3", c:0.82}],
-      /* UN SEUL BATIMENT AU SECOND PLAN, ET UN REVERBERE LOIN DE LUI.
-         Il y en avait trois, et ils se recouvraient tous : le premier allait de -54 a 266,
-         le deuxieme de 214 a 620, le troisieme de 495 a 776 pour une carte large de 662.
-         Bout a bout ils faisaient un mur d'un bord a l'autre — deux d'entre eux, de meme
-         hauteur et de meme teinte, se lisaient meme comme un seul gros bloc. La course, elle,
-         les seme espaces ; la carte doit dire la meme chose.
-         Il en reste un, large de 320 soit la moitie de la carte, pose a gauche du centre —
-         de 121 a 441 — et le reverbere lointain passe a droite, de 490 a 544, ou personne
-         ne le touche. Le plan respire, et l'on voit que c'est un plan et non un fond. */
-      bandes:[[{k:"ville_bloc2", c:0.30}, {k:"ville_lampe_loin", c:0.78}]],
+      /* UN SEUL BATIMENT AU SECOND PLAN, ET UN REVERBERE LOIN DE LUI — ET `seul` EST CE
+         QUI LE GARANTIT. La liste n'a longtemps compte que pour moitie : trois batiments y
+         etaient poses, ils se recouvraient, on en a laisse un — et la carte montrait
+         toujours un mur, parce que la carte CHAINE ce qu'on lui donne. La copie choisie
+         n'est qu'une ancre : la rangee s'etendait ensuite a gauche et a droite, six copies
+         de l'immeuble se chevauchant d'un tiers, vingt-huit du reverbere. Mesure sur la
+         vignette : la bande couvrait de -371 a 938 pour 591 de large.
+         Les deux pieces sont donc marquees `seul`. Il reste un batiment et un reverbere ;
+         entre eux et autour d'eux on voit le ciel et la ligne de gratte-ciels du fond.
+         SA PLACE SE CHOISIT CONTRE CELLE DES AUTRES PLANS, pas dans l'absolu : a 0,30 il se
+         posait juste derriere l'immeuble du plan de devant et les deux masses grises n'en
+         faisaient qu'une a gauche, la droite restant vide ; a 0,62 il rejoignait le
+         gratte-ciel du fond, et c'est le milieu qui se vidait. A 0,46 chacun des trois plans
+         tient son tiers. Le plan respire, et l'on voit que c'est un plan et non un fond. */
+      bandes:[[{k:"ville_bloc2", c:0.46, seul:true},
+               {k:"ville_lampe_loin", c:0.80, seul:true}]],
       /* L'immeuble fait 684 unites de large sur une carte qui en compte 662 : a sa taille
          il n'y aurait que lui. Reduit a 0,62 il en occupe les deux tiers gauches et laisse
          la rue s'ouvrir a droite — le reverbere puis la voiture, chacun a l'air libre.
