@@ -3654,7 +3654,7 @@ let FONT='Fredoka,"Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif';
    ET LES MONDES SE REFERMENT AVEC LUI, puisque ce sont les records de score qui les
    ouvraient. C'est la consequence honnete du changement ; l'interrupteur des reglages est
    la pour ne pas avoir a les regagner pendant les essais. */
-const SAVE_KEY="poule.v4";
+const SAVE_KEY="poule.v5";
 /* LES RECORDS SONT PAR MONDE, les compteurs de vie restent communs.
    Un record est le record de QUELQUE CHOSE : le champ, la rue et le sous-bois n'ont ni les
    memes obstacles ni la meme densite, et un seul chiffre pour les trois ne dit rien — il
@@ -3674,11 +3674,19 @@ function carnetMonde(nom){
 function carnet(){ return carnetMonde((typeof monde!=="undefined" && monde) ? monde.nom : save.monde); }
 try{
   let o=JSON.parse(localStorage.getItem(SAVE_KEY)||"null");
-  let mou=0, scorePerime=false;
+  let mou=0, scorePerime=false, distPerime=false;
+  /* REPRISE D'UN CARNET v4 : LE METRE A CHANGE DE LONGUEUR. Il en valait treize et demi
+     de moins, et le score cent fois plus. Les records de distance et de score de ces
+     carnets-la ne veulent plus rien dire — gardes, ils seraient imbattables et ouvriraient
+     tous les mondes d'un coup. Les mouches, elles, se comptent toujours pareil. */
+  if(!o){
+    const v4=JSON.parse(localStorage.getItem("poule.v4")||"null");
+    if(v4 && typeof v4==="object"){ o=v4; scorePerime=true; distPerime=true; }
+  }
   /* Reprise du carnet de la formule precedente : tout est bon a garder sauf le score. */
   if(!o){
     const v3=JSON.parse(localStorage.getItem("poule.v3")||"null");
-    if(v3 && typeof v3==="object"){ o=v3; scorePerime=true; }
+    if(v3 && typeof v3==="object"){ o=v3; scorePerime=true; distPerime=true; }
   }
   if(!o){
     const v2=JSON.parse(localStorage.getItem("poule.v2")||"null");
@@ -3696,12 +3704,14 @@ try{
       for(const n in o.mondes){ const c=o.mondes[n]; if(!c||typeof c!=="object") continue;
         save.mondes[n]={best:scorePerime ? 0 : Math.max(0,c.best|0),
                         bestMou:Math.max(0,c.bestMou|0),
-                        bestDist:Math.max(0,c.bestDist|0), runs:Math.max(0,c.runs|0)}; }
+                        bestDist:distPerime ? 0 : Math.max(0,c.bestDist|0),
+                        runs:Math.max(0,c.runs|0)}; }
     }else{
       const n=(typeof o.monde==="string") ? o.monde : "ferme";
-      save.mondes[n]={best:mou ? 0 : Math.max(0,o.best|0),
+      save.mondes[n]={best:(mou||scorePerime) ? 0 : Math.max(0,o.best|0),
                       bestMou:Math.max(mou, o.bestMou|0),
-                      bestDist:Math.max(0,o.bestDist|0), runs:Math.max(0,o.runs|0)};
+                      bestDist:distPerime ? 0 : Math.max(0,o.bestDist|0),
+                      runs:Math.max(0,o.runs|0)};
     }
     save.flies=Math.max(0,o.flies|0);
     save.runs=Math.max(0,o.runs|0); save.sound=o.sound!==false;
@@ -3752,7 +3762,7 @@ const TEXTES={
   /* La formule, écrite en toutes lettres sous le score. Elle disait le produit ; elle dit
      maintenant la somme et ses deux poids, parce que c'est le rapport entre les deux qui
      se retient — une mouche vaut cent mètres. */
-  findetail:  ["%1 mouches × 5 000 + %2 m × 50", "%1 flies × 5,000 + %2 m × 50"],
+  findetail:  ["%1 mouches × 50 + %2 m × 7", "%1 flies × 50 + %2 m × 7"],
   rien:       ["Tu n'as rien attrapé", "You caught nothing"],
   recperso:   ["Ton record personnel", "Your personal best"],
   nouveaurec: ["Nouveau record !", "New best!"],
@@ -4335,8 +4345,25 @@ let speed=0, dist=0, t=0, shake=0, hold=false, holdT=0, eaten=0;
    jamais. C'est le prix d'un score qu'on peut lire en courant.
    Les metres sont ceux qu'affiche la barre — arrondis — pour que le compte se verifie a
    l'oeil : 500 metres et 20 mouches font 25 000 plus 100 000, et rien d'autre. */
-const SCORE_METRE=50, SCORE_MOUCHE=5000;
-function metres(){ return Math.round(dist); }
+/* ---------- LE METRE, ET POURQUOI IL EN FALLAIT UN VRAI ----------
+   `dist` compte les pas du monde, pas les metres : c'est lui qui reveille les semis, les
+   points de controle et les mondes, et tout le jeu est regle sur son rythme. Il etait
+   AFFICHE tel quel, et l'on parcourait cent metres a la seconde.
+   LA VITESSE SE DEDUIT DE LA POULE, ELLE NE SE CHOISIT PAS. Une poule qui court fait
+   quatorze kilometres a l'heure, soit quatre metres par seconde ; a fond de train, sept.
+   Le monde defile a 500 pas la seconde au depart et 900 au plus vite : il faut donc 125
+   pas pour un metre, et comme `dist` avance deja d'un pas pour 9,2 unites de monde, un
+   metre vaut 13,6 de ses unites.
+   RIEN D'AUTRE NE CHANGE. Le monde defile exactement comme avant, les obstacles tombent
+   aux memes instants, les mouches au meme debit : c'est la LECTURE qui est corrigee, pas
+   la course. Une partie qui affichait dix mille metres en affiche sept cent trente-cinq,
+   et c'est ce qu'on parcourt vraiment. */
+const PAS_METRE=13.6;               // unites de `dist` pour un metre reel
+/* Le score suit la meme division. Cent mouches et dix mille anciens metres — la partie de
+   reference — valaient un million ; ils valent maintenant dix mille, moitie par les
+   mouches, moitie par la distance : 735 metres a 7 points, plus 100 mouches a 50. */
+const SCORE_METRE=7, SCORE_MOUCHE=50;
+function metres(){ return Math.round(dist/PAS_METRE); }
 function score(){ return metres()*SCORE_METRE + eaten*SCORE_MOUCHE; }
 /* Un nombre a cinq chiffres se lit mal d'un bloc, mais une virgule ou une espace le
    coupe en deux mots. Ce qu'il faut, c'est un simple RESPIRE.
@@ -5128,7 +5155,9 @@ function die(dessus){
     if(ptd){
       ptd.hidden=!dernierPoint;
       if(dernierPoint) ptd.textContent=
-        T("ptdetail", Math.round(dernierPoint.dist), dernierPoint.eaten, dernierPoint.vies);
+        /* le point de controle est garde en pas — c'est de la qu'on repart — mais il
+           s'annonce en metres, comme tout ce qui se lit */
+        T("ptdetail", Math.round(dernierPoint.dist/PAS_METRE), dernierPoint.eaten, dernierPoint.vies);
     }
   }
   textesFin();
@@ -6068,8 +6097,12 @@ let comboMax=0, orGobees=0, travObs=0, airDepuis=-9, airMax=0, plafondTouche=fal
    LE CALCUL PART TOUJOURS DE LA DISTANCE, jamais d'un compteur qu'on incremente : c'est
    ce qui permet de repartir d'un point de controle au milieu de la suite sans avoir a
    rejouer ce qui precede. */
-const JALON_PREMIER=3000;         // le premier point de controle
-const JALON_PAS=5000;             // et l'ecart entre tous les suivants
+/* LES DEUX NOMBRES SONT EN METRES REELS, et ils ont ete choisis pour que la CADENCE ne
+   bouge pas : le premier drapeau tombait a trente-cinq secondes de course et les suivants
+   toutes les cinquante, c'est encore le cas. Ce sont les nombres qui ont change d'unite,
+   pas le rythme du jeu. */
+const JALON_PREMIER=220;          // le premier point de controle, en metres
+const JALON_PAS=370;              // et l'ecart entre tous les suivants
 function jalonApres(m){
   if(m < JALON_PREMIER) return JALON_PREMIER;
   return JALON_PREMIER + JALON_PAS*(Math.floor((m-JALON_PREMIER)/JALON_PAS)+1);
@@ -6158,7 +6191,8 @@ function cimeCiel(){
 }
 function remetJalons(){
   jalons=[]; jalonMot=-9;
-  prochainJalon=jalonApres(dist);
+  /* jalonApres raisonne en metres, `dist` compte en pas : on convertit des deux cotes. */
+  prochainJalon=jalonApres(dist/PAS_METRE)*PAS_METRE;
 }
 function avanceJalons(dt){
   if(dist >= prochainJalon - (VIEW_W+90-(HEN_X+50))/JALON_MPU && !cielPris()){
@@ -6168,7 +6202,7 @@ function avanceJalons(dt){
        reporte donc pas d'un drapeau a l'autre. */
     const m=Math.round(dist+(VIEW_W+90-(HEN_X+50))/JALON_MPU);
     jalons.push({x:VIEW_W+90, m, ph:Math.random()*6.3, pris:false, eclat:-1, morceaux:null});
-    prochainJalon = jalonApres(prochainJalon);
+    prochainJalon = jalonApres(prochainJalon/PAS_METRE)*PAS_METRE;
   }
   /* tant qu'il est la, ce qui resterait colle attend derriere : les evenements — le
      singe et sa noix, le cerf-volant, le journal — et eux seuls. Les oiseaux sont
@@ -7025,7 +7059,7 @@ const MONDES = {
    a rien a ajouter pour cela.
    ET LES BROUILLONS NE COMPTENT PAS. Ils ne paraissent pas dans le carrousel ; s'ils
    entraient dans l'ordre, ils y feraient un trou infranchissable. */
-const SEUIL_MONDE = 1000000;
+const SEUIL_MONDE = 10000;
 function ordreMondes(){ return Object.keys(MONDES).filter(n=>!MONDES[n].brouillon); }
 function mondePrecedent(nom){
   const l=ordreMondes(), i=l.indexOf(nom);
@@ -9146,14 +9180,19 @@ function lunettes(jitter, cale, bob, clignote, tete){
    meme rebond qu'a la poule, et elles restent accrochees a elle.
    ELLES S'OUVRENT ET SE FERMENT comme le pouvoir : apparaitre d'un coup se lirait comme un
    defaut d'affichage, et disparaitre d'un coup ne previendrait pas que c'est fini. */
-const ECHO_COUL="#3BC9FF";
-/* CINQ COPIES, ET NON TROIS. A trois, la trainee se lisait comme trois poules pales plutot
-   que comme une trace : on comptait les copies. A cinq, avec un pas plus court et un
-   effacement geometrique — chacune garde six dixiemes de la precedente — l'oeil ne compte
-   plus, il voit une queue. Le dernier est presque invisible, et c'est ce qui donne la
-   pointe : une trainee qui s'arrete net est un empilement. */
-const ECHO_N=5, ECHO_PAS=16, ECHO_CHUTE=1.0;
-const ECHO_A=0.34, ECHO_Q=0.60;
+const ECHO_COUL="#3BC9FF";           // le bleu du pouvoir, celui du halo de la jauge
+/* TROIS COPIES, ET TROIS BLEUS. Elles etaient cinq, toutes de la meme couleur, et ne se
+   distinguaient que par leur transparence : on voyait une tache bleue qui s'estompait, pas
+   une trace. Elles sont trois, chacune de SA teinte — le bleu profond juste derriere elle,
+   puis le bleu du pouvoir, puis un bleu de ciel presque blanc pour la plus lointaine — et
+   c'est le passage d'un bleu a l'autre qui donne la profondeur, non l'effacement.
+   ET LA TRACE ONDULE. Chaque copie se souleve et retombe a son propre rythme, un peu plus
+   ample a mesure qu'elle s'eloigne : un sillage n'est pas un empilement de copies figees,
+   c'est quelque chose qui vit derriere. */
+const ECHO_TEINTES=["#1F7FD8", "#3BC9FF", "#9EE7FF"];
+const ECHO_ALPHA=[0.58, 0.42, 0.28];
+const ECHO_PAS=20, ECHO_CHUTE=1.2;
+const ECHO_ONDE=2.4, ECHO_CADENCE=5.2;      // l'amplitude du sillage, et ses vagues par seconde
 function echos(w, h, jitter, bob, cle){
   if(!festin()) return;
   const im=SPR[cle]; if(!im || !im.naturalWidth) return;
@@ -9163,10 +9202,12 @@ function echos(w, h, jitter, bob, cle){
   if(a<=0.01) return;
   const cale = hen.ground && FOOT_POSE[cle]!=null ? (FOOT_Y-FOOT_POSE[cle])*sc() : 0;
   const y = hen.y-footOff()+cale-bob;
-  const sil = silhouette(im, ECHO_COUL);
-  for(let i=ECHO_N;i>=1;i--){
-    ctx.globalAlpha=ECHO_A*Math.pow(ECHO_Q,i-1)*a;
-    ctx.drawImage(sil, hen.x+jitter-ECHO_PAS*i, y+ECHO_CHUTE*i, w, h);
+  /* la plus lointaine d'abord : la plus proche doit passer par-dessus les autres */
+  for(let i=ECHO_TEINTES.length;i>=1;i--){
+    const onde=Math.sin(t*ECHO_CADENCE - i*0.85)*ECHO_ONDE*i;
+    ctx.globalAlpha=ECHO_ALPHA[i-1]*a;
+    ctx.drawImage(silhouette(im, ECHO_TEINTES[i-1]),
+                  hen.x+jitter-ECHO_PAS*i, y+ECHO_CHUTE*i+onde, w, h);
   }
   ctx.globalAlpha=1;
 }
