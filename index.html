@@ -9121,6 +9121,35 @@ function lunettes(jitter, cale, bob, clignote, tete){
   ctx.drawImage(clignote ? silhouette(im, clignote) : im,
     hen.x+jitter+(LUN_X+d[0])*k, hen.y-footOff()+cale-bob+(LUN_Y+d[1])*k, LUN_W*k, LUN_H*k);
 }
+/* ---------- LES ECHOS DU FESTIN ----------
+   Trois copies d'elle-meme, bleues et de plus en plus effacees, trainent derriere elle
+   pendant que les lunettes durent. Ce n'est pas une lumiere posee sur le decor — celle-la
+   a ete essayee et retiree : elle repeignait tout l'ecran pour dire une paire de lunettes
+   — c'est ELLE qui laisse une trace, et rien d'autre de l'image ne change.
+   ELLES REPRENNENT LA POSE EN COURS, ET SON CALAGE. Une copie posee au cadre nu aurait
+   flotte des que la foulee change de pose : chaque dessin a son propre point bas, et le
+   rebond de la course monte et descend le corps. On leur passe donc le meme recalage et le
+   meme rebond qu'a la poule, et elles restent accrochees a elle.
+   ELLES S'OUVRENT ET SE FERMENT comme le pouvoir : apparaitre d'un coup se lirait comme un
+   defaut d'affichage, et disparaitre d'un coup ne previendrait pas que c'est fini. */
+const ECHO_COUL="#3BC9FF";
+const ECHO_N=3, ECHO_PAS=18, ECHO_CHUTE=1.2;
+function echos(w, h, jitter, bob, cle){
+  if(!festin()) return;
+  const im=SPR[cle]; if(!im || !im.naturalWidth) return;
+  const ouvre=Math.min(1,(t-festinDepuis)/0.35);
+  const ferme=Math.max(0,Math.min(1,(festinJusqu-t)/0.6));
+  const a=ouvre*ferme;
+  if(a<=0.01) return;
+  const cale = hen.ground && FOOT_POSE[cle]!=null ? (FOOT_Y-FOOT_POSE[cle])*sc() : 0;
+  const y = hen.y-footOff()+cale-bob;
+  const sil = silhouette(im, ECHO_COUL);
+  for(let i=ECHO_N;i>=1;i--){
+    ctx.globalAlpha=(0.10+0.22/i)*a;
+    ctx.drawImage(sil, hen.x+jitter-ECHO_PAS*i, y+ECHO_CHUTE*i, w, h);
+  }
+  ctx.globalAlpha=1;
+}
 function henFrame(){
   if(hen.dead){
     const rp=relevePose(); if(rp) return SPR[rp.k];
@@ -9725,6 +9754,7 @@ function draw(){
     /* La tete visible, qui n'est pas toujours celle de la pose : c'est elle que les
        lunettes suivent. */
     let tete=cle;
+    echos(w, h, jitter, bob, cle);      // la trainee du festin, derriere elle
     if(COURSE.indexOf(cle)>=0){
       /* Le bec s'ouvre, la foulee continue. Si la composition ne peut pas se faire — la
          planche pas encore chargee — on retombe sur le cycle nu : mieux vaut une poule
