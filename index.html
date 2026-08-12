@@ -10251,6 +10251,23 @@ function drawHUD(){
   /* ---- la plume et la jauge de vol ---- */
   ctx.drawImage(SPR.feather, gx, top+u*0.32-fh/2, fw, fh);
   const r2=jh/2;
+  /* SOUS LE FESTIN, LA JAUGE S'ENTOURE DE BLEU. Le pouvoir fait durer le vol deux fois
+     plus — la jauge descend deux fois moins vite — mais rien ne le disait a l'endroit ou
+     ca se joue : on voyait la trainee bleue derriere la poule sans faire le lien avec
+     l'energie. Le meme bleu que la trainee, pose autour de la capsule, fait ce lien.
+     IL EST LARGE ET FAIBLE, ET NON FIN ET FRANC : un trait net de plus autour de la jauge
+     se serait lu comme une seconde bordure, donc comme une information de forme ; un halo
+     large se lit comme un etat. Sa moitie interieure passe sous le blanc de la jauge, qui
+     est peint juste apres — seule la moitie qui deborde se voit. */
+  if(festin()){
+    const ouvre=Math.min(1,(t-festinDepuis)/0.35);
+    const ferme=Math.max(0,Math.min(1,(festinJusqu-t)/0.6));
+    ctx.save();
+    ctx.globalAlpha=0.45*ouvre*ferme*(0.78+0.22*Math.sin(t*4));
+    ctx.strokeStyle=ECHO_COUL; ctx.lineWidth=trait*3.6; ctx.lineJoin="round";
+    rr(bx,jy,gw,jh,r2); ctx.stroke();
+    ctx.restore();
+  }
   ctx.lineWidth=trait; ctx.strokeStyle=INK; ctx.lineJoin="round";
   rr(bx,jy,gw,jh,r2); ctx.fillStyle="#FFFFFF"; ctx.fill(); ctx.stroke();
   const f=Math.max(0,Math.min(1,hen.feathers));
