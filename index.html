@@ -5943,7 +5943,20 @@ let comboMax=0, orGobees=0, travObs=0, airDepuis=-9, airMax=0, plafondTouche=fal
    la planche au decoupage : un pendule tourne autour de son attache. Pivote par son
    centre, le drapeau se serait balance en glissant lateralement, ce qui ne ressemble a
    rien de suspendu. */
-const JALON_METRES=3000;          // un point de controle tous les trois kilometres
+/* ---------- OU TOMBENT LES POINTS DE CONTROLE ----------
+   PAS A INTERVALLE REGULIER. Le premier vient tot — trois kilometres — parce qu'une course
+   qui n'en offre aucun avant longtemps ne donne rien a sauver ; les suivants s'espacent, a
+   cinq kilometres l'un de l'autre. La suite est donc 3000, 8000, 13000, 18000, et ainsi de
+   suite : un debut accueillant, puis une cadence qui ne s'emballe pas.
+   LE CALCUL PART TOUJOURS DE LA DISTANCE, jamais d'un compteur qu'on incremente : c'est
+   ce qui permet de repartir d'un point de controle au milieu de la suite sans avoir a
+   rejouer ce qui precede. */
+const JALON_PREMIER=3000;         // le premier point de controle
+const JALON_PAS=5000;             // et l'ecart entre tous les suivants
+function jalonApres(m){
+  if(m < JALON_PREMIER) return JALON_PREMIER;
+  return JALON_PREMIER + JALON_PAS*(Math.floor((m-JALON_PREMIER)/JALON_PAS)+1);
+}
 const JALON_W=96;                 // largeur du dessin, en unites de monde
 const JALON_SOUS=10;              // de combien la corde part sous le bandeau
 const JALON_ATTACHE=0.528;        // le milieu de la corde, en parts de la largeur
@@ -5970,8 +5983,8 @@ let jalons=[], prochainJalon=0, dernierPoint=null, jalonMot=-9;
      — ET IL LE GARDE POUR LUI TANT QU'IL TRAVERSE. Les trois semeurs du ciel — oiseaux,
        evenements, nuees de mouches — sont repousses au-dela de sa sortie, plus une
        courte queue pour que rien ne parte dans son dos.
-   Le cout est nul : un drapeau traverse en une seconde et demie tous les trois mille
-   metres, et les semeurs du ciel travaillent a l'echelle de la centaine de metres. */
+   Le cout est nul : un drapeau traverse en une seconde et demie tous les trois a cinq
+   mille metres, et les semeurs du ciel travaillent a l'echelle de la centaine de metres. */
 const JALON_QUEUE=20;             // metres de calme laisses derriere lui
 const JALON_BORD=-240;            // au-dela, c'est sorti : ca ne le croisera plus
 /* ET IL EN VEUT UN PEU PLUS QUE SA HAUTEUR. Sans garde, la premiere mesure donnait bien
@@ -6028,7 +6041,7 @@ function cimeCiel(){
 }
 function remetJalons(){
   jalons=[]; jalonMot=-9;
-  prochainJalon=(Math.floor(dist/JALON_METRES)+1)*JALON_METRES;
+  prochainJalon=jalonApres(dist);
 }
 function avanceJalons(dt){
   if(dist >= prochainJalon - (VIEW_W+90-(HEN_X+50))/JALON_MPU && !cielPris()){
@@ -6038,7 +6051,7 @@ function avanceJalons(dt){
        reporte donc pas d'un drapeau a l'autre. */
     const m=Math.round(dist+(VIEW_W+90-(HEN_X+50))/JALON_MPU);
     jalons.push({x:VIEW_W+90, m, ph:Math.random()*6.3, pris:false, eclat:-1, morceaux:null});
-    prochainJalon += JALON_METRES;
+    prochainJalon = jalonApres(prochainJalon);
   }
   /* tant qu'il est la, ce qui resterait colle attend derriere : les evenements — le
      singe et sa noix, le cerf-volant, le journal — et eux seuls. Les oiseaux sont
