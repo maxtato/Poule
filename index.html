@@ -3610,7 +3610,16 @@ let FONT='Fredoka,"Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif';
    mais qui reste exactement ce que la nouvelle ligne « mouches » compte. Seul le
    score repart de zero, faute de pouvoir etre reconstitue : personne ne sait sur
    quelle distance ces mouches-la avaient ete gobees. */
-const SAVE_KEY="poule.v3";
+/* LA CLE CHANGE QUAND LA FORMULE DU SCORE CHANGE, et c'est la troisieme fois. Un record
+   est le record d'un compte ; le compte n'etant plus le meme, l'ancien chiffre ne dit plus
+   rien et ne se convertit pas — la somme et le produit ne se croisent qu'au point de
+   repere, la somme rendant plus sur les courses courtes et moins sur les longues. On garde
+   donc tout le reste du carnet — mouches, parties, langue, son, terrain, trophees,
+   meilleure distance, meilleur nombre de mouches — et le seul SCORE repart de zero.
+   ET LES MONDES SE REFERMENT AVEC LUI, puisque ce sont les records de score qui les
+   ouvraient. C'est la consequence honnete du changement ; l'interrupteur des reglages est
+   la pour ne pas avoir a les regagner pendant les essais. */
+const SAVE_KEY="poule.v4";
 /* LES RECORDS SONT PAR MONDE, les compteurs de vie restent communs.
    Un record est le record de QUELQUE CHOSE : le champ, la rue et le sous-bois n'ont ni les
    memes obstacles ni la meme densite, et un seul chiffre pour les trois ne dit rien — il
@@ -3630,7 +3639,12 @@ function carnetMonde(nom){
 function carnet(){ return carnetMonde((typeof monde!=="undefined" && monde) ? monde.nom : save.monde); }
 try{
   let o=JSON.parse(localStorage.getItem(SAVE_KEY)||"null");
-  let mou=0;
+  let mou=0, scorePerime=false;
+  /* Reprise du carnet de la formule precedente : tout est bon a garder sauf le score. */
+  if(!o){
+    const v3=JSON.parse(localStorage.getItem("poule.v3")||"null");
+    if(v3 && typeof v3==="object"){ o=v3; scorePerime=true; }
+  }
   if(!o){
     const v2=JSON.parse(localStorage.getItem("poule.v2")||"null");
     if(v2 && typeof v2==="object"){ o=v2; mou=Math.max(0,v2.best|0); }
@@ -3645,7 +3659,8 @@ try{
        celui-la qui les recoit. Les deux autres partent a zero, ce qui est vrai. */
     if(o.mondes && typeof o.mondes==="object"){
       for(const n in o.mondes){ const c=o.mondes[n]; if(!c||typeof c!=="object") continue;
-        save.mondes[n]={best:Math.max(0,c.best|0), bestMou:Math.max(0,c.bestMou|0),
+        save.mondes[n]={best:scorePerime ? 0 : Math.max(0,c.best|0),
+                        bestMou:Math.max(0,c.bestMou|0),
                         bestDist:Math.max(0,c.bestDist|0), runs:Math.max(0,c.runs|0)}; }
     }else{
       const n=(typeof o.monde==="string") ? o.monde : "ferme";
@@ -3696,9 +3711,10 @@ const TEXTES={
   start:      ["Start", "Start"],
   gameover:   ["Game Over", "Game Over"],
   tonscore:   ["Ton score", "Your score"],
-  /* La formule, écrite en toutes lettres sous le score : c'est la seule façon de
-     faire comprendre d'un coup d'œil qu'il ne sert à rien de courir sans gober. */
-  findetail:  ["%1 mouches × %2 m", "%1 flies × %2 m"],
+  /* La formule, écrite en toutes lettres sous le score. Elle disait le produit ; elle dit
+     maintenant la somme et ses deux poids, parce que c'est le rapport entre les deux qui
+     se retient — une mouche vaut cent mètres. */
+  findetail:  ["%1 mouches × 5 000 + %2 m × 50", "%1 flies × 5,000 + %2 m × 50"],
   rien:       ["Tu n'as rien attrapé", "You caught nothing"],
   recperso:   ["Ton record personnel", "Your personal best"],
   nouveaurec: ["Nouveau record !", "New best!"],
@@ -4224,13 +4240,29 @@ const HEN_X=150;
 const hen={x:HEN_X,y:0,vy:0,ground:true,feathers:1,anim:0,flap:0,dead:false};
 let speed=0, dist=0, t=0, shake=0, hold=false, holdT=0, eaten=0;
 /* ---------- le score ----------
-   Le score est la distance MULTIPLIEE par les mouches, pas l'une ou l'autre. Courir
-   loin sans rien gober ne vaut rien ; gober beaucoup sans avancer ne vaut rien non
-   plus. Il faut les deux, et c'est ce que le produit dit d'un seul chiffre.
-   Les metres sont ceux qu'affiche la barre — arrondis — pour que le compte se
-   verifie a l'oeil : 500 metres et 20 mouches font 10 000, et rien d'autre. */
+   LE SCORE EST UNE SOMME, ET IL L'EST DEVENU POUR QU'ON PUISSE LE SUIVRE. C'etait un
+   PRODUIT — la distance multipliee par les mouches — et le produit disait bien la regle
+   (courir sans gober ne vaut rien) mais il ne se suivait pas : en pleine course il fallait
+   faire la multiplication de tete, ou attendre l'ecran de fin pour savoir ou l'on en etait.
+   Une somme, elle, ne fait que monter, et chaque mouche est un bond qu'on voit.
+   LES DEUX POIDS SONT CALIBRES SUR UN REPERE ET UNE MESURE. Le repere : dix mille metres
+   et cent mouches valent un million, ce qui est exactement ce que rendait le produit — le
+   seuil qui ouvre le monde suivant ne bouge donc pas d'un pouce. La mesure : le jeu SEME
+   22,3 mouches par mille metres, releve sur trente kilometres dans les cinq mondes et
+   stable avec la distance ; cent mouches en dix mille metres, c'est donc un joueur qui en
+   prend 45 sur 100 — un bon joueur ordinaire, et non un joueur parfait.
+   Il restait un degre de liberte, le partage du million entre les deux, et c'est
+   MOITIE-MOITIE : cinq cent mille de chaque cote au repere. D'ou 50 points par metre et
+   5 000 par mouche — c'est-a-dire, et c'est ce qui compte pour le joueur, UNE MOUCHE VAUT
+   CENT METRES. Le detour se decide de tete, sans calcul.
+   CE QUE CELA CHANGE, ET C'EST ASSUME : la distance seule paie maintenant. Le million sans
+   gober une seule mouche arrive a vingt mille metres, la ou le produit ne l'accordait
+   jamais. C'est le prix d'un score qu'on peut lire en courant.
+   Les metres sont ceux qu'affiche la barre — arrondis — pour que le compte se verifie a
+   l'oeil : 500 metres et 20 mouches font 25 000 plus 100 000, et rien d'autre. */
+const SCORE_METRE=50, SCORE_MOUCHE=5000;
 function metres(){ return Math.round(dist); }
-function score(){ return metres()*eaten; }
+function score(){ return metres()*SCORE_METRE + eaten*SCORE_MOUCHE; }
 /* Un nombre a cinq chiffres se lit mal d'un bloc, mais une virgule ou une espace le
    coupe en deux mots. Ce qu'il faut, c'est un simple RESPIRE.
    Il n'est confie a AUCUN caractere. Les espaces fines — ultrafine, fine insecable —
@@ -9929,6 +9961,8 @@ function drawHUD(){
     const g2=m.rec ? cw*1.25+u*0.07+largeurP(m.rec.replace(/\d/g,"0"), fpet, "700") : 0;
     m.w=Math.max(g1,g2);
   }
+  /* L'ordonnee de la ligne des petits records — voir plus bas pourquoi elle descend. */
+  const YREC=top+u*0.775;
   const ecart=u*0.18;                        // entre une mesure et son filet
   const largeD=MES.reduce((a,m)=>a+m.w,0)+ecart*2*MES.length;
   const xD=R-padD-largeD;                    // bord gauche du bloc de droite
@@ -10033,11 +10067,26 @@ function drawHUD(){
     }
     if(m.rec){
       const lr=largeurP(m.rec, fpet, "700");
-      txtP(m.rec, xg, top+u*0.60, fpet, REC_GRIS, "right", "middle");
-      couronne(xg-lr-u*0.07-couronneLarge(cw), top+u*0.60-cw/2, cw, trait);
+      txtP(m.rec, xg, YREC, fpet, REC_GRIS, "right", "middle");
+      couronne(xg-lr-u*0.07-couronneLarge(cw), YREC-cw/2, cw, trait);
     }
     x+=m.w+ecart;
   }
+  /* ---- ET LE SCORE, SOUS LES DEUX COMPTEURS, SUR TOUTE LA LARGEUR DU BLOC ----
+     C'est lui qu'on suit maintenant qu'il est une somme : il monte tout seul avec les
+     metres et bondit de cinq mille a chaque mouche. Il prend donc la DEUXIEME ligne, la
+     plus large, et les deux petits records descendent d'un cran — le bandeau en a trois,
+     et c'est au score qu'il faut la place, pas a eux.
+     SA COULEUR DIT LE RECORD SANS L'ECRIRE. C'est le meme vocabulaire que les deux
+     compteurs — encre, ambre aux trois quarts, rouge dans les dix derniers pour cent, or
+     une fois passe — et cela evite d'ajouter une couronne et un second nombre sur une
+     ligne qui n'a deja pas trop de place.
+     LES TROIS LIGNES TIENNENT DANS LE BANDEAU, ET C'EST COMPTE. Sur une hauteur de un :
+     les compteurs occupent 0,275 a 0,545, le score 0,608 a 0,793, les records 0,802 a
+     0,949, et le filet qui ferme le bandeau est a 0,974. */
+  const fsc=Math.round(u*0.185);
+  txtP(chiffre(score()), R-padD, top+u*0.60, fsc,
+       coulPres(score(), carnet().best), "right", "middle");
 
   /* ---- la chaine de mouches : une pastille rouge au milieu ----
      Elle ne compte pas de points — le score se fait aux mouches et aux metres — elle
