@@ -10469,12 +10469,13 @@ const CART_MIN=13, CART_MAX=18;     // et ses bornes, en pixels CSS
 const CART_PETIT=0.59;              // la seconde ligne, en parts de la premiere
 const CART_FOND="rgba(26,22,20,";   // l'encre du fond, son alpha se pose juste apres
 const CART_ALPHA=0.22;              // a peine pose : on doit voir la terre au travers
-const CART_BLANC="#FFFFFF", CART_PALE="#E9E0D2", CART_ETI="#BFB5A6";
-/* LE LISERE DOIT ETRE OPAQUE. Le tampon d'ecriture est repeint deux fois — une fois de
-   la teinte du liseré, une fois de celle de l'encre — et chaque passe MULTIPLIE l'alpha
-   du tampon. Un liseré a 55 pour cent laissait donc les chiffres eux-memes a 55 pour
-   cent : blancs demandes, gris obtenus, releve sur l'image. */
-const CART_CERNE="#241E1A";
+/* TOUT EST DU MEME BLANC, ET SANS LISERE. Les trois textes se distinguaient par leur
+   teinte — blanc pour le score, creme pour la ligne du bas, gris pour le mot — ce qui
+   faisait trois valeurs a lire dans un cartouche qui tient dans un timbre. Ils sont
+   maintenant du meme blanc pur, et c'est la TAILLE seule qui dit lequel compte. Le lisere
+   sombre est parti avec : il tenait les chiffres sur le bois, qui etait clair ; sur le
+   fond d'encre transparent, le blanc se tient tout seul. */
+const CART_BLANC="#FFFFFF", CART_PALE="#FFFFFF", CART_ETI="#FFFFFF";
 const CART_BAS=0.022;               // le vide sous le cartouche, en parts de l'ecran
 let panT=null, panCle="";
 function panneauRecords(){
@@ -10518,11 +10519,11 @@ function panneauRecords(){
       rr(0, 0, w, h, h*0.28); ctx.fill();
       const yEti=padY+tEti*0.5;
       const y1=padY+tEti+apresEti+t1*0.5, y2=y1+t1*0.5+entre+t2*0.5;
-      txtP(T("hudrec"), padX, yEti, tEti, CART_ETI, "left", "middle", CART_CERNE);
+      txtP(T("hudrec"), padX, yEti, tEti, CART_ETI, "left", "middle");
       couronne(padX, y1-ch*0.52, ch, Math.max(0.7, t1*0.075));
-      txtP(sc, padX+cw+jeu, y1, t1, CART_BLANC, "left", "middle", CART_CERNE);
+      txtP(sc, padX+cw+jeu, y1, t1, CART_BLANC, "left", "middle");
       ctx.drawImage(SPR.fly_hud, padX, y2-mh*0.60, mw, mh);
-      txtP(bas, padX+mw+jeu2, y2, t2, CART_PALE, "left", "middle", CART_CERNE);
+      txtP(bas, padX+mw+jeu2, y2, t2, CART_PALE, "left", "middle");
     } finally{ ctx=vieux; }
     panCle=cle;
   }
