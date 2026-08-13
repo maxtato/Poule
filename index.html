@@ -3687,6 +3687,10 @@ const save={mondes:{}, flies:0, runs:0,
                les parties : c'est un axe qui monte tout seul avec le temps passe, et
                c'est ce qui tient le milieu de l'echelle des trophees. */
             km:0,
+            /* LE MODE COOL ET LES MOUCHES DOREES, sur toute une vie de jeu. Ils montent
+               a l'instant meme ou la chose arrive — pas a la mort, comme les mouches —
+               parce qu'un palier doit tomber pendant qu'on regarde le jeu. */
+            cool:0, or:0,
             sound:true, pixel:true, lang:"", monde:"ferme", trophees:[],
             /* DE QUEL COTE SE PLANTE LE PANNEAU DES RECORDS — "gauche", "droite" ou
                "cache". C'est un reglage de confort : on ne joue pas des deux mains de la
@@ -3745,6 +3749,7 @@ try{
     }
     save.flies=Math.max(0,o.flies|0);
     save.km=Math.max(0,o.km|0);
+    save.cool=Math.max(0,o.cool|0); save.or=Math.max(0,o.or|0);
     save.runs=Math.max(0,o.runs|0); save.sound=o.sound!==false;
     /* LE STYLE NE SE RELIT PLUS DU CARNET. Il n'y a plus qu'un jeu de dessins a l'ecran,
        et un carnet ecrit du temps ou l'on pouvait choisir ramenait le trait sans que rien
@@ -3890,37 +3895,61 @@ const TEXTES={
   hudrec:     ["RECORD", "BEST"],
   /* Les trophées. L'intitulé ne dit plus que l'unité : le compte est gravé sur la
      coupe, et l'écrire deux fois prenait la moitié de la carte pour rien. */
-  tm10:       ["mouches gobées", "flies eaten"],
-  tm25:       ["mouches gobées", "flies eaten"],
-  tm50:       ["mouches gobées", "flies eaten"],
-  tm100:      ["mouches gobées", "flies eaten"],
-  tm250:      ["mouches gobées", "flies eaten"],
-  td300:      ["mètres d'une traite", "metres in one run"],
-  td800:      ["mètres d'une traite", "metres in one run"],
-  td1500:     ["mètres d'une traite", "metres in one run"],
-  td3000:     ["mètres d'une traite", "metres in one run"],
-  tor:        ["mouche dorée", "golden fly"],
-  tchaine:    ["à la chaîne", "in a chain"],
-  tchaine20:  ["à la chaîne", "in a chain"],
-  ttrav:      ["obstacles traversés", "obstacles crossed"],
-  tvol:       ["secondes en l'air", "seconds airborne"],
-  tsoir:      ["Le crépuscule", "Dusk"],
-  tcent:      ["mouches en tout", "flies in all"],
-  ttotal:     ["mouches en tout", "flies in all"],
-  tmou600:    ["mouches en tout", "flies in all"],
-  tmille:     ["mouches en tout", "flies in all"],
-  tmou3500:   ["mouches en tout", "flies in all"],
-  tmou8000:   ["mouches en tout", "flies in all"],
-  tmou15000:  ["mouches en tout", "flies in all"],
-  tkm5:       ["kilomètres courus", "kilometres run"],
-  tkm25:      ["kilomètres courus", "kilometres run"],
-  tkm75:      ["kilomètres courus", "kilometres run"],
-  tkm200:     ["kilomètres courus", "kilometres run"],
-  tparties10: ["parties jouées", "games played"],
-  tparties25: ["parties jouées", "games played"],
-  tparties:   ["parties jouées", "games played"],
-  tparties100:["parties jouées", "games played"],
-  tmondes:    ["terrains conquis", "worlds conquered"]
+  /* LES NOMS DES TROPHEES. Un nombre grave sur une coupe ne dit pas ce qu'on a fait —
+     il dit combien. Chaque cran porte donc un nom, et c'est lui qu'on lit en gros ; le
+     compte reste sur la coupe et l'unite passe en petit dessous. Les noms sont courts
+     par necessite : la carte fait un tiers de la largeur de jeu, coupe comprise. */
+  tm10:       ["Petite faim", "Peckish"],
+  tm25:       ["Bon appétit", "Good appetite"],
+  tm50:       ["Gourmande", "Greedy"],
+  tm100:      ["Goinfre", "Glutton"],
+  tm250:      ["Ogresse", "Ogress"],
+  td300:      ["En jambes", "Warmed up"],
+  td800:      ["Le kilomètre", "The kilometre"],
+  td1500:     ["Grande enjambée", "Long strider"],
+  td3000:     ["Marathonienne", "Marathoner"],
+  tvol:       ["Plané", "Gliding"],
+  tvol25:     ["En apesanteur", "Weightless"],
+  tvol50:     ["Dans les nuages", "In the clouds"],
+  tvol100:    ["Vrai oiseau", "A real bird"],
+  ttrav:      ["Passe-muraille", "Ghost runner"],
+  tcool1:     ["Lunettes noires", "Shades on"],
+  tcool5:     ["Frimeuse", "Show-off"],
+  tcool10:    ["Sacrée classe", "Real class"],
+  tcool25:    ["Vedette", "Celebrity"],
+  tcool50:    ["Icône", "Icon"],
+  tor:        ["Éclat doré", "Golden bite"],
+  tor5:       ["Chercheuse d'or", "Gold digger"],
+  tor10:      ["Le filon", "The gold vein"],
+  tor25:      ["Pluie d'or", "Golden rain"],
+  tor50:      ["Tout en or", "Golden goose"],
+  tcent:      ["La centaine", "First hundred"],
+  ttotal:     ["Chasseuse", "Hunter"],
+  tmou600:    ["Fléau des mouches", "Fly bane"],
+  tmille:     ["Le millier", "The thousand"],
+  tmou3500:   ["Razzia", "Clean sweep"],
+  tmou8000:   ["Insatiable", "Insatiable"],
+  tmou15000:  ["Légende", "Legend"],
+  tkm5:       ["Mise en route", "Getting going"],
+  tkm25:      ["Baroudeuse", "Rambler"],
+  tkm75:      ["Grande voyageuse", "Great traveller"],
+  tkm200:     ["Tour du monde", "Round the world"],
+  tparties10: ["Habituée", "Regular"],
+  tparties25: ["Fidèle au poste", "Always back"],
+  tparties:   ["Increvable", "Unstoppable"],
+  tparties100:["Centenaire", "Centenarian"],
+  tmondes:    ["Reine des cinq", "Queen of five"],
+  /* Les unites, en petit sous le nom. Une par famille, partagee par tous ses crans. */
+  umouches:   ["mouches gobées", "flies eaten"],
+  umetres:    ["mètres d'une traite", "metres in one run"],
+  uvol:       ["secondes en l'air", "seconds airborne"],
+  utrav:      ["obstacles traversés", "obstacles crossed"],
+  ucool:      ["fois en mode cool", "times in cool mode"],
+  uor:        ["mouches dorées", "golden flies"],
+  utout:      ["mouches en tout", "flies in all"],
+  ukm:        ["kilomètres courus", "kilometres run"],
+  uparties:   ["parties jouées", "games played"],
+  umondes:    ["terrains conquis", "worlds conquered"]
 };
 function T(cle, ...n){
   const e=TEXTES[cle];
@@ -5956,7 +5985,8 @@ function posePref(){
    « tout recommencer depuis le debut » en restant au milieu d'une partie dont le score
    compte encore. */
 function effaceProgression(){
-  save.mondes={}; save.flies=0; save.runs=0; save.km=0; save.trophees=[];
+  save.mondes={}; save.flies=0; save.runs=0; save.km=0; save.cool=0; save.or=0;
+  save.trophees=[];
   /* LES TERRAINS SE REFERMENT AVEC LES RECORDS, puisque ce sont les records qui les
      ouvraient. Si l'on etait sur l'un d'eux, on retombe sur le premier ouvert — sans quoi
      l'accueil resterait sur une carte devenue injouable. L'interrupteur d'essai, lui, ne
@@ -6123,11 +6153,24 @@ function eclat(x,y,n){
    seul — on sait ce qui vient apres 250 sans avoir a le lire.
      mouches en une partie   10 · 25 · 50 · 100 · 250
      metres d'une traite     500 · 1 000 · 2 500 · 5 000
+     secondes en l'air       10 · 25 · 50 · 100
+     fois en mode cool       1 · 5 · 10 · 25 · 50
+     mouches dorees          1 · 5 · 10 · 25 · 50
      mouches en tout         100 · 250 · 500 · 1 000 · 2 500 · 5 000 · 10 000
      kilometres courus       5 · 25 · 100 · 250
      parties jouees          10 · 25 · 50 · 100
    Les axes ne montent pas a la meme vitesse et leurs crans s'intercalent : c'est ce
    decalage, et non la longueur de la liste, qui donne le goutte-a-goutte.
+   LA CHAINE ET LE CREPUSCULE SONT PARTIS. La chaine ne meritait pas d'axe a elle : elle
+   ne sert qu'a une chose, declencher le mode cool a vingt, et c'est CE MOMENT-LA qu'on
+   veut recompenser, pas le compte qui y mene. Le crepuscule, lui, tombait au bout de
+   vingt-six secondes de course : c'est une decouverte, pas un exploit.
+   LES SECONDES EN L'AIR SONT MESUREES, PAS SUPPOSEES. Jauge pleine et bouton tenu, la
+   poule tient 5,4 s en vol ordinaire et 12,6 s en mode cool. Au-dela, il faut manger en
+   volant : une mouche rend un tiers de jauge, soit 1,4 s de plus, et une doree la rend
+   tout entiere. Vingt-cinq secondes demandent donc une quinzaine de mouches sans reposer
+   patte a terre, et cent secondes en demandent environ soixante-dix — c'est le bout de
+   l'echelle, et il est atteignable.
    L'ECHELLE A ETE JOUEE AVANT D'ETRE ECRITE. Deux vies de joueur ont ete rejouees sur
    cent vingt parties — celle qui prend le jeu par les cornes et celle du dimanche — en
    notant a quelle partie chaque trophee tombe. L'ancienne echelle donnait neuf de ses
@@ -6135,57 +6178,76 @@ function eclat(x,y,n){
    celle-ci donne au plus trois trophees dans la meme partie, et son plus long silence
    est de vingt-sept parties pour le premier joueur, vingt et une pour le second.
    TROIS FAMILLES, ET ELLES NE SE GAGNENT PAS AU MEME RYTHME. Ce qu'on fait EN UNE PARTIE
-   monte avec l'adresse, ce qu'on cumule AU FIL DES PARTIES monte avec le temps passe, et
-   les tours d'adresse tombent quand ils tombent. Un joueur qui progresse vite epuise la
-   premiere famille et voit arriver la deuxieme ; un joueur du dimanche fait l'inverse.
+   monte avec l'adresse ; ce qu'on cumule AU FIL DES PARTIES monte avec le temps passe ;
+   et les MOMENTS RARES — le mode cool, la mouche doree — se comptent sur toute une vie de
+   jeu et non par partie, parce qu'il en tombe un par partie au mieux. Un joueur qui
+   progresse vite epuise la premiere famille et voit arriver la deuxieme ; un joueur du
+   dimanche fait l'inverse.
+   ET CHAQUE CRAN PORTE UN NOM. Un nombre grave sur une coupe dit combien, jamais quoi :
+   « 25 » ne se retient pas, « Vedette » si. Le nom se lit en gros sur la carte, le compte
+   reste sur la coupe, et l'unite passe en petit dessous pour dire de quoi il s'agit.
    Ce que donne une partie ordinaire, mesure sur les etats de reference : une trentaine
    de mouches, quatre cents metres. Le premier soir donne donc les deux premiers crans de
    chaque axe — un trophee par partie environ, ce qui est le bon rythme pour apprendre ce
    qui se recompense — et le reste s'etale sur la centaine de parties suivantes. */
 const TROPHEES=[
   /* ---- ce qu'on fait en une partie : les mouches ---- */
-  {k:"m10",     n:10,   ok:()=>eaten>=10},
-  {k:"m25",     n:25,   ok:()=>eaten>=25},
-  {k:"m50",     n:50,   ok:()=>eaten>=50},
-  {k:"m100",    n:100,  ok:()=>eaten>=100},
-  {k:"m250",    n:250,  ok:()=>eaten>=250},
+  {k:"m10",     n:10,   u:"umouches", ok:()=>eaten>=10},
+  {k:"m25",     n:25,   u:"umouches", ok:()=>eaten>=25},
+  {k:"m50",     n:50,   u:"umouches", ok:()=>eaten>=50},
+  {k:"m100",    n:100,  u:"umouches", ok:()=>eaten>=100},
+  {k:"m250",    n:250,  u:"umouches", ok:()=>eaten>=250},
   /* ---- ce qu'on fait en une partie : la distance ---- */
-  {k:"d300",    n:500,  ok:()=>metres()>=500},
-  {k:"d800",    n:1000, ok:()=>metres()>=1000},
-  {k:"d1500",   n:2500, ok:()=>metres()>=2500},
-  {k:"d3000",   n:5000, ok:()=>metres()>=5000},
-  /* ---- les tours d'adresse, qui ne se comptent pas en crans ---- */
-  {k:"or",      n:1,    ok:()=>orGobees>=1},
-  {k:"chaine",  n:10,   ok:()=>comboMax>=10},
-  {k:"chaine20",n:25,   ok:()=>comboMax>=25},
-  {k:"trav",    n:10,   ok:()=>travObs>=10},
-  {k:"vol",     n:20,   ok:()=>airMax>=20},
-  {k:"soir",    n:0,    ok:()=>dist>=DAY_LEN*0.75},
+  {k:"d300",    n:500,  u:"umetres",  ok:()=>metres()>=500},
+  {k:"d800",    n:1000, u:"umetres",  ok:()=>metres()>=1000},
+  {k:"d1500",   n:2500, u:"umetres",  ok:()=>metres()>=2500},
+  {k:"d3000",   n:5000, u:"umetres",  ok:()=>metres()>=5000},
+  /* ---- ce qu'on fait en une partie : le vol. C'est le plus long vol d'une traite,
+         pas un cumul : reposer une patte remet le compteur a zero. ---- */
+  {k:"vol",     n:10,   u:"uvol",     ok:()=>airMax>=10},
+  {k:"vol25",   n:25,   u:"uvol",     ok:()=>airMax>=25},
+  {k:"vol50",   n:50,   u:"uvol",     ok:()=>airMax>=50},
+  {k:"vol100",  n:100,  u:"uvol",     ok:()=>airMax>=100},
+  {k:"trav",    n:10,   u:"utrav",    ok:()=>travObs>=10},
+  /* ---- LE MODE COOL ET LES MOUCHES DOREES SE COMPTENT SUR TOUTE UNE VIE DE JEU, et
+         non par partie : ce sont des moments rares, un par partie au mieux, et un
+         palier par partie ne serait pas un palier. Les deux compteurs montent a
+         l'instant meme ou la chose arrive, pas a la mort. ---- */
+  {k:"cool1",   n:1,    u:"ucool",    ok:()=>save.cool>=1},
+  {k:"cool5",   n:5,    u:"ucool",    ok:()=>save.cool>=5},
+  {k:"cool10",  n:10,   u:"ucool",    ok:()=>save.cool>=10},
+  {k:"cool25",  n:25,   u:"ucool",    ok:()=>save.cool>=25},
+  {k:"cool50",  n:50,   u:"ucool",    ok:()=>save.cool>=50},
+  {k:"or",      n:1,    u:"uor",      ok:()=>save.or>=1},
+  {k:"or5",     n:5,    u:"uor",      ok:()=>save.or>=5},
+  {k:"or10",    n:10,   u:"uor",      ok:()=>save.or>=10},
+  {k:"or25",    n:25,   u:"uor",      ok:()=>save.or>=25},
+  {k:"or50",    n:50,   u:"uor",      ok:()=>save.or>=50},
   /* ---- ce qui se cumule d'une partie a l'autre. La course en cours y est comprise,
          sinon le trophee tomberait sur l'ecran de fin, quand plus personne ne regarde
          le jeu. Les derniers crans sont hors de portee d'une bonne soiree, et c'est
          exactement leur emploi : tenir la duree. ---- */
-  {k:"cent",    n:100,  ok:()=>save.flies+eaten>=100},
-  {k:"total",   n:250,  ok:()=>save.flies+eaten>=250},
-  {k:"mou600",  n:500,  ok:()=>save.flies+eaten>=500},
-  {k:"mille",   n:1000, ok:()=>save.flies+eaten>=1000},
-  {k:"mou3500", n:2500, ok:()=>save.flies+eaten>=2500},
-  {k:"mou8000", n:5000, ok:()=>save.flies+eaten>=5000},
-  {k:"mou15000",n:10000,ok:()=>save.flies+eaten>=10000},
+  {k:"cent",    n:100,  u:"utout",    ok:()=>save.flies+eaten>=100},
+  {k:"total",   n:250,  u:"utout",    ok:()=>save.flies+eaten>=250},
+  {k:"mou600",  n:500,  u:"utout",    ok:()=>save.flies+eaten>=500},
+  {k:"mille",   n:1000, u:"utout",    ok:()=>save.flies+eaten>=1000},
+  {k:"mou3500", n:2500, u:"utout",    ok:()=>save.flies+eaten>=2500},
+  {k:"mou8000", n:5000, u:"utout",    ok:()=>save.flies+eaten>=5000},
+  {k:"mou15000",n:10000,u:"utout",    ok:()=>save.flies+eaten>=10000},
   /* Les kilometres d'une vie de jeu. Ils montent au meme rythme que les mouches mais
      pas au meme moment : c'est ce decalage qui remplit le milieu de l'echelle. */
-  {k:"km5",     n:5,    ok:()=>save.km+metres()>=5000},
-  {k:"km25",    n:25,   ok:()=>save.km+metres()>=25000},
-  {k:"km75",    n:100,  ok:()=>save.km+metres()>=100000},
-  {k:"km200",   n:250,  ok:()=>save.km+metres()>=250000},
-  {k:"parties10",n:10,  ok:()=>save.runs+1>=10},
-  {k:"parties25",n:25,  ok:()=>save.runs+1>=25},
-  {k:"parties", n:50,   ok:()=>save.runs+1>=50},
-  {k:"parties100",n:100,ok:()=>save.runs+1>=100},
+  {k:"km5",     n:5,    u:"ukm",      ok:()=>save.km+metres()>=5000},
+  {k:"km25",    n:25,   u:"ukm",      ok:()=>save.km+metres()>=25000},
+  {k:"km75",    n:100,  u:"ukm",      ok:()=>save.km+metres()>=100000},
+  {k:"km200",   n:250,  u:"ukm",      ok:()=>save.km+metres()>=250000},
+  {k:"parties10",n:10,  u:"uparties", ok:()=>save.runs+1>=10},
+  {k:"parties25",n:25,  u:"uparties", ok:()=>save.runs+1>=25},
+  {k:"parties", n:50,   u:"uparties", ok:()=>save.runs+1>=50},
+  {k:"parties100",n:100,u:"uparties", ok:()=>save.runs+1>=100},
   /* Un record dans les cinq terrains. La course en cours compte pour le sien : sans
      cela le trophee attendrait la mort du joueur pour se declarer, et tomberait au
      premier instant de la partie suivante. */
-  {k:"mondes",  n:5,    ok:()=>Object.keys(MONDES).every(n=>
+  {k:"mondes",  n:5,    u:"umondes",  ok:()=>Object.keys(MONDES).every(n=>
                           carnetMonde(n).best>0 || (monde && n===monde.nom && score()>0))}
 ];
 /* Ce que la partie en cours doit retenir pour les tests ci-dessus. Tout est remis a
@@ -8302,12 +8364,15 @@ function update(dt){
       if(combo===1) festinArme=true;              // une chaine neuve peut regagner le festin
       if(combo>=FESTIN_N && festinArme){
         festinArme=false;
+        /* le compte d'une vie de jeu, tenu a l'instant meme : c'est lui que les
+           trophees du mode cool regardent */
+        save.cool++; storeSave();
         festinDepuis=t; festinJusqu=t+FESTIN_DUREE;
         SFX.festin();
         eclat(hen.x+80, hen.y-90, 26);
       }
       if(f.or){
-        orGobees++;
+        orGobees++; save.or++; storeSave();
         /* Le pouvoir ne s'additionne pas indefiniment : une doree gobee pendant qu'il
            dure repart de la duree pleine, elle ne l'empile pas. */
         orJusqu=t+OR_DUREE;
@@ -10063,30 +10128,47 @@ function bandeauTrophee(R, pad, VW, y){
     ctx.fillText(String(tr.n), cx+chW*CUP_CX, cy+chH*CUP_CY);
   }
 
-  /* L'intitule ne dit plus que l'unite — « mouches gobées », « à la chaîne », «
-     secondes en l'air ». Le compte, lui, est grave sur la coupe : ecrit deux fois il
-     prenait la moitie de la carte pour ne rien ajouter.
-     Il se replie sur deux lignes si besoin, et le corps se reduit tant qu'il deborde :
-     l'anglais et le francais n'ont pas la meme longueur, et la carte ne doit pas
-     dependre de la langue. */
+  /* LE NOM EN GROS, L'UNITE EN PETIT DESSOUS. Le compte est grave sur la coupe ; ce
+     qu'il reste a dire, c'est CE QU'ON A FAIT, et « 25 » ne le dit pas. Le nom prend
+     donc la ligne du haut, et l'unite — « fois en mode cool », « secondes en l'air » —
+     tient en dessous, plus petite et plus sombre, pour dire de quoi le nombre parle.
+     Le nom se replie sur deux lignes si besoin, et son corps se reduit tant qu'il
+     deborde : l'anglais et le francais n'ont pas la meme longueur, et la carte ne doit
+     pas dependre de la langue. */
   const tx=cx+chW+ch*MARGE, tw=x+cw-ch*(MARGE+0.04)-tx;
   ctx.textAlign="left"; ctx.textBaseline="alphabetic";
-  const mots=T("t"+tr.k).split(" ");
-  let fs2=Math.round(ch*0.27), lignes=[];
-  for(let essai2=0; essai2<6; essai2++){
-    ctx.font="700 "+fs2+"px "+FONT;
-    lignes=[];
-    for(const m of mots){
-      const essai = lignes.length ? lignes[lignes.length-1]+" "+m : m;
-      if(lignes.length && ctx.measureText(essai).width<=tw) lignes[lignes.length-1]=essai;
-      else lignes.push(m);
+  const coupe=(txt, corps)=>{
+    ctx.font="700 "+corps+"px "+FONT;
+    const l=[];
+    for(const m of String(txt).split(" ")){
+      const e = l.length ? l[l.length-1]+" "+m : m;
+      if(l.length && ctx.measureText(e).width<=tw) l[l.length-1]=e; else l.push(m);
     }
+    return l;
+  };
+  let fs2=Math.round(ch*0.26), lignes=[];
+  for(let essai2=0; essai2<7; essai2++){
+    lignes=coupe(T("t"+tr.k), fs2);
+    ctx.font="700 "+fs2+"px "+FONT;
     if(lignes.length<=2 && lignes.every(l=>ctx.measureText(l).width<=tw)) break;
     fs2=Math.round(fs2*0.9);
   }
-  ctx.fillStyle="#D6342B";
-  const y0=y+ch*0.5 + fs2*(lignes.length>1 ? -0.12 : 0.34);
-  lignes.forEach((l,i)=>ctx.fillText(l, tx, y0+i*fs2*1.10));
+  /* L'UNITE NE SE REPLIE PAS, ELLE RETRECIT. Repliee, elle prendrait une troisieme
+     ligne et la carte n'en a pas la hauteur ; et c'est la ligne secondaire, celle dont
+     on peut serrer le corps sans rien perdre. */
+  const uni=T(tr.u||"umouches");
+  let fuFin=Math.max(7, Math.round(fs2*0.62));
+  ctx.font="700 "+fuFin+"px "+FONT;
+  while(fuFin>6 && ctx.measureText(uni).width>tw){
+    fuFin--; ctx.font="700 "+fuFin+"px "+FONT;
+  }
+  /* les deux blocs, centres ensemble dans la hauteur de la carte */
+  const hTot=lignes.length*fs2*1.06 + fuFin*1.35;
+  let yy=y+ch*0.5 - hTot/2 + fs2*0.86;
+  ctx.fillStyle="#D6342B"; ctx.font="700 "+fs2+"px "+FONT;
+  lignes.forEach((l,i)=>ctx.fillText(l, tx, yy+i*fs2*1.06));
+  ctx.fillStyle="#9A8B76"; ctx.font="700 "+fuFin+"px "+FONT;
+  ctx.fillText(uni, tx, yy+(lignes.length-1)*fs2*1.06+fuFin*1.35);
   ctx.restore();
 }
 
