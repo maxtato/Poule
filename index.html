@@ -9404,19 +9404,33 @@ const ECHO_A=0.34, ECHO_Q=0.60;
 /* Les trois contours de la jauge, du plus lointain au plus proche : c'est dans cet ordre
    qu'ils se tracent, le plus large d'abord, pour que le plus fonce reste dessus. */
 const JAUGE_TEINTES=["#9EE7FF", "#3BC9FF", "#1F7FD8"];
-/* LA PASTILLE DU MODE COOL : son bleu, et ses echos derriere elle. Le pas est en parts
-   de sa largeur, la chute en pixels d'ecran — comme la trainee du poulet, en plus court :
-   elle est posee au milieu du bandeau, elle ne peut pas trainer sur toute la largeur. */
+/* LE BLEU DU MODE COOL, ET SES HALOS. */
 const PAST_BLEU="#1F7FD8";
-const PAST_ECHO_N=3, PAST_ECHO_PAS=5.5, PAST_ECHO_CHUTE=0.8;
-const PAST_ECHO_A=0.5, PAST_ECHO_Q=0.62;
-/* CE QUE FAIT LA JAUGE DE VOL PENDANT LE MODE COOL. Quatre facons, et l'on en change d'un
-   mot : "contours" les trois anneaux d'avant, sur une jauge qui reste rouge ; "bleu" la
-   jauge elle-meme qui vire au bleu ; "echos" le bleu plus des copies decalees derriere ;
-   "tout" le bleu, les echos et les anneaux ensemble. */
-let JAUGE_COOL="echos";
-const JAUGE_ECHO_N=3, JAUGE_ECHO_PAS=3.4, JAUGE_ECHO_CHUTE=1.0;
-const JAUGE_ECHO_A=0.55, JAUGE_ECHO_Q=0.6;
+/* LES HALOS SONT CONCENTRIQUES, PAS TRAINANTS. Le poulet, lui, file vers la droite : sa
+   trainee est derriere lui parce qu'il vient de la. La pastille et la jauge, elles, ne
+   bougent pas d'un pouce — une trainee sur le cote leur inventerait un mouvement qu'elles
+   n'ont pas. Ce sont donc des ONDES : la meme forme reprise de plus en plus large, la plus
+   proche la plus foncee, la plus lointaine la plus claire, et l'ecart qui respire. L'objet
+   a l'air de s'avancer vers nous au lieu de filer sur le cote.
+   Les halos sont PEINTS PLEINS et non traces : chacun n'est visible que par ce qu'il
+   deborde du precedent, et l'on obtient des anneaux emboites sans avoir a calculer une
+   epaisseur de trait par anneau. */
+const HALO_N=3, HALO_PAS=0.085;     // le pas d'un halo au suivant, en parts de la hauteur
+const HALO_A=0.58, HALO_Q=0.60;     // l'encre du plus proche, et ce qu'il en reste au suivant
+/* LA JAUGE DEMANDE UN PAS PLUS LARGE QUE LA PASTILLE. Le pas se prend sur la hauteur de
+   l'element : celle de la capsule vaut le sixieme de celle du nuage, et le meme pas lui
+   faisait trois anneaux d'un pixel, c'est-a-dire un lisere. */
+const HALO_PAS_JAUGE=0.26;
+function halosCool(trace, h, vague, pas){
+  if(vague<=0.01) return;
+  for(let i=HALO_N;i>=1;i--){
+    const d=h*(pas||HALO_PAS)*i*(1+0.12*Math.sin(t*3.4-i*0.8));
+    ctx.globalAlpha=HALO_A*Math.pow(HALO_Q,i-1)*vague;
+    ctx.fillStyle=JAUGE_TEINTES[Math.min(JAUGE_TEINTES.length-1, HALO_N-i)];
+    trace(d); ctx.fill();
+  }
+  ctx.globalAlpha=1;
+}
 const JAUGE_LARGE=[6.2, 4.0, 2.2];          // en parts du trait du bandeau
 const JAUGE_ALPHA=[0.34, 0.46, 0.60];
 function echos(w, h, jitter, bob, cle){
@@ -10684,27 +10698,10 @@ function drawHUD(){
   const ouvreC=cool()?Math.min(1,(t-coolDepuis)/0.35):0;
   const fermeC=cool()?Math.max(0,Math.min(1,(coolJusqu-t)/0.6)):0;
   const vagueC=ouvreC*fermeC;
-  /* LES ECHOS DE LA JAUGE, DERRIERE ELLE. Meme geste que la trainee du poulet : des
-     copies decalees vers la gauche, du bleu le plus clair au plus fonce. */
-  if(vagueC>0.01 && (JAUGE_COOL==="echos" || JAUGE_COOL==="tout")){
-    ctx.save();
-    for(let i=JAUGE_ECHO_N;i>=1;i--){
-      ctx.globalAlpha=JAUGE_ECHO_A*Math.pow(JAUGE_ECHO_Q,i-1)*vagueC;
-      ctx.fillStyle=JAUGE_TEINTES[Math.min(JAUGE_TEINTES.length-1,i-1)];
-      rr(bx-JAUGE_ECHO_PAS*i, jy+JAUGE_ECHO_CHUTE*i, gw, jh, r2); ctx.fill();
-    }
-    ctx.restore();
-  }
-  if(vagueC>0.01 && (JAUGE_COOL==="contours" || JAUGE_COOL==="tout")){
-    ctx.save(); ctx.lineJoin="round";
-    for(let i=0;i<JAUGE_TEINTES.length;i++){
-      ctx.globalAlpha=JAUGE_ALPHA[i]*vagueC;
-      ctx.strokeStyle=JAUGE_TEINTES[i];
-      ctx.lineWidth=trait*JAUGE_LARGE[i]*(1+0.14*Math.sin(t*4-i*0.9));
-      rr(bx,jy,gw,jh,r2); ctx.stroke();
-    }
-    ctx.restore();
-  }
+  /* LES ONDES DE LA JAUGE : la meme capsule, reprise de plus en plus large derriere elle. */
+  ctx.save();
+  halosCool(d=>rr(bx-d, jy-d, gw+2*d, jh+2*d, r2+d), jh, vagueC, HALO_PAS_JAUGE);
+  ctx.restore();
   ctx.lineWidth=trait; ctx.strokeStyle=INK; ctx.lineJoin="round";
   rr(bx,jy,gw,jh,r2); ctx.fillStyle="#FFFFFF"; ctx.fill(); ctx.stroke();
   const f=Math.max(0,Math.min(1,hen.feathers));
@@ -10715,8 +10712,7 @@ function drawHUD(){
        PENDANT LE MODE COOL, ELLE PASSE AU BLEU : c'est la couleur du mode partout
        ailleurs — la trainee, la pastille — et c'est ici que le pouvoir se depense. */
     const rouge = f>0.25 ? "#D6342B" : mixHex("#D6342B","#FF9C8A", 0.5+0.5*Math.sin(t*13));
-    ctx.fillStyle = (vagueC>0.01 && JAUGE_COOL!=="contours")
-                  ? mixHex(rouge, PAST_BLEU, vagueC) : rouge;
+    ctx.fillStyle = mixHex(rouge, PAST_BLEU, vagueC);
     ctx.fillRect(bx,jy,gw*f,jh);
     ctx.restore();
     rr(bx,jy,gw,jh,r2); ctx.stroke();
@@ -10859,13 +10855,13 @@ function drawHUD(){
        donne l'air tracee a la main, sans rien qui bouge d'une image a l'autre.
        Pas de contour d'encre : le rouge plein porte le blanc tout seul, et un cerne
        l'aurait rendue a la famille des jauges alors que c'est un evenement. */
-    const rN=h*0.30, rb=h*0.15, ren=h*0.09;
     /* Le trace du nuage, pose ou l'on veut : c'est ce qui permet de le repeter en echo
        derriere lui, exactement comme la trainee du poulet. */
-    const traceNuage=(ccx,ccy)=>{
-      const x0=ccx-w/2, y0=ccy-h/2;
+    const traceNuage=(ccx,ccy,ww,hh)=>{
+      const rNN=hh*0.30, rbb=hh*0.15, renn=hh*0.09;
+      const x0=ccx-ww/2, y0=ccy-hh/2;
       ctx.beginPath();
-      rr(x0,y0,w,h,rN);
+      rr(x0,y0,ww,hh,rNN);
     /* Les bosses sont posees SUR le bord, a peine rentrees : elles ne depassent que de
        six centiemes de la hauteur. Plus saillantes, la pastille tournait a la fleur. */
     const BOSSES=[[-0.26,-0.5,1.00],[0.02,-0.5,0.86],[0.28,-0.5,0.94],
@@ -10873,28 +10869,20 @@ function drawHUD(){
                   [0.26,0.5,0.92],[-0.04,0.5,1.00],[-0.28,0.5,0.86],
                   [-0.5,0.16,0.96],[-0.5,-0.18,0.88]];
       for(const [ux,uy,kk] of BOSSES){
-        const cxb=ccx+ux*(w-(uy?0:ren*2))-(ux>0?ren:ux<0?-ren:0);
-        const cyb=ccy+uy*(h-(ux?0:ren*2))-(uy>0?ren:uy<0?-ren:0);
-        ctx.moveTo(cxb+rb*kk, cyb);
-        ctx.arc(cxb, cyb, rb*kk, 0, 7);
+        const cxb=ccx+ux*(ww-(uy?0:renn*2))-(ux>0?renn:ux<0?-renn:0);
+        const cyb=ccy+uy*(hh-(ux?0:renn*2))-(uy>0?renn:uy<0?-renn:0);
+        ctx.moveTo(cxb+rbb*kk, cyb);
+        ctx.arc(cxb, cyb, rbb*kk, 0, 7);
       }
     };
-    /* LES ECHOS DU MODE COOL, DERRIERE LA PASTILLE. Le poulet en laisse une trainee ; la
-       pastille en laisse une aussi, du meme bleu et du meme cote, pour que les deux
-       disent la meme chose au meme moment. Ils s'ouvrent avec le mode et se referment
-       avec lui. */
+    /* LES ONDES DU MODE COOL, AUTOUR DE LA PASTILLE : le meme nuage, repris de plus en
+       plus large. Elles s'ouvrent avec le mode et se referment avec lui. */
     if(cool()){
       const ouvre=Math.min(1,(t-coolDepuis)/0.30);
       const ferme=Math.max(0,Math.min(1,(coolJusqu-t)/0.5));
-      for(let i=PAST_ECHO_N;i>=1;i--){
-        ctx.globalAlpha=PAST_ECHO_A*Math.pow(PAST_ECHO_Q,i-1)*ouvre*ferme;
-        ctx.fillStyle=JAUGE_TEINTES[Math.min(JAUGE_TEINTES.length-1, i-1)];
-        traceNuage(bcx-PAST_ECHO_PAS*i*(w/bw), bcy+PAST_ECHO_CHUTE*i);
-        ctx.fill();
-      }
-      ctx.globalAlpha=1;
+      halosCool(d=>traceNuage(bcx,bcy,w+2*d,h+2*d), h, ouvre*ferme);
     }
-    traceNuage(bcx,bcy);
+    traceNuage(bcx,bcy,w,h);
     /* ET PENDANT LE MODE COOL ELLE PASSE AU BLEU, comme la trainee et comme la jauge :
        une seule couleur pour un seul etat, ou qu'on regarde. */
     ctx.fillStyle = cool() ? PAST_BLEU
