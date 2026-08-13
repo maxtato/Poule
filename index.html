@@ -4027,8 +4027,8 @@ const SFX={
   /* LE COUP D'AILE. Il sert deux fois : au coup voulu, quand le doigt appuie, et a chaque
      battement du vol tenu — d'ou le facteur. Il a par ailleurs BEAUCOUP MAIGRI : joue une
      fois, il passait ; joue trois fois par seconde tant qu'on vole, il couvrait le reste. */
-  aile:  (f=1)=>{ souffle(.13,{vol:.055*f,cut:900});
-                  tone(210,.09,{type:"triangle",vol:.038*f,to:150}); },
+  aile:  (f=1)=>{ souffle(.13,{vol:.10*f,cut:900});
+                  tone(210,.09,{type:"triangle",vol:.068*f,to:150}); },
   pose:  ()=>{ souffle(.10,{vol:.10,cut:420}); },
   /* La noix qui se casse : un claquement sec et court, tres haut de spectre. Rien a voir
      avec le choc de la poule, qui est long et grave — celui-ci ne doit pas se lire comme
@@ -4222,7 +4222,7 @@ function traverse(){ return t<orJusqu && !hen.dead; }
    longue chaine tiendrait le pouvoir indefiniment. Le compteur, lui, continue de monter :
    il dit toujours la meme chose, et il reste dore tant que le pouvoir dure. */
 const COOL_N=20;          // la longueur de chaine qui donne les lunettes
-const COOL_DUREE=6;       // ce que durent les lunettes, comme le pouvoir de la doree
+const COOL_DUREE=8;       // ce que durent les lunettes : deux secondes de plus que la doree
 /* ET PENDANT CE TEMPS, ELLE PLANE. Les lunettes ne se voyaient que sur elle ; le pouvoir
    ne se SENTAIT pas dans la main. Deux choses changent donc pendant qu'il dure, et elles
    vont dans le meme sens : chaque seconde de vol coute moins de plumes, et la pesanteur
@@ -4872,7 +4872,7 @@ function avanceFond(dt, v){
    - les doigts sont comptes : lever un doigt alors qu'un autre est pose ne coupe pas le vol      */
 let flapNow=false, jumpBuf=-9, lastPress=-9, flapUntil=-9;
 /* Le battement du vol tenu, en parts du coup d'aile voulu, et le cycle deja sonne. */
-const AILE_TENU=0.34;
+const AILE_TENU=0.50;
 let batVu=-1;
 const fingers=new Set();
 /* Le saut part toujours a pleine impulsion et se coupe net au relachement : la
@@ -6183,7 +6183,7 @@ function eclat(x,y,n){
    veut recompenser, pas le compte qui y mene. Le crepuscule, lui, tombait au bout de
    vingt-six secondes de course : c'est une decouverte, pas un exploit.
    LES SECONDES EN L'AIR SONT MESUREES, PAS SUPPOSEES. Jauge pleine et bouton tenu, la
-   poule tient 5,4 s en vol ordinaire et 12,6 s en mode cool. Au-dela, il faut manger en
+   poulet tient 5,4 s en vol ordinaire et 10,7 s en mode cool. Au-dela, il faut manger en
    volant : une mouche rend un tiers de jauge, soit 1,4 s de plus, et une doree la rend
    tout entiere. Vingt-cinq secondes demandent donc une quinzaine de mouches sans reposer
    patte a terre, et cent secondes en demandent environ soixante-dix — c'est le bout de
