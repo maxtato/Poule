@@ -10202,8 +10202,9 @@ const PAN_MAX=118, PAN_MIN=94;      // et ses bornes, en pixels CSS
      "plaque" une plaque claire posee sur le bois, sous les deux lignes
      "grave"  le contraire : chiffres creme, ombre sombre dessous
      "ombre"  l'encre seule, avec une ombre claire en bas a droite */
-let PAN_EFFET="halo";
+let PAN_EFFET="grave";
 const PAN_CLAIR="#FBF3E4";          // le creme du halo et de la plaque
+const PAN_BLANC="#FFFFFF";          // les chiffres graves sur le bois
 const PAN_OMBRE="#4A3524";          // le brun sombre qui creuse les lettres gravees
 const PAN_RAP=644/780;              // la hauteur du dessin, en parts de sa largeur
 /* la boite du BOIS dans le dessin — gauche, droite, haut, bas — relevee sur la planche
@@ -10258,7 +10259,9 @@ function dessinePanneau(c, w, h){
   const tGros=Math.round(lb*0.170), tPetit=Math.round(lb*0.100);
   const ch=tGros*0.86, cw=couronneLarge(ch), jeu=lb*0.055;
   const mh=tPetit*1.05, mw=mh*MOU_W/MOU_H, jeu2=lb*0.040;
-  const sc=chiffre(c.best), bas=chiffre(c.bestMou)+" · "+chiffre(c.bestDist)+" m";
+  /* LES DEUX NOMBRES DU BAS RESPIRENT. Colles au point qui les separe, le compte de
+     mouches et les metres se lisaient comme un seul nombre a rallonge. */
+  const sc=chiffre(c.best), bas=chiffre(c.bestMou)+"   ·   "+chiffre(c.bestDist)+" m";
   /* si le nombre deborde du bois, c'est le corps qui cede, jamais la planche */
   const e1=Math.min(1, (dedans-cw-jeu)/Math.max(1,largeurP(sc,tGros,"900")));
   const e2=Math.min(1, (dedans-mw-jeu2)/Math.max(1,largeurP(bas,tPetit,"700")));
@@ -10278,8 +10281,8 @@ function dessinePanneau(c, w, h){
     rr(-lp/2, y1-t1*0.62-lb*0.01, lp, hp, lb*0.045); ctx.fill();
     ctx.globalAlpha=1;
   }
-  const teinte1 = grave ? PAN_CLAIR : INK;
-  const teinte2 = grave ? PAN_CLAIR : "#4A3A28";
+  const teinte1 = grave ? PAN_BLANC : INK;
+  const teinte2 = grave ? PAN_BLANC : "#4A3A28";
   const cerne1  = PAN_EFFET==="halo" ? PAN_CLAIR : grave ? PAN_OMBRE : null;
   couronne(x1, y1-ch*0.62, ch, Math.max(0.7, w*0.010));
   if(PAN_EFFET==="ombre"){
