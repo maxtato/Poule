@@ -10193,8 +10193,8 @@ function txtP(txt, x, y, taille, coul, align, base, halo){
    recadre, puis reduit a la grille de la maison. Ne restent au code que les chiffres.
    LE DEVERS EST MESURE, LUI AUSSI. Le bord haut de la planche descend de 2,57 degres ;
    ecrit d'aplomb, le texte aurait glisse vers le bas du bois d'un bout a l'autre. */
-const PAN_LARGE=0.298;              // le dessin entier, en parts du cadre de jeu
-const PAN_MAX=118, PAN_MIN=94;      // et ses bornes, en pixels CSS
+const PAN_LARGE=0.262;              // le dessin entier, en parts du cadre de jeu
+const PAN_MAX=104, PAN_MIN=84;      // et ses bornes, en pixels CSS
 /* CE QUI REND LES CHIFFRES LISIBLES SUR LE BOIS. De l'encre sur du brun n'a presque pas
    de contraste — le meme chiffre se detache au bandeau parce que le bandeau est creme.
    Quatre facons de le rattraper, et l'on peut en changer d'un mot :
@@ -10255,8 +10255,13 @@ function dessinePanneau(c, w, h){
 
   /* ce que le panneau annonce : la couronne et le score, puis la mouche et les metres */
   const bg=x+w*PAN_BOIS[0], bd=x+w*PAN_BOIS[1], lb=bd-bg;
-  const dedans=lb*0.84, cx=(bg+bd)/2, cy=y+h*(PAN_L1+PAN_L2)/2;
-  const tGros=Math.round(lb*0.170), tPetit=Math.round(lb*0.100);
+  /* LE BOIS A MAIGRI, PAS LES CHIFFRES. Les corps se prennent sur la largeur du bois ;
+     reduire la planche les aurait donc reduits d'autant, alors que c'est la planche qu'on
+     voulait plus discrete. Leurs parts ont monte de ce que la planche a perdu — le score
+     tient ses dix-sept points d'un bout a l'autre — et la marge interieure a ete resserree
+     pour leur rendre la place. */
+  const dedans=lb*0.90, cx=(bg+bd)/2, cy=y+h*(PAN_L1+PAN_L2)/2;
+  const tGros=Math.round(lb*0.199), tPetit=Math.round(lb*0.117);
   const ch=tGros*0.86, cw=couronneLarge(ch), jeu=lb*0.055;
   const mh=tPetit*1.05, mw=mh*MOU_W/MOU_H, jeu2=lb*0.040;
   /* LES DEUX NOMBRES DU BAS RESPIRENT. Colles au point qui les separe, le compte de
