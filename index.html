@@ -9877,6 +9877,7 @@ function draw(){
 
   ctx.restore();                    // fin du premier plan translate
   ctx.restore();
+  if(state!==S.MENU) panneauRecords();   // il reste plante quand la poule tombe
   drawHUD();
   if(px){
     vue.setTransform(1,0,0,1,0,0);
@@ -10158,6 +10159,111 @@ function txtP(txt, x, y, taille, coul, align, base){
   ctx.imageSmoothingEnabled=false;
   ctx.drawImage(tampTxt, dx, dy, wc, hc);
   ctx.imageSmoothingEnabled=!save.pixel;
+}
+
+/* ---------- LE PANNEAU DES RECORDS, EN BAS A GAUCHE ----------
+   Il est PLANTE DANS LA TERRE, sous la ligne d'horizon, tout en bas de l'ecran : la
+   grande bande de sol qui reste sous le jeu n'est pas du vide, c'est la zone ou le pouce
+   se pose, et un panneau y tient sans jamais couvrir ce qui court. Il dit les records du
+   MONDE EN COURS — chaque terrain a son carnet — et il ne parait pas tant qu'aucun record
+   n'a ete pose : un panneau vierge ne dirait rien a une premiere partie.
+   Il est dessine au trait plutot que pose en planche : le bois, les clous, les pieds et
+   les touffes descendent tous de sa largeur, si bien qu'il garde ses proportions du
+   telephone au bureau, et le tampon de pixels lui donne le meme grain qu'au reste. */
+const PAN_LARGE=0.265;              // sa largeur, en parts du cadre de jeu
+const PAN_MAX=112, PAN_MIN=86;      // et ses bornes, en pixels CSS
+const PAN_RAP=0.60;                 // la hauteur de la planche, en parts de sa largeur
+const PAN_PIED=0.22;                // les pieds, de meme
+const PAN_BAS=0.028;                // le vide sous les pieds, en parts de la hauteur d'ecran
+const PAN_BOIS="#C9955F", PAN_HAUT="#D2A16D", PAN_COUTURE="#A9773F",
+      PAN_PIEDC="#BC8B54", PAN_CLOU="#8C8C8C", PAN_HERBE="#7FA83F";
+function panneauRecords(){
+  const c=carnet();
+  if(!c.best) return;
+  const w=Math.max(PAN_MIN, Math.min(PAN_MAX, bandW*PAN_LARGE));
+  const h=w*PAN_RAP, pied=w*PAN_PIED;
+  const x=bandX+Math.max(9, bandW*0.030);
+  const ySol=H-Math.max(12, H*PAN_BAS);
+  const y=ySol-pied-h;
+  const tr=Math.max(1.1, w*0.021);            // l'encre du contour
+  ctx.save();
+  ctx.lineJoin="round"; ctx.lineCap="round"; ctx.strokeStyle=INK;
+
+  /* l'ombre au sol : le panneau touche la terre, il ne flotte pas dessus */
+  ctx.fillStyle="rgba(26,22,20,.10)";
+  ctx.beginPath(); ctx.ellipse(x+w*0.5, ySol, w*0.44, h*0.075, 0, 0, 7); ctx.fill();
+
+  /* les deux pieds, legerement penches, derriere la planche */
+  ctx.fillStyle=PAN_PIEDC; ctx.lineWidth=tr;
+  for(const u of [0.22, 0.66]){
+    const px0=x+w*u, larg=w*0.075, pen=w*0.018;
+    ctx.beginPath();
+    ctx.moveTo(px0, y+h-tr); ctx.lineTo(px0+larg, y+h-tr);
+    ctx.lineTo(px0+larg+pen, ySol); ctx.lineTo(px0+pen, ySol);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+
+  /* la planche : trois lattes, la plus haute un peu plus claire */
+  const r=w*0.055;
+  rr(x, y, w, h, r); ctx.fillStyle=PAN_BOIS; ctx.fill();
+  ctx.save(); rr(x, y, w, h, r); ctx.clip();
+  ctx.fillStyle=PAN_HAUT; ctx.fillRect(x, y, w, h*0.30);
+  ctx.strokeStyle=PAN_COUTURE; ctx.lineWidth=Math.max(0.8, tr*0.55);
+  for(const v of [0.30, 0.68]){
+    ctx.beginPath(); ctx.moveTo(x, y+h*v); ctx.lineTo(x+w, y+h*v+w*0.006); ctx.stroke();
+  }
+  /* quelques fibres, toujours les memes : le bois ne doit pas grouiller d'une image
+     a l'autre, il est donc trace sur une liste fixe et non au hasard */
+  ctx.globalAlpha=0.30;
+  for(const [a,b,l] of [[0.10,0.16,0.16],[0.55,0.14,0.13],[0.28,0.50,0.20],
+                        [0.70,0.52,0.12],[0.16,0.84,0.17],[0.62,0.86,0.14]]){
+    ctx.beginPath(); ctx.moveTo(x+w*a, y+h*b); ctx.lineTo(x+w*(a+l), y+h*b+h*0.012); ctx.stroke();
+  }
+  ctx.globalAlpha=1; ctx.restore();
+  ctx.strokeStyle=INK; ctx.lineWidth=tr; rr(x, y, w, h, r); ctx.stroke();
+
+  /* les deux clous, sur l'axe, en haut et en bas */
+  const rc=Math.max(1.1, w*0.016);
+  ctx.fillStyle=PAN_CLOU; ctx.lineWidth=Math.max(0.7, tr*0.5);
+  for(const v of [0.115, 0.885]){
+    ctx.beginPath(); ctx.arc(x+w*0.5, y+h*v, rc, 0, 7); ctx.fill(); ctx.stroke();
+  }
+
+  /* ce que le panneau annonce : la couronne et le score, puis la mouche et les metres */
+  const cx=x+w*0.5, dedans=w-w*0.16;
+  const tGros=Math.round(w*0.155), tPetit=Math.round(w*0.088);
+  const ch=tGros*0.86, cw=couronneLarge(ch), jeu=w*0.05;
+  const mh=tPetit*1.05, mw=mh*MOU_W/MOU_H, jeu2=w*0.035;
+  const sc=chiffre(c.best), bas=chiffre(c.bestMou)+" \u00B7 "+chiffre(c.bestDist)+" m";
+  /* si le nombre deborde de la planche, c'est le corps qui cede, jamais la planche */
+  const e1=Math.min(1, (dedans-cw-jeu)/Math.max(1,largeurP(sc,tGros,"900")));
+  const e2=Math.min(1, (dedans-mw-jeu2)/Math.max(1,largeurP(bas,tPetit,"700")));
+  const t1=Math.max(7, Math.round(tGros*e1)), t2=Math.max(6, Math.round(tPetit*e2));
+  const w1=largeurP(sc,t1,"900"), w2=largeurP(bas,t2,"700");
+  const y1=y+h*0.42, y2=y+h*0.735;
+  const x1=cx-(cw+jeu+w1)/2;
+  couronne(x1, y1-ch*0.62, ch, Math.max(0.7, tr*0.45));
+  txtP(sc, x1+cw+jeu, y1, t1, INK, "left", "middle");
+  const x2=cx-(mw+jeu2+w2)/2;
+  ctx.drawImage(SPR.fly_hud, x2, y2-mh*0.60, mw, mh);
+  txtP(bas, x2+mw+jeu2, y2, t2, "#4A3A28", "left", "middle");
+
+  /* les touffes et les cailloux au pied : le panneau appartient au decor.
+     L'HERBE EST CELLE DU JEU, pas une touffe redessinee : les memes planches que le sol
+     porte deja, en plus petit. Tracees a la main elles sortaient en fleches. */
+  const th=h*0.30;
+  for(const [u,k,s] of [[0.02,"grass1",1], [0.90,"grass2",0.82]]){
+    const im=SPR[k]; if(!im || !im.naturalWidth) continue;
+    const gh=th*s, gw=gh*im.naturalWidth/im.naturalHeight;
+    ctx.drawImage(im, x+w*u, ySol-gh, gw, gh);
+  }
+  /* et deux cailloux du sol, de la meme fabrique que l'herbe */
+  for(const [u,k,s] of [[0.40,"rock1",0.42], [0.70,"rock0",0.32]]){
+    const im=SPR[k]; if(!im || !im.naturalWidth) continue;
+    const ph=th*s, pw=ph*im.naturalWidth/im.naturalHeight;
+    ctx.drawImage(im, x+w*u, ySol-ph, pw, ph);
+  }
+  ctx.restore();
 }
 
 function drawHUD(){
