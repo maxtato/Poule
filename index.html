@@ -751,20 +751,23 @@
   /* La pastille est un dessin, pas un cercle CSS : le fond est pose en JS depuis
      les images embarquees. L'ombre passe par un filtre et non par box-shadow, pour
      qu'elle epouse le disque au lieu d'en cerner le carre.
-     Elle est douce et non franche : le disque porte son propre rebord releve, et un
-     aplat d'encre dessous lui faisait un croissant noir qui se lisait comme un
-     defaut. L'ancienne pastille, elle, etait un aplat rouge sans contour a elle —
-     c'est cette ombre d'encre qui lui tenait lieu de bord. */
+     ELLE EST FRANCHE, ET C'EST CELLE DES CHIFFRES DU DECOMPTE — six points plus bas,
+     aucun flou, l'encre a un dixieme. Le meme ecran porte donc une seule facon de poser
+     une ombre. Elle avait ete douce a l'epoque ou la pastille etait un aplat rouge sans
+     contour a elle : l'ombre d'encre lui tenait lieu de bord et, franche, lui faisait un
+     croissant noir. La pastille est un dessin depuis, avec son propre rebord releve, et
+     un dixieme d'encre ne peut plus passer pour un defaut. */
   #fly{position:absolute;left:50%;bottom:calc(30px + env(safe-area-inset-bottom,0px));
     width:96px;height:96px;border:0;padding:0;
     background:transparent no-repeat center/contain;
     display:none;z-index:8;cursor:pointer;
     transform:translateX(-50%);
-    filter:drop-shadow(0 5px 6px rgba(26,22,20,.28));
+    filter:drop-shadow(0 6px 0 rgba(26,22,20,.10));
     transition:transform .09s,filter .09s}
   #fly.on{display:block}
+  /* Enfoncee, la pastille descend et son ombre se resserre — franche, elle aussi. */
   #fly.presse{transform:translateX(-50%) translateY(3px) scale(.97);
-    filter:drop-shadow(0 1px 2px rgba(26,22,20,.22)) brightness(.94)}
+    filter:drop-shadow(0 2px 0 rgba(26,22,20,.10)) brightness(.94)}
   #volmot{position:absolute;left:50%;transform:translateX(-50%);
     bottom:calc(10px + env(safe-area-inset-bottom,0px));
     display:none;font-size:10px;font-weight:700;letter-spacing:.17em;
