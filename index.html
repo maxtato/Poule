@@ -9421,6 +9421,13 @@ const HALO_A=0.58, HALO_Q=0.60;     // l'encre du plus proche, et ce qu'il en re
    l'element : celle de la capsule vaut le sixieme de celle du nuage, et le meme pas lui
    faisait trois anneaux d'un pixel, c'est-a-dire un lisere. */
 const HALO_PAS_JAUGE=0.26;
+/* CE QUE DEVIENT LA JAUGE DE VOL QUAND ELLE DESCEND : elle palit sous ce niveau-la, sans
+   jamais tomber plus bas que cette encre, et son battement va de deux fois par seconde a
+   presque deux fois plus vite. L'amplitude est ce que le battement enleve a l'encre du
+   moment : au tiers, la jauge a demi vide va et vient entre les deux tiers et le plein de
+   ce qui lui reste. */
+const JAUGE_PALIT=0.55, JAUGE_OPAQ_MIN=0.34;
+const JAUGE_BAT=[3.4, 11], JAUGE_BAT_AMPL=0.34;
 function halosCool(trace, h, vague, pas){
   if(vague<=0.01) return;
   for(let i=HALO_N;i>=1;i--){
@@ -10707,13 +10714,22 @@ function drawHUD(){
   const f=Math.max(0,Math.min(1,hen.feathers));
   if(f>0.02){
     ctx.save(); rr(bx,jy,gw,jh,r2); ctx.clip();
-    /* La jauge est rouge d'un bout a l'autre. Sous un quart, le rouge s'eclaircit et
-       s'assombrit six fois par seconde — meme nature de signal, urgence croissante.
+    /* PLUS ELLE MAIGRIT, PLUS ELLE S'EFFACE — ET PLUS ELLE BAT. Le rouge etait plein
+       d'un bout a l'autre et ne changeait qu'au dernier quart, en s'eclaircissant : la
+       jauge disait donc la meme chose de deux facons, sa longueur et sa teinte, et rien
+       du tout entre les deux. Elle perd desormais de l'encre a mesure qu'elle descend —
+       le rouge devient une teinte de plus en plus lavee sur le blanc du fond — et un
+       battement s'y ajoute, lent et a peine marque quand il reste de quoi voler, rapide
+       et franc quand il n'en reste plus. Ce que la longueur dit de loin, la matiere le
+       dit de pres.
        PENDANT LE MODE COOL, ELLE PASSE AU BLEU : c'est la couleur du mode partout
        ailleurs — la trainee, la pastille — et c'est ici que le pouvoir se depense. */
-    const rouge = f>0.25 ? "#D6342B" : mixHex("#D6342B","#FF9C8A", 0.5+0.5*Math.sin(t*13));
-    ctx.fillStyle = mixHex(rouge, PAST_BLEU, vagueC);
+    const bas=1-Math.max(0, Math.min(1, f/JAUGE_PALIT));      // 0 pleine, 1 a sec
+    const puls=0.5+0.5*Math.sin(t*(JAUGE_BAT[0]+(JAUGE_BAT[1]-JAUGE_BAT[0])*bas));
+    ctx.globalAlpha=1-(1-JAUGE_OPAQ_MIN)*bas*(1-JAUGE_BAT_AMPL+JAUGE_BAT_AMPL*puls);
+    ctx.fillStyle = mixHex("#D6342B", PAST_BLEU, vagueC);
     ctx.fillRect(bx,jy,gw*f,jh);
+    ctx.globalAlpha=1;
     ctx.restore();
     rr(bx,jy,gw,jh,r2); ctx.stroke();
   }
