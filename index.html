@@ -4020,7 +4020,11 @@ function souffle(dur, {vol=0.2, cut=1200, at=0}={}){
 }
 const SFX={
   saut:  ()=>{ tone(430,.13,{vol:.20,to:790}); },
-  aile:  ()=>{ souffle(.13,{vol:.15,cut:900}); tone(210,.09,{type:"triangle",vol:.10,to:150}); },
+  /* LE COUP D'AILE. Il sert deux fois : au coup voulu, quand le doigt appuie, et a chaque
+     battement du vol tenu — d'ou le facteur. Il a par ailleurs BEAUCOUP MAIGRI : joue une
+     fois, il passait ; joue trois fois par seconde tant qu'on vole, il couvrait le reste. */
+  aile:  (f=1)=>{ souffle(.13,{vol:.055*f,cut:900});
+                  tone(210,.09,{type:"triangle",vol:.038*f,to:150}); },
   pose:  ()=>{ souffle(.10,{vol:.10,cut:420}); },
   /* La noix qui se casse : un claquement sec et court, tres haut de spectre. Rien a voir
      avec le choc de la poule, qui est long et grave — celui-ci ne doit pas se lire comme
@@ -4863,6 +4867,9 @@ function avanceFond(dt, v){
    - un appui juste avant l'atterrissage est memorise et declenche le saut des le contact
    - les doigts sont comptes : lever un doigt alors qu'un autre est pose ne coupe pas le vol      */
 let flapNow=false, jumpBuf=-9, lastPress=-9, flapUntil=-9;
+/* Le battement du vol tenu, en parts du coup d'aile voulu, et le cycle deja sonne. */
+const AILE_TENU=0.34;
+let batVu=-1;
 const fingers=new Set();
 /* Le saut part toujours a pleine impulsion et se coupe net au relachement : la
    hauteur suit donc la duree de l'appui, sans qu'il faille attendre de savoir
@@ -8223,6 +8230,13 @@ function update(dt){
     /* ~4,2 s de vol continu a jauge pleine, et plus de neuf pendant le mode cool */
     hen.feathers-=dt*0.24*(cool()?COOL_PLUME:1);
     hen.flap+=dt*13;                    // 3,25 battements complets par seconde
+    /* ET ON L'ENTEND BATTRE, PAS SEULEMENT PARTIR. Le son ne se jouait qu'a l'appui :
+       doigt tenu, la poule battait des ailes en silence, ce qui laissait croire que le
+       vol s'etait arrete. Le battement sonne donc a chaque cycle du dessin — le meme
+       compteur, donc le son et l'image ne peuvent pas se decaler — et beaucoup plus bas
+       que le coup d'aile voulu : c'est un fond, pas un evenement. */
+    const bat=Math.floor(hen.flap/4);
+    if(bat!==batVu){ batVu=bat; SFX.aile(AILE_TENU); }
     /* Une plume toutes les trois dixiemes de seconde environ, contre sept par
        seconde avant : a ce rythme-la elle laissait une trainee continue derriere
        elle, et la perte de plumes ne se lisait plus comme un evenement. Le coup
@@ -10417,7 +10431,7 @@ const CART_MIN=13, CART_MAX=18;     // et ses bornes, en pixels CSS
 const CART_PETIT=0.59;              // la seconde ligne, en parts de la premiere
 const CART_FOND="rgba(26,22,20,";   // l'encre du fond, son alpha se pose juste apres
 const CART_ALPHA=0.34;              // a peine pose : on doit voir la terre au travers
-const CART_BLANC="#FFFFFF", CART_PALE="#E9E0D2";
+const CART_BLANC="#FFFFFF", CART_PALE="#E9E0D2", CART_ETI="#BFB5A6";
 /* LE LISERE DOIT ETRE OPAQUE. Le tampon d'ecriture est repeint deux fois — une fois de
    la teinte du liseré, une fois de celle de l'encre — et chaque passe MULTIPLIE l'alpha
    du tampon. Un liseré a 55 pour cent laissait donc les chiffres eux-memes a 55 pour
@@ -10435,12 +10449,17 @@ function panneauRecords(){
   const mh=t2*1.05, mw=mh*MOU_W/MOU_H, jeu2=t1*0.22;
   const sc=chiffre(c.best), bas=chiffre(c.bestMou)+"   ·   "+chiffre(c.bestDist)+" m";
   const w1=cw+jeu+largeurP(sc,t1,"900"), w2=mw+jeu2+largeurP(bas,t2,"700");
-  const padX=t1*0.52, padY=t1*0.40, entre=t1*0.20;
+  /* LE MOT « RECORD », EN TETE ET EN PETIT. Le cartouche montrait trois nombres sans
+     jamais dire ce qu'ils etaient : la couronne le suggerait, elle ne le disait pas, et
+     rien ne distinguait ces chiffres-la de ceux du bandeau, qui sont ceux de la course en
+     cours. Le mot le dit. */
+  const tEti=Math.max(6, Math.round(t1*0.40));
+  const padX=t1*0.52, padY=t1*0.34, entre=t1*0.20, apresEti=t1*0.16;
   const k=save.pixel ? kPix : dpr;
   /* la taille et la place tombent sur la grille : le tampon se pose sans lissage, et d'un
      tampon large de 39,3 pixels dans une place de 39 une colonne serait jetee */
-  const w=Math.round((Math.max(w1,w2)+padX*2)*k)/k;
-  const h=Math.round((padY*2+t1+entre+t2)*k)/k;
+  const w=Math.round((Math.max(w1,w2,largeurP(T("hudrec"),tEti,"700"))+padX*2)*k)/k;
+  const h=Math.round((padY*2+tEti+apresEti+t1+entre+t2)*k)/k;
   const marge=Math.max(6, bandW*0.030);
   const x=Math.round((save.panneau==="droite" ? bandX+bandW-marge-w : bandX+marge)*k)/k;
   const y=Math.round((H-Math.max(10, H*CART_BAS)-h)*k)/k;
@@ -10459,7 +10478,9 @@ function panneauRecords(){
     try{
       ctx.fillStyle=CART_FOND+CART_ALPHA+")";
       rr(0, 0, w, h, h*0.28); ctx.fill();
-      const y1=padY+t1*0.5, y2=padY+t1+entre+t2*0.5;
+      const yEti=padY+tEti*0.5;
+      const y1=padY+tEti+apresEti+t1*0.5, y2=y1+t1*0.5+entre+t2*0.5;
+      txtP(T("hudrec"), padX, yEti, tEti, CART_ETI, "left", "middle", CART_CERNE);
       couronne(padX, y1-ch*0.52, ch, Math.max(0.7, t1*0.075));
       txtP(sc, padX+cw+jeu, y1, t1, CART_BLANC, "left", "middle", CART_CERNE);
       ctx.drawImage(SPR.fly_hud, padX, y2-mh*0.60, mw, mh);
