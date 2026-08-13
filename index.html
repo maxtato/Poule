@@ -6117,18 +6117,23 @@ function eclat(x,y,n){
    coup sur coup ; la deuxieme a corrige ce debut-la mais laissait un trou : douze lignes
    dont huit tombaient dans les deux premieres parties, et plus rien ensuite avant mille
    mouches.
-   L'ECHELLE EST DONC GEOMETRIQUE, ET SUR SIX AXES. Chaque cran demande a peu pres deux
-   fois ce qu'a demande le precedent — 10, 30, 60, 120, 250 mouches en une partie ; 400,
-   1 000, 2 000, 4 000 metres d'une traite ; 100, 250, 600, 1 500, 3 500, 8 000, 12 000
-   mouches en tout ; 5, 25, 75, 150 kilometres ; 10, 25, 50, 100 parties. Les axes ne
-   montent pas a la meme vitesse et leurs crans s'intercalent : c'est ce decalage, et non
-   la longueur de la liste, qui donne le goutte-a-goutte.
+   L'ECHELLE EST CELLE DES NOMBRES RONDS, ET SUR SIX AXES. 10, 25, 50, 100, 250, 500,
+   1 000, 2 500, 5 000, 10 000 : trois crans par decade, chacun valant deux a deux fois et
+   demie le precedent. C'est l'echelle a laquelle on compte, et un cran s'y annonce tout
+   seul — on sait ce qui vient apres 250 sans avoir a le lire.
+     mouches en une partie   10 · 25 · 50 · 100 · 250
+     metres d'une traite     500 · 1 000 · 2 500 · 5 000
+     mouches en tout         100 · 250 · 500 · 1 000 · 2 500 · 5 000 · 10 000
+     kilometres courus       5 · 25 · 100 · 250
+     parties jouees          10 · 25 · 50 · 100
+   Les axes ne montent pas a la meme vitesse et leurs crans s'intercalent : c'est ce
+   decalage, et non la longueur de la liste, qui donne le goutte-a-goutte.
    L'ECHELLE A ETE JOUEE AVANT D'ETRE ECRITE. Deux vies de joueur ont ete rejouees sur
    cent vingt parties — celle qui prend le jeu par les cornes et celle du dimanche — en
    notant a quelle partie chaque trophee tombe. L'ancienne echelle donnait neuf de ses
    douze lignes dans les dix premieres parties et PLUS RIEN APRES LA QUARANTE-CINQUIEME ;
    celle-ci donne au plus trois trophees dans la meme partie, et son plus long silence
-   est de dix-sept parties pour le premier joueur, vingt-deux pour le second.
+   est de vingt-sept parties pour le premier joueur, vingt et une pour le second.
    TROIS FAMILLES, ET ELLES NE SE GAGNENT PAS AU MEME RYTHME. Ce qu'on fait EN UNE PARTIE
    monte avec l'adresse, ce qu'on cumule AU FIL DES PARTIES monte avec le temps passe, et
    les tours d'adresse tombent quand ils tombent. Un joueur qui progresse vite epuise la
@@ -6140,21 +6145,21 @@ function eclat(x,y,n){
 const TROPHEES=[
   /* ---- ce qu'on fait en une partie : les mouches ---- */
   {k:"m10",     n:10,   ok:()=>eaten>=10},
-  {k:"m25",     n:30,   ok:()=>eaten>=30},
-  {k:"m50",     n:60,   ok:()=>eaten>=60},
-  {k:"m100",    n:120,  ok:()=>eaten>=120},
+  {k:"m25",     n:25,   ok:()=>eaten>=25},
+  {k:"m50",     n:50,   ok:()=>eaten>=50},
+  {k:"m100",    n:100,  ok:()=>eaten>=100},
   {k:"m250",    n:250,  ok:()=>eaten>=250},
   /* ---- ce qu'on fait en une partie : la distance ---- */
-  {k:"d300",    n:400,  ok:()=>metres()>=400},
+  {k:"d300",    n:500,  ok:()=>metres()>=500},
   {k:"d800",    n:1000, ok:()=>metres()>=1000},
-  {k:"d1500",   n:2000, ok:()=>metres()>=2000},
-  {k:"d3000",   n:4000, ok:()=>metres()>=4000},
+  {k:"d1500",   n:2500, ok:()=>metres()>=2500},
+  {k:"d3000",   n:5000, ok:()=>metres()>=5000},
   /* ---- les tours d'adresse, qui ne se comptent pas en crans ---- */
   {k:"or",      n:1,    ok:()=>orGobees>=1},
-  {k:"chaine",  n:12,   ok:()=>comboMax>=12},
-  {k:"chaine20",n:20,   ok:()=>comboMax>=20},
-  {k:"trav",    n:8,    ok:()=>travObs>=8},
-  {k:"vol",     n:18,   ok:()=>airMax>=18},
+  {k:"chaine",  n:10,   ok:()=>comboMax>=10},
+  {k:"chaine20",n:25,   ok:()=>comboMax>=25},
+  {k:"trav",    n:10,   ok:()=>travObs>=10},
+  {k:"vol",     n:20,   ok:()=>airMax>=20},
   {k:"soir",    n:0,    ok:()=>dist>=DAY_LEN*0.75},
   /* ---- ce qui se cumule d'une partie a l'autre. La course en cours y est comprise,
          sinon le trophee tomberait sur l'ecran de fin, quand plus personne ne regarde
@@ -6162,17 +6167,17 @@ const TROPHEES=[
          exactement leur emploi : tenir la duree. ---- */
   {k:"cent",    n:100,  ok:()=>save.flies+eaten>=100},
   {k:"total",   n:250,  ok:()=>save.flies+eaten>=250},
-  {k:"mou600",  n:600,  ok:()=>save.flies+eaten>=600},
-  {k:"mille",   n:1500, ok:()=>save.flies+eaten>=1500},
-  {k:"mou3500", n:3500, ok:()=>save.flies+eaten>=3500},
-  {k:"mou8000", n:8000, ok:()=>save.flies+eaten>=8000},
-  {k:"mou15000",n:12000,ok:()=>save.flies+eaten>=12000},
+  {k:"mou600",  n:500,  ok:()=>save.flies+eaten>=500},
+  {k:"mille",   n:1000, ok:()=>save.flies+eaten>=1000},
+  {k:"mou3500", n:2500, ok:()=>save.flies+eaten>=2500},
+  {k:"mou8000", n:5000, ok:()=>save.flies+eaten>=5000},
+  {k:"mou15000",n:10000,ok:()=>save.flies+eaten>=10000},
   /* Les kilometres d'une vie de jeu. Ils montent au meme rythme que les mouches mais
      pas au meme moment : c'est ce decalage qui remplit le milieu de l'echelle. */
   {k:"km5",     n:5,    ok:()=>save.km+metres()>=5000},
   {k:"km25",    n:25,   ok:()=>save.km+metres()>=25000},
-  {k:"km75",    n:75,   ok:()=>save.km+metres()>=75000},
-  {k:"km200",   n:150,  ok:()=>save.km+metres()>=150000},
+  {k:"km75",    n:100,  ok:()=>save.km+metres()>=100000},
+  {k:"km200",   n:250,  ok:()=>save.km+metres()>=250000},
   {k:"parties10",n:10,  ok:()=>save.runs+1>=10},
   {k:"parties25",n:25,  ok:()=>save.runs+1>=25},
   {k:"parties", n:50,   ok:()=>save.runs+1>=50},
