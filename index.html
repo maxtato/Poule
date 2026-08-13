@@ -593,6 +593,8 @@
     border-radius:50%;border:1.5px solid #1A1614;background:#FAF3EC;color:#1A1614;
     cursor:pointer;z-index:8;display:none;align-items:center;justify-content:center}
   #pausebtn.on{display:flex}
+  /* Le panneau des records passe a droite : la pause va a gauche. */
+  body.pauseg #pausebtn{left:16px;right:auto}
   #pausebtn svg{display:block}
   #pausebtn:active{background:#1A1614;color:#FAF3EC}
   /* En pixel, la pastille est rasterisee comme ses deux voisines du bas. */
@@ -1148,6 +1150,22 @@
     <div class="choix">
       <button class="opt mot" data-lang="fr">Français</button>
       <button class="opt mot" data-lang="en">English</button>
+    </div>
+    <!-- OU SE PLANTE LE PANNEAU DES RECORDS. Le pouce qui tient le telephone masque son
+         propre coin : celui qui joue de la main gauche veut le panneau a droite, et
+         reciproquement. Quand il passe a droite, le bouton de pause part a gauche — les
+         deux vivent dans la meme bande de terre et se marcheraient dessus. -->
+    <h3>
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
+           stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3.4" y="5.2" width="17.2" height="9.4" rx="1.8"/>
+        <path d="M9.2 14.6v5M14.8 14.6v5M6.6 20h11"/>
+      </svg><span data-t="panneau">Panneau des records</span>
+    </h3>
+    <div class="choix">
+      <button class="opt mot" data-pan="gauche" data-t="pangauche">Gauche</button>
+      <button class="opt mot" data-pan="droite" data-t="pandroite">Droite</button>
+      <button class="opt mot" data-pan="cache" data-t="panmasque">Masqué</button>
     </div>
     <!-- L'INTERRUPTEUR D'ESSAI. Les terrains s'ouvrent l'un apres l'autre, a un million
          de points chacun ; celui-ci les ouvre tous d'un coup, pour pouvoir les essayer
@@ -3662,6 +3680,10 @@ const SAVE_KEY="poule.v5";
    `flies` et `runs`, qui comptent une vie de jeu et non une performance, restent communs. */
 const save={mondes:{}, flies:0, runs:0,
             sound:true, pixel:true, lang:"", monde:"ferme", trophees:[],
+            /* DE QUEL COTE SE PLANTE LE PANNEAU DES RECORDS — "gauche", "droite" ou
+               "cache". C'est un reglage de confort : on ne joue pas des deux mains de la
+               meme facon, et le pouce qui tient le telephone masque son propre coin. */
+            panneau:"gauche",
             /* L'INTERRUPTEUR D'ESSAI. Il ouvre tous les terrains d'un coup, et il vit dans
                le carnet comme le son ou la langue : c'est un reglage, pas une progression,
                donc l'effacement du carnet ne le touche pas. */
@@ -3723,6 +3745,7 @@ try{
     if(typeof o.monde==="string") save.monde=o.monde;   // verifie a l'ouverture
     if(Array.isArray(o.trophees)) save.trophees=o.trophees.filter(x=>typeof x==="string");
     save.debloque = o.debloque===true;
+    if(o.panneau==="gauche"||o.panneau==="droite"||o.panneau==="cache") save.panneau=o.panneau;
   }
 }catch(e){}
 /* Rien de choisi : on suit la langue du navigateur. Le francais pour qui parle
@@ -3793,6 +3816,13 @@ const TEXTES={
   volmot:     ["Maintenir pour voler", "Hold to fly"],
   saut:       ["Sauter, ou maintenir pour voler", "Jump, or hold to fly"],
   reglages:   ["Réglages", "Settings"],
+  panneau:    ["Panneau des records", "Records sign"],
+  /* UN MOT PAR BOUTON, PAS DEUX. « A gauche » et « A droite » passaient a la ligne quand
+     « Masque » tenait sur la sienne : trois boutons cote a cote n'ont pas la place d'une
+     preposition, et la rubrique dit deja de quoi l'on parle. */
+  pangauche:  ["Gauche", "Left"],
+  pandroite:  ["Droite", "Right"],
+  panmasque:  ["Masqué", "Hidden"],
   style:      ["Style des dessins", "Drawing style"],
   trait:      ["Dessin", "Line art"],
   pixel:      ["Pixel", "Pixel"],
@@ -5854,6 +5884,17 @@ function choisitLangue(l){
   if(l!=="fr"&&l!=="en") return;
   save.lang=l; storeSave(); poseLangue();
 }
+/* LE COTE DU PANNEAU, ET CELUI DE LA PAUSE AVEC LUI. Les deux occupent la meme bande de
+   terre sous le jeu ; les laisser du meme cote reviendrait a poser un bouton sur un
+   panneau. La pause part donc a l'oppose, et le panneau se refait puisque sa place a
+   change. */
+function choisitPanneau(p){
+  if(p!=="gauche"&&p!=="droite"&&p!=="cache") return;
+  save.panneau=p; storeSave(); posePanneau(); posePref();
+}
+function posePanneau(){
+  document.body.classList.toggle("pauseg", save.panneau==="droite");
+}
 /* L'etat du son dans la feuille de reglages. Il a deux commandes — la pastille du coin
    et ces deux boutons — et deux commandes pour un seul reglage doivent toujours dire la
    meme chose : celle-ci se repeint a chaque fois que l'autre agit. */
@@ -5872,6 +5913,8 @@ function posePref(){
   const dm=$("deblocmot");
   if(dm){ dm.dataset.t = save.debloque?"ouvertoui":"ouvertnon";
           dm.textContent=T(dm.dataset.t); dm.classList.toggle("non", !save.debloque); }
+  for(const o of document.querySelectorAll("#pref .opt[data-pan]"))
+    o.classList.toggle("actif", o.dataset.pan===save.panneau);
   /* « Reprendre » n'a de sens que s'il y a une course a reprendre : ouverte depuis
      l'accueil, la feuille n'affiche pas ce bouton. */
   $("pref").classList.toggle("encours", halted && state===S.PLAY);
@@ -5943,6 +5986,7 @@ $("pref").addEventListener("click",e=>{
      interrupteur que la pastille du coin, et les deux se suivent. */
   if(o && o.dataset.son!==undefined){ audio(); setMute(o.dataset.son==="0"); posePref(); return; }
   if(o && o.dataset.lang){ choisitLangue(o.dataset.lang); return; }
+  if(o && o.dataset.pan){ audio(); choisitPanneau(o.dataset.pan); return; }
   /* Changer de monde relance une partie neuve : les deux ne partagent ni le decor ni
      les obstacles, et les melanger en pleine course n'aurait aucun sens. */
   if(o && o.dataset.monde){ choisirMonde(o.dataset.monde, true); return; }
@@ -10221,6 +10265,7 @@ const PAN_BAS=0.022;                // le vide sous le panneau, en parts de l'ec
    record ou le monde changent, c'est-a-dire presque jamais. */
 let panT=null, panCle="";
 function panneauRecords(){
+  if(save.panneau==="cache") return;
   const c=carnet();
   if(!c.best) return;
   const im=SPR.panneau_bois; if(!im || !im.naturalWidth) return;
@@ -10231,7 +10276,8 @@ function panneauRecords(){
      arrondit donc les deux au pixel de dessin, et la pose est un pour un. */
   const w=Math.round(Math.max(PAN_MIN, Math.min(PAN_MAX, bandW*PAN_LARGE))*k)/k;
   const h=Math.round(w*PAN_RAP*k)/k;
-  const x=Math.round((bandX+Math.max(6, bandW*0.018))*k)/k;
+  const marge=Math.max(6, bandW*0.018);
+  const x=Math.round((save.panneau==="droite" ? bandX+bandW-marge-w : bandX+marge)*k)/k;
   const y=Math.round((H-Math.max(10, H*PAN_BAS)-h)*k)/k;
   const cle=[Math.round(w*10), c.best, c.bestMou, c.bestDist, PAN_EFFET, save.pixel?1:0,
              Math.round(k*100)].join("|");
@@ -10847,6 +10893,7 @@ function styleJeu(px, init){
 function demarre(){
   const el=$("load"); if(el) el.remove();
   poseLangue();
+  posePanneau();                       // le cote du panneau, et celui de la pause avec lui
   FONT=getComputedStyle(document.body).fontFamily;
   styleJeu(save.pixel, true);
   /* Le monde choisi la derniere fois, avant le premier semis : sinon la ferme se seme,
