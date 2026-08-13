@@ -10028,7 +10028,7 @@ const SCORE_PART=0.33;              // la part de la hauteur du bandeau que pren
    creux se resserrent. Sur une ligne qui touche deja le bord, chaque unite rendue est une
    unite de chiffre en plus. */
 const SEP_PART=0.18;                // le filet vertical et ses marges, en parts du bandeau
-const FILET_Y=0.551;                // le filet horizontal, au creux mesure entre les deux lignes
+const FILET_Y=0.448;               // le filet horizontal, au creux mesure entre les deux lignes
 const COMPTEUR_PART=0.200;          // les mouches et les metres, seuls sur leur ligne
 /* L'epaisseur du trait de TOUT ce que le bandeau trace en code — coeur, etoile,
    couronnes, contour des jauges. Elle n'est pas choisie : c'est celle du trait des
@@ -10181,13 +10181,25 @@ function drawHUD(){
   const u=hautBandeau();
   const pad=Math.max(9, u*0.22);             // marge de gauche
   const padD=Math.max(7, u*0.16);            // marge de droite, plus serree
-  const top=Math.max(4, u*0.10);
+  /* LA MARGE DU HAUT, D'OU TOUT DESCEND. Elle ne se choisit pas : elle se deduit de
+     l'encre. Mesure sur l'image avec l'ancienne valeur — un dixieme de la hauteur — il
+     restait vingt pixels de vide au-dessus des chiffres et sept seulement en dessous : le
+     bandeau paraissait lourd du bas alors que ses marges de calcul, elles, etaient egales.
+     C'est que l'encre ne remplit pas sa ligne de la meme facon en haut et en bas. On pose
+     donc la marge la ou les deux vides se valent, et le bloc entier — plume, jauges, coeur,
+     pastille et nombres — descend d'un seul chiffre, sans qu'aucun alignement ne bouge. */
+  const top=u*0.022;
 
   const fh=u*0.27, fw=fh*FEA_W/FEA_H;        // la plume
   /* Les deux jauges ont maigri d'un septieme par rapport au visuel de reference, qui
      les donnait a 0,175 et 0,155 : a l'ecran elles pesaient plus que ce qu'elles
      disent. Elles gardent leur ligne, seule l'epaisseur change. */
-  const jh=u*0.150, jy=top+u*0.32-jh/2;      // la jauge de vol
+  /* LA PREMIERE LIGNE EST UNE LIGNE, DES DEUX COTES. La plume et la jauge etaient posees
+     quatre pixels plus bas que les compteurs d'en face : mesuree, l'encre de gauche avait
+     son milieu a 0,332 de la hauteur du bandeau quand celle de droite l'avait a 0,278. Sur
+     une bande aussi basse, ce demi-cran se voyait. Les deux moities partagent desormais le
+     meme axe. */
+  const jh=u*0.150, jy=top+u*0.2655-jh/2;    // la jauge de vol
   const ph=u*0.133;                          // la barre de pouvoir
   const cvh=u*0.25;                          // le coeur
   const y2=top+u*0.65;                       // le milieu de la seconde ligne
@@ -10219,7 +10231,7 @@ function drawHUD(){
      davantage. Elle garde donc sa taille d'avant, ecrite dans les fractions du nouveau
      bandeau, et le gain de hauteur va aux nombres. */
   const bw=u*0.64, bh=u*0.46;                // la pastille du festin, un peu plus petite
-  const bcx=L+VW*0.5, bcy=top+u*0.44;        // au milieu, et elle n'en bouge plus
+  const bcx=L+VW*0.5, bcy=top+u*0.461;       // au milieu, et elle n'en bouge plus
   const xMax=R-padD, xMin=bcx+bw/2+u*0.16;
 
   /* PLUS AUCUN RECORD ECRIT DANS LE BANDEAU, ET TROIS NOMBRES QUI RESPIRENT. Ils etaient
@@ -10305,7 +10317,7 @@ function drawHUD(){
   ctx.fillRect(L, BH-Math.max(1.2,u*0.026), VW, Math.max(1.2,u*0.026));
 
   /* ---- la plume et la jauge de vol ---- */
-  ctx.drawImage(SPR.feather, gx, top+u*0.32-fh/2, fw, fh);
+  ctx.drawImage(SPR.feather, gx, top+u*0.2655-fh/2, fw, fh);
   const r2=jh/2;
   /* SOUS LE COMBO, LA JAUGE S'ENTOURE DE TROIS CONTOURS EN ECHO. Le pouvoir fait durer le
      vol deux fois plus — la jauge descend deux fois moins vite — mais rien ne le disait a
@@ -10441,13 +10453,17 @@ function drawHUD(){
   /* le filet horizontal : il court sur toute la largeur du bloc — celle de la plus large
      des deux lignes — et il separe ce qui se compte de ce que ca fait */
   ctx.fillStyle=FILET_HUD;
-  /* SA HAUTEUR EST MESUREE, PAS CHOISIE. Le « milieu » que txtP accepte n'est pas le milieu
-     de l'encre — il pose son tampon a y moins 0,72 fois le corps — et un filet place au
-     jugé passait a cinq pixels du haut des chiffres du score. Releve sur l'image : l'encre
-     des compteurs s'arrete a 0,46 de la hauteur du bandeau, celle du score commence a 0,64.
-     Le filet se pose au milieu de ce creux, et le score a ete descendu d'un poil pour que
-     le creux existe. */
-  ctx.fillRect(xD, Math.round(top+u*FILET_Y)+0.5, largeD, Math.max(1,u*0.016));
+  /* SA HAUTEUR EST MESUREE, PAS CHOISIE, ET C'EST SON MILIEU QU'ON POSE. Le « milieu » que
+     txtP accepte n'est pas le milieu de l'encre — il pose son tampon a y moins 0,72 fois le
+     corps — si bien qu'un filet place au juge tombe ou personne ne l'attend : releve sur
+     l'image, il rasait le haut des chiffres du score, un pixel au-dessous d'eux, et seuls
+     les chiffres qui le recouvraient donnaient l'illusion qu'il passait au-dessus. C'est
+     l'encre qui commande : les compteurs s'arretent a 0,379 de la hauteur du bandeau, le
+     score commence a 0,559, et le filet se pose au milieu de ce creux — d'ou 0,448 compte
+     depuis la marge du haut. Son epaisseur se retranche pour que ce soit bien son MILIEU
+     qui tombe la, et il se cale sur le pixel de l'ecran, pas sur celui du monde. */
+  const epF=Math.max(1,u*0.016);
+  ctx.fillRect(xD, Math.round((top+u*FILET_Y-epF/2)*dpr)/dpr, largeD, epF);
   poseLigne(LIGNES[1], top+u*LIGNES[1].y);
 
   /* ---- la chaine de mouches : une pastille rouge au milieu ----
