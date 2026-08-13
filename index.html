@@ -3788,9 +3788,9 @@ const TEXTES={
   suivant:    ["Terrain suivant", "Next ground"],
   record:     ["Record", "Best"],
   /* LE MOT DE LA PASTILLE DIT CE QU'ELLE COMPTE, ET NON CE QU'ELLE PROMET. Elle affichait
-     « Festin », qui est le nom de la recompense ; ce qu'elle porte est le nombre de mouches
+     « Mode cool », qui est le nom de la recompense ; ce qu'elle porte est le nombre de mouches
      enchainees, c'est-a-dire un combo. Le mot est le meme dans les deux langues. */
-  festin:     ["Combo", "Combo"],
+  combo:      ["Combo", "Combo"],
   gobees:     ["Gobées", "Eaten"],
   parties:    ["Parties", "Games"],
   start:      ["Start", "Start"],
@@ -4036,20 +4036,20 @@ const SFX={
   tic:   ()=>{ tone(820,.13,{type:"square",vol:.22}); },
   depart:()=>{ tone(1240,.45,{type:"square",vol:.22}); },
   /* Le gobage monte d'un demi-ton par mouche du combo : la chaine s'entend, et elle monte
-     JUSQU'AU FESTIN. Le plafond etait a douze mouches — la moitie du chemin : passe la
+     JUSQU'AU MODE COOL. Le plafond etait a douze mouches — la moitie du chemin : passe la
      treizieme, la chaine continuait de compter mais le son ne bougeait plus, et les sept
      dernieres, les plus difficiles, se gobaient dans le silence de la note precedente. Il
      est desormais cale sur la longueur qui donne les lunettes : la derniere mouche du
-     festin est aussi la plus aigue, une octave et demie au-dessus de la premiere. */
-  gobe:  n=>{ const f=620*Math.pow(1.0595,Math.min(n,FESTIN_N-1));
+     mode cool est aussi la plus aigue, une octave et demie au-dessus de la premiere. */
+  gobe:  n=>{ const f=620*Math.pow(1.0595,Math.min(n,COOL_N-1));
                tone(f,.06,{vol:.20,to:f*1.5}); tone(f*1.5,.09,{vol:.16,at:.05}); },
   choc:  ()=>{ souffle(.30,{vol:.30,cut:700}); tone(280,.38,{type:"sawtooth",vol:.26,to:52}); },
   palier:()=>{ tone(880,.09,{type:"triangle",vol:.16}); tone(1320,.13,{type:"triangle",vol:.13,at:.07}); },
   record:()=>{ [660,880,1100,1320].forEach((f,i)=>tone(f,.14,{type:"triangle",vol:.18,at:i*.075})); },
-  /* LE FESTIN : vingt mouches de suite. Quatre notes qui montent en sautant, plus large
+  /* LE MODE COOL : vingt mouches de suite. Quatre notes qui montent en sautant, plus large
      que la doree et plus court que la fanfare du record — c'est une recompense qu'on gagne
      a la suite, pas une chance qu'on croise. */
-  festin:()=>{ [523,784,1047,1568].forEach((f,i)=>
+  cool:()=>{ [523,784,1047,1568].forEach((f,i)=>
                  tone(f,.22,{type:"square",vol:.19,at:i*.075}));
                souffle(.30,{vol:.12,cut:3200,at:.04}); },
   /* La doree : une montee plus longue et plus brillante que le record, pour qu'on
@@ -4203,27 +4203,27 @@ const S={MENU:0,PLAY:1,DEAD:2};
 let state=S.MENU, best=0, deadAt=-9, overShown=false;
 let tOr=0, orJusqu=-9;      // prochaine mouche doree, et fin du pouvoir
 function traverse(){ return t<orJusqu && !hen.dead; }
-/* ---------- LE FESTIN : VINGT MOUCHES DE SUITE ----------
+/* ---------- LE MODE COOL : VINGT MOUCHES DE SUITE ----------
    LES LUNETTES NE VIENNENT PLUS DE LA MOUCHE DOREE. Elles la doublaient : la doree se voit
    deja de loin, elle fait clignoter la poule et elle remplit sa jauge — lui ajouter des
    lunettes, c'etait mettre deux recompenses sur le meme evenement, et n'en laisser aucune
    a ce qui se merite. Elles paient donc maintenant la CHAINE : vingt mouches gobees sans
    laisser retomber le compteur, ce qui ne s'obtient pas par chance.
-   ET UNE FOIS LE FESTIN PRIS, IL FAUT LAISSER LA CHAINE MOURIR POUR EN REPRENDRE UN. Sans
+   ET UNE FOIS LE MODE COOL PRIS, IL FAUT LAISSER LA CHAINE MOURIR POUR EN REPRENDRE UN. Sans
    cela, la vingt-et-unieme mouche redonnerait des lunettes, puis la vingt-deuxieme, et une
    longue chaine tiendrait le pouvoir indefiniment. Le compteur, lui, continue de monter :
    il dit toujours la meme chose, et il reste dore tant que le pouvoir dure. */
-const FESTIN_N=20;          // la longueur de chaine qui donne les lunettes
-const FESTIN_DUREE=6;       // ce que durent les lunettes, comme le pouvoir de la doree
+const COOL_N=20;          // la longueur de chaine qui donne les lunettes
+const COOL_DUREE=6;       // ce que durent les lunettes, comme le pouvoir de la doree
 /* ET PENDANT CE TEMPS, ELLE PLANE. Les lunettes ne se voyaient que sur elle ; le pouvoir
    ne se SENTAIT pas dans la main. Deux choses changent donc pendant qu'il dure, et elles
    vont dans le meme sens : chaque seconde de vol coute moins de plumes, et la pesanteur
    s'allege. La premiere fait durer le vol, la seconde fait planer — on tombe plus
    doucement quand on cesse de battre, et le moindre coup d'aile porte plus loin. */
-const FESTIN_PLUME=0.45;    // ce qu'une seconde de vol coute en plumes, pendant le festin
-const FESTIN_CHUTE=0.75;    // ce que pese la pesanteur, pendant le festin
-let festinJusqu=-9, festinDepuis=-9, festinArme=true;
-function festin(){ return t<festinJusqu && !hen.dead; }
+const COOL_PLUME=0.45;    // ce qu'une seconde de vol coute en plumes, pendant le mode cool
+const COOL_CHUTE=0.75;    // ce que pese la pesanteur, pendant le mode cool
+let coolJusqu=-9, coolDepuis=-9, coolArme=true;
+function cool(){ return t<coolJusqu && !hen.dead; }
 let deadLand=-9;      // instant du contact au sol
 /* D'ou vient le choc : en vol ou en course. Fige au moment du coup, sinon la pose
    changerait au premier dixieme de seconde, quand elle quitte le sol. */
@@ -4530,7 +4530,7 @@ function reset(depuis){
      suivantes, et leur hauteur avec. */
   tFly=1.2+Math.random()*2.6;
   tOr=OR_PREM[0]+Math.random()*(OR_PREM[1]-OR_PREM[0]); orJusqu=-9;
-  festinJusqu=-9; festinDepuis=-9; festinArme=true;
+  coolJusqu=-9; coolDepuis=-9; coolArme=true;
   clouds=[]; for(let i=0;i<5;i++) clouds.push({x:Math.random()*VIEW_W*1.5, f:.15+Math.random()*.6,
                                                s:.55+Math.random()*.6, v:.5+Math.random()*.7,
                                                forme:nuageForme()});
@@ -8220,8 +8220,8 @@ function update(dt){
   const fly=flying();
   if(fly){
     hen.vy=Math.max(hen.vy-4400*dt, -310);
-    /* ~4,2 s de vol continu a jauge pleine, et plus de neuf pendant le festin */
-    hen.feathers-=dt*0.24*(festin()?FESTIN_PLUME:1);
+    /* ~4,2 s de vol continu a jauge pleine, et plus de neuf pendant le mode cool */
+    hen.feathers-=dt*0.24*(cool()?COOL_PLUME:1);
     hen.flap+=dt*13;                    // 3,25 battements complets par seconde
     /* Une plume toutes les trois dixiemes de seconde environ, contre sept par
        seconde avant : a ce rythme-la elle laissait une trainee continue derriere
@@ -8230,7 +8230,7 @@ function update(dt){
     if(Math.random()<dt*3) feather(hen.x+30, hen.y-62);
   }else hen.flap += (t<flapUntil ? dt*13 : dt*5);
 
-  hen.vy=Math.min(hen.vy+3500*dt*(festin()?FESTIN_CHUTE:1), 1800);
+  hen.vy=Math.min(hen.vy+3500*dt*(cool()?COOL_CHUTE:1), 1800);
   hen.y+=hen.vy*dt;
   if(enSaut && hen.vy>=0) enSaut=false;      // sommet du saut atteint : le vol peut prendre
 
@@ -8357,7 +8357,7 @@ function update(dt){
   }
   flies=flies.filter(f=>f.x>-90);
 
-  if(combo && t-lastEat>COMBO_T){ combo=0; festinArme=true; }   // la chaine est retombee
+  if(combo && t-lastEat>COMBO_T){ combo=0; coolArme=true; }   // la chaine est retombee
   for(let i=flies.length-1;i>=0;i--){
     const f=flies[i];
     if(Math.abs(f.x-(hen.x+78))<52 && Math.abs(f.y-(hen.y-56))<54){
@@ -8367,14 +8367,14 @@ function update(dt){
       combo = (t-lastEat<COMBO_T) ? combo+1 : 1;
       if(combo>comboMax) comboMax=combo;
       lastEat=t;
-      if(combo===1) festinArme=true;              // une chaine neuve peut regagner le festin
-      if(combo>=FESTIN_N && festinArme){
-        festinArme=false;
+      if(combo===1) coolArme=true;              // une chaine neuve peut regagner le mode cool
+      if(combo>=COOL_N && coolArme){
+        coolArme=false;
         /* le compte d'une vie de jeu, tenu a l'instant meme : c'est lui que les
            trophees du mode cool regardent */
         save.cool++; storeSave();
-        festinDepuis=t; festinJusqu=t+FESTIN_DUREE;
-        SFX.festin();
+        coolDepuis=t; coolJusqu=t+COOL_DUREE;
+        SFX.cool();
         eclat(hen.x+80, hen.y-90, 26);
       }
       if(f.or){
@@ -8384,7 +8384,7 @@ function update(dt){
         orJusqu=t+OR_DUREE;
         SFX.pouvoir();
         eclat(f.x, f.y, 22);
-        /* La doree pendant un festin ne coupe pas les lunettes : les deux pouvoirs se
+        /* La doree pendant un mode cool ne coupe pas les lunettes : les deux pouvoirs se
            superposent, et la silhouette doree les emporte avec elle. */
       }else{
         SFX.gobe(combo-1);
@@ -9347,24 +9347,24 @@ function drawStars(g,cx,cy,e){
   }
 }
 /* ---------- LES LUNETTES, POSEES SUR LA POSE EN COURS ----------
-   Elles ne paraissent que pendant le festin et suivent la poule dans tous ses etats : le
+   Elles ne paraissent que pendant le mode cool et suivent la poule dans tous ses etats : le
    tremblement de la panique, le recalage au sol de chaque pose de course, le rebond de la
    foulee. Les trois lui sont passes plutot que relus, parce que le trace les a deja
    calcules et qu'un second calcul finirait par diverger du premier.
    ET ELLES CLIGNOTENT AVEC ELLE QUAND LES DEUX POUVOIRS SE CROISENT. Une mouche doree
-   gobee pendant le festin met la poule en SILHOUETTE — blanche puis doree — et une paire
+   gobee pendant le mode cool met la poule en SILHOUETTE — blanche puis doree — et une paire
    de lunettes noires restee noire sur une poule blanche se verrait comme une piece
    rapportee. On leur applique donc la meme teinte, par le meme mecanisme : la silhouette
    de leur planche. */
 function lunettes(jitter, cale, bob, clignote, tete){
-  if(!festin()) return;
+  if(!cool()) return;
   const im=SPR.lunettes; if(!im || !im.naturalWidth) return;
   const k=sc(), d=LUN_CALE[tete] || LUN_DROIT;
   ctx.globalAlpha=1;
   ctx.drawImage(clignote ? silhouette(im, clignote) : im,
     hen.x+jitter+(LUN_X+d[0])*k, hen.y-footOff()+cale-bob+(LUN_Y+d[1])*k, LUN_W*k, LUN_H*k);
 }
-/* ---------- LES ECHOS DU FESTIN ----------
+/* ---------- LES ECHOS DU MODE COOL ----------
    Trois copies d'elle-meme, bleues et de plus en plus effacees, trainent derriere elle
    pendant que les lunettes durent. Ce n'est pas une lumiere posee sur le decor — celle-la
    a ete essayee et retiree : elle repeignait tout l'ecran pour dire une paire de lunettes
@@ -9389,10 +9389,10 @@ const JAUGE_TEINTES=["#9EE7FF", "#3BC9FF", "#1F7FD8"];
 const JAUGE_LARGE=[6.2, 4.0, 2.2];          // en parts du trait du bandeau
 const JAUGE_ALPHA=[0.34, 0.46, 0.60];
 function echos(w, h, jitter, bob, cle){
-  if(!festin()) return;
+  if(!cool()) return;
   const im=SPR[cle]; if(!im || !im.naturalWidth) return;
-  const ouvre=Math.min(1,(t-festinDepuis)/0.35);
-  const ferme=Math.max(0,Math.min(1,(festinJusqu-t)/0.6));
+  const ouvre=Math.min(1,(t-coolDepuis)/0.35);
+  const ferme=Math.max(0,Math.min(1,(coolJusqu-t)/0.6));
   const a=ouvre*ferme;
   if(a<=0.01) return;
   const cale = hen.ground && FOOT_POSE[cle]!=null ? (FOOT_Y-FOOT_POSE[cle])*sc() : 0;
@@ -10008,7 +10008,7 @@ function draw(){
     /* La tete visible, qui n'est pas toujours celle de la pose : c'est elle que les
        lunettes suivent. */
     let tete=cle;
-    echos(w, h, jitter, bob, cle);      // la trainee du festin, derriere elle
+    echos(w, h, jitter, bob, cle);      // la trainee du mode cool, derriere elle
     if(COURSE.indexOf(cle)>=0){
       /* Le bec s'ouvre, la foulee continue. Si la composition ne peut pas se faire — la
          planche pas encore chargee — on retombe sur le cycle nu : mieux vaut une poule
@@ -10527,7 +10527,7 @@ function drawHUD(){
 
   /* ---- CE QUI SE COMPTE, A DROITE : LA MOITIE DROITE, ET RIEN QUE CELLE-LA ----
      LE BANDEAU SE PARTAGE EN TROIS, ET LES PARTS SONT FIXES : a gauche ce qui se depense,
-     au milieu la pastille du festin, a droite ce qui se compte. Le bloc de droite prenait
+     au milieu la pastille du mode cool, a droite ce qui se compte. Le bloc de droite prenait
      auparavant la largeur qu'il voulait et la pastille reculait devant lui — mesure, elle
      se retrouvait jusqu'a soixante-neuf unites hors du milieu sur une longue partie, et la
      jauge de vol tombait a un tiers de sa longueur. C'est l'inverse desormais : la pastille
@@ -10542,7 +10542,7 @@ function drawHUD(){
      cinquieme de plus — c'est-a-dire tout ce que la moitie droite venait de gagner, et
      davantage. Elle garde donc sa taille d'avant, ecrite dans les fractions du nouveau
      bandeau, et le gain de hauteur va aux nombres. */
-  const bw=u*0.64, bh=u*0.46;                // la pastille du festin, un peu plus petite
+  const bw=u*0.64, bh=u*0.46;                // la pastille du mode cool, un peu plus petite
   const bcx=L+VW*0.5, bcy=top+u*0.461;       // au milieu, et elle n'en bouge plus
   const xMax=R-padD, xMin=bcx+bw/2+u*0.16;
 
@@ -10643,9 +10643,9 @@ function drawHUD(){
      ET ILS RESPIRENT EN DECALE. Un tiers de seconde separe la vague de l'un de celle du
      suivant : le mouvement va du dedans vers le dehors, et le pouvoir a l'air de rayonner
      plutot que de clignoter. */
-  if(festin()){
-    const ouvre=Math.min(1,(t-festinDepuis)/0.35);
-    const ferme=Math.max(0,Math.min(1,(festinJusqu-t)/0.6));
+  if(cool()){
+    const ouvre=Math.min(1,(t-coolDepuis)/0.35);
+    const ferme=Math.max(0,Math.min(1,(coolJusqu-t)/0.6));
     ctx.save(); ctx.lineJoin="round";
     for(let i=0;i<JAUGE_TEINTES.length;i++){
       ctx.globalAlpha=JAUGE_ALPHA[i]*ouvre*ferme;
@@ -10794,7 +10794,7 @@ function drawHUD(){
        LE REBOND DE LA MOUCHE RESTE PAR-DESSUS, ET LES DEUX SE MULTIPLIENT : l'un dit qu'on
        vient d'en gober une, l'autre ou l'on en est. Additionnes, ils se seraient annules
        une fois sur deux. */
-    const av=Math.min(1, Math.max(0, (combo-2)/(FESTIN_N-2)));
+    const av=Math.min(1, Math.max(0, (combo-2)/(COOL_N-2)));
     const bat=Math.max(0, Math.sin(t*(1.4+4.6*av)*Math.PI*2));
     const pop=(1+0.14*Math.max(0, 1-(t-lastEat)/0.18))*(1+(0.02+0.10*av)*bat);
     const w=bw*pop, h=bh*pop, bx0=bcx-w/2, by0=bcy-h/2;
@@ -10821,16 +10821,16 @@ function drawHUD(){
       ctx.moveTo(cxb+rb*kk, cyb);
       ctx.arc(cxb, cyb, rb*kk, 0, 7);
     }
-    /* Et pendant le festin elle passe a l'ambre : le pouvoir est en cours, le compteur
+    /* Et pendant le mode cool elle passe a l'ambre : le pouvoir est en cours, le compteur
        continue de monter, mais il ne compte plus vers rien tant que la chaine n'est pas
        retombee. La couleur le dit sans un mot de plus. */
-    ctx.fillStyle = festin() ? "#E09A18"
+    ctx.fillStyle = cool() ? "#E09A18"
                   : mixHex("#D6342B", "#F07020", Math.max(0, (av-0.55)/0.45));
     ctx.fill();
     /* les corps de la pastille se mesurent sur ELLE et non sur le bandeau : c'est ce qui
        lui permet de garder ses proportions maintenant qu'elle ne le suit plus */
     txtP("×"+combo, bcx, by0+h*0.36, Math.round(bh*0.483*pop), "#FFFFFF", "center", "middle");
-    txtP(T("festin").toUpperCase(), bcx, by0+h*0.68, Math.round(bh*0.175*pop),
+    txtP(T("combo").toUpperCase(), bcx, by0+h*0.68, Math.round(bh*0.175*pop),
          "#FFFFFF", "center", "middle");
     /* le temps qu'il reste pour entretenir la chaine, dans le bas de la pastille */
     const tw=w*0.72, th=Math.max(1.6,h*0.075), tx0=bcx-tw/2, ty0=by0+h*0.82;
