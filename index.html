@@ -3682,6 +3682,10 @@ const SAVE_KEY="poule.v5";
    dit seulement dans lequel on a le plus joue. `mondes` porte donc un carnet par monde ;
    `flies` et `runs`, qui comptent une vie de jeu et non une performance, restent communs. */
 const save={mondes:{}, flies:0, runs:0,
+            /* LES METRES DE TOUTE UNE VIE DE JEU. Ils se comptent comme les mouches et
+               les parties : c'est un axe qui monte tout seul avec le temps passe, et
+               c'est ce qui tient le milieu de l'echelle des trophees. */
+            km:0,
             sound:true, pixel:true, lang:"", monde:"ferme", trophees:[],
             /* DE QUEL COTE SE PLANTE LE PANNEAU DES RECORDS — "gauche", "droite" ou
                "cache". C'est un reglage de confort : on ne joue pas des deux mains de la
@@ -3739,6 +3743,7 @@ try{
                       runs:Math.max(0,o.runs|0)};
     }
     save.flies=Math.max(0,o.flies|0);
+    save.km=Math.max(0,o.km|0);
     save.runs=Math.max(0,o.runs|0); save.sound=o.sound!==false;
     /* LE STYLE NE SE RELIT PLUS DU CARNET. Il n'y a plus qu'un jeu de dessins a l'ecran,
        et un carnet ecrit du temps ou l'on pouvait choisir ramenait le trait sans que rien
@@ -3885,17 +3890,36 @@ const TEXTES={
   /* Les trophées. L'intitulé ne dit plus que l'unité : le compte est gravé sur la
      coupe, et l'écrire deux fois prenait la moitié de la carte pour rien. */
   tm10:       ["mouches gobées", "flies eaten"],
+  tm25:       ["mouches gobées", "flies eaten"],
   tm50:       ["mouches gobées", "flies eaten"],
   tm100:      ["mouches gobées", "flies eaten"],
+  tm250:      ["mouches gobées", "flies eaten"],
+  td300:      ["mètres d'une traite", "metres in one run"],
+  td800:      ["mètres d'une traite", "metres in one run"],
+  td1500:     ["mètres d'une traite", "metres in one run"],
+  td3000:     ["mètres d'une traite", "metres in one run"],
   tor:        ["mouche dorée", "golden fly"],
   tchaine:    ["à la chaîne", "in a chain"],
+  tchaine20:  ["à la chaîne", "in a chain"],
   ttrav:      ["obstacles traversés", "obstacles crossed"],
   tvol:       ["secondes en l'air", "seconds airborne"],
   tsoir:      ["Le crépuscule", "Dusk"],
   tcent:      ["mouches en tout", "flies in all"],
   ttotal:     ["mouches en tout", "flies in all"],
+  tmou600:    ["mouches en tout", "flies in all"],
   tmille:     ["mouches en tout", "flies in all"],
-  tparties:   ["parties jouées", "games played"]
+  tmou3500:   ["mouches en tout", "flies in all"],
+  tmou8000:   ["mouches en tout", "flies in all"],
+  tmou15000:  ["mouches en tout", "flies in all"],
+  tkm5:       ["kilomètres courus", "kilometres run"],
+  tkm25:      ["kilomètres courus", "kilometres run"],
+  tkm75:      ["kilomètres courus", "kilometres run"],
+  tkm200:     ["kilomètres courus", "kilometres run"],
+  tparties10: ["parties jouées", "games played"],
+  tparties25: ["parties jouées", "games played"],
+  tparties:   ["parties jouées", "games played"],
+  tparties100:["parties jouées", "games played"],
+  tmondes:    ["terrains conquis", "worlds conquered"]
 };
 function T(cle, ...n){
   const e=TEXTES[cle];
@@ -5173,7 +5197,7 @@ function die(dessus){
   c.bestMou=Math.max(c.bestMou, eaten);
   c.bestDist=Math.max(c.bestDist, metres());
   c.runs++;
-  save.flies+=eaten; save.runs++; storeSave();
+  save.flies+=eaten; save.runs++; save.km+=metres(); storeSave();
   $("fscore").innerHTML=chiffreHTML(score());
   $("fdetail").innerHTML=T("findetail", eaten, chiffreHTML(metres()));
   /* Les pastilles ne portent que des nombres : c'est la ligne au-dessus qui dit
@@ -5931,7 +5955,7 @@ function posePref(){
    « tout recommencer depuis le debut » en restant au milieu d'une partie dont le score
    compte encore. */
 function effaceProgression(){
-  save.mondes={}; save.flies=0; save.runs=0; save.trophees=[];
+  save.mondes={}; save.flies=0; save.runs=0; save.km=0; save.trophees=[];
   /* LES TERRAINS SE REFERMENT AVEC LES RECORDS, puisque ce sont les records qui les
      ouvraient. Si l'on etait sur l'un d'eux, on retombe sur le premier ouvert — sans quoi
      l'accueil resterait sur une carte devenue injouable. L'interrupteur d'essai, lui, ne
@@ -6087,29 +6111,76 @@ function eclat(x,y,n){
    tomber le jour — la coupe reste nue.
 
    L'ECHELLE COMPTE AUTANT QUE LA LISTE. Un trophee n'est une recompense que s'il est
-   rare : sur la premiere echelle, la dixieme et la vingt-cinquieme mouche tombaient
-   coup sur coup, et toucher le plafond du ciel — ce qui arrive au premier vol de la
-   premiere partie — valait autant que cent mouches. Deux lignes sont donc parties
-   (les 25 mouches, le plafond) et les exploits ont ete remontes.
-   Ce que donne une partie ordinaire : la dixieme mouche, puis le crepuscule vers la
-   quarantieme seconde. Rien d'autre avant la cinquantieme mouche. */
+   rare — mais une liste dont tout tombe le premier soir n'est pas une liste de trophees,
+   c'est un tutoriel. La premiere echelle donnait la dixieme et la vingt-cinquieme mouche
+   coup sur coup ; la deuxieme a corrige ce debut-la mais laissait un trou : douze lignes
+   dont huit tombaient dans les deux premieres parties, et plus rien ensuite avant mille
+   mouches.
+   L'ECHELLE EST DONC GEOMETRIQUE, ET SUR SIX AXES. Chaque cran demande a peu pres deux
+   fois ce qu'a demande le precedent — 10, 30, 60, 120, 250 mouches en une partie ; 400,
+   1 000, 2 000, 4 000 metres d'une traite ; 100, 250, 600, 1 500, 3 500, 8 000, 12 000
+   mouches en tout ; 5, 25, 75, 150 kilometres ; 10, 25, 50, 100 parties. Les axes ne
+   montent pas a la meme vitesse et leurs crans s'intercalent : c'est ce decalage, et non
+   la longueur de la liste, qui donne le goutte-a-goutte.
+   L'ECHELLE A ETE JOUEE AVANT D'ETRE ECRITE. Deux vies de joueur ont ete rejouees sur
+   cent vingt parties — celle qui prend le jeu par les cornes et celle du dimanche — en
+   notant a quelle partie chaque trophee tombe. L'ancienne echelle donnait neuf de ses
+   douze lignes dans les dix premieres parties et PLUS RIEN APRES LA QUARANTE-CINQUIEME ;
+   celle-ci donne au plus trois trophees dans la meme partie, et son plus long silence
+   est de dix-sept parties pour le premier joueur, vingt-deux pour le second.
+   TROIS FAMILLES, ET ELLES NE SE GAGNENT PAS AU MEME RYTHME. Ce qu'on fait EN UNE PARTIE
+   monte avec l'adresse, ce qu'on cumule AU FIL DES PARTIES monte avec le temps passe, et
+   les tours d'adresse tombent quand ils tombent. Un joueur qui progresse vite epuise la
+   premiere famille et voit arriver la deuxieme ; un joueur du dimanche fait l'inverse.
+   Ce que donne une partie ordinaire, mesure sur les etats de reference : une trentaine
+   de mouches, quatre cents metres. Le premier soir donne donc les deux premiers crans de
+   chaque axe — un trophee par partie environ, ce qui est le bon rythme pour apprendre ce
+   qui se recompense — et le reste s'etale sur la centaine de parties suivantes. */
 const TROPHEES=[
+  /* ---- ce qu'on fait en une partie : les mouches ---- */
   {k:"m10",     n:10,   ok:()=>eaten>=10},
-  {k:"m50",     n:50,   ok:()=>eaten>=50},
-  {k:"m100",    n:100,  ok:()=>eaten>=100},
+  {k:"m25",     n:30,   ok:()=>eaten>=30},
+  {k:"m50",     n:60,   ok:()=>eaten>=60},
+  {k:"m100",    n:120,  ok:()=>eaten>=120},
+  {k:"m250",    n:250,  ok:()=>eaten>=250},
+  /* ---- ce qu'on fait en une partie : la distance ---- */
+  {k:"d300",    n:400,  ok:()=>metres()>=400},
+  {k:"d800",    n:1000, ok:()=>metres()>=1000},
+  {k:"d1500",   n:2000, ok:()=>metres()>=2000},
+  {k:"d3000",   n:4000, ok:()=>metres()>=4000},
+  /* ---- les tours d'adresse, qui ne se comptent pas en crans ---- */
   {k:"or",      n:1,    ok:()=>orGobees>=1},
   {k:"chaine",  n:12,   ok:()=>comboMax>=12},
-  {k:"trav",    n:6,    ok:()=>travObs>=6},
+  {k:"chaine20",n:20,   ok:()=>comboMax>=20},
+  {k:"trav",    n:8,    ok:()=>travObs>=8},
   {k:"vol",     n:18,   ok:()=>airMax>=18},
   {k:"soir",    n:0,    ok:()=>dist>=DAY_LEN*0.75},
-  /* Les suivants comptent par-dela la partie : la course en cours y est comprise,
-     sinon le trophee tomberait sur l'ecran de fin, quand plus personne ne regarde
-     le jeu. Ils sont la pour tenir la duree — le dernier est hors de portee d'une
-     bonne soiree. */
+  /* ---- ce qui se cumule d'une partie a l'autre. La course en cours y est comprise,
+         sinon le trophee tomberait sur l'ecran de fin, quand plus personne ne regarde
+         le jeu. Les derniers crans sont hors de portee d'une bonne soiree, et c'est
+         exactement leur emploi : tenir la duree. ---- */
   {k:"cent",    n:100,  ok:()=>save.flies+eaten>=100},
   {k:"total",   n:250,  ok:()=>save.flies+eaten>=250},
-  {k:"mille",   n:1000, ok:()=>save.flies+eaten>=1000},
-  {k:"parties", n:50,   ok:()=>save.runs+1>=50}
+  {k:"mou600",  n:600,  ok:()=>save.flies+eaten>=600},
+  {k:"mille",   n:1500, ok:()=>save.flies+eaten>=1500},
+  {k:"mou3500", n:3500, ok:()=>save.flies+eaten>=3500},
+  {k:"mou8000", n:8000, ok:()=>save.flies+eaten>=8000},
+  {k:"mou15000",n:12000,ok:()=>save.flies+eaten>=12000},
+  /* Les kilometres d'une vie de jeu. Ils montent au meme rythme que les mouches mais
+     pas au meme moment : c'est ce decalage qui remplit le milieu de l'echelle. */
+  {k:"km5",     n:5,    ok:()=>save.km+metres()>=5000},
+  {k:"km25",    n:25,   ok:()=>save.km+metres()>=25000},
+  {k:"km75",    n:75,   ok:()=>save.km+metres()>=75000},
+  {k:"km200",   n:150,  ok:()=>save.km+metres()>=150000},
+  {k:"parties10",n:10,  ok:()=>save.runs+1>=10},
+  {k:"parties25",n:25,  ok:()=>save.runs+1>=25},
+  {k:"parties", n:50,   ok:()=>save.runs+1>=50},
+  {k:"parties100",n:100,ok:()=>save.runs+1>=100},
+  /* Un record dans les cinq terrains. La course en cours compte pour le sien : sans
+     cela le trophee attendrait la mort du joueur pour se declarer, et tomberait au
+     premier instant de la partie suivante. */
+  {k:"mondes",  n:5,    ok:()=>Object.keys(MONDES).every(n=>
+                          carnetMonde(n).best>0 || (monde && n===monde.nom && score()>0))}
 ];
 /* Ce que la partie en cours doit retenir pour les tests ci-dessus. Tout est remis a
    zero par reset(). */
@@ -9977,7 +10048,11 @@ function bandeauTrophee(R, pad, VW, y){
   ctx.drawImage(SPR.coupe, cx, cy, chW, chH);
   if(tr.n){
     ctx.textAlign="center"; ctx.textBaseline="middle";
-    ctx.font="900 "+Math.round(chH*(String(tr.n).length>2?0.24:0.30))+"px "+FONT;
+    /* Le nombre grave se serre a mesure qu'il s'allonge. L'echelle des trophees monte
+       maintenant jusqu'a douze mille mouches : a deux tailles seulement, un nombre de
+       cinq chiffres sortait de la coupe. */
+    const nl=String(tr.n).length;
+    ctx.font="900 "+Math.round(chH*(nl>=5?0.185:nl>2?0.24:0.30))+"px "+FONT;
     ctx.fillStyle="#8A5A1E";                 // le brun du socle, pas l'encre du trait
     ctx.fillText(String(tr.n), cx+chW*CUP_CX, cy+chH*CUP_CY);
   }
