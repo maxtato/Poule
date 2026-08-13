@@ -10124,7 +10124,13 @@ function encreP(txt, taille, poids){
           : w - ctx.measureText(fin).width + z.actualBoundingBoxRight;
   return [g, d];
 }
-function txtP(txt, x, y, taille, coul, align, base){
+/* LE HALO. Un texte d'encre sur du bois brun n'a presque pas de contraste : le meme
+   chiffre qui se detache au bandeau, sur le creme, s'y noie. On l'entoure donc d'une
+   couronne claire — le meme tampon, repeint d'une teinte, pose tout autour avant lui.
+   Il n'en coute pas un tampon de plus : le texte n'est ecrit et seuille QU'UNE FOIS,
+   et c'est cette meme image qu'on repeint et qu'on repose huit fois. */
+const HALO_TOUR=[[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,-1],[-1,1],[1,1],[-2,0],[2,0],[0,-2],[0,2]];
+function txtP(txt, x, y, taille, coul, align, base, halo){
   /* Un nombre groupe s'ecrit groupe par groupe, le creux pose entre deux. L'ensemble
      est mesure d'abord : c'est lui qui donne le point de depart, quel que soit le
      calage demande. */
@@ -10134,12 +10140,15 @@ function txtP(txt, x, y, taille, coul, align, base){
     const l=m.map(p=>ctx.measureText(p).width);
     const tot=l.reduce((a,b)=>a+b,0)+creux*(m.length-1);
     let cx = align==="right" ? x-tot : align==="center" ? x-tot/2 : x;
-    for(let i=0;i<m.length;i++){ txtP(m[i], cx, y, taille, coul, "left", base); cx+=l[i]+creux; }
+    for(let i=0;i<m.length;i++){ txtP(m[i], cx, y, taille, coul, "left", base, halo); cx+=l[i]+creux; }
     return;
   }
   ctx.font="900 "+taille+"px "+FONT;
   ctx.textAlign=align; ctx.textBaseline=base;
-  if(!save.pixel){ ctx.fillStyle=coul; ctx.fillText(txt, x, y); return; }
+  if(!save.pixel){
+    if(halo){ ctx.save(); ctx.lineWidth=Math.max(1.6, taille*0.26); ctx.strokeStyle=halo;
+              ctx.lineJoin="round"; ctx.strokeText(txt, x, y); ctx.restore(); }
+    ctx.fillStyle=coul; ctx.fillText(txt, x, y); return; }
   /* Le tampon d'ecriture est a la resolution de la GRILLE : un pixel ici, un pixel
      d'art la-bas. Ecrit a la taille du monde il aurait un grain trois fois trop gros,
      ecrit a la taille de l'ecran il echapperait a la grille. */
@@ -10157,6 +10166,16 @@ function txtP(txt, x, y, taille, coul, align, base){
   const dx = align==="right" ? x-wc+1/k : align==="center" ? x-wc/2 : x-1/k;
   const dy = base==="middle" ? y-taille*0.72 : base==="alphabetic" ? y-taille*1.05 : y-1/k;
   ctx.imageSmoothingEnabled=false;
+  if(halo){
+    const p=1/k;                              // un pixel de grille, en pixels CSS
+    ttx.globalCompositeOperation="source-in";
+    ttx.fillStyle=halo; ttx.fillRect(0,0,w,h);
+    ttx.globalCompositeOperation="source-over";
+    for(const [ax,ay] of HALO_TOUR) ctx.drawImage(tampTxt, dx+ax*p, dy+ay*p, wc, hc);
+    ttx.globalCompositeOperation="source-in";
+    ttx.fillStyle=coul; ttx.fillRect(0,0,w,h);
+    ttx.globalCompositeOperation="source-over";
+  }
   ctx.drawImage(tampTxt, dx, dy, wc, hc);
   ctx.imageSmoothingEnabled=!save.pixel;
 }
@@ -10174,8 +10193,18 @@ function txtP(txt, x, y, taille, coul, align, base){
    recadre, puis reduit a la grille de la maison. Ne restent au code que les chiffres.
    LE DEVERS EST MESURE, LUI AUSSI. Le bord haut de la planche descend de 2,57 degres ;
    ecrit d'aplomb, le texte aurait glisse vers le bas du bois d'un bout a l'autre. */
-const PAN_LARGE=0.335;              // le dessin entier, en parts du cadre de jeu
-const PAN_MAX=134, PAN_MIN=104;     // et ses bornes, en pixels CSS
+const PAN_LARGE=0.298;              // le dessin entier, en parts du cadre de jeu
+const PAN_MAX=118, PAN_MIN=94;      // et ses bornes, en pixels CSS
+/* CE QUI REND LES CHIFFRES LISIBLES SUR LE BOIS. De l'encre sur du brun n'a presque pas
+   de contraste — le meme chiffre se detache au bandeau parce que le bandeau est creme.
+   Quatre facons de le rattraper, et l'on peut en changer d'un mot :
+     "halo"   une couronne creme autour de l'encre, glyphe par glyphe
+     "plaque" une plaque claire posee sur le bois, sous les deux lignes
+     "grave"  le contraire : chiffres creme, ombre sombre dessous
+     "ombre"  l'encre seule, avec une ombre claire en bas a droite */
+let PAN_EFFET="halo";
+const PAN_CLAIR="#FBF3E4";          // le creme du halo et de la plaque
+const PAN_OMBRE="#4A3524";          // le brun sombre qui creuse les lettres gravees
 const PAN_RAP=644/780;              // la hauteur du dessin, en parts de sa largeur
 /* la boite du BOIS dans le dessin — gauche, droite, haut, bas — relevee sur la planche
    detouree : le reste, ce sont les pieds, les cailloux, les touffes et l'ombre */
@@ -10183,13 +10212,44 @@ const PAN_BOIS=[0.092, 0.929, 0.047, 0.674];
 const PAN_PENTE=-2.57*Math.PI/180;  // le devers du bois, mesure sur son bord haut
 const PAN_L1=0.295, PAN_L2=0.455;   // les deux lignes, en parts de la hauteur du dessin
 const PAN_BAS=0.022;                // le vide sous le panneau, en parts de l'ecran
+/* LE PANNEAU SE PEINT UNE FOIS, PAS SOIXANTE FOIS PAR SECONDE. Ses chiffres ne bougent
+   pas d'une partie — un record se pose a la mort, jamais pendant — et le halo, lui, coute :
+   douze poses de tampon par ligne. Mesure a l'image, il faisait passer la ferme de 16,7 a
+   17,2 ms de moyenne. On le peint donc dans un tampon a lui, a la resolution ou le jeu
+   dessine, et l'image ne fait plus que le poser. Le tampon se refait quand la largeur, le
+   record ou le monde changent, c'est-a-dire presque jamais. */
+let panT=null, panCle="";
 function panneauRecords(){
   const c=carnet();
   if(!c.best) return;
   const im=SPR.panneau_bois; if(!im || !im.naturalWidth) return;
-  const w=Math.max(PAN_MIN, Math.min(PAN_MAX, bandW*PAN_LARGE)), h=w*PAN_RAP;
-  const x=bandX+Math.max(6, bandW*0.018);
-  const y=H-Math.max(10, H*PAN_BAS)-h;
+  const k=save.pixel ? kPix : dpr;
+  /* LA TAILLE ET LA PLACE TOMBENT SUR LA GRILLE. Le tampon se pose sans lissage : d'un
+     tampon large de 39,3 pixels dans une place de 39, une colonne serait jetee, et posee
+     a un tiers de pixel pres le panneau perdrait une ligne differente a chaque image. On
+     arrondit donc les deux au pixel de dessin, et la pose est un pour un. */
+  const w=Math.round(Math.max(PAN_MIN, Math.min(PAN_MAX, bandW*PAN_LARGE))*k)/k;
+  const h=Math.round(w*PAN_RAP*k)/k;
+  const x=Math.round((bandX+Math.max(6, bandW*0.018))*k)/k;
+  const y=Math.round((H-Math.max(10, H*PAN_BAS)-h)*k)/k;
+  const cle=[Math.round(w*10), c.best, c.bestMou, c.bestDist, PAN_EFFET, save.pixel?1:0,
+             Math.round(k*100)].join("|");
+  if(panCle!==cle){
+    if(!panT) panT=document.createElement("canvas");
+    panT.width=Math.max(1, Math.round(w*k)); panT.height=Math.max(1, Math.round(h*k));
+    const g=panT.getContext("2d");
+    g.setTransform(k,0,0,k,0,0);
+    const vieux=ctx; ctx=g;                 // txtP et couronne peignent dans `ctx`
+    try{ dessinePanneau(c, w, h); } finally{ ctx=vieux; }
+    panCle=cle;
+  }
+  ctx.imageSmoothingEnabled=false;
+  ctx.drawImage(panT, x, y, w, h);
+  ctx.imageSmoothingEnabled=!save.pixel;
+}
+function dessinePanneau(c, w, h){
+  const im=SPR.panneau_bois;
+  const x=0, y=0;
   ctx.drawImage(im, x, y, w, h);
 
   /* ce que le panneau annonce : la couronne et le score, puis la mouche et les metres */
@@ -10207,12 +10267,30 @@ function panneauRecords(){
   ctx.save();
   ctx.translate(cx, cy); ctx.rotate(PAN_PENTE);
   const y1=h*(PAN_L1-(PAN_L1+PAN_L2)/2), y2=h*(PAN_L2-(PAN_L1+PAN_L2)/2);
-  const x1=-(cw+jeu+w1)/2;
+  const x1=-(cw+jeu+w1)/2, x2=-(mw+jeu2+w2)/2;
+  const grave=PAN_EFFET==="grave";
+  /* la plaque : elle couvre les deux lignes d'un seul tenant, un peu plus large que la
+     plus longue des deux, et s'arrete bien avant les clous */
+  if(PAN_EFFET==="plaque"){
+    const lp=Math.max(cw+jeu+w1, mw+jeu2+w2)+lb*0.09;
+    const hp=(y2+t2*0.62)-(y1-t1*0.62)+lb*0.02;
+    ctx.fillStyle=PAN_CLAIR; ctx.globalAlpha=0.86;
+    rr(-lp/2, y1-t1*0.62-lb*0.01, lp, hp, lb*0.045); ctx.fill();
+    ctx.globalAlpha=1;
+  }
+  const teinte1 = grave ? PAN_CLAIR : INK;
+  const teinte2 = grave ? PAN_CLAIR : "#4A3A28";
+  const cerne1  = PAN_EFFET==="halo" ? PAN_CLAIR : grave ? PAN_OMBRE : null;
   couronne(x1, y1-ch*0.62, ch, Math.max(0.7, w*0.010));
-  txtP(sc, x1+cw+jeu, y1, t1, INK, "left", "middle");
-  const x2=-(mw+jeu2+w2)/2;
+  if(PAN_EFFET==="ombre"){
+    ctx.globalAlpha=0.55;
+    txtP(sc, x1+cw+jeu+w*0.012, y1+w*0.012, t1, PAN_CLAIR, "left", "middle");
+    txtP(bas, x2+mw+jeu2+w*0.010, y2+w*0.010, t2, PAN_CLAIR, "left", "middle");
+    ctx.globalAlpha=1;
+  }
+  txtP(sc, x1+cw+jeu, y1, t1, teinte1, "left", "middle", cerne1);
   ctx.drawImage(SPR.fly_hud, x2, y2-mh*0.60, mw, mh);
-  txtP(bas, x2+mw+jeu2, y2, t2, "#4A3A28", "left", "middle");
+  txtP(bas, x2+mw+jeu2, y2, t2, teinte2, "left", "middle", cerne1);
   ctx.restore();
 }
 
