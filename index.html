@@ -3663,7 +3663,10 @@ function mixHex(a,b,u,pas){
    durer. Midi tient deux temps, la nuit deux temps, et les passages un seul. Il en
    resulte : plein jour jusqu'a 43 % de la course, l'or et le crepuscule jusqu'a 71 %, la
    nuit jusqu'a 86 %, et l'aube pour finir. */
-const JOUR_SUITE=[0,1,1,2,3,4,4];        // matin, midi, midi, apres-midi, soir, nuit, nuit
+/* Dix temps au lieu de sept, et le passage du soir a la nuit n'en occupe toujours qu'un :
+   il tombe donc en un dixieme de journee au lieu d'un septieme, un tiers plus vite. Ce
+   que la journee y perd, la nuit le prend — elle tient trois temps au lieu de deux. */
+const JOUR_SUITE=[0,1,1,1,2,3,4,4,4,4];  // matin, midi x3, apres-midi, soir, nuit x4
 function partDuJour(){ return (dist%DAY_LEN)/DAY_LEN; }
 function heure(){
   /* La palette vient du monde : meme journee, meme decoupage, d'autres teintes. */
@@ -9665,11 +9668,16 @@ const SOL_R=0.052, LUNE_R=0.042;    // les rayons, en parts de la largeur de vue
    sort en glissant, sans jamais apparaitre ni s'eteindre au milieu du ciel. */
 const SOL_ARC=[0.42, 0.82], LUNE_ARC=[0.38, 0.74];
 const SOL_X=[-0.12, 1.12], LUNE_X=[-0.12, 1.12];
-/* Le soleil se leve avec la journee et se couche aux trois quarts, dans le crepuscule ;
-   la lune se leve un peu avant lui pour qu'on les voie se croiser, et se couche au petit
-   matin — son tour passe donc par-dessus le rebouclage du compteur, d'ou la borne au-dela
-   de un. */
-const SOL_TOUR=[0, 0.70], LUNE_TOUR=[0.62, 1.04];
+/* ---------- ILS NE SONT PAS LA TOUT LE TEMPS, ET C'EST MIEUX ----------
+   Le soleil occupait les sept dixiemes de la journee et la lune les quatre suivants : on
+   voyait donc le trajet ENTIER de l'un, puis le trajet ENTIER de l'autre, sans repit. Un
+   ciel n'a pas besoin d'etre meuble en permanence, et deux astres qui se relaient sans
+   interruption finissent par se lire comme une horloge.
+   Chacun n'a plus qu'un PASSAGE. Le soleil entre par la gauche vers le dixieme de la
+   course, traverse, et ressort a la moitie ; le ciel reste vide et clair un moment ;
+   puis il s'assombrit ; et c'est seulement une fois la nuit tombee que la lune traverse a
+   son tour, brievement, avant de laisser le ciel vide jusqu'a l'aube. */
+const SOL_TOUR=[0.08, 0.50], LUNE_TOUR=[0.68, 0.94];
 /* LE SOLEIL EST UNE BOULE UNIE. Il avait un coeur clair dans un bord plus dore : deux
    teintes pour un disque large comme le pouce, ce qui ne dit rien et fait un oeil. Une
    seule couleur, et l'on n'y revient pas. */
@@ -10651,23 +10659,70 @@ const COURONNE_PTS = [[0,1],[0,0.26],[0.26,0.60],[0.5,0],[0.74,0.60],[1,0.26],[1
    et les jointures deviennent franches au lieu d'etre arrondies. La forme ne change pas
    d'un cheveu — ce sont les memes sept points — mais les deux dents laterales sortent
    maintenant identiques, et la pointe du milieu est une vraie pointe. */
-function traceCouronne(g, x, y, w, h, pas){
-  const q = pas>0 ? v=>Math.round(v/pas)*pas : v=>v;
+function traceCouronne(g, x, y, w, h, pas, dec){
+  const d = dec||0;
+  const q = pas>0 ? v=>Math.round(v/pas)*pas+d : v=>v;
   g.beginPath();
   COURONNE_PTS.forEach(([u,v],i)=>{ const X=q(x+u*w), Y=q(y+v*h);
     if(i) g.lineTo(X,Y); else g.moveTo(X,Y); });
   g.closePath();
 }
 function peintCouronne(g, x, y, h, trait, pas){
-  traceCouronne(g, x, y, h*COURONNE_RAP, h, pas);
+  let lw=trait, dec=0;
+  if(pas>0){
+    const cases=Math.max(1, Math.round(trait/pas));
+    lw=cases*pas;
+    /* UN TRAIT D'UNE CASE DOIT COUVRIR UNE CASE ENTIERE. Le trait se pose a cheval sur le
+       contour : trace sur un bord de case, il en mord deux a moitie, et le rasteriseur
+       rend deux rangees GRISES au lieu d'une rangee noire. Le contour y perd la moitie de
+       son encre — c'est ce qui donnait une couronne delavee des qu'on a grossi ses cases.
+       On decale donc le trace d'une demi-case quand le trait en compte un nombre IMPAIR.
+       Le remplissage, lui, se retrouve a cheval a son tour ; mais son bord est justement
+       ce que le trait recouvre, et personne ne le voit. */
+    dec=(cases%2) ? pas/2 : 0;
+  }
+  traceCouronne(g, x, y, h*COURONNE_RAP, h, pas, dec);
   g.fillStyle=YELL; g.fill();
-  /* le trait aussi tombe sur la grille, et jamais sous une case */
-  g.lineWidth = pas>0 ? Math.max(pas, Math.round(trait/pas)*pas) : trait;
+  g.lineWidth=lw;
   g.strokeStyle=INK; g.lineJoin="miter"; g.miterLimit=3; g.stroke();
 }
 function couronneLarge(h){ return h*COURONNE_RAP; }
-/* Sur la toile du jeu, une case d'art vaut 1/kPix des unites ou l'on dessine. */
-function couronne(x, y, h, trait){ peintCouronne(ctx, x, y, h, trait, save.pixel?1/kPix:0); }
+/* ---------- ELLE A SA PROPRE GRILLE, ET ELLE EST PLUS GROSSE ----------
+   Ramener les sommets sur la grille du jeu avait rendu la couronne franche, mais pas
+   PIXEL : a un pixel d'art par pixel d'ecran, ses marches font un tiers de point CSS et
+   on ne les distingue pas — c'est un dessin net, pas un dessin en cases. Une couronne
+   haute de dix points ne peut pas non plus etre agrandie pour qu'on les voie : ce qu'il
+   faut, c'est qu'elle ait MOINS DE CASES, plus grosses.
+   Elle est donc peinte a part, dans un petit tampon ou sa hauteur ne compte qu'une dizaine
+   de cases, puis posee agrandie SANS LISSAGE. Une case vaut trois pixels d'art. Le trait,
+   ramene a la meme grille, tombe pile sur une case : un contour d'un pixel, ce qui est
+   exactement le vocabulaire du pixel art et ce qu'aucune quantite de vecteur ne donne.
+   Le tampon est garde tant que la hauteur demandee ne change pas — elle ne change qu'au
+   redimensionnement de la fenetre. */
+const COURONNE_GROS = 3;            // pixels d'art par case de la couronne
+let couronneT=null, couronneCases=-1, couronneMarge=0;
+function couronneTampon(n){
+  if(couronneCases===n) return couronneT;
+  const w=Math.round(n*COURONNE_RAP), trait=n*COURONNE_TRAIT;
+  /* le trait deborde de sa moitie de part et d'autre du contour : on lui laisse la place */
+  const m=Math.ceil(Math.max(1,trait)/2)+1;
+  const c=couronneT || (couronneT=document.createElement("canvas"));
+  c.width=w+2*m; c.height=n+2*m;
+  const g=c.getContext("2d");
+  g.clearRect(0,0,c.width,c.height);
+  peintCouronne(g, m, m, n, trait, 1);
+  couronneCases=n; couronneMarge=m;
+  return c;
+}
+function couronne(x, y, h, trait){
+  const k = save.pixel ? kPix : dpr;   // cases d'art par unite de dessin
+  const pas = COURONNE_GROS/k;         // une case de couronne, en unites de dessin
+  const n = Math.max(6, Math.round(h/pas));
+  const c = couronneTampon(n), m = couronneMarge;
+  const av = ctx.imageSmoothingEnabled; ctx.imageSmoothingEnabled=false;
+  ctx.drawImage(c, x-m*pas, y-m*pas, c.width*pas, c.height*pas);
+  ctx.imageSmoothingEnabled=av;
+}
 function coeur(x, y, h, plein, trait){
   const w=h*1.08;
   ctx.beginPath();
@@ -11370,24 +11425,26 @@ function iconePause(g){
 /* LES COURONNES DU DOCUMENT. Il y en a deux — le panneau de fin et chaque carte de
    terrain — et elles ne sont pas dessinees a part : c'est la MEME couronne que celle du
    bandeau, peinte une fois dans un coin et servie aux deux en image.
-   ELLE EST PEINTE A LA GRILLE DU JEU, comme les dessins des panneaux : sa hauteur en
-   pixels d'art est celle qu'elle occupe sur l'ecran de reference divisee par PX_JEU, si
-   bien qu'un pixel de la couronne tombe sur un pixel de l'ecran des que la definition
-   vaut trois — et qu'elle a le meme grain que tout le reste. */
+   ELLE A LA GRILLE DE L'AUTRE COURONNE, celle que la toile peint — voir COURONNE_GROS.
+   Sa hauteur en cases est celle qu'elle occupe sur l'ecran de reference, divisee par la
+   grille du jeu ET par la grosseur de ses cases : une trentaine, la ou elle en comptait
+   soixante-dix-huit. La feuille de style l'agrandit ensuite, et `image-rendering:pixelated`
+   garde les carres carres. Les deux couronnes du jeu ont ainsi le meme grain, qui n'est
+   pas celui des planches. */
 const COURONNE_HAUT = 26;           // sa hauteur a l'ecran de reference, en points CSS
 let couronneSrc=null;
 function poseCouronnes(){
   if(!couronneSrc){
-    const h=Math.round(COURONNE_HAUT/PX_JEU), w=Math.round(h*COURONNE_RAP);
+    const h=Math.round(COURONNE_HAUT/PX_JEU/COURONNE_GROS), w=Math.round(h*COURONNE_RAP);
     const trait=h*COURONNE_TRAIT;
     const c=document.createElement("canvas");
     /* Le trait deborde de sa moitie de part et d'autre du contour : on lui laisse la
        place, sans quoi les pointes et les cotes sortiraient rognes. */
-    const m=Math.ceil(trait/2)+1;
+    const m=Math.ceil(Math.max(1,trait)/2)+1;
     c.width=w+2*m; c.height=h+2*m;
     const g=c.getContext("2d");
     g.imageSmoothingEnabled=!save.pixel;
-    /* ici le contexte est a l'echelle un : la case d'art vaut un */
+    /* ici le contexte est a l'echelle un : la case vaut un */
     peintCouronne(g, m, m, h, trait, 1);
     couronneSrc=c.toDataURL("image/png");
   }
