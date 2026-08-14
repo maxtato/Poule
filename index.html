@@ -4511,6 +4511,61 @@ function ralenti(){
   return RAL_COUP+(RAL_MONDE-RAL_COUP)*douceur((age-RAL_TENUE)/RAL_REPRISE);
 }
 function cool(){ return t<coolJusqu && !hen.dead; }
+
+/* ---------- LE MONDE AVANCE PAR CRANS ----------
+   LE RALENTI NE SE VOYAIT PAS. Il se sent dans la main, il s'entend dans le haut-parleur,
+   mais une image qui defile moins vite reste une image normale : on ne la compare pas a
+   celle qu'on ne voit plus. Des barres de bande magnetique l'ont dit un temps ; elles le
+   disaient SUR l'image, comme un ecran qui se detraque, et pas du monde.
+   CE QUI LE DIT VRAIMENT, C'EST DEUX TEMPS DANS LA MEME IMAGE. Le decor n'avance plus en
+   continu mais par crans, sept fois et demie par seconde, pendant que la poule, elle,
+   continue de courir sans rupture — ses pattes, son vol, sa chute gardent le temps reel.
+   L'oeil n'a rien a comparer avec l'exterieur : il compare les deux temps entre eux, dans
+   la meme image, et il lit « ralenti » sans qu'on ait rien pose dessus. C'est ce que fait
+   une camera qui echantillonne moins souvent que le mouvement qu'elle filme.
+   COMMENT, SANS DEUX HORLOGES A TENIR. Tout ce qui defile se deplace en `speed*dt`, et
+   rien d'autre. On ne touche donc ni a `speed` — dont une dizaine de calculs de rendez-vous
+   se servent, et qui vaudrait zero trois images sur quatre, avec des divisions par zero au
+   bout — ni au pas de temps du jeu. On remplace `dt` par `dtMonde` AUX SEULS ENDROITS OU
+   QUELQUE CHOSE SE DEPLACE : il vaut zero pendant qu'un cran se remplit, puis rend d'un
+   seul coup tout le temps mis en reserve. La distance parcourue est donc la meme a un
+   millieme pres, cran ou pas — c'est la meme somme, versee en une fois au lieu de huit.
+   OU PASSE LA LIGNE DE PARTAGE : ce qui appartient au MONDE avance par crans — decor,
+   collines, sol, obstacles, oiseaux, mouches, drapeaux, nuages, et la distance elle-meme.
+   Ce qui appartient a la POULE garde le temps reel : ses pattes, sa hauteur, son vol, et
+   aussi la poussiere sous ses pieds et les plumes qu'elle lache. Une plume qui se
+   figerait en l'air trois images sur quatre se lirait comme un blocage, pas comme un
+   ralenti ; elle tombe de la poule, elle suit la poule.
+   ET LA PHYSIQUE SUIT LE DESSIN. Les obstacles sautent avec le decor, donc ce qu'on voit
+   est exactement ce qui touche : rien ne se decale entre l'image et le contact. Le cran
+   dure treize centiemes de seconde, bien en dessous du temps de reaction — il ne retire
+   donc rien au joueur, il ne fait que grossir le grain du temps.
+   DIX-SEPT ENDROITS, ET AUCUN OUBLI POSSIBLE : le monde defile depuis dix-sept lignes, et
+   s'il en restait une en `dt`, l'objet qu'elle deplace glisserait tout seul pendant que le
+   reste saute. On ne l'a pas cherche a l'oeil : `saccade.js` FORCE le pas du monde a zero
+   et releve l'abscisse de tout ce qui defile pendant cinquante images. Rien n'a bouge. */
+/* LA DUREE DU CRAN EST LE SEUL REGLAGE, et c'est lui qui separe « ralenti » de « ca
+   rame ». Treize centiemes de seconde, soit sept crans et demi par seconde : c'est la
+   cadence de la maquette sur laquelle l'effet a ete choisi. Mesure a ce reglage : le
+   monde tient huit images puis saute de 35 points a l'ecran en croisiere, de 33 au coup
+   de frein. Un premier essai a 0,09 s donnait dix crans par seconde et 26 points — plus
+   propre, mais l'effet se lisait deja beaucoup moins.
+   CE QUE LE CRAN COUTE EN METRES : rien, ou presque. La reserve rend exactement ce
+   qu'elle a pris, mais elle le rend a la vitesse de l'instant du versement, et cette
+   vitesse change pendant que le ralenti se releve. Mesure sur dix secondes de mode cool :
+   593,3 metres avec le cran contre 591,7 sans, soit 1,7 metre de PLUS. */
+const SAC_PAS=0.13;       // la duree d'un cran du monde, en secondes
+let dtMonde=0, sacRes=0;  // le pas du monde, et le temps mis en reserve
+function pasMonde(dt, vivant){
+  if(!vivant || ralenti()>=0.999){
+    /* on rend la reserve en sortant : sans quoi le monde perdrait le bout de cran
+       commence, et la distance ne serait plus la meme avec et sans l'effet */
+    const r=sacRes; sacRes=0; return dt+r;
+  }
+  sacRes+=dt;
+  if(sacRes<SAC_PAS) return 0;
+  const d=sacRes; sacRes=0; return d;
+}
 let deadLand=-9;      // instant du contact au sol
 /* D'ou vient le choc : en vol ou en course. Fige au moment du coup, sinon la pose
    changerait au premier dixieme de seconde, quand elle quitte le sol. */
@@ -8620,6 +8675,9 @@ function heurte(o, hb){
 function update(dt){
   t+=dt;
   horlogeBorne(dt);
+  /* le pas du monde se calcule ici, avant tout le reste : la terre remuee par la pierre
+     s'en sert elle aussi, et elle se met a jour bien avant le decor */
+  dtMonde=pasMonde(dt, state===S.PLAY);
   /* Le coeur perdu monte et s'evapore, quel que soit l'etat : il est lache pendant la
      culbute, ou le jeu n'est plus en course, et il doit finir sa montee. */
   for(const c of coeurs){ c.l-=dt/COEUR_VOL; c.y-=dt*COEUR_MONTE; c.ph+=dt*3.1; }
@@ -8640,7 +8698,7 @@ function update(dt){
     /* Posee, elle appartient au sol et le suit ; en l'air, elle garde son elan et le
        sol glisse dessous. Les mottes de la pierre ne defilent ni dans un cas ni dans
        l'autre — voir giclee(). */
-    if(p.file) p.x-=speed*dt;
+    if(p.file) p.x-=speed*dtMonde;
     if(p.pose){ p.l-=dt/TERRE_VIE; continue; }
     p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=1250*dt; p.rot+=p.vr*dt;
     p.l-=dt/TERRE_VIE;
@@ -8731,8 +8789,8 @@ function update(dt){
   /* LE RALENTI SE POSE ICI, ET NULLE PART AILLEURS. Tout ce qui defile part de `speed` —
      voir ralenti() juste au-dessus pour la raison. */
   speed=Math.min(500+dist*0.33,900)*ralenti();
-  dist+=speed*dt/9.2;
-  avanceJalons(dt);
+  dist+=speed*dtMonde/9.2;
+  avanceJalons(dtMonde);
   /* LE RECORD SE FRANCHIT PENDANT LA COURSE, ET C'EST LA QU'IL FAUT LE DIRE. Annonce a
      l'ecran de fin, il arrive quand tout est joue ; annonce ici, il dit qu'il reste
      quelque chose a defendre. Une seule fois par partie, et seulement s'il y avait un
@@ -8867,7 +8925,7 @@ function update(dt){
       bonus.push({x:VIEW_W+90, y:hauteurLibre(), ph:Math.random()*7});
   }
   for(const b of bonus){
-    b.x-=speed*dt;
+    b.x-=speed*dtMonde;
     b.y+=Math.sin(t*1.6+b.ph)*10*dt*2.4;
   }
   bonus=bonus.filter(b=>b.x>-90);
@@ -8882,7 +8940,7 @@ function update(dt){
 
   const FLY_MIN=-52-MOU_H/2;
   for(const f of flies){
-    f.x-=(speed+f.drift)*dt;
+    f.x-=(speed+f.drift)*dtMonde;
     f.y+=Math.sin(t*f.sp+f.ph)*f.amp*dt*2.4;      // vol saccade, jamais tout a fait droit
     if(f.y>FLY_MIN) f.y=FLY_MIN;                  // le sol reste infranchissable
     for(const o of obs){                          // et elle ne se pose pas sur les obstacles
@@ -8943,17 +9001,17 @@ function update(dt){
   for(const o of obs){
     /* Le cerf-volant fuit dans le meme sens que la poule mais moins vite : ce qui
        reste de l'ecart, c'est elle qui le comble. */
-    if(o.k==="kite"){ o.x-=Math.max(60, speed-KITE_VOL)*dt; vole(o); }
+    if(o.k==="kite"){ o.x-=Math.max(60, speed-KITE_VOL)*dtMonde; vole(o); }
     /* Le journal ne recule pas a une vitesse : il est porte. La bourrasque le fait passer
        du quasi-surplace a plus vite que le decor, et sa hauteur suit ses deux souffles. */
     else if(o.k==="journal"){ o.t+=dt;
       const souffle = JOURNAL_VENT + JOURNAL_RAFALE*souffleJournal(o).rafale;
-      o.x -= speed*souffle*dt;
+      o.x -= speed*souffle*dtMonde;
       poseJournal(o);
       semeTraitsJournal(o, souffle, dt); }
     /* La borne crache : elle defile comme le sol, et son jet change de cran. */
     else if(o.k==="ville_borne"){
-      o.x -= speed*dt;
+      o.x -= speed*dtMonde;
       avanceBruine(o, dt);
       o.tEau-=dt;
       if(o.tEau<=0){
@@ -8967,13 +9025,13 @@ function update(dt){
       }
     }
     /* La taupe sort de terre : elle defile comme le sol, et sa pose suit son programme. */
-    else if(o.k==="taupe"){ o.x -= speed*dt; avanceTaupe(o, dt); }
+    else if(o.k==="taupe"){ o.x -= speed*dtMonde; avanceTaupe(o, dt); }
     /* Le scorpion marche : il defile avec le sol, plus son va-et-vient. */
     else if(o.k==="desert_scorpion"){
       o.t+=dt;
       const a=phaseScorp(o);
       const dx=Math.sin(a)*SCORP_RAYON;
-      o.x -= speed*dt;
+      o.x -= speed*dtMonde;
       o.x += dx-o.dx; o.dx=dx;
       /* sa vitesse propre, en parts de son maximum : le signe dit ou il regarde, la
          valeur absolue dit a quelle cadence il remue les pattes */
@@ -8988,7 +9046,7 @@ function update(dt){
       const u=speed*ventVireve(o);
       /* sa vitesse par rapport au SOL, a l'ecran ; le decor, lui, va a -speed */
       const rel=-u;
-      o.x -= (speed+u)*dt;
+      o.x -= (speed+u)*dtMonde;
       /* ROULEMENT SANS GLISSEMENT sur le sable : l'angle suit la course relative divisee
          par le rayon. Une boule qui ne bouge pas par rapport au sable ne tourne pas. */
       o.rot += (rel/(o.h/2))*dt;
@@ -8999,7 +9057,7 @@ function update(dt){
     }
     /* La stalactite tombe. Brisee, elle ne fait plus que defiler et palir. */
     else if(o.k==="mont_stalac"){
-      o.x-=speed*dt;
+      o.x-=speed*dtMonde;
       if(o.pose){ o.age+=dt; }
       else { o.vy+=STALAC_G*dt; o.y+=o.vy*dt;
              if(Math.random()<dt*STALAC_TRAITS)
@@ -9024,7 +9082,7 @@ function update(dt){
     }
     /* La fiente tombe. Posee, elle ne fait plus que defiler et palir. */
     else if(o.k==="fiente"){
-      o.x-=speed*dt;
+      o.x-=speed*dtMonde;
       if(o.pose){ o.age+=dt; }
       else { o.vy+=FIENTE_G*dt; o.y+=o.vy*dt;
              /* Les traits de sa chute, semes comme ceux de la poule en panique : ils
@@ -9047,7 +9105,7 @@ function update(dt){
        seule des qu'il arrive assez pres du bord. Une fois la noix partie il reste bras
        ballant jusqu'a sa sortie — c'est ce qui permet de voir qui l'a lancee. */
     else if(o.k==="singe"){
-      o.x-=speed*dt;
+      o.x-=speed*dtMonde;
       /* Quatre pas : il MONTRE sa noix, il TEND le bras, il LACHE, il REPLIE. Le premier
          et le dernier sont des durees — ils ne conditionnent rien d'autre qu'eux-memes et
          doivent se lire pareil a toutes les vitesses. Celui du lacher est une POSITION,
@@ -9074,7 +9132,7 @@ function update(dt){
     /* Celui qui double la poule remonte l'ecran vers la droite ; les autres le
        descendent vers la gauche, decor compris. */
     else if(estOiseau(o.k) && o.sens>0) o.x += OISEAU_DOUBLE*dt;
-    else o.x-=(estOiseau(o.k) ? speed+OISEAUX[o.k].vit : speed)*dt;
+    else o.x-=(estOiseau(o.k) ? speed+OISEAUX[o.k].vit : speed)*dtMonde;
   }
   for(const n of jets) obs.push(n);
   obs=obs.filter(o=>!o.eclate);
@@ -9104,16 +9162,16 @@ function update(dt){
      ramasse, il serait reste a courir hors du cadre jusqu'a la fin de la partie. */
   obs=obs.filter(o=>o.x>-380 && !(o.sens>0 && o.x>VIEW_W+520));
 
-  for(const c of clouds){ c.x-=c.v*speed*.10*dt;
+  for(const c of clouds){ c.x-=c.v*speed*.10*dtMonde;
     if(c.x<-180){ c.x=VIEW_W+140; c.f=.15+Math.random()*.6; c.forme=nuageForme(); } }
   for(const g of sol){
-    g.x-=speed*dt;                                   // solidaire du sol : aucune derive
+    g.x-=speed*dtMonde;                              // solidaire du sol : aucune derive
     /* On attend que le detail soit sorti PAR SON BORD DROIT. Une touffe de quarante
        unites tenait dans la marge de soixante ; une fissure de trois cents disparaissait
        en plein ecran. */
     if(g.x+g.d.w<-20) replanteSol(g);
   }
-  avanceFond(dt, speed);                             // second plan puis fond
+  avanceFond(dtMonde, speed);                             // second plan puis fond
 
   for(const p of puffs){ p.x+=p.vx*dt-speed*dt*.5; p.y+=p.vy*dt; p.vy+=140*dt; p.l-=dt*1.7; }
   puffs=puffs.filter(p=>p.l>0);
@@ -10833,9 +10891,6 @@ function draw(){
 
   ctx.restore();                    // fin du premier plan translate
   ctx.restore();
-  /* Les barres du ralenti passent sur le MONDE et sous l'interface : le bandeau, le
-     cartouche et les boutons restent nets, sans quoi on croirait a une panne d'ecran. */
-  if(state!==S.MENU) bandesRalenti();
   if(state!==S.MENU) panneauRecords();   // il reste plante quand la poule tombe
   drawHUD();
   if(px){
@@ -11329,146 +11384,6 @@ function panneauRecords(){
   ctx.imageSmoothingEnabled=false;
   ctx.drawImage(panT, x, y, w, h);
   ctx.imageSmoothingEnabled=!save.pixel;
-}
-
-/* ---------- LES BARRES DU RALENTI ----------
-   Le ralenti se sent dans la main et s'entend dans le haut-parleur ; il ne se VOIT pas.
-   Une image qui defile moins vite reste une image normale — on ne compare pas a ce qu'on
-   ne voit plus. Il faut donc un signe, et le signe doit dire « le temps est trafique »
-   plutot que « le jeu a un probleme ».
-   C'EST LE VOCABULAIRE DE LA BANDE MAGNETIQUE. Une cassette qu'on ralentit ou qu'on
-   rembobine perd son asservissement : des barres de brouillage traversent l'image de bas
-   en haut, et dedans le trait saute. Tout le monde a vu ca, et personne ne le prend pour
-   une panne du jeu — ca se lit comme un ralenti.
-   DEUX LECONS DU PREMIER ESSAI, toutes deux mesurees a l'ecran plutot que devinees.
-   1. UN VOILE CLAIR NE SE VOIT PAS SUR UN JEU CREME. Le ciel, le sol, le bandeau : tout
-      ici est pale. Un voile creme a 24 centiemes pose dessus ne bougeait rien du tout, et
-      la barre ne se lisait qu'aux quelques traits d'encre qu'elle portait. Ce qui ressort
-      sur cette palette, c'est l'ENCRE : la barre est donc faite de lignes sombres serrees,
-      un peigne double du peigne de fond, et non d'une clarte.
-   2. UN DECALAGE LATERAL NE DECHIRE RIEN QUAND IL N'Y A PAS DE VERTICALES. Le decor est
-      fait d'un ciel uni, de collines douces et d'une ligne d'horizon : glisser la tranche
-      sur le cote ne coupait que le tronc de l'arbre, une fois sur trois. Le saut VERTICAL,
-      lui, coupe l'horizon, le sol, l'herbe et la poule d'un coup — c'est la vraie panne
-      d'asservissement d'un magnetoscope, et c'est ce qui se voit. On garde les deux, mais
-      c'est le saut vertical qui porte l'effet.
-   TOUT SUIT LA FORCE DU RALENTI : rien au temps plein, la moitie en croisiere, tout au
-   coup de frein. L'effet arrive donc avec le coup de frein, puis se tient en retrait.
-
-   ---- CE QUE L'EFFET COUTAIT, ET POURQUOI IL EST ECRIT AINSI ----
-   Ecrit de la facon evidente — on decale la tranche a meme l'ecran, on passe un motif sur
-   toute la hauteur — il ajoutait 49 ms par image, soit trois fois le prix du jeu entier.
-   Mesure geste par geste, deux coupables, et deux surprises :
-     1. RECOPIER LA TOILE SUR ELLE-MEME COUTE LA TOILE, PAS LA TRANCHE. 9 ms pour cent
-        cinquante rangees sur deux mille cinq cents : quand la source et la destination
-        sont la meme toile, le moteur doit d'abord s'en faire une photo entiere. En passant
-        par une petite toile de service de la taille d'une barre, ce n'est plus la meme
-        toile, la photo n'a plus lieu d'etre, et le meme geste tombe a 0,2 ms — cinquante
-        fois moins. On y gagne deux fois : tout le reste de la barre (voile, peigne, lisere,
-        brouillage) se peint alors sur cette petite toile, quinze fois plus petite que
-        l'ecran, et ne revient qu'en un seul depot.
-     2. UN MOTIF REPETE N'EST PAS UN REMPLISSAGE. Le peigne de fond passe au motif coutait
-        18 ms a lui seul — le carrelage se refait pixel par pixel. Peint UNE FOIS dans une
-        tuile de la largeur du terrain, puis depose une dizaine de fois, il ne coute plus
-        rien. C'est la meme idee qu'un timbre, mais l'evidence trompait : un motif de quatre
-        pixels a l'air moins cher qu'une tuile de mille, et c'est le contraire. */
-const VHS_N=2;            // combien de barres traversent l'ecran a la fois
-const VHS_HAUT=0.060;     // leur epaisseur, en parts de la hauteur de l'ecran
-const VHS_VIT=0.22;       // ce qu'elles parcourent par seconde, en parts de hauteur
-const VHS_DEC=5;          // le glissement lateral de l'image dans la barre, en points
-const VHS_SAUT=0.40;      // le saut vertical, en parts de l'epaisseur de la barre
-const VHS_VOILE=0.10;     // le voile clair de la barre
-const VHS_BORD=0.75;      // et le lisere qui la borde
-const VHS_GRAIN=0.34;     // les traits de brouillage dans la barre
-const VHS_DENSE=0.30;     // l'encre du peigne DANS la barre
-const VHS_PEIGNE=0.085;   // l'encre du peigne de fond
-const VHS_PAS=4;          // une ligne sombre toutes les N cases d'art
-const VHS_TUILE=256;      // la hauteur de la tuile du peigne de fond, multiple du pas
-let tampVHS=null, peigneVHS=null, tailleVHS="";
-/* les deux toiles de service, refaites seulement quand le terrain change de taille */
-function outilsVHS(W, ep){
-  const cle=W+"x"+ep;
-  if(tailleVHS===cle) return;
-  tailleVHS=cle;
-  tampVHS=document.createElement("canvas");
-  tampVHS.width=W; tampVHS.height=ep;
-  peigneVHS=document.createElement("canvas");
-  peigneVHS.width=W; peigneVHS.height=VHS_TUILE;
-  const g=peigneVHS.getContext("2d");
-  g.fillStyle=INK;
-  for(let y=0;y<VHS_TUILE;y+=VHS_PAS) g.fillRect(0,y,W,1);
-}
-function forceRalenti(){
-  return Math.max(0, Math.min(1, (1-ralenti())/0.70));
-}
-function bandesRalenti(){
-  const f=forceRalenti();
-  if(f<=0.02) return;
-  const k=save.pixel ? kPix : dpr;
-  const c=ctx.canvas;
-  const X=Math.round(bandX*k), W=Math.round(bandW*k), Hp=Math.round(H*k);
-  if(W<=0) return;
-  const ep=Math.max(3, Math.round(H*VHS_HAUT*k));
-  outilsVHS(W, ep);
-  const g=tampVHS.getContext("2d");
-  const dec=Math.max(1, Math.round(VHS_DEC*f*k));
-  const saut=Math.max(1, Math.round(ep*VHS_SAUT*f));
-  const fil=Math.max(1, Math.round(k/3));
-  ctx.save();
-  /* ON TRAVAILLE EN PIXELS DE LA TOILE, et pas dans les unites du jeu : l'image qu'on
-     recopie est celle de la toile, et une recopie a l'echelle serait lissee ou decalee
-     d'un demi-pixel. */
-  ctx.setTransform(1,0,0,1,0,0);
-  ctx.beginPath(); ctx.rect(X,0,W,Hp); ctx.clip();
-  ctx.imageSmoothingEnabled=false;
-
-  /* la trame du tube, sur toute la hauteur : la tuile deposee bout a bout */
-  ctx.globalAlpha=VHS_PEIGNE*f;
-  for(let y=0;y<Hp;y+=VHS_TUILE) ctx.drawImage(peigneVHS, X, y);
-
-  for(let i=0;i<VHS_N;i++){
-    const u=(t*VHS_VIT + i/VHS_N) % 1;
-    /* elles MONTENT : une barre qui descend se lit comme un balayage de scanner, une qui
-       monte comme une bande qui defile — c'est le sens du rembobinage. */
-    const y=Math.round((1-u)*(Hp+ep))-ep;
-    /* L'IMAGE DEPLACEE. On reprend la tranche un peu PLUS BAS dans la toile : l'horizon,
-       le sol et la poule sautent d'un cran a l'entree de la barre et reviennent a la
-       sortie. La prise est ramenee dans la toile — une tranche prise dehors ne rend rien
-       du tout, et la barre disparaitrait aux bords. */
-    const pris=Math.max(0, Math.min(Math.max(0,Hp-ep), y+saut));
-    g.setTransform(1,0,0,1,0,0);
-    g.imageSmoothingEnabled=false;
-    /* « copy » remplace tout : pas besoin d'effacer la barre precedente */
-    g.globalCompositeOperation="copy"; g.globalAlpha=1;
-    g.drawImage(c, X, pris, W, ep, 0, 0, W, ep);
-    g.globalCompositeOperation="source-over";
-    g.globalAlpha=VHS_VOILE*f;
-    g.fillStyle=CREAM; g.fillRect(0, 0, W, ep);
-    /* le peigne DANS la barre, quatre fois plus appuye qu'au fond : c'est lui qui la rend
-       visible sur un decor pale, la ou un voile clair ne faisait rien */
-    g.globalAlpha=VHS_DENSE*f;
-    g.drawImage(peigneVHS, 0, -(((y%VHS_PAS)+VHS_PAS)%VHS_PAS));
-    g.globalAlpha=VHS_BORD*f;
-    g.fillRect(0, ep-fil, W, fil);                     // le bas, clair
-    g.fillStyle=INK;
-    g.fillRect(0, 0, W, fil*2);                        // le haut, sombre : le bord d'attaque
-    /* LE BROUILLAGE DANS LA BARRE. Un voile uni fait un reflet ; ce qui fait la bande
-       magnetique, ce sont des traits qui la hachent sur des longueurs inegales. Ils sont
-       tires d'une suite sans hasard, calee sur la barre elle-meme, de sorte qu'ils
-       l'accompagnent au lieu de grouiller sur place. */
-    g.globalAlpha=VHS_GRAIN*f;
-    for(let j=0;j<9;j++){
-      const a1=Math.sin((j*37.7+i*11.3)+Math.floor(y/9)*0.7)*0.5+0.5;
-      const a2=Math.sin((j*91.1+i*5.9)+Math.floor(y/9)*1.3)*0.5+0.5;
-      const bw=Math.max(2, a2*W*0.30);
-      const by=fil+Math.round(a2*(ep-2*fil));
-      g.fillRect(Math.round(a1*W*0.9), by, Math.round(bw), Math.max(1,Math.round(k*0.6)));
-    }
-    /* et la barre entiere revient d'un coup, glissee sur le cote */
-    ctx.globalAlpha=1;
-    ctx.drawImage(tampVHS, X+dec, y);
-  }
-  ctx.restore();
 }
 
 function drawHUD(){
