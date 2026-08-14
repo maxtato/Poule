@@ -6319,6 +6319,12 @@ const JALON_MOT=1.9;              // combien de temps le mot reste a l'ecran
 const JALON_TENUE=0.60;           // dont ce temps-la a pleine encre, avant le fondu
 const JALON_MPU=9.2;              // unites de monde par metre de course
 let jalons=[], prochainJalon=0, dernierPoint=null, jalonMot=-9;
+/* LE RECORD BATTU SE DIT PENDANT LA COURSE, ET UNE SEULE FOIS. Le nombre du bandeau
+   virait deja a l'or en passant le record — mais il est petit, et l'on regarde la poule.
+   Le mot le dit en grand, comme le checkpoint, en jaune. Il ne parait que s'il y avait un
+   record a battre : sur une premiere partie, passer zero n'est pas un exploit. */
+const REC_MOT=2.2, REC_TENUE=0.9;
+let recMot=-9, recDit=false;
 /* LE DRAPEAU VEUT LE CIEL POUR LUI SEUL, ET IL FAUT LE LUI DONNER EN DEUX TEMPS.
    Il pend exactement la ou passe tout ce qui vole. Mesure sur 326 km dans les quatre
    mondes, avant regle : 159 recouvrements a la ferme, 722 en ville, 452 dans la jungle,
@@ -6393,7 +6399,7 @@ function cimeCiel(){
   return jalons.length ? Math.max(haut, jalonBas()+JALON_MARGE) : haut;
 }
 function remetJalons(){
-  jalons=[]; jalonMot=-9;
+  jalons=[]; jalonMot=-9; recMot=-9; recDit=false;
   /* jalonApres raisonne en metres, `dist` compte en pas : on convertit des deux cotes. */
   prochainJalon=jalonApres(dist/PAS_METRE)*PAS_METRE;
 }
@@ -6517,39 +6523,73 @@ function dessineJalons(){
 /* LE MOT, pose dans le bandeau et non dans le monde : il ne defile pas, il parait et
    s'efface sur place. Il monte d'un tiers de bandeau en paraissant — assez pour qu'on
    voie qu'il arrive, pas assez pour qu'il ait l'air de fuir. */
-function motJalon(L, VW, u){
-  const age=t-jalonMot;
-  if(age<0 || age>JALON_MOT) return;
-  /* IL EST LA, PUIS IL S'EFFACE. Une entree adoucie le faisait grandir dans le decor
-     comme s'il arrivait de loin ; le drapeau, lui, est franchi d'un coup. Le mot parait
-     donc entier a la premiere image, tient le temps qu'on le lise, et ne s'anime que
-     pour partir. */
-  const li=(x)=>{ const c=Math.max(0,Math.min(1,x)); return c*c*(3-2*c); };
-  const a=1-li((age-JALON_TENUE)/(JALON_MOT-JALON_TENUE));
-  if(a<=0.002) return;
-  const mot=T("checkpoint").toUpperCase();
+/* ---------- LES MOTS QUI PARAISSENT EN PLEIN ECRAN ----------
+   Le checkpoint, le record battu : deux annonces, une seule facon de les dire. Elles
+   reprennent CELLE DES CHIFFRES DU DECOMPTE, qui est la plus forte du jeu — le mot
+   tremble sur place et porte une ombre franche six points plus bas. Le tremblement se
+   compte en parts du CORPS et non en pixels : un ecart fixe serait un soubresaut sur un
+   petit ecran et un frisson invisible sur un grand.
+   Les cinq crans sont ceux du decompte, au centieme pres : c'est la meme animation,
+   rejouee au canevas parce que ces mots-la ne sont pas des elements du document. */
+const VIBRE=[[0,0,0],[-0.013,0.009,-0.7],[0.013,-0.009,0.7],
+             [-0.009,-0.013,-0.4],[0.009,0.013,0.4],[0,0,0]];
+const VIBRE_TOUR=0.17;              // le tour complet, comme au decompte
+const MOT_OMBRE=0.13, MOT_OMBRE_A=0.10;   // l'ombre, en parts du corps, et son encre
+function vibration(age, taille){
+  const u=((age/VIBRE_TOUR)%1)*(VIBRE.length-1);
+  const i=Math.floor(u), f=u-i;
+  const a=VIBRE[i], b=VIBRE[i+1];
+  return [(a[0]+(b[0]-a[0])*f)*taille,
+          (a[1]+(b[1]-a[1])*f)*taille,
+          (a[2]+(b[2]-a[2])*f)*Math.PI/180];
+}
+/* Le mot lui-meme : mesure pour tenir dans le cadre, tremblant, et pose sur son ombre.
+   Pas de cerne creme : les chiffres du decompte n'en ont pas, et le mot se detache tout
+   seul sur le ciel, qui est clair dans les cinq mondes. */
+function motPlein(mot, coul, L, VW, y, alpha, age, part){
   ctx.save();
-  ctx.globalAlpha=a;
+  ctx.globalAlpha=alpha;
   ctx.textAlign="center"; ctx.textBaseline="middle";
   /* LA TAILLE SE MESURE, ELLE NE SE CHOISIT PAS. Onze lettres en gras a un douzieme de
      la largeur du cadre debordaient sur un telephone de 390 et venaient buter dans le
      bandeau des trophees. On part de la taille voulue, on mesure le mot, et on retombe
      dessous s'il ne tient pas dans les trois quarts du cadre — ce qui laisse de quoi
      respirer des deux cotes quel que soit le mot et quelle que soit la langue. */
-  let taille=Math.round(Math.min(30, VW*0.077));
+  let taille=Math.round(Math.min(30, VW*(part||0.077)));
   ctx.font="900 "+taille+"px "+FONT;
   const large=ctx.measureText(mot).width, tient=VW*0.74;
   if(large>tient){
     taille=Math.max(11, Math.floor(taille*tient/large));
     ctx.font="900 "+taille+"px "+FONT;
   }
-  /* Il descend sous la carte des trophees, qui occupe le coin droit juste sous le
-     bandeau : deux annonces au meme endroit se recouvrent tot ou tard. */
-  const y=u*2.6;
-  ctx.lineWidth=Math.max(3, taille*0.26); ctx.lineJoin="round";
-  ctx.strokeStyle=CREAM; ctx.strokeText(mot, L+VW/2, y);
-  ctx.fillStyle="#D6342B"; ctx.fillText(mot, L+VW/2, y);
+  const [vx,vy,vr]=vibration(age, taille);
+  ctx.translate(L+VW/2+vx, y+vy);
+  ctx.rotate(vr);
+  ctx.fillStyle="rgba(26,22,20,"+MOT_OMBRE_A+")";
+  ctx.fillText(mot, 0, taille*MOT_OMBRE);
+  ctx.fillStyle=coul;
+  ctx.fillText(mot, 0, 0);
   ctx.restore();
+}
+function motJalon(L, VW, u){
+  /* IL EST LA, PUIS IL S'EFFACE. Une entree adoucie le faisait grandir dans le decor
+     comme s'il arrivait de loin ; le drapeau, lui, est franchi d'un coup. Le mot parait
+     donc entier a la premiere image, tient le temps qu'on le lise, et ne s'anime que
+     pour partir. */
+  const li=(x)=>{ const c=Math.max(0,Math.min(1,x)); return c*c*(3-2*c); };
+  /* Le mot du record passe SOUS celui du drapeau quand les deux tombent ensemble : ils
+     partagent la meme ligne, et deux annonces au meme endroit se recouvrent tot ou tard.
+     Il descend donc d'une hauteur de mot tant que l'autre est a l'ecran. */
+  const ageJ=t-jalonMot, ageR=t-recMot;
+  const jalonLa=ageJ>=0 && ageJ<=JALON_MOT;
+  if(jalonLa){
+    const a=1-li((ageJ-JALON_TENUE)/(JALON_MOT-JALON_TENUE));
+    if(a>0.002) motPlein(T("checkpoint").toUpperCase(), "#D6342B", L, VW, u*2.6, a, ageJ);
+  }
+  if(ageR>=0 && ageR<=REC_MOT){
+    const a=1-li((ageR-REC_TENUE)/(REC_MOT-REC_TENUE));
+    if(a>0.002) motPlein(T("hudrec"), YELL, L, VW, u*(jalonLa?3.5:2.6), a, ageR);
+  }
 }
 let trophFile=[], trophT=-9, trophCur=null;
 const TROPH_DUREE=3.4, TROPH_ECART=4.0;
@@ -8219,6 +8259,14 @@ function update(dt){
   speed=Math.min(500+dist*0.33,900);
   dist+=speed*dt/9.2;
   avanceJalons(dt);
+  /* LE RECORD SE FRANCHIT PENDANT LA COURSE, ET C'EST LA QU'IL FAUT LE DIRE. Annonce a
+     l'ecran de fin, il arrive quand tout est joue ; annonce ici, il dit qu'il reste
+     quelque chose a defendre. Une seule fois par partie, et seulement s'il y avait un
+     record a battre. */
+  if(!recDit){
+    const rec=carnet().best;
+    if(rec>0 && score()>rec){ recDit=true; recMot=t; }
+  }
   /* Le choc l'a reculee d'une cinquantaine d'unites ; elle rattrape sa place mainte-
      nant que le decor defile, en courant plus vite que lui. Ramenee pendant qu'elle se
      relevait, elle aurait glisse sur le sol sans lever une patte. */
