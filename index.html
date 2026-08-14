@@ -926,30 +926,37 @@
      et l'ouverture d'un terrain n'a rien a refaire. */
   .niv.bloque canvas{filter:grayscale(1) brightness(1.06) contrast(.72)}
   .niv .vue canvas{position:relative;z-index:0}
-  /* ---------- LE VOILE EST PASSE DU SOMBRE AU CLAIR, ET LE MOT AVEC ----------
-     Le mot etait BLANC, pose sur un voile d'encre a demi transparent. C'est joli tant que
-     le voile est la ; ca ne tient plus des qu'il manque, et il manquait — sur la carte du
-     premier plan, chez le joueur, deux fois de suite. Ecrire l'ordre des calques n'y a
-     rien change ; renforcer l'ombre du mot non plus.
-     Alors on cesse de dependre du voile. Le dessin d'un terrain ferme est deja PALI par
-     son filtre — gris, un peu eclairci, contraste baisse — c'est-a-dire clair. Un mot
-     d'encre s'y lit donc tout seul, voile ou pas. Le voile passe au creme, ou il ne sert
-     plus qu'a poser l'ambiance et a faire reculer le dessin ; s'il disparaissait a son
-     tour, on ne perdrait qu'un peu de douceur, plus le texte.
-     C'est le meme raisonnement que pour le sol de la nuit : ce qu'il faut tenir n'est pas
-     une couleur, c'est un ECART, et un ecart ne se tient que s'il survit a la panne. */
+  /* ---------- LE MOT EST BLANC SUR UN VOILE SOMBRE, ET IL Y REVIENT ----------
+     Il l'a ete, puis il est passe a l'encre sur un voile creme — une tentative pour que le
+     mot survive a la disparition du voile, qu'on n'arrivait pas a expliquer. La carte y
+     gagnait en surete ce qu'elle perdait en allure : un terrain ferme doit avoir l'air
+     ETEINT, et un voile clair l'efface au lieu de l'eteindre. On revient donc au sombre,
+     qui etait le bon choix.
+     CE QU'ON GARDE DE L'ESSAI : l'ombre du mot, franche et serree, et l'ordre des calques
+     ecrit dans la feuille de style au lieu d'etre suppose. Ni l'un ni l'autre ne se voit
+     quand tout va bien, et les deux tiennent le mot si quelque chose lache. */
   .niv .verrou{position:absolute;inset:0;z-index:1;display:none;
     flex-direction:column;align-items:center;justify-content:center;gap:6px;
     padding:8px 10px;text-align:center;
-    background:rgba(250,243,236,.60);color:#2E2822}
+    background:rgba(38,33,30,.46);color:#FFFDF8}
   .niv.bloque .verrou{display:flex}
   .niv .verrou svg{width:clamp(18px,calc(var(--carte,220px)*.13),30px);height:auto;
     flex:none;opacity:.95}
-  /* L'OMBRE DU MOT EST CLAIRE, comme le voile : elle le detache du dessin la ou celui-ci
-     garde une tache foncee — un tronc, un immeuble — sans jamais l'assombrir. */
+  /* L'OMBRE DU MOT PORTE PLUS LOIN QUE CELLE D'ORIGINE, et il faut dire exactement ce
+     qu'elle vaut. Le mot est blanc et se lit parce qu'un voile sombre le porte ; si ce
+     voile venait a manquer, il resterait du blanc sur un gris pale. Mesure du contraste
+     dans ce cas-la, voile retire, en relevant la clarte du fond AU CONTACT des lettres :
+         sans ombre           1,5 pour 1
+         ombre d'origine      1,8
+         ombre d'ici          2,4
+     Elle aide donc, et elle ne sauve rien : a 2,4 le mot se devine, il ne se lit pas. Ce
+     n'est pas une reparation, c'est un amorti — et la ou le voile est present, on ne la
+     distingue pas. La vraie surete serait de ne pas dependre du voile, ce qui demande un
+     mot sombre sur un fond clair ; essaye, et refuse : une carte fermee doit avoir l'air
+     eteinte, pas effacee. */
   .niv .verrou .mot{font-size:clamp(9px,calc(var(--carte,220px)*.055),13px);
     font-weight:800;line-height:1.25;text-wrap:balance;
-    text-shadow:0 1px 2px rgba(250,243,236,.95), 0 0 7px rgba(250,243,236,.9)}
+    text-shadow:0 1px 2px rgba(20,16,14,.85), 0 0 6px rgba(20,16,14,.65)}
   .niv.bloque .ligne{opacity:.55}
   /* Le bouton de depart devant un terrain ferme : eteint, mais toujours la. Le selecteur
      porte l'identifiant parce que celui du bouton rouge le porte : sans lui, le rouge
