@@ -699,6 +699,53 @@
      pour ne pas faire un grand vide la ou l'autre paire porte un dessin. */
   #pref .opt.mot{padding:13px 8px;text-transform:none;letter-spacing:.06em;font-size:14px}
   #pref .opt.mot.actif{padding:12px 7px}
+  /* ---------- LA FEUILLE DES TROPHEES ----------
+     Elle emprunte tout a celle des reglages — le voile, la carte creme, le titre, la
+     colonne qui defile, le bouton rouge du pied — et n'ajoute que ce qui lui est propre :
+     le compte en tete et les lignes de la liste. Deux feuilles qui se ressemblent se
+     retiennent comme une seule. */
+  #troph{justify-content:center;background:rgba(26,22,20,.28);z-index:12}
+  #troph .card{display:flex;flex-direction:column;align-items:center;
+    gap:clamp(6px,1.2vh,10px);
+    background:#FAF3EC;border:1.5px solid #1A1614;border-radius:26px;
+    padding:clamp(18px,3vh,26px) clamp(14px,4vw,20px) clamp(14px,2.4vh,20px);
+    width:min(88%,360px);max-height:88vh;position:relative;
+    box-shadow:0 14px 34px rgba(26,22,20,.26)}
+  #troph .card > h2{margin:0;text-align:center;flex:none;
+    font-size:clamp(19px,5.4vw,24px);font-weight:900;letter-spacing:.12em;
+    text-transform:uppercase;color:#3A322C}
+  /* LE COMPTE EN TETE, et c'est la premiere chose qu'on vient y chercher : combien il en
+     reste. Il est en rouge parce que c'est un score, comme les records des cartes. */
+  #troph .compte{margin:0;flex:none;font-size:clamp(12px,3.4vw,15px);
+    font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#D6342B}
+  #troph .dedans{display:flex;flex-direction:column;width:100%;min-height:0;flex:1;
+    gap:2px;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding:clamp(4px,1vh,8px) 2px}
+  /* Une ligne : la coupe, puis ce qu'elle vaut. Les lignes alternent de fond, tres
+     legerement — quarante lignes d'affilee sans reperes se lisent comme un mur. */
+  #troph .tr{display:flex;align-items:center;gap:clamp(9px,3vw,13px);
+    padding:clamp(5px,1.2vh,8px) clamp(6px,2vw,10px);border-radius:12px}
+  #troph .tr:nth-child(odd){background:rgba(214,201,176,.20)}
+  #troph .tr canvas{flex:none;display:block;image-rendering:pixelated}
+  /* LA COUPE ETEINTE. Grisee et pâlie, elle reste une coupe — on voit qu'il y a quelque
+     chose a gagner la — mais elle ne brille pas comme celles qu'on a. */
+  #troph .tr.ferme canvas{filter:grayscale(1) brightness(1.12) contrast(.55) opacity(.5)}
+  #troph .tr .quoi{display:flex;flex-direction:column;gap:1px;min-width:0}
+  #troph .tr b{font-size:clamp(12px,3.5vw,15px);font-weight:900;letter-spacing:.02em;
+    color:#3A322C;line-height:1.2}
+  #troph .tr i{font-style:normal;font-size:clamp(10px,2.9vw,12px);font-weight:700;
+    letter-spacing:.04em;color:#8B7C69;line-height:1.2}
+  /* Les trois points d'interrogation. Espaces, pales, sans unite dessous : ils occupent la
+     place du nom sans rien en dire. */
+  #troph .tr.ferme b{color:#B5AA9A;letter-spacing:.28em}
+  #troph .btn.ferme{width:100%;padding:clamp(12px,2.6vh,15px) 12px;margin-top:clamp(2px,1vh,8px);
+    font-size:clamp(13px,3.7vw,16px);font-weight:900;letter-spacing:.1em;
+    text-transform:uppercase;border:1.5px solid #D6342B;border-radius:18px;
+    background:#D6342B;color:#fff;cursor:pointer}
+  #troph .btn.ferme:active{background:#B32A22;border-color:#B32A22}
+  /* Les deux boutons creux de l'accueil, cote a cote. */
+  #menu .deuxbas{display:flex;align-items:center;justify-content:center;
+    gap:clamp(8px,3vw,14px)}
   /* Les deux boutons du bas. Le premier est plein et rouge — c'est celui qu'on cherche —
      le second creux, et il n'existe que si une course attend derriere. */
   #pref .btn.ferme{width:100%;padding:clamp(12px,2.6vh,15px) 12px;margin-top:clamp(4px,1.4vh,10px);
@@ -1013,7 +1060,30 @@
   </div>
   <div class="bas">
     <button class="btn jouer" id="play" data-t="start">Start</button>
-    <button class="btn creux" id="playreg" data-t="reglages">Réglages</button>
+    <!-- DEUX BOUTONS SUR UNE LIGNE plutot que l'un sous l'autre : la bande basse est
+         deja la partie serree de l'accueil — elle vaut la bande de terre et rien de plus —
+         et un troisieme bouton empile aurait pousse le carrousel vers le haut. -->
+    <div class="deuxbas">
+      <button class="btn creux" id="playtroph" data-t="trophees">Trophées</button>
+      <button class="btn creux" id="playreg" data-t="reglages">Réglages</button>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- LA LISTE DES TROPHEES ----------
+     Elle dit DEUX choses, et la seconde compte autant que la premiere : ce qu'on a gagne,
+     et COMBIEN IL EN RESTE. D'ou la liste entiere, dans l'ordre, sans en cacher un seul —
+     un trophee qu'on ignore ne donne envie de rien.
+     Ce qu'on cache, c'est le BUT. Une ligne verrouillee montre une coupe eteinte et trois
+     points d'interrogation : on sait qu'il existe, on ne sait pas ce qu'il demande, et la
+     surprise reste entiere le jour ou il tombe. Le nombre grave sur la coupe part avec le
+     reste — c'est lui qui trahirait le plus. -->
+<div class="layer" id="troph" role="dialog" data-ta="trophees" aria-label="Trophées" aria-modal="true">
+  <div class="card">
+    <h2 data-t="trophees">Trophées</h2>
+    <p class="compte" id="trophcompte"></p>
+    <div class="dedans" id="trophliste"></div>
+    <button class="btn ferme" data-t="fermer">Fermer</button>
   </div>
 </div>
 
@@ -3294,6 +3364,27 @@ const MOU_W = 49.14, MOU_H = 24.53;   // la mouche, deux poses d'ailes
    legerement a gauche du milieu — l'anse droite et le caillou tirent la silhouette
    de ce cote. */
 const CUP_W = 52.0, CUP_H = 48.0, CUP_CX = 0.503, CUP_CY = 0.335;
+/* LA COUPE ET SON NOMBRE, EN UN SEUL ENDROIT. Elle est dessinee a deux endroits — le
+   bandeau qui annonce un trophee gagne, et la liste de tous les trophees — et un dessin
+   fait deux fois finit par diverger. `n` absent ou nul, la coupe sort nue : c'est ce qu'il
+   faut a un trophee qu'on n'a pas encore, dont on ne doit pas connaitre le but.
+   Rend la largeur occupee, dont l'appelant a besoin pour poser ce qui suit. */
+function peintCoupe(g, x, y, h, n){
+  if(!SPR.coupe || !SPR.coupe.naturalWidth) return 0;
+  const w=h*CUP_W/CUP_H;
+  g.drawImage(SPR.coupe, x, y, w, h);
+  if(n){
+    g.textAlign="center"; g.textBaseline="middle";
+    /* Le nombre grave se serre a mesure qu'il s'allonge. L'echelle des trophees monte
+       jusqu'a dix mille mouches : a deux tailles seulement, un nombre de cinq chiffres
+       sortait de la coupe. */
+    const nl=String(n).length;
+    g.font="900 "+Math.round(h*(nl>=5?0.185:nl>2?0.24:0.30))+"px "+FONT;
+    g.fillStyle="#8A5A1E";                 // le brun du socle, pas l'encre du trait
+    g.fillText(String(n), x+w*CUP_CX, y+h*CUP_CY);
+  }
+  return w;
+}
 /* Bec ouvert en vol : pose isolee, calee sur la tete comme les poses de battement.
    Au sol, la pose equivalente vit dans le canvas commun (SPR.snap). */
 const GOBE_W = 396, GOBE_H = 189, GOBE_HEAD = [281.5, 58.5];
@@ -3919,6 +4010,10 @@ const TEXTES={
   volmot:     ["Maintenir pour voler", "Hold to fly"],
   saut:       ["Sauter, ou maintenir pour voler", "Jump, or hold to fly"],
   reglages:   ["Réglages", "Settings"],
+  trophees:   ["Trophées", "Trophies"],
+  /* Le compte de la liste. On dit ce qu'on A, pas ce qui manque : « 12 sur 40 » se lit
+     comme une progression, « 28 restants » comme une dette. */
+  trophcompte:["%1 sur %2", "%1 of %2"],
   panneau:    ["Panneau des records", "Records sign"],
   /* UN MOT PAR BOUTON, PAS DEUX. « A gauche » et « A droite » passaient a la ligne quand
      « Masque » tenait sur la sienne : trois boutons cote a cote n'ont pas la place d'une
@@ -4338,7 +4433,11 @@ function traverse(){ return t<orJusqu && !hen.dead; }
    longue chaine tiendrait le pouvoir indefiniment. Le compteur, lui, continue de monter :
    il dit toujours la meme chose, et il reste dore tant que le pouvoir dure. */
 const COOL_N=20;          // la longueur de chaine qui donne les lunettes
-const COOL_DUREE=8;       // ce que durent les lunettes : deux secondes de plus que la doree
+/* IL DURE DIX SECONDES, ET IL EN A DURE SIX PUIS HUIT. C'est la recompense la plus rare
+   du jeu — vingt mouches sans en manquer une — et une recompense rare doit se sentir
+   passer. A dix secondes on a le temps de faire quelque chose du pouvoir, pas seulement
+   de le voir s'allumer et s'eteindre. */
+const COOL_DUREE=10;      // ce que durent les lunettes : quatre secondes de plus que la doree
 /* ET PENDANT CE TEMPS, ELLE PLANE. Les lunettes ne se voyaient que sur elle ; le pouvoir
    ne se SENTAIT pas dans la main. Deux choses changent donc pendant qu'il dure, et elles
    vont dans le meme sens : chaque seconde de vol coute moins de plumes, et la pesanteur
@@ -6168,6 +6267,57 @@ $("sur").addEventListener("pointerdown",e=>e.stopPropagation());
 $("sur").addEventListener("click",e=>{ if(e.target===$("sur")) fermeSur(); });
 function ouvrePref(){ posePref(); dessineReglageVignette(); $("pref").classList.add("on"); }
 function fermePref(){ $("pref").classList.remove("on"); }
+
+/* ---------- LA LISTE DE TOUS LES TROPHEES ----------
+   Elle se refait a chaque ouverture plutot que de se tenir a jour : elle ne s'ouvre pas
+   souvent, quarante lignes ne coutent rien, et une liste refaite ne peut pas mentir.
+   LA COUPE EST UN CANEVAS ET NON UNE IMAGE, pour deux raisons qui vont ensemble : le
+   nombre y est GRAVE, ce qu'une balise <img> ne saurait pas faire, et le dessin est en
+   pixels — le navigateur qui l'etirerait le lisserait. On le peint donc a la definition de
+   l'ecran, sans lissage, par la meme fonction que le bandeau du jeu.
+   Le canevas fait la meme taille pour tous, ouverts comme fermes : une liste dont les
+   lignes changent de hauteur selon ce qu'on possede se lit comme une liste cassee. */
+const TROPH_COUPE = 34;             // la coupe de la liste, en points CSS
+function poseTrophees(){
+  const boite=$("trophliste"); if(!boite) return;
+  const eus=new Set(save.trophees||[]);
+  const c=$("trophcompte");
+  if(c) c.textContent=T("trophcompte", eus.size, TROPHEES.length);
+  boite.innerHTML="";
+  const k=Math.min(3, Math.max(1, Math.round(window.devicePixelRatio||1)));
+  for(const tr of TROPHEES){
+    const ouvert=eus.has(tr.k);
+    const l=document.createElement("div");
+    l.className="tr"+(ouvert?"":" ferme");
+    const h=TROPH_COUPE, w=Math.ceil(h*CUP_W/CUP_H);
+    const cv=document.createElement("canvas");
+    cv.width=Math.round(w*k); cv.height=Math.round(h*k);
+    cv.style.width=w+"px"; cv.style.height=h+"px";
+    const g=cv.getContext("2d");
+    g.setTransform(k,0,0,k,0,0);
+    g.imageSmoothingEnabled=false;
+    /* Le nombre ne se grave que sur les coupes gagnees : c'est lui qui trahirait le but. */
+    peintCoupe(g, 0, 0, h, ouvert ? tr.n : 0);
+    const q=document.createElement("span"); q.className="quoi";
+    const b=document.createElement("b");
+    b.textContent = ouvert ? T("t"+tr.k) : "???";
+    q.appendChild(b);
+    if(ouvert){
+      const i=document.createElement("i");
+      i.textContent=T(tr.u||"umouches");
+      q.appendChild(i);
+    }
+    l.appendChild(cv); l.appendChild(q);
+    boite.appendChild(l);
+  }
+}
+function ouvreTrophees(){ poseTrophees(); $("troph").classList.add("on"); }
+function fermeTrophees(){ $("troph").classList.remove("on"); }
+$("playtroph").addEventListener("click",ouvreTrophees);
+$("troph").addEventListener("pointerdown",e=>e.stopPropagation());
+$("troph").addEventListener("click",e=>{
+  if(e.target.closest(".ferme.btn") || e.target===$("troph")) fermeTrophees();
+});
 /* LA SEULE PORTE DES REGLAGES : un vrai bouton, sous celui du depart, ecrit en toutes
    lettres. La pastille ronde du coin bas-gauche qui faisait double emploi est partie —
    elle ne disait pas ce qu'elle ouvrait. */
@@ -10543,19 +10693,9 @@ function bandeauTrophee(R, pad, VW, y){
      donc une coupe posee a la hauteur de la carte venait frotter le trait du haut. Le
      nombre grave suit, il se dimensionne sur elle. */
   const MARGE=0.13;
-  const chH=ch*(1-2*MARGE), chW=chH*CUP_W/CUP_H;
+  const chH=ch*(1-2*MARGE);
   const cx=x+ch*MARGE, cy=y+ch*MARGE;
-  ctx.drawImage(SPR.coupe, cx, cy, chW, chH);
-  if(tr.n){
-    ctx.textAlign="center"; ctx.textBaseline="middle";
-    /* Le nombre grave se serre a mesure qu'il s'allonge. L'echelle des trophees monte
-       maintenant jusqu'a douze mille mouches : a deux tailles seulement, un nombre de
-       cinq chiffres sortait de la coupe. */
-    const nl=String(tr.n).length;
-    ctx.font="900 "+Math.round(chH*(nl>=5?0.185:nl>2?0.24:0.30))+"px "+FONT;
-    ctx.fillStyle="#8A5A1E";                 // le brun du socle, pas l'encre du trait
-    ctx.fillText(String(tr.n), cx+chW*CUP_CX, cy+chH*CUP_CY);
-  }
+  const chW=peintCoupe(ctx, cx, cy, chH, tr.n);
 
   /* LE NOM EN GROS, L'UNITE EN PETIT DESSOUS. Le compte est grave sur la coupe ; ce
      qu'il reste a dire, c'est CE QU'ON A FAIT, et « 25 » ne le dit pas. Le nom prend
