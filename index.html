@@ -5421,7 +5421,13 @@ function accueil(){
 
 function start(){
   /* UN TERRAIN FERME NE SE JOUE PAS, quelle que soit la porte. Le bouton est deja eteint,
-     mais l'appui sur le terrain et les raccourcis du clavier passent aussi par ici. */
+     mais l'appui sur le terrain et les raccourcis du clavier passent aussi par ici.
+     ET S'IL EST FERME, ON RETOMBE SUR CELUI DU CARNET AVANT DE REFUSER. Le carnet ne
+     retient que des terrains ouverts : s'y rabattre rend toujours une partie jouable. Un
+     refus muet est la pire des reponses a un bouton allume — c'est ce qui arrivait quand
+     le terrain charge et la carte du milieu avaient diverge — et le garde-fou coute une
+     ligne. */
+  if(monde && !mondeOuvert(monde.nom)) choisirMonde(save.monde, false);
   if(monde && !mondeOuvert(monde.nom)) return;
   /* Une partie neuve part de zero, points de controle compris : « Recommencer » est un
      recommencement, pas une reprise. */
@@ -5854,7 +5860,6 @@ function verrouVignette(cvs, mot){
   g.translate(x0, y0); g.scale(t/24, t/24);
   g.strokeStyle=VERR_CLAIR; g.lineWidth=1.9;
   g.lineCap="round"; g.lineJoin="round";
-  g.shadowColor=VERR_HALO; g.shadowBlur=2.2;   // le cadenas se detache lui aussi
   const rx=2.2, X=4.6, Y=10.4, L=14.8, Hh=9.6;
   g.beginPath();
   g.moveTo(X+rx, Y);
@@ -5890,18 +5895,12 @@ function verrouVignette(cvs, mot){
   }
   g.textAlign="center"; g.textBaseline="middle";
   const inter=fs*1.25, y1=H*0.56 + (t*0.10);
-  /* LE HALO DU MOT, ET IL PORTE TOUT. Le voile ne fait plus assez d'ecart a lui seul :
-     c'est ce halo sombre, pose sous chaque ligne, qui detache le blanc — du paysage clair
-     comme du voile. Il est peint DEUX FOIS, parce qu'une seule passe d'ombre floue est
-     trop pale pour tenir un texte de cette taille. */
+  /* LE MOT EST NU, sans ombre ni halo. C'est demande, et c'est plus propre : un halo sous
+     un texte de dix points fait une salissure autour des lettres plutot qu'un relief.
+     Il ne tient donc plus que par le voile — voir VERR_VOILE, remonte de ce qu'il faut
+     pour que le blanc garde son ecart sans que la carte redevienne sombre. */
   lignes.forEach((l,i)=>{
     const y=y1+(i-(lignes.length-1)/2)*inter;
-    g.save();
-    g.shadowColor=VERR_HALO; g.shadowBlur=Math.max(2, fs*0.55);
-    g.fillStyle=VERR_CLAIR;
-    g.fillText(l, W/2, y);
-    g.fillText(l, W/2, y);
-    g.restore();
     g.fillStyle=VERR_CLAIR;
     g.fillText(l, W/2, y);
   });
@@ -6139,7 +6138,21 @@ function suitCarrousel(){
   const i=l.indexOf(b), g=$("precniv"), d=$("suivniv");
   if(g) g.disabled = i<=0;
   if(d) d.disabled = i>=l.length-1;
-  if(b.dataset.monde!==save.monde) choisirMonde(b.dataset.monde, true);
+  /* ---------- LE TERRAIN CHARGE SUIT LE CARROUSEL, TOUJOURS ----------
+     Cette ligne ne chargeait le terrain que s'il differait de celui RETENU dans le carnet,
+     et les deux ne sont pas la meme chose : on peut regarder un terrain ferme — c'est a
+     cela que sert le carrousel — mais le carnet, lui, ne retient que les terrains ouverts.
+     D'ou le defaut, et il rendait le jeu injouable : on part de la ferme, on va voir la
+     ville qui est fermee (le terrain charge devient la ville, le carnet garde la ferme),
+     on revient sur la ferme — et comme la ferme est deja celle du carnet, on ne recharge
+     rien. Le terrain charge reste la VILLE. Le bouton de depart, lui, se regle sur la
+     carte du milieu : il se rallume. Mais start() refuse de lancer un terrain ferme, et
+     c'est le terrain CHARGE qu'il regarde. Le bouton repond donc, et il ne se passe rien.
+     Il fallait quitter le jeu pour s'en sortir.
+     On charge donc sans condition. choisirMonde() sait deja ne rien faire quand le terrain
+     demande est celui qui tourne ; la comparaison etait non seulement fausse, elle etait
+     de trop. */
+  choisirMonde(b.dataset.monde, true);
   poseDepart(b.dataset.monde);
 }
 /* LE BOUTON DE DEPART DIT CE QU'IL PEUT FAIRE. Devant un terrain ferme il ne disparait
