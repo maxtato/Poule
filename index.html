@@ -343,7 +343,11 @@
      toucher a l'ordre ni au nombre des choses dites. */
   #over .carte{position:relative;width:min(calc(var(--band,100%) - 24px),400px);
     --ko:clamp(76px,21.5vw,106px);margin-top:calc(var(--ko)*0.24);box-sizing:border-box;
-    padding:clamp(56px,14.4vw,74px) clamp(30px,8vw,46px) clamp(34px,8.6vw,48px);
+    /* Le bas est plus large que ce que le resserrement avait laisse : « Accueil » est le
+       dernier objet de la carte, et 34 points le posaient presque sur le feston du bas.
+       Il en a 46 — l'ecart au bord de la bulle passe de 34 a 46 points, sans rien rendre
+       de la hauteur gagnee ailleurs. */
+    padding:clamp(56px,14.4vw,74px) clamp(30px,8vw,46px) clamp(46px,11.8vw,60px);
     animation:parait .26s cubic-bezier(.2,1.15,.5,1)}
   #over .blob{position:absolute;inset:0;z-index:0;
     background:center/100% 100% no-repeat}
