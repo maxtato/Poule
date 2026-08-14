@@ -914,66 +914,11 @@
     transform:scale(.88);opacity:.62;
     transition:transform .22s ease,opacity .22s ease,box-shadow .22s ease}
   .niv.actif{transform:scale(1);opacity:1;box-shadow:0 7px 22px rgba(26,22,20,.22)}
-  /* ---------- L'ORDRE DES CALQUES DE LA VIGNETTE, ECRIT PLUTOT QUE SUPPOSE ----------
-     Le verrou passait par-dessus le dessin parce qu'il vient apres lui dans le document,
-     et rien de plus. Ca suffit tant que les deux sont peints dans le meme calque ; ca ne
-     suffit plus des que l'un d'eux part dans un calque a lui, et c'est exactement ce qui
-     arrive ici : le dessin d'un terrain ferme porte un FILTRE, ce qui en fait un calque
-     separe, et la carte du premier plan est la seule des cinq a ne pas etre elle-meme
-     composee — les voisines ont une opacite de 0,62 qui les regroupe. Sur un moteur qui
-     compose ces calques dans un autre ordre que le document, le dessin filtre repasse
-     alors PAR-DESSUS le verrou, et le mot disparait — sur la carte du milieu seulement.
-     Le defaut ne se voit pas sur le moteur dont je dispose ici ; ce qui suit ne le repare
-     donc pas au vu d'une mesure, mais retire la SUPPOSITION qui le rend possible. La
-     vignette devient un contexte d'empilement a elle, le dessin y prend l'etage zero et le
-     verrou l'etage un. L'ordre est alors ecrit dans la feuille de style, et plus aucun
-     moteur n'a le droit de l'intervertir. */
-  .niv .vue{position:relative;display:block;border-radius:13px;overflow:hidden;
-    isolation:isolate}
-  /* LE VERROU. La vignette passe au gris et s'assombrit, et le mot vient par-dessus. On
-     grise par un filtre plutot qu'en repeignant le canevas : le dessin reste ce qu'il est,
-     et l'ouverture d'un terrain n'a rien a refaire. */
-  .niv.bloque canvas{filter:grayscale(1) brightness(1.06) contrast(.72)}
-  .niv .vue canvas{position:relative;z-index:0}
-  /* ---------- LE MOT EST BLANC SUR UN VOILE SOMBRE, ET IL Y REVIENT ----------
-     Il l'a ete, puis il est passe a l'encre sur un voile creme — une tentative pour que le
-     mot survive a la disparition du voile, qu'on n'arrivait pas a expliquer. La carte y
-     gagnait en surete ce qu'elle perdait en allure : un terrain ferme doit avoir l'air
-     ETEINT, et un voile clair l'efface au lieu de l'eteindre. On revient donc au sombre,
-     qui etait le bon choix.
-     CE QU'ON GARDE DE L'ESSAI : l'ombre du mot, franche et serree, et l'ordre des calques
-     ecrit dans la feuille de style au lieu d'etre suppose. Ni l'un ni l'autre ne se voit
-     quand tout va bien, et les deux tiennent le mot si quelque chose lache. */
-  .niv .verrou{position:absolute;inset:0;z-index:1;display:none;
-    flex-direction:column;align-items:center;justify-content:center;gap:6px;
-    padding:8px 10px;text-align:center;
-    background:rgba(38,33,30,.46);color:#FFFDF8}
-  .niv.bloque .verrou{display:flex}
-  .niv .verrou svg{width:clamp(18px,calc(var(--carte,220px)*.13),30px);height:auto;
-    flex:none;opacity:.95}
-  /* L'OMBRE DU MOT PORTE PLUS LOIN QUE CELLE D'ORIGINE, et il faut dire exactement ce
-     qu'elle vaut. Le mot est blanc et se lit parce qu'un voile sombre le porte ; si ce
-     voile venait a manquer, il resterait du blanc sur un gris pale. Mesure du contraste
-     dans ce cas-la, voile retire, en relevant la clarte du fond AU CONTACT des lettres :
-         sans ombre           1,5 pour 1
-         ombre d'origine      1,8
-         ombre d'ici          2,4
-     Elle aide donc, et elle ne sauve rien : a 2,4 le mot se devine, il ne se lit pas. Ce
-     n'est pas une reparation, c'est un amorti — et la ou le voile est present, on ne la
-     distingue pas. La vraie surete serait de ne pas dependre du voile, ce qui demande un
-     mot sombre sur un fond clair ; essaye, et refuse : une carte fermee doit avoir l'air
-     eteinte, pas effacee. */
-  /* `text-wrap:balance` EST PARTI, et c'est une elimination, pas une reparation. Il
-     equilibrait la longueur des deux lignes — un agrement, rien de plus — et c'est la
-     seule propriete exotique qui agissait sur ce texte-la : elle est recente, elle demande
-     au moteur une seconde passe de mise en page, et son comportement change avec le nombre
-     de lignes, donc avec la largeur de la carte. C'est exactement la forme du defaut
-     rapporte : le texte manque sur la carte la plus large et sur elle seule. Faute de
-     pouvoir le reproduire, on retire ce qui pourrait le causer et qui ne sert a rien
-     d'essentiel ; les lignes se couperont un peu moins joliment, personne ne le verra. */
-  .niv .verrou .mot{font-size:clamp(9px,calc(var(--carte,220px)*.055),13px);
-    font-weight:800;line-height:1.25;
-    text-shadow:0 1px 2px rgba(20,16,14,.85), 0 0 6px rgba(20,16,14,.65)}
+  /* LA VIGNETTE. Elle ne porte plus qu'une chose, son canevas : le verrou d'un terrain
+     ferme y est PEINT — voir verrouVignette() — au lieu d'etre empile par-dessus. Il n'y a
+     donc plus d'ordre de calques a tenir, plus de filtre a poser, et plus de texte qui
+     puisse manquer pendant que le dessin, lui, s'affiche. */
+  .niv .vue{position:relative;display:block;border-radius:13px;overflow:hidden}
   .niv.bloque .ligne{opacity:.55}
   /* Le bouton de depart devant un terrain ferme : eteint, mais toujours la. Le selecteur
      porte l'identifiant parce que celui du bouton rouge le porte : sans lui, le rouge
@@ -5860,6 +5805,90 @@ function semeVignette(m, larg){
   monde=m0;
   return ch;
 }
+/* ---------- LE VERROU EST PEINT DANS LA VIGNETTE, ET PLUS POSE DESSUS ----------
+   Il a ete pendant longtemps un element du document — un voile, un cadenas en SVG, un mot
+   — empile par-dessus le canevas de la carte. Sur la carte SELECTIONNEE, et sur elle
+   seule, le mot n'arrivait pas ; sur ses voisines il etait la. Trois explications ont ete
+   essayees et aucune n'a rien change : l'ordre des calques ecrit au lieu d'etre suppose,
+   l'ombre du mot renforcee, puis la correction automatique des tailles et l'equilibrage
+   des lignes retires. Aucune n'est reproductible sur le moteur dont je dispose, et le
+   defaut, lui, est reste.
+   ON CESSE DONC DE CHERCHER POURQUOI, ET L'ON RETIRE LA POSSIBILITE. Le canevas de la
+   carte, LUI, s'affiche : c'est le dessin qu'on voit derriere le voile, sur la carte
+   selectionnee comme sur les autres. Le verrou y est donc peint AVEC le paysage, du meme
+   pinceau et dans la meme image. Il ne peut plus manquer sans que le dessin manque aussi.
+   Le gris ne vient plus non plus d'un filtre de la feuille de style : la couleur est
+   retiree ici, par une passe de saturation, avant le voile et le mot. Une seule chose a
+   afficher au lieu de trois empilees.
+   Ce qu'on perd : le mot n'est plus du texte pour les outils de lecture. Il est rendu au
+   bouton de la carte, en `aria-label`, ou il dit la meme chose. */
+const VERR_VOILE="rgba(38,33,30,.50)";
+const VERR_CLAIR="#FFFDF8";
+function verrouVignette(cvs, mot){
+  const g=cvs.getContext("2d"), W=cvs.width, H=cvs.height;
+  g.save();
+  g.setTransform(1,0,0,1,0,0);
+  /* LE GRIS D'ABORD. `saturation` remplace la couleur de ce qui est dessous par celle du
+     gris pose — c'est-a-dire aucune — en gardant les clartes : le paysage s'eteint sans
+     s'assombrir, ce que faisait le filtre. */
+  g.globalCompositeOperation="saturation";
+  g.fillStyle="#808080"; g.fillRect(0,0,W,H);
+  g.globalCompositeOperation="source-over";
+  g.fillStyle=VERR_VOILE; g.fillRect(0,0,W,H);
+
+  /* Le cadenas, aux memes proportions que celui qui etait en SVG : un corps arrondi et
+     une anse. Il est trace dans le repere de 24 unites du dessin d'origine, ce qui evite
+     de recalculer ses points. */
+  const t=W*0.155, x0=(W-t)/2, y0=H*0.34-t*0.30;
+  g.save();
+  g.translate(x0, y0); g.scale(t/24, t/24);
+  g.strokeStyle=VERR_CLAIR; g.lineWidth=1.9;
+  g.lineCap="round"; g.lineJoin="round";
+  const rx=2.2, X=4.6, Y=10.4, L=14.8, Hh=9.6;
+  g.beginPath();
+  g.moveTo(X+rx, Y);
+  g.lineTo(X+L-rx, Y);      g.quadraticCurveTo(X+L, Y, X+L, Y+rx);
+  g.lineTo(X+L, Y+Hh-rx);   g.quadraticCurveTo(X+L, Y+Hh, X+L-rx, Y+Hh);
+  g.lineTo(X+rx, Y+Hh);     g.quadraticCurveTo(X, Y+Hh, X, Y+Hh-rx);
+  g.lineTo(X, Y+rx);        g.quadraticCurveTo(X, Y, X+rx, Y);
+  g.closePath(); g.stroke();
+  g.beginPath();
+  g.moveTo(8.2, 10.4); g.lineTo(8.2, 7.8);
+  g.arc(12, 7.8, 3.8, Math.PI, 0);
+  g.lineTo(15.8, 10.4);
+  g.stroke();
+  g.restore();
+
+  /* LE MOT, replie sur la largeur de la vignette. Son corps suit la carte comme le faisait
+     la feuille de style, et il retrecit tant que le repli demande plus de trois lignes. */
+  const marge=W*0.10, tw=W-2*marge;
+  let fs=Math.max(9, Math.round(W*0.070)), lignes=[];
+  const coupe=(corps)=>{
+    g.font="800 "+corps+"px "+FONT;
+    const l=[];
+    for(const m of String(mot).split(" ")){
+      const e=l.length ? l[l.length-1]+" "+m : m;
+      if(l.length && g.measureText(e).width<=tw) l[l.length-1]=e; else l.push(m);
+    }
+    return l;
+  };
+  for(let i=0;i<8;i++){
+    lignes=coupe(fs);
+    if(lignes.length<=3 && lignes.every(l=>g.measureText(l).width<=tw)) break;
+    fs=Math.round(fs*0.9);
+  }
+  g.textAlign="center"; g.textBaseline="middle";
+  const inter=fs*1.25, y1=H*0.56 + (t*0.10);
+  /* L'ombre du mot, franche : elle le tient sur les taches claires du paysage. */
+  lignes.forEach((l,i)=>{
+    const y=y1+(i-(lignes.length-1)/2)*inter;
+    g.fillStyle="rgba(20,16,14,.55)";
+    g.fillText(l, W/2, y+Math.max(1,fs*0.09));
+    g.fillStyle=VERR_CLAIR;
+    g.fillText(l, W/2, y);
+  });
+  g.restore();
+}
 function dessineVignette(cvs, nom){
   const m=MONDES[nom], j=m.heures[0];
   const W=cvs.width, H=cvs.height, g=cvs.getContext("2d");
@@ -6142,12 +6171,7 @@ function poseNiveaux(){
       /* LE VERROU EST DANS LA VIGNETTE, par-dessus le dessin, et non sous la carte : c'est
          le dessin qu'il faut barrer, puisque c'est lui qui donne envie. La ligne du nom et
          du record reste lisible dessous — un terrain ferme a le droit de dire son nom. */
-      b.innerHTML='<span class="vue"><canvas></canvas>'
-                + '<span class="verrou"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none"'
-                + ' stroke="currentColor" stroke-width="1.9" stroke-linecap="round"'
-                + ' stroke-linejoin="round"><rect x="4.6" y="10.4" width="14.8" height="9.6"'
-                + ' rx="2.2"/><path d="M8.2 10.4V7.8a3.8 3.8 0 0 1 7.6 0v2.6"/></svg>'
-                + '<span class="mot"></span></span></span>'
+      b.innerHTML='<span class="vue"><canvas></canvas></span>'
                 + '<span class="ligne"><span class="nom"></span><span class="score">'
                 + '<img class="couronne" alt="">'
                 + '<span class="rec"></span></span></span>';
@@ -6172,13 +6196,15 @@ function poseNiveaux(){
     /* Ouvert ou ferme, et ce qu'il faut faire pour l'ouvrir. */
     const ouvert=mondeOuvert(nom), prec=mondePrecedent(nom);
     b.classList.toggle("bloque", !ouvert);
-    const mot=b.querySelector(".verrou .mot");
+    /* Le mot du verrou ne se pose plus dans le document : il est peint dans la vignette,
+       plus bas, et rendu aux outils de lecture par le libelle du bouton. */
     /* LE NOMBRE NE SE COUPE PAS EN DEUX. Le creux des milliers est une espace ordinaire
        partout ailleurs, ou le chiffre est pose par chiffreHTML et ne retourne jamais a la
        ligne ; ici le texte est du texte, et « 1 000 000 » se cassait apres le premier
        groupe. On lui donne donc une espace insecable etroite. */
-    if(mot) mot.textContent = ouvert ? ""
+    b.__verrou = ouvert ? ""
       : T("verrou", chiffre(SEUIL_MONDE).split(MIL).join("\u202F"), T("monde"+prec));
+    b.setAttribute("aria-label", b.__verrou ? T("monde"+nom)+" — "+b.__verrou : T("monde"+nom));
     const r=b.querySelector(".rec");
     /* Le mot « Record » ne s'ecrit plus : la couronne le dit, et elle le dit mieux. */
     r.innerHTML = c.best>0 ? chiffreHTML(c.best) : "—";
@@ -6197,6 +6223,7 @@ function poseNiveaux(){
     const l=Math.max(96, Math.round(b.clientWidth||220)), d=Math.min(3, devicePixelRatio||1);
     cvs.width=Math.round(l*d); cvs.height=Math.round(l*VIG_RAPPORT*d);
     dessineVignette(cvs, b.dataset.monde);
+    if(b.__verrou) verrouVignette(cvs, b.__verrou);
   }
   centreNiveau(save.monde, false);
   suitCarrousel();
