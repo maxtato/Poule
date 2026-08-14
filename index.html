@@ -10729,14 +10729,21 @@ function couronneLarge(h){ return h*COURONNE_RAP; }
    exactement le vocabulaire du pixel art et ce qu'aucune quantite de vecteur ne donne.
    Le tampon est garde tant que la hauteur demandee ne change pas — elle ne change qu'au
    redimensionnement de la fenetre. */
-/* TROIS PIXELS D'ART PAR CASE, C'ETAIT DEUX DE TROP. A cette grosseur la couronne ne
-   comptait plus que dix cases de haut : ce n'etait plus un dessin en pixels, c'etait un
-   dessin EN BLOCS, et les trois dents devenaient des escaliers de trois marches. A deux,
-   elle en compte une quinzaine — assez pour que les marches se voient, pas assez pour
-   qu'elles remplacent la forme. Deux et non un et demi : le tampon est agrandi sans
-   lissage, et un facteur qui n'est pas entier donne des cases de deux largeurs
-   differentes selon l'endroit, ce qui se voit plus qu'un gros pixel franc. */
-const COURONNE_GROS = 2;            // pixels d'art par case de la couronne
+/* ELLE EST REDESCENDUE A LA GRILLE DU JEU, ET ELLE Y GAGNE QUAND MEME. On est passe par
+   trois pixels d'art par case, puis deux ; les deux etaient trop gros. A trois, la
+   couronne ne comptait plus que vingt cases de haut et ses trois dents devenaient des
+   escaliers de quelques marches — un dessin EN BLOCS, plus un dessin en pixels.
+   UN ET DEMI A ETE ESSAYE, ET MESURE : c'est le pire des trois. Le tampon est agrandi
+   sans lissage, et un facteur qui n'est pas entier fait tomber les cases sur DEUX
+   LARGEURS differentes selon l'endroit — une marche large, une etroite, en alternance —
+   ce qui se remarque bien plus qu'un gros pixel franc.
+   A un, la couronne a exactement le grain du reste du jeu, trente-neuf cases de haut. Et
+   ce n'est PAS un retour au point de depart : ce qui reste de tout ce chemin, c'est le
+   tampon et l'alignement. Avant, elle etait tracee au vecteur directement sur la toile et
+   son contour, a cheval sur deux rangees, sortait gris. Elle est maintenant peinte a part,
+   ses sommets tombent sur les cases et son trait couvre des rangees entieres. Meme
+   finesse, contour franc. */
+const COURONNE_GROS = 1;            // pixels d'art par case de la couronne
 let couronneT=null, couronneCases=-1, couronneMarge=0;
 function couronneTampon(n){
   if(couronneCases===n) return couronneT;
