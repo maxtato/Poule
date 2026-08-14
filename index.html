@@ -101,6 +101,15 @@
      pour empecher la loupe de Safari de s'inviter. Les deux doivent ceder ensemble — voir
      `laisseGlisser` — sinon on rend le defilement d'une main et on le reprend de l'autre. */
   .defile{touch-action:pan-y}
+  /* ---------- LE NAVIGATEUR NE GROSSIT PAS LES TEXTES TOUT SEUL ----------
+     Les navigateurs de telephone ont une correction automatique de la taille des textes :
+     ils GONFLENT le corps dans les blocs qu'ils jugent trop larges pour l'ecran, d'un
+     facteur qui depend de la largeur du bloc. Sur une page de jeu ou chaque corps est deja
+     calcule en parts de l'ecran, cette correction ne peut que casser une mise en page — et
+     elle frappe d'autant plus fort que le bloc est large, donc la plus grande carte avant
+     les autres. On la coupe, ce qui est l'usage pour une page qui se dimensionne
+     elle-meme. Le prefixe reste : il est le seul reconnu par Safari. */
+  html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   html,body{height:100%;overflow:hidden;background:#FAF3EC;
     font-family:Fredoka,"Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif;
     color:#1A1614;touch-action:none;overscroll-behavior:none;
@@ -954,8 +963,16 @@
      distingue pas. La vraie surete serait de ne pas dependre du voile, ce qui demande un
      mot sombre sur un fond clair ; essaye, et refuse : une carte fermee doit avoir l'air
      eteinte, pas effacee. */
+  /* `text-wrap:balance` EST PARTI, et c'est une elimination, pas une reparation. Il
+     equilibrait la longueur des deux lignes — un agrement, rien de plus — et c'est la
+     seule propriete exotique qui agissait sur ce texte-la : elle est recente, elle demande
+     au moteur une seconde passe de mise en page, et son comportement change avec le nombre
+     de lignes, donc avec la largeur de la carte. C'est exactement la forme du defaut
+     rapporte : le texte manque sur la carte la plus large et sur elle seule. Faute de
+     pouvoir le reproduire, on retire ce qui pourrait le causer et qui ne sert a rien
+     d'essentiel ; les lignes se couperont un peu moins joliment, personne ne le verra. */
   .niv .verrou .mot{font-size:clamp(9px,calc(var(--carte,220px)*.055),13px);
-    font-weight:800;line-height:1.25;text-wrap:balance;
+    font-weight:800;line-height:1.25;
     text-shadow:0 1px 2px rgba(20,16,14,.85), 0 0 6px rgba(20,16,14,.65)}
   .niv.bloque .ligne{opacity:.55}
   /* Le bouton de depart devant un terrain ferme : eteint, mais toujours la. Le selecteur
