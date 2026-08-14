@@ -4585,6 +4585,7 @@ const footOff=()=>FOOT_Y*sc();
    croiraient trois kilometres en retard et videraient leur reserve d'un coup. */
 function reset(depuis){
   hen.x=HEN_X; hen.y=0; hen.vy=0; hen.ground=true; hen.feathers=1; hen.flap=0; hen.dead=false;
+  batProchain=AILE_CYCLE;
   flapNow=false; jumpBuf=-9; flapUntil=-9; enSaut=false; fingers.clear();
   /* Rien ne doit tomber au meme endroit d'une partie a l'autre : le premier obstacle
      etait toujours a 1,1 s, donc toujours au meme metre. Le plancher garde de quoi le
@@ -4949,13 +4950,26 @@ function avanceFond(dt, v){
    - un appui juste avant l'atterrissage est memorise et declenche le saut des le contact
    - les doigts sont comptes : lever un doigt alors qu'un autre est pose ne coupe pas le vol      */
 let flapNow=false, jumpBuf=-9, lastPress=-9, flapUntil=-9;
-/* Le battement du vol tenu, en parts du coup d'aile voulu, et le cycle deja sonne.
+/* ---------- LE PREMIER BATTEMENT SONNAIT DEUX FOIS ----------
+   A l'appui, le coup d'aile voulu sonnait, et le vol tenu sonnait a son tour DES L'IMAGE
+   SUIVANTE : deux battements colles, puis le rythme regulier. Deux fautes s'ajoutaient.
+   La premiere : le battement tenu se declenchait au changement de `floor(flap/4)`, et ce
+   numero de cycle gardait la valeur du vol PRECEDENT ; a l'appui il ne correspondait plus,
+   donc il changeait, donc ca sonnait. La seconde : l'appui pose le dessin a mi-cycle
+   (`flap=2`, ailes hautes), si bien que le cycle suivant tombait une demi-periode plus
+   tot que les autres — un troisieme coup rapproche.
+   On ne compte donc plus les cycles : on retient A QUEL POINT DU BATTEMENT le prochain son
+   doit tomber. L'appui le pose une periode entiere plus loin, et chaque son repousse le
+   suivant d'exactement une periode depuis l'endroit ou l'on est. Le rythme est le meme du
+   premier au dernier, quoi qu'il arrive avant. */
+const AILE_CYCLE=4;                 // la periode du battement, dans les unites de `flap`
+let batProchain=AILE_CYCLE;
+/* Le battement du vol tenu, en parts du coup d'aile voulu.
    IL RESTE SOUS LE COUP D'AILE VOULU, mais de peu. Il revient trois fois et demie par
    seconde tant que le doigt tient : a force egale il couvrirait le reste du jeu. A la
    moitie, en revanche, il disparaissait — et c'est la moitie d'un son qu'on n'entendait
    deja pas. Quatre cinquiemes. */
 const AILE_TENU=0.80;
-let batVu=-1;
 const fingers=new Set();
 /* Le saut part toujours a pleine impulsion et se coupe net au relachement : la
    hauteur suit donc la duree de l'appui, sans qu'il faille attendre de savoir
@@ -4989,6 +5003,7 @@ function press(){
     hen.feathers=Math.max(0,hen.feathers-0.036);
     enSaut=false;                       // un coup d'aile voulu met fin au saut
     hen.flap=2;                         // repart sur la pose ailes hautes
+    batProchain=hen.flap+AILE_CYCLE;    // le maintien reprend une periode plus loin
     flapUntil=t+0.22;                   // la pose de vol tient meme si on relache aussitot
     feather(hen.x+30, hen.y-62);
     flapNow=true;                       // et le maintien enchaine sans temps mort
@@ -5359,7 +5374,7 @@ function die(dessus){
    La chaine, elle, est bel et bien cassee : on ne gobe pas en etant a terre. */
 function repart(){
   hen.dead=false; hen.ground=true; hen.y=0; hen.vy=0; hen.anim=0;
-  hen.flap=0; flapNow=false; enSaut=false; jumpBuf=-9; flapUntil=-9;
+  hen.flap=0; batProchain=AILE_CYCLE; flapNow=false; enSaut=false; jumpBuf=-9; flapUntil=-9;
   hold=false; fingers.clear();
   hen.feathers=Math.max(hen.feathers, RELEVE_PLUMES);
   vaSeRelever=false; releveAt=-9;
@@ -8370,8 +8385,7 @@ function update(dt){
        vol s'etait arrete. Le battement sonne donc a chaque cycle du dessin — le meme
        compteur, donc le son et l'image ne peuvent pas se decaler — et beaucoup plus bas
        que le coup d'aile voulu : c'est un fond, pas un evenement. */
-    const bat=Math.floor(hen.flap/4);
-    if(bat!==batVu){ batVu=bat; SFX.aile(AILE_TENU); }
+    if(hen.flap>=batProchain){ SFX.aile(AILE_TENU); batProchain=hen.flap+AILE_CYCLE; }
     /* Une plume toutes les trois dixiemes de seconde environ, contre sept par
        seconde avant : a ce rythme-la elle laissait une trainee continue derriere
        elle, et la perte de plumes ne se lisait plus comme un evenement. Le coup
@@ -10699,7 +10713,14 @@ function couronneLarge(h){ return h*COURONNE_RAP; }
    exactement le vocabulaire du pixel art et ce qu'aucune quantite de vecteur ne donne.
    Le tampon est garde tant que la hauteur demandee ne change pas — elle ne change qu'au
    redimensionnement de la fenetre. */
-const COURONNE_GROS = 3;            // pixels d'art par case de la couronne
+/* TROIS PIXELS D'ART PAR CASE, C'ETAIT DEUX DE TROP. A cette grosseur la couronne ne
+   comptait plus que dix cases de haut : ce n'etait plus un dessin en pixels, c'etait un
+   dessin EN BLOCS, et les trois dents devenaient des escaliers de trois marches. A deux,
+   elle en compte une quinzaine — assez pour que les marches se voient, pas assez pour
+   qu'elles remplacent la forme. Deux et non un et demi : le tampon est agrandi sans
+   lissage, et un facteur qui n'est pas entier donne des cases de deux largeurs
+   differentes selon l'endroit, ce qui se voit plus qu'un gros pixel franc. */
+const COURONNE_GROS = 2;            // pixels d'art par case de la couronne
 let couronneT=null, couronneCases=-1, couronneMarge=0;
 function couronneTampon(n){
   if(couronneCases===n) return couronneT;
