@@ -926,22 +926,30 @@
      et l'ouverture d'un terrain n'a rien a refaire. */
   .niv.bloque canvas{filter:grayscale(1) brightness(1.06) contrast(.72)}
   .niv .vue canvas{position:relative;z-index:0}
+  /* ---------- LE VOILE EST PASSE DU SOMBRE AU CLAIR, ET LE MOT AVEC ----------
+     Le mot etait BLANC, pose sur un voile d'encre a demi transparent. C'est joli tant que
+     le voile est la ; ca ne tient plus des qu'il manque, et il manquait — sur la carte du
+     premier plan, chez le joueur, deux fois de suite. Ecrire l'ordre des calques n'y a
+     rien change ; renforcer l'ombre du mot non plus.
+     Alors on cesse de dependre du voile. Le dessin d'un terrain ferme est deja PALI par
+     son filtre — gris, un peu eclairci, contraste baisse — c'est-a-dire clair. Un mot
+     d'encre s'y lit donc tout seul, voile ou pas. Le voile passe au creme, ou il ne sert
+     plus qu'a poser l'ambiance et a faire reculer le dessin ; s'il disparaissait a son
+     tour, on ne perdrait qu'un peu de douceur, plus le texte.
+     C'est le meme raisonnement que pour le sol de la nuit : ce qu'il faut tenir n'est pas
+     une couleur, c'est un ECART, et un ecart ne se tient que s'il survit a la panne. */
   .niv .verrou{position:absolute;inset:0;z-index:1;display:none;
     flex-direction:column;align-items:center;justify-content:center;gap:6px;
     padding:8px 10px;text-align:center;
-    background:rgba(38,33,30,.46);color:#FFFDF8}
+    background:rgba(250,243,236,.60);color:#2E2822}
   .niv.bloque .verrou{display:flex}
   .niv .verrou svg{width:clamp(18px,calc(var(--carte,220px)*.13),30px);height:auto;
     flex:none;opacity:.95}
-  /* L'OMBRE DU MOT PORTE PLUS LOIN QU'AVANT, et c'est une ceinture en plus des bretelles.
-     Le mot est blanc et ne se lit que parce qu'un voile sombre le porte ; si ce voile
-     venait a manquer — c'est l'autre explication possible du mot disparu — il resterait
-     du blanc sur un gris pale, c'est-a-dire rien. Une ombre serree et franche le tient
-     desormais tout seul, sur n'importe quel fond. Elle ne coute rien la ou le voile est
-     bien la : sous lui, on ne la distingue pas. */
+  /* L'OMBRE DU MOT EST CLAIRE, comme le voile : elle le detache du dessin la ou celui-ci
+     garde une tache foncee — un tronc, un immeuble — sans jamais l'assombrir. */
   .niv .verrou .mot{font-size:clamp(9px,calc(var(--carte,220px)*.055),13px);
     font-weight:800;line-height:1.25;text-wrap:balance;
-    text-shadow:0 1px 2px rgba(20,16,14,.85), 0 0 6px rgba(20,16,14,.65)}
+    text-shadow:0 1px 2px rgba(250,243,236,.95), 0 0 7px rgba(250,243,236,.9)}
   .niv.bloque .ligne{opacity:.55}
   /* Le bouton de depart devant un terrain ferme : eteint, mais toujours la. Le selecteur
      porte l'identifiant parce que celui du bouton rouge le porte : sans lui, le rouge
@@ -3644,17 +3652,19 @@ const DAY_LEN=13600;                       // 1 000 metres reels pour boucler la
    nuit, sur aucun des cinq mondes — mesure. Le sol reste donc bien plus clair que le
    ciel une fois la nuit tombee : c'est la ou l'on court, et c'est ce que fait une terre
    sous la lune.
-   ET LA NUIT A ETE REMONTEE D'UN CRAN APRES COUP. Premiere version : le ciel a 23
+   ET LA NUIT A ETE REMONTEE DEUX FOIS APRES COUP. Premiere version : le ciel a 23
    centiemes de clarte, le sol a 47. C'etait une vraie nuit, et c'etait trop — un ecran de
    telephone se regarde souvent en plein jour, et l'ecart a l'encre tombait alors a 3,7
-   pour un. Chaque plan a repris une dizaine de points : il fait toujours nuit, la lune et
-   les etoiles s'y voient toujours, mais on distingue ce qui arrive. */
+   pour un. Deuxieme version a 34 et 57, celle-ci a 41 et 64 : l'ecart a l'encre est
+   remonte a 6,8 pour un sur la terre, soit les deux tiers de ce qu'il vaut en plein jour.
+   Il fait toujours nuit — le ciel reste a moins de la moitie de la clarte du sol, la lune
+   et les etoiles s'y voient — mais on distingue ce qui arrive sans plisser les yeux. */
 const HEURES=[
   {haut:"#F2E7D6", bas:"#FAF3EC", coll:"#E3D8C5", terre:"#E0D3BC", dec:"#BBB2A5"},  // matin
   {haut:"#DCEAF2", bas:"#FBF7F0", coll:"#DBDDD3", terre:"#DED5C2", dec:"#B4B4AE"},  // plein midi
   {haut:"#F8DFB2", bas:"#FDF1DE", coll:"#E6D1AB", terre:"#DFCBA6", dec:"#C3B29A"},  // fin d'apres-midi
   {haut:"#B28DB4", bas:"#E0AD99", coll:"#B19096", terre:"#B2988A", dec:"#927C85"},  // crepuscule
-  {haut:"#554C61", bas:"#7C697D", coll:"#645968", terre:"#998A94", dec:"#554D5B"}   // nuit
+  {haut:"#685B76", bas:"#90798B", coll:"#796B7B", terre:"#AA9CA3", dec:"#685F6D"}   // nuit
 ];
 /* ---------- l'heure de la ville ----------
    La ferme est beige, la ville est GRISE. Ce n'est pas une autre journee : c'est la
@@ -3669,7 +3679,7 @@ const HEURES_VILLE=[
   {haut:"#E4E7E9", bas:"#F8F7F6", coll:"#DBDCD9", terre:"#D0CECA", dec:"#B3B3B2"},  // plein midi
   {haut:"#E6E1D7", bas:"#F5F2EE", coll:"#D7D3CA", terre:"#CBC6BE", dec:"#B8B4AF"},  // fin d'apres-midi
   {haut:"#A698AA", bas:"#C7B3B2", coll:"#A79AA3", terre:"#A39A99", dec:"#8C838B"},  // crepuscule
-  {haut:"#524F5F", bas:"#6F6580", coll:"#5D5969", terre:"#8F8999", dec:"#504D5B"}   // nuit
+  {haut:"#645F72", bas:"#827792", coll:"#6F6A7C", terre:"#A29DA9", dec:"#635F6D"}   // nuit
 ];
 /* ---------- l'heure de la jungle ----------
    Troisieme monde en preparation : le decor n'est pas encore la, mais sa couleur, si.
@@ -3692,7 +3702,7 @@ const HEURES_JUNGLE=[
   {haut:"#E1E9EC", bas:"#FAF7F0", coll:"#DADFCB", terre:"#DED8B5", dec:"#B0B8A4"},  // plein midi
   {haut:"#EFE0C3", bas:"#F9F2E4", coll:"#DDD5B0", terre:"#DBCEA1", dec:"#B9B798"},  // fin d'apres-midi
   {haut:"#AC94AD", bas:"#D4B4A5", coll:"#AD9E94", terre:"#B6A686", dec:"#8E8980"},  // crepuscule
-  {haut:"#544E60", bas:"#76687E", coll:"#625C66", terre:"#988D8B", dec:"#525058"}   // nuit
+  {haut:"#665E73", bas:"#8B7A8F", coll:"#756E77", terre:"#AAA19C", dec:"#656369"}   // nuit
 ];
 /* Le bandeau ne se choisit pas non plus : ce qui compte n'est pas sa couleur mais son
    CONTRASTE avec le ciel qu'il surmonte. Il subit la meme transformation que les heures,
@@ -3721,7 +3731,7 @@ const HEURES_DESERT=[
   {haut:"#EAE7DD", bas:"#FEF6EB", coll:"#EAD9C0", terre:"#ECD2AC", dec:"#C4B194"},  // plein midi
   {haut:"#F8DEB5", bas:"#FEF1DE", coll:"#EDCFA5", terre:"#EAC997", dec:"#CDB088"},  // fin d'apres-midi
   {haut:"#B58C96", bas:"#DFB39A", coll:"#BF9382", terre:"#C79C75", dec:"#A27F6D"},  // crepuscule
-  {haut:"#5A4F5E", bas:"#7B6A7C", coll:"#685A62", terre:"#A18782", dec:"#5B4E52"}   // nuit
+  {haut:"#6E6170", bas:"#8F7A8A", coll:"#7D696F", terre:"#B39B94", dec:"#6E5E60"}   // nuit
 ];
 /* Le bandeau du desert subit la meme transformation, et l'ecart est verifie comme pour
    les autres — bandeau moins ciel : -7,3 contre -6,9 au champ ; filet moins bandeau :
@@ -3761,7 +3771,7 @@ const HEURES_MONTAGNE=[
      de la roche, pas de la neige. Il garde donc dix points de clarte de plus le soir
      comme la nuit : la neige est ce qui reste visible quand tout s'eteint. */
   {haut:"#878CBA", bas:"#A9AFD1", coll:"#7E8FC3", terre:"#A9B0C6", dec:"#787E97"},  // crepuscule
-  {haut:"#4C4D61", bas:"#626086", coll:"#525570", terre:"#A0A1BB", dec:"#4A4C5E"}   // nuit
+  {haut:"#5B5D76", bas:"#71709A", coll:"#5F6486", terre:"#B4B6CA", dec:"#5B5E71"}   // nuit
 ];
 const BANDEAU_MONTAGNE = "#F7F9FC", FILET_MONTAGNE = "#E2E8F0";
 /* `pas` arrondit chaque canal : les teintes du fond et du second plan servent de
@@ -3785,12 +3795,16 @@ function mixHex(a,b,u,pas){
    longs plats, midi et la nuit, et des bascules courtes entre eux. On ne touche donc pas
    aux teintes : on ecrit dans quel ORDRE on les traverse, en repetant celles qui doivent
    durer. Midi tient deux temps, la nuit deux temps, et les passages un seul. Il en
-   resulte : plein jour jusqu'a 43 % de la course, l'or et le crepuscule jusqu'a 71 %, la
-   nuit jusqu'a 86 %, et l'aube pour finir. */
+   resulte : plein jour jusqu'a 50 % de la course, l'or et le crepuscule jusqu'a 70 %, la
+   nuit jusqu'a 90 %, et l'aube pour finir.
+   ET LA NUIT EST PLUS COURTE QUE LE JOUR, ce qui n'allait pas de soi : a poids egal on
+   passe autant de temps dans le noir que dans la lumiere, et le noir se remarque plus. Le
+   plein jour tient quatre temps, la nuit trois — vingt pour cent de la course contre
+   cinquante. C'est un jeu de plein air ; la nuit y est un passage, pas une moitie. */
 /* Dix temps au lieu de sept, et le passage du soir a la nuit n'en occupe toujours qu'un :
    il tombe donc en un dixieme de journee au lieu d'un septieme, un tiers plus vite. Ce
    que la journee y perd, la nuit le prend — elle tient trois temps au lieu de deux. */
-const JOUR_SUITE=[0,1,1,1,2,3,4,4,4,4];  // matin, midi x3, apres-midi, soir, nuit x4
+const JOUR_SUITE=[0,1,1,1,1,2,3,4,4,4];  // matin, midi x4, apres-midi, soir, nuit x3
 function partDuJour(){ return (dist%DAY_LEN)/DAY_LEN; }
 function heure(){
   /* La palette vient du monde : meme journee, meme decoupage, d'autres teintes. */
@@ -9899,7 +9913,7 @@ const SOL_X=[-0.12, 1.12], LUNE_X=[-0.12, 1.12];
    course, traverse, et ressort a la moitie ; le ciel reste vide et clair un moment ;
    puis il s'assombrit ; et c'est seulement une fois la nuit tombee que la lune traverse a
    son tour, brievement, avant de laisser le ciel vide jusqu'a l'aube. */
-const SOL_TOUR=[0.08, 0.50], LUNE_TOUR=[0.68, 0.94];
+const SOL_TOUR=[0.08, 0.54], LUNE_TOUR=[0.72, 0.96];
 /* LE SOLEIL EST UNE BOULE UNIE. Il avait un coeur clair dans un bord plus dore : deux
    teintes pour un disque large comme le pouce, ce qui ne dit rien et fait un oeil. Une
    seule couleur, et l'on n'y revient pas. */
