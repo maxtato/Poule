@@ -10825,7 +10825,13 @@ function panneauRecords(){
   if(!c.best) return;
   const t1=Math.max(CART_MIN, Math.min(CART_MAX, Math.round(bandW*CART_CORPS)));
   const t2=Math.max(7, Math.round(t1*CART_PETIT));
-  const ch=t1*0.86, cw=couronneLarge(ch), jeu=t1*0.30;
+  /* LA COURONNE EST UNE ETIQUETTE, PAS UN CHIFFRE. A 86 centiemes du corps du score elle
+     depassait les chiffres eux-memes — leurs hauts de casse n'en font que 70 environ — et
+     c'est elle qu'on lisait en premier dans un cartouche dont tout l'interet est le
+     nombre. A 62, elle vient sous la ligne des chiffres : on la voit, elle dit de quoi il
+     s'agit, et elle ne se presente plus avant lui. Le vide qui la suit se resserre du
+     meme mouvement, sans quoi elle aurait l'air posee loin de ce qu'elle annonce. */
+  const ch=t1*0.62, cw=couronneLarge(ch), jeu=t1*0.24;
   const mh=t2*1.05, mw=mh*MOU_W/MOU_H, jeu2=t1*0.22;
   const sc=chiffre(c.best), bas=chiffre(c.bestMou)+"   ·   "+chiffre(c.bestDist)+" m";
   const w1=cw+jeu+largeurP(sc,t1,"900"), w2=mw+jeu2+largeurP(bas,t2,"700");
