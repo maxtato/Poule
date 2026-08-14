@@ -3492,15 +3492,38 @@ const INK="#1A1614", CREAM="#FAF3EC", SAND="#EFE5D5", EARTH="#E0D3BC",
    les collines et la terre glissent maintenant d'une heure a l'autre. Toutes les
    etapes restent claires : les dessins sont a l'encre sombre et doivent se lire
    aussi bien a midi qu'au crepuscule. */
-const DAY_LEN=2400;                        // metres pour boucler la journee, soit ~35 s
+/* LA JOURNEE DURAIT VINGT-CINQ SECONDES, ET C'ETAIT LA UN DEFAUT. 2 400 unites de
+   `dist` font 176 metres reels : on traversait le matin, midi, l'apres-midi et le
+   crepuscule en moins d'une demi-minute, et une course de mille metres — celle qu'un
+   trophee recompense — repassait quatorze fois par le meme coucher de soleil. L'heure
+   ne racontait plus une journee, elle clignotait.
+   Elle prend maintenant MILLE METRES, soit environ deux minutes vingt de course : le
+   matin tient les deux cents premiers metres, le crepuscule tombe apres le deuxieme
+   drapeau, et la nuit se merite. Cinq fois et demie plus lent. */
+const DAY_LEN=13600;                       // 1 000 metres reels pour boucler la journee
 /* Trois valeurs etagent la profondeur : `coll` pour les massifs du fond, `dec`,
    plus fonce, pour les arbres du second plan, et l'encre des dessins de devant.
    `dec` sert aussi a la ligne d'horizon, qui appartient au meme lointain. */
+/* ---------- CINQ HEURES, ET LA DERNIERE EST NOIRE ----------
+   Il y en avait quatre, et elles avaient toutes la MEME CLARTE : c'etait la regle, et
+   elle avait sa raison — le jeu se lit pareil a toute heure. Mais une journee dont
+   toutes les heures sont aussi claires les unes que les autres n'est pas une journee,
+   c'est un nuancier : on voyait la couleur tourner sans jamais sentir le jour tomber.
+   Le crepuscule descend donc pour de bon — de 75 centiemes de clarte a 63 pour le ciel —
+   et une CINQUIEME heure s'ajoute derriere lui, la nuit, qui descend a 29. L'ecart du
+   plus clair au plus sombre passe de six points a soixante-cinq.
+   CE QUI RESTE DE LA REGLE, ET C'EST L'ESSENTIEL : ce n'est pas la clarte du decor qu'il
+   faut tenir, c'est L'ECART ENTRE LE DECOR ET L'ENCRE, puisque c'est lui qui decide si
+   un obstacle se voit. Il vaut 10 pour un en plein jour ; il ne descend pas sous 4,1 la
+   nuit, sur aucun des cinq mondes — mesure. Le sol reste donc bien plus clair que le
+   ciel une fois la nuit tombee : c'est la ou l'on court, et c'est ce que fait une terre
+   sous la lune. */
 const HEURES=[
   {haut:"#F2E7D6", bas:"#FAF3EC", coll:"#E3D8C5", terre:"#E0D3BC", dec:"#BBB2A5"},  // matin
   {haut:"#DCEAF2", bas:"#FBF7F0", coll:"#DBDDD3", terre:"#DED5C2", dec:"#B4B4AE"},  // plein midi
   {haut:"#F8DFB2", bas:"#FDF1DE", coll:"#E6D1AB", terre:"#DFCBA6", dec:"#C3B29A"},  // fin d'apres-midi
-  {haut:"#DCC6DA", bas:"#FBE8DD", coll:"#D7C3BF", terre:"#CFBEB3", dec:"#B5A6A6"}   // crepuscule
+  {haut:"#B28DB4", bas:"#E0AD99", coll:"#B19096", terre:"#B2988A", dec:"#927C85"},  // crepuscule
+  {haut:"#393243", bas:"#584C5C", coll:"#463E4B", terre:"#7F717E", dec:"#38323E"}   // nuit
 ];
 /* ---------- l'heure de la ville ----------
    La ferme est beige, la ville est GRISE. Ce n'est pas une autre journee : c'est la
@@ -3514,7 +3537,8 @@ const HEURES_VILLE=[
   {haut:"#EAE8E4", bas:"#F6F4F2", coll:"#DBD9D5", terre:"#D0CDC9", dec:"#B5B3B0"},  // matin
   {haut:"#E4E7E9", bas:"#F8F7F6", coll:"#DBDCD9", terre:"#D0CECA", dec:"#B3B3B2"},  // plein midi
   {haut:"#E6E1D7", bas:"#F5F2EE", coll:"#D7D3CA", terre:"#CBC6BE", dec:"#B8B4AF"},  // fin d'apres-midi
-  {haut:"#D2CDD1", bas:"#F0EBE9", coll:"#CCC7C6", terre:"#BFBBB9", dec:"#ADA9A9"}   // crepuscule
+  {haut:"#A698AA", bas:"#C7B3B2", coll:"#A79AA3", terre:"#A39A99", dec:"#8C838B"},  // crepuscule
+  {haut:"#373441", bas:"#514A5F", coll:"#423E4C", terre:"#746E82", dec:"#35323E"}   // nuit
 ];
 /* ---------- l'heure de la jungle ----------
    Troisieme monde en preparation : le decor n'est pas encore la, mais sa couleur, si.
@@ -3536,7 +3560,8 @@ const HEURES_JUNGLE=[
   {haut:"#EEE8DC", bas:"#F8F4ED", coll:"#DEDBC2", terre:"#DFD6B1", dec:"#B4B79E"},  // matin
   {haut:"#E1E9EC", bas:"#FAF7F0", coll:"#DADFCB", terre:"#DED8B5", dec:"#B0B8A4"},  // plein midi
   {haut:"#EFE0C3", bas:"#F9F2E4", coll:"#DDD5B0", terre:"#DBCEA1", dec:"#B9B798"},  // fin d'apres-midi
-  {haut:"#D7CAD4", bas:"#F5EAE1", coll:"#D0C8B8", terre:"#CDC2A6", dec:"#ADAC9C"}   // crepuscule
+  {haut:"#AC94AD", bas:"#D4B4A5", coll:"#AD9E94", terre:"#B6A686", dec:"#8E8980"},  // crepuscule
+  {haut:"#383342", bas:"#554B5D", coll:"#44404A", terre:"#7D7275", dec:"#36343C"}   // nuit
 ];
 /* Le bandeau ne se choisit pas non plus : ce qui compte n'est pas sa couleur mais son
    CONTRASTE avec le ciel qu'il surmonte. Il subit la meme transformation que les heures,
@@ -3564,7 +3589,8 @@ const HEURES_DESERT=[
   {haut:"#F8E6CD", bas:"#FCF3E7", coll:"#EED5B7", terre:"#EDD0A8", dec:"#C8B08E"},  // matin
   {haut:"#EAE7DD", bas:"#FEF6EB", coll:"#EAD9C0", terre:"#ECD2AC", dec:"#C4B194"},  // plein midi
   {haut:"#F8DEB5", bas:"#FEF1DE", coll:"#EDCFA5", terre:"#EAC997", dec:"#CDB088"},  // fin d'apres-midi
-  {haut:"#E0C8C5", bas:"#FAE9DB", coll:"#E0C2AD", terre:"#DCBC9B", dec:"#C1A58C"}   // crepuscule
+  {haut:"#B58C96", bas:"#DFB39A", coll:"#BF9382", terre:"#C79C75", dec:"#A27F6D"},  // crepuscule
+  {haut:"#3C3541", bas:"#584D5C", coll:"#4A4048", terre:"#846C6B", dec:"#3C3439"}   // nuit
 ];
 /* Le bandeau du desert subit la meme transformation, et l'ecart est verifie comme pour
    les autres — bandeau moins ciel : -7,3 contre -6,9 au champ ; filet moins bandeau :
@@ -3598,7 +3624,13 @@ const HEURES_MONTAGNE=[
   {haut:"#F0F6FD", bas:"#FAFEFF", coll:"#E8F2FD", terre:"#F6FAFE", dec:"#BBC2CB"},  // matin
   {haut:"#EFF6FF", bas:"#F9FEFF", coll:"#E7F2FF", terre:"#F5FAFF", dec:"#B7C1CB"},  // plein midi
   {haut:"#F5F7FC", bas:"#FDFEFF", coll:"#EEF1F8", terre:"#F9FAFD", dec:"#BFC2C8"},  // fin d'apres-midi
-  {haut:"#E1E9F4", bas:"#F0F6FE", coll:"#D5E2F3", terre:"#E8EEF6", dec:"#A8B2BF"}  // crepuscule
+  /* LA NEIGE NE SE COUCHE PAS COMME LA TERRE. Le sol de la montagne est le seul des cinq
+     a etre blanc, et c'est voulu : sa clarte tient l'ecart avec la poule, elle aussi
+     blanche. Descendu au meme etage que les quatre autres il devenait un sol gris-bleu —
+     de la roche, pas de la neige. Il garde donc dix points de clarte de plus le soir
+     comme la nuit : la neige est ce qui reste visible quand tout s'eteint. */
+  {haut:"#878CBA", bas:"#A9AFD1", coll:"#7E8FC3", terre:"#A9B0C6", dec:"#787E97"},  // crepuscule
+  {haut:"#343441", bas:"#494762", coll:"#3B3C4F", terre:"#8383A4", dec:"#31323F"}   // nuit
 ];
 const BANDEAU_MONTAGNE = "#F7F9FC", FILET_MONTAGNE = "#E2E8F0";
 /* `pas` arrondit chaque canal : les teintes du fond et du second plan servent de
@@ -3613,12 +3645,26 @@ function mixHex(a,b,u,pas){
   };
   return "rgb("+m(16)+","+m(8)+","+m(0)+")";
 }
+/* ---------- L'ORDRE DES HEURES, ET LEURS PALIERS ----------
+   Les cinq teintes se suivaient a intervalles egaux, et la nuit n'a alors qu'un INSTANT :
+   le fondu qui l'amene commence a peine termine que celui qui l'emmene est parti. Mesure
+   sur la premiere version a cinq etapes : le ciel n'etait vraiment noir qu'aux alentours
+   de 80 % de la journee, et a 95 % il faisait deja plein jour.
+   Une journee n'est pourtant pas une suite de virages a vitesse constante — elle a de
+   longs plats, midi et la nuit, et des bascules courtes entre eux. On ne touche donc pas
+   aux teintes : on ecrit dans quel ORDRE on les traverse, en repetant celles qui doivent
+   durer. Midi tient deux temps, la nuit deux temps, et les passages un seul. Il en
+   resulte : plein jour jusqu'a 43 % de la course, l'or et le crepuscule jusqu'a 71 %, la
+   nuit jusqu'a 86 %, et l'aube pour finir. */
+const JOUR_SUITE=[0,1,1,2,3,4,4];        // matin, midi, midi, apres-midi, soir, nuit, nuit
+function partDuJour(){ return (dist%DAY_LEN)/DAY_LEN; }
 function heure(){
   /* La palette vient du monde : meme journee, meme decoupage, d'autres teintes. */
   const H=(typeof monde!=="undefined" && monde.heures) ? monde.heures : HEURES;
-  const u=(dist%DAY_LEN)/DAY_LEN*H.length;
+  const N=JOUR_SUITE.length;
+  const u=partDuJour()*N;
   const i=u|0, f=u-i, e=f*f*(3-2*f);       // adoucit l'entree et la sortie de chaque etape
-  const a=H[i%H.length], b=H[(i+1)%H.length];
+  const a=H[JOUR_SUITE[i%N]%H.length], b=H[JOUR_SUITE[(i+1)%N]%H.length];
   return {haut:mixHex(a.haut,b.haut,e), bas:mixHex(a.bas,b.bas,e),
           coll:mixHex(a.coll,b.coll,e,3), terre:mixHex(a.terre,b.terre,e),
           dec:mixHex(a.dec,b.dec,e,3),
@@ -9564,6 +9610,139 @@ function peintCiel(c, jour, ya, yb){
     c.fillStyle=g; c.fillRect(-20, ya, VIEW_W+40, yb-ya);
   }
 }
+
+/* ---------- LE SOLEIL, LA LUNE ET LES ETOILES ----------
+   La journee se disait jusqu'ici par la seule couleur du ciel : on la voyait tourner
+   sans savoir ce qui la faisait tourner. Il y a maintenant quelque chose a regarder —
+   un disque qui monte, passe au-dessus de la course, redescend et se couche derriere la
+   crete, et une lune qui prend le relais par l'autre bord.
+   ILS NE SUIVENT PAS LE DECOR. Tout ce qui est peint dans ce repere defile avec le
+   monde, plus ou moins vite selon son plan ; un astre, lui, est a distance infinie et ne
+   bouge QUE DE L'HEURE. Sa place ne se calcule donc pas a partir de `dist` comme un
+   arbre, mais a partir de la part de journee ecoulee : a heure egale, le soleil est au
+   meme endroit du ciel, qu'on ait couru cent metres ou dix mille.
+   ILS PASSENT DERRIERE TOUT. Peints entre le ciel et les bandes de decor, ils sont
+   masques par les nuages, par la crete et par le second plan — c'est ce qui donne le
+   coucher : le soleil ne s'efface pas, il DESCEND DERRIERE la ligne d'horizon. */
+const SOL_R=0.052, LUNE_R=0.042;    // les rayons, en parts de la largeur de vue
+/* L'arc, en parts du ciel visible — celui qui reste sous le bandeau. Le bas est negatif :
+   les deux astres partent et finissent SOUS l'horizon, ou personne ne les voit passer du
+   bord droit au bord gauche quand la journee reboucle. */
+const SOL_ARC=[-0.07, 0.86], LUNE_ARC=[-0.06, 0.72];
+/* Et en parts de la largeur. Le soleil finit sa course AU-DELA DU BORD : il ne s'eteint
+   pas au milieu du ciel, il sort du cadre en meme temps qu'il passe sous la crete. La
+   lune fait l'inverse et entre par la gauche. */
+const SOL_X=[0.04, 1.03], LUNE_X=[-0.02, 0.86];
+/* Le soleil se leve avec la journee et se couche aux trois quarts, dans le crepuscule ;
+   la lune se leve un peu avant lui pour qu'on les voie se croiser, et se couche au petit
+   matin — son tour passe donc par-dessus le rebouclage du compteur, d'ou la borne au-dela
+   de un. */
+const SOL_TOUR=[0, 0.70], LUNE_TOUR=[0.62, 1.04];
+const SOL_COEUR="#FFE9A8", SOL_BORD="#F3B13F", SOL_HALO="255,205,110";
+const LUNE_COEUR="#F7F2DF", LUNE_TACHE="#E2DAC0", LUNE_HALO="238,240,220";
+const ETOILE_N=38, ETOILE_COUL="#FFF8E4";
+/* De combien il fait nuit, LU SUR LE CIEL LUI-MEME et non sur le numero de l'heure. Les
+   etoiles et l'eclat de la lune se reglent ainsi tout seuls si les palettes bougent, et
+   ils se rallument au bon moment dans les cinq mondes sans qu'aucun ait sa constante. */
+function obscurite(coul){
+  const a=coul[0]==="#"
+    ? [parseInt(coul.slice(1,3),16),parseInt(coul.slice(3,5),16),parseInt(coul.slice(5,7),16)]
+    : coul.match(/\d+/g).map(Number);
+  const l=(Math.max(...a)+Math.min(...a))/510;      // la clarte, entre 0 et 1
+  return Math.max(0, Math.min(1, (0.62-l)/0.28));
+}
+/* Ou en est le tour d'un astre, ou -1 s'il n'est pas de service. Le tour de la lune
+   deborde de un : on essaie donc aussi la part de journee augmentee d'un tour. */
+function tourAstre(p, [a, z]){
+  for(const q of [p, p+1]){ const u=(q-a)/(z-a); if(u>=0 && u<=1) return u; }
+  return -1;
+}
+function poseAstre(u, arc, bx, cielH){
+  return [VIEW_W*(bx[0]+(bx[1]-bx[0])*u),
+          -cielH*(arc[0]+(arc[1]-arc[0])*Math.sin(Math.PI*u))];
+}
+/* Le halo : trois anneaux de plus en plus larges et de plus en plus pales. Pas de flou —
+   le mode pixel n'en veut pas, et un flou pose sur une grille de trois pixels bave sur
+   tout le ciel. Trois disques suffisent a dire la lumiere. */
+function halo(c, x, y, r, rgb, force){
+  for(let i=3;i>=1;i--){
+    c.globalAlpha=force*0.13*(4-i)/3;
+    c.fillStyle="rgba("+rgb+","+1+")";
+    c.beginPath(); c.arc(x, y, r*(1+0.38*i), 0, 6.2832); c.fill();
+  }
+  c.globalAlpha=1;
+}
+function astres(c, jour){
+  const cielH=-bandBas;                        // le ciel visible, sous le bandeau
+  if(cielH<=0) return;
+  const p=partDuJour();
+  const noir=obscurite(jour.haut);
+  const R=VIEW_W*SOL_R, RL=VIEW_W*LUNE_R;
+  c.save();
+  c.lineJoin="round"; c.lineCap="round";
+
+  /* LES ETOILES, LES PREMIERES ET LES PLUS LOIN. Leurs places sont tirees d'une suite
+     sans hasard — le meme ciel a chaque partie — et elles ne scintillent pas toutes
+     ensemble : chacune a son propre retard, sans quoi le ciel entier clignoterait. */
+  if(noir>0.01){
+    c.fillStyle=ETOILE_COUL;
+    for(let i=0;i<ETOILE_N;i++){
+      const a=Math.sin(i*12.9898)*43758.5453, b=Math.sin(i*78.233)*23421.631;
+      const x=VIEW_W*(a-Math.floor(a)), y=-cielH*(0.10+0.86*(b-Math.floor(b)));
+      const bat=0.55+0.45*Math.sin(t*1.7+i*2.1);
+      c.globalAlpha=noir*bat*0.9;
+      const rr2=2.2+1.6*(a-Math.floor(a));
+      c.beginPath(); c.arc(x, y, rr2, 0, 6.2832); c.fill();
+    }
+    c.globalAlpha=1;
+  }
+
+  /* LA LUNE. Un disque pale, ses trois mers, et le trait d'encre de tout le jeu — celui
+     des nuages, a la meme force. Elle est deja levee dans le crepuscule, ou elle se voit
+     a peine, et c'est la nuit qu'elle prend son eclat. */
+  const ul=tourAstre(p, LUNE_TOUR);
+  if(ul>=0){
+    const [x,y]=poseAstre(ul, LUNE_ARC, LUNE_X, cielH);
+    if(y<0){
+      /* Elle se leve dans la brume de l'horizon, et surtout ELLE PALIT AVEC LE JOUR : une
+         lune pleine posee sur un ciel de midi se lisait comme un ballon. Elle n'a son
+         plein eclat que dans le noir, et se devine a peine le reste du temps. */
+      const vu=Math.min(1, -y/(cielH*0.10))*(0.22+0.78*noir);
+      halo(c, x, y, RL, LUNE_HALO, vu);
+      c.globalAlpha=vu;
+      c.fillStyle=LUNE_COEUR;
+      c.beginPath(); c.arc(x, y, RL, 0, 6.2832); c.fill();
+      c.fillStyle=LUNE_TACHE;
+      for(const [dx,dy,dr] of [[-0.34,-0.22,0.24],[0.28,0.12,0.19],[-0.08,0.42,0.14]]){
+        c.beginPath(); c.arc(x+RL*dx, y+RL*dy, RL*dr, 0, 6.2832); c.fill();
+      }
+      c.strokeStyle=INK; c.globalAlpha=vu*NUAGE_ENCRE; c.lineWidth=3;
+      c.beginPath(); c.arc(x, y, RL, 0, 6.2832); c.stroke();
+      c.globalAlpha=1;
+    }
+  }
+
+  /* LE SOLEIL, DEVANT LA LUNE quand les deux se croisent au crepuscule : c'est lui qu'on
+     regarde tant qu'il est la. */
+  const us=tourAstre(p, SOL_TOUR);
+  if(us>=0){
+    const [x,y]=poseAstre(us, SOL_ARC, SOL_X, cielH);
+    if(y<0){
+      const vu=Math.min(1, -y/(cielH*0.09));
+      halo(c, x, y, R, SOL_HALO, vu*0.9);
+      c.globalAlpha=vu;
+      c.fillStyle=SOL_BORD;
+      c.beginPath(); c.arc(x, y, R, 0, 6.2832); c.fill();
+      c.fillStyle=SOL_COEUR;
+      c.beginPath(); c.arc(x, y, R*0.82, 0, 6.2832); c.fill();
+      c.strokeStyle=INK; c.globalAlpha=vu*NUAGE_ENCRE; c.lineWidth=3;
+      c.beginPath(); c.arc(x, y, R, 0, 6.2832); c.stroke();
+      c.globalAlpha=1;
+    }
+  }
+  c.restore();
+}
+
 function peintBandes(c, m, jour, ch, larg, hautGuir, nuages, bd, sm){
   /* LES NUAGES D'ABORD, DERRIERE TOUT LE RESTE. Ils etaient traces apres la crete et ce
      qui se tient au loin : un nuage passait donc DEVANT une colline, devant un immeuble,
@@ -9852,6 +10031,9 @@ function draw(){
   ctx.translate(sx, groundY+sy);
 
   peintCiel(ctx, jour, -worldH-20, 0);
+  /* Entre le ciel et le decor : les nuages, la crete et le second plan leur passent
+     devant, et c'est ce qui fait le coucher. */
+  astres(ctx, jour);
 
   peintBandes(ctx, monde, jour, {hills, loin, decor, guir}, VIEW_W, bandBas, true, bandes, semis);
   /* Les drapeaux pendent dans le ciel, devant le decor lointain et derriere tout ce qui
