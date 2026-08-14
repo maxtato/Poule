@@ -87,9 +87,24 @@
      posent la barre Copier/Rechercher par-dessus la partie. La regle porte sur *tous*
      les elements et non sur le seul body : la feuille de style du navigateur remet la
      selection sur certains d'entre eux, boutons compris. */
+  /* `touch-action` N'EST PLUS ICI, ET C'EST TOUTE L'HISTOIRE DU DEFILEMENT QUI NE
+     DEFILAIT PAS. Il y etait, sur TOUS les elements, pour qu'un doigt maintenu sur le jeu
+     ne fasse pas glisser la page. Mais le navigateur ne lit pas cette propriete sur le
+     seul element qu'on touche : il PART de lui et REMONTE, en croisant les permissions au
+     passage, et un seul `none` sur le chemin interdit tout le geste.
+     Rendre la permission au conteneur qui defile ne servait donc a rien : la ligne qu'on
+     touche restait a `none` en dessous de lui, et la carte, la couche et le plateau
+     restaient a `none` au-dessus. Mesure de la chaine, depuis le mot d'une ligne de
+     trophee : b:none < .quoi:none < .tr:none < #trophliste:pan-y < .card:none <
+     #troph:none < #stage:none. Un seul maillon permissif au milieu de six verrous.
+     On procede donc a l'envers : plus de blocage general, et le blocage POSE la ou l'on
+     joue — la toile, les deux boutons du jeu, et les couches qui n'ont rien a faire
+     defiler. Partout ailleurs le navigateur fait ce qu'il sait faire. */
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;
     -webkit-user-select:none;-moz-user-select:none;user-select:none;
-    -webkit-touch-callout:none;-webkit-user-drag:none;touch-action:none}
+    -webkit-touch-callout:none;-webkit-user-drag:none}
+  /* La ou le doigt joue : aucun geste du navigateur, jamais. */
+  #cv, #fly, #pausebtn, #over, #pause, #pub, #compte, #sur{touch-action:none}
   /* ---------- CE QUI DEFILE DOIT POUVOIR DEFILER ----------
      La regle ci-dessus coupe `touch-action` sur TOUS les elements, et c'est voulu : un jeu
      ou l'on maintient le doigt appuye ne doit pas se mettre a glisser sous lui. Mais elle
@@ -112,7 +127,7 @@
   html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   html,body{height:100%;overflow:hidden;background:#FAF3EC;
     font-family:Fredoka,"Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif;
-    color:#1A1614;touch-action:none;overscroll-behavior:none;
+    color:#1A1614;overscroll-behavior:none;
     -webkit-user-select:none;user-select:none}
   /* Le terrain est dessine en hauteur : 800 de large pour au moins 1250 de haut.
      Sur un telephone couche il ne resterait qu'une bande minuscule au centre, on
