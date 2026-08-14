@@ -5822,8 +5822,18 @@ function semeVignette(m, larg){
    afficher au lieu de trois empilees.
    Ce qu'on perd : le mot n'est plus du texte pour les outils de lecture. Il est rendu au
    bouton de la carte, en `aria-label`, ou il dit la meme chose. */
-const VERR_VOILE="rgba(38,33,30,.50)";
+/* LE VOILE EST LEGER, ET IL A UNE RAISON DE L'ETRE. La carte du milieu paraissait bien
+   plus sombre que ses voisines, et ce n'est pas le voile qui differait : les voisines
+   portent une opacite de 0,62, qui les dilue TOUTES ENTIERES dans le fond clair de la
+   page. Mesure a l'ecran, voile a 50 centiemes : la selectionnee sortait a 116 de clarte
+   contre 161 aux voisines. Et l'ecart ne se rattrape pas en jouant sur le voile — il tient
+   a l'opacite, donc il reste d'une quarantaine de points quelle qu'en soit la force.
+   On allege donc franchement, jusqu'a ce que la carte du milieu cesse d'etre une tache
+   sombre au centre de l'ecran : a 28 centiemes elle remonte a 150. Le mot, lui, ne compte
+   plus sur le voile pour se detacher — il porte son propre halo, peint sous lui. */
+const VERR_VOILE="rgba(38,33,30,.28)";
 const VERR_CLAIR="#FFFDF8";
+const VERR_HALO="rgba(20,16,14,.85)";
 function verrouVignette(cvs, mot){
   const g=cvs.getContext("2d"), W=cvs.width, H=cvs.height;
   g.save();
@@ -5844,6 +5854,7 @@ function verrouVignette(cvs, mot){
   g.translate(x0, y0); g.scale(t/24, t/24);
   g.strokeStyle=VERR_CLAIR; g.lineWidth=1.9;
   g.lineCap="round"; g.lineJoin="round";
+  g.shadowColor=VERR_HALO; g.shadowBlur=2.2;   // le cadenas se detache lui aussi
   const rx=2.2, X=4.6, Y=10.4, L=14.8, Hh=9.6;
   g.beginPath();
   g.moveTo(X+rx, Y);
@@ -5879,11 +5890,18 @@ function verrouVignette(cvs, mot){
   }
   g.textAlign="center"; g.textBaseline="middle";
   const inter=fs*1.25, y1=H*0.56 + (t*0.10);
-  /* L'ombre du mot, franche : elle le tient sur les taches claires du paysage. */
+  /* LE HALO DU MOT, ET IL PORTE TOUT. Le voile ne fait plus assez d'ecart a lui seul :
+     c'est ce halo sombre, pose sous chaque ligne, qui detache le blanc — du paysage clair
+     comme du voile. Il est peint DEUX FOIS, parce qu'une seule passe d'ombre floue est
+     trop pale pour tenir un texte de cette taille. */
   lignes.forEach((l,i)=>{
     const y=y1+(i-(lignes.length-1)/2)*inter;
-    g.fillStyle="rgba(20,16,14,.55)";
-    g.fillText(l, W/2, y+Math.max(1,fs*0.09));
+    g.save();
+    g.shadowColor=VERR_HALO; g.shadowBlur=Math.max(2, fs*0.55);
+    g.fillStyle=VERR_CLAIR;
+    g.fillText(l, W/2, y);
+    g.fillText(l, W/2, y);
+    g.restore();
     g.fillStyle=VERR_CLAIR;
     g.fillText(l, W/2, y);
   });
