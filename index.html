@@ -4082,8 +4082,23 @@ const SFX={
   /* LE COUP D'AILE. Il sert deux fois : au coup voulu, quand le doigt appuie, et a chaque
      battement du vol tenu — d'ou le facteur. Il a par ailleurs BEAUCOUP MAIGRI : joue une
      fois, il passait ; joue trois fois par seconde tant qu'on vole, il couvrait le reste. */
-  aile:  (f=1)=>{ souffle(.13,{vol:.10*f,cut:900});
-                  tone(210,.09,{type:"triangle",vol:.068*f,to:150}); },
+  /* ---------- LE BATTEMENT D'AILE, ET POURQUOI ON NE L'ENTENDAIT PAS ----------
+     Monter le volume ne suffisait pas, et deux essais l'ont montre : le defaut n'etait pas
+     la FORCE du son mais sa HAUTEUR. Le souffle etait filtre a 900 Hz et la note descendait
+     de 210 a 150 : presque toute son energie vivait donc SOUS 500 Hz, la ou un
+     haut-parleur de telephone ne descend pas. On produisait un son, on le comptait dans
+     les reglages, et il n'arrivait jamais a l'oreille.
+     Mesure, hors ligne, en passant chaque son dans un passe-haut a 500 Hz qui imite ce
+     qu'un petit haut-parleur laisse sortir, et rapportee au SAUT qui sert d'etalon :
+         reglage d'avant   6 % du saut, dont 44 a 56 % perdu sous la barre
+         deux fois plus fort   9 a 14 %  — on gagne peu, on perd toujours autant
+         plus haut, meme force  10 %     — la part utile passe a 78 %
+         les deux ensemble      32 %     — dont 86 % au-dessus de la barre
+     C'est le dernier qui est pose ici. Le souffle s'ouvre a 3 200 Hz, ce qui lui donne
+     l'air d'une plume et non d'un coup sourd, et la note remonte a 400 : ses harmoniques
+     tombent alors en plein dans ce qu'un telephone sait rendre. */
+  aile:  (f=1)=>{ souffle(.14,{vol:.15*f,cut:3200});
+                  tone(400,.10,{type:"triangle",vol:.095*f,to:250}); },
   pose:  ()=>{ souffle(.10,{vol:.10,cut:420}); },
   /* La noix qui se casse : un claquement sec et court, tres haut de spectre. Rien a voir
      avec le choc de la poule, qui est long et grave — celui-ci ne doit pas se lire comme
@@ -4926,8 +4941,12 @@ function avanceFond(dt, v){
    - un appui juste avant l'atterrissage est memorise et declenche le saut des le contact
    - les doigts sont comptes : lever un doigt alors qu'un autre est pose ne coupe pas le vol      */
 let flapNow=false, jumpBuf=-9, lastPress=-9, flapUntil=-9;
-/* Le battement du vol tenu, en parts du coup d'aile voulu, et le cycle deja sonne. */
-const AILE_TENU=0.50;
+/* Le battement du vol tenu, en parts du coup d'aile voulu, et le cycle deja sonne.
+   IL RESTE SOUS LE COUP D'AILE VOULU, mais de peu. Il revient trois fois et demie par
+   seconde tant que le doigt tient : a force egale il couvrirait le reste du jeu. A la
+   moitie, en revanche, il disparaissait — et c'est la moitie d'un son qu'on n'entendait
+   deja pas. Quatre cinquiemes. */
+const AILE_TENU=0.80;
 let batVu=-1;
 const fingers=new Set();
 /* Le saut part toujours a pleine impulsion et se coupe net au relachement : la
