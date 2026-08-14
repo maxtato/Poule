@@ -299,14 +299,21 @@
      qu'on veut centre : il descend donc de la moitie de ce que la poule depasse en
      haut. Elle deborde de 46 % de sa hauteur, et sa hauteur vaut 0,72 fois sa
      largeur ; la moitie du debord fait donc 0,166 fois --ko. */
+  /* ELLE PRENAIT LES NEUF DIXIEMES D'UN PETIT ECRAN. Mesure faite : 602 points de haut
+     sur un ecran de 844, et 571 sur un de 640 — la carte y touchait presque les deux
+     bords, et la poule morte, qu'on voulait justement laisser voir en bas, n'avait plus
+     de place. Sur ces 602 points, 182 n'etaient QUE du vide entre les lignes et 116 de
+     la marge : plus que le texte lui-meme. On resserre donc les vides et on rabote ce
+     qui pouvait l'etre — la pierre, le titre, les deux pastilles, les boutons — sans
+     toucher a l'ordre ni au nombre des choses dites. */
   #over .carte{position:relative;width:min(calc(var(--band,100%) - 24px),400px);
-    --ko:clamp(88px,25vw,122px);margin-top:calc(var(--ko)*0.24);box-sizing:border-box;
-    padding:clamp(70px,18vw,92px) clamp(34px,9vw,52px) clamp(46px,11.5vw,62px);
+    --ko:clamp(76px,21.5vw,106px);margin-top:calc(var(--ko)*0.24);box-sizing:border-box;
+    padding:clamp(56px,14.4vw,74px) clamp(30px,8vw,46px) clamp(34px,8.6vw,48px);
     animation:parait .26s cubic-bezier(.2,1.15,.5,1)}
   #over .blob{position:absolute;inset:0;z-index:0;
     background:center/100% 100% no-repeat}
   #over .dedans{position:relative;z-index:1;display:flex;flex-direction:column;
-    align-items:center;gap:clamp(8px,2.2vw,13px)}
+    align-items:center;gap:clamp(5px,1.5vw,9px)}
   /* La pierre tombale est plantee sur le bord haut du panneau, a demi dehors. Le
      canvas epouse la planche — plus haut que large — la ou la poule K.-O. tenait dans
      un canvas plus large qu'elle, pour loger sa ronde d'etoiles. La largeur est donc
@@ -315,28 +322,28 @@
   #over .ko{position:absolute;z-index:2;left:50%;top:clamp(-6px,-1vw,0px);
     transform:translate(-50%,-46%);width:calc(var(--ko)*1.10);height:auto}
   /* L'annonce, en rouge : c'est elle qui dit que la manche est finie. */
-  #over .fin{margin:0;font-size:clamp(34px,10vw,50px);
+  #over .fin{margin:0;font-size:clamp(30px,8.6vw,42px);
     font-weight:900;letter-spacing:-.01em;line-height:.9;text-transform:uppercase;
     color:#D6342B}
-  #over .lg{margin:clamp(6px,1.8vw,10px) 0 0;font-size:clamp(11px,3vw,14px);
+  #over .lg{margin:clamp(4px,1.2vw,7px) 0 0;font-size:clamp(11px,3vw,14px);
     font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#7A6A57}
   /* Deux pastilles pleines, sans contour : le decompte du tour, puis le record. */
   #over .pastille{display:flex;align-items:center;justify-content:center;
     gap:clamp(8px,2.4vw,13px);border-radius:999px;
-    padding:clamp(5px,1.4vw,8px) clamp(20px,6vw,34px)}
-  #over .pastille span{font-size:clamp(34px,9.6vw,48px);font-weight:900;line-height:1;
+    padding:clamp(4px,1.1vw,6px) clamp(20px,6vw,34px)}
+  #over .pastille span{font-size:clamp(30px,8.2vw,42px);font-weight:900;line-height:1;
     font-variant-numeric:tabular-nums;letter-spacing:-.02em;color:#2B2118}
   /* Les deux pastilles se serrent sur leur contenu : celle du decompte tirait sur
      toute la largeur et faisait une barre, la ou l'autre etait une pastille. */
   #over .score{background:#EDE4D3;padding-left:clamp(24px,7vw,40px);
     padding-right:clamp(28px,8vw,44px)}
   #over .record{background:#F8CE72}
-  #over .record span{font-size:clamp(27px,7.4vw,37px)}
+  #over .record span{font-size:clamp(24px,6.4vw,32px)}
   /* La formule sous le score, en petit : c'est une explication, pas un resultat. */
-  #over .detail{margin:clamp(4px,1.2vw,7px) 0 0;font-size:clamp(10px,2.7vw,13px);
+  #over .detail{margin:clamp(3px,0.9vw,5px) 0 0;font-size:clamp(10px,2.7vw,13px);
     font-weight:900;letter-spacing:.04em;color:#8B7C69;
     font-variant-numeric:tabular-nums}
-  #over .ico{height:clamp(26px,7.2vw,38px);width:auto;display:block}
+  #over .ico{height:clamp(23px,6.2vw,33px);width:auto;display:block}
   /* En pixel art, les dessins poses par le document sont agrandis eux aussi :
      sans image-rendering le navigateur les lisse et la pastille redevient floue. */
   body.px #fly, body.px #menu .sico, body.px #over .ico,
@@ -350,17 +357,17 @@
      la regle generale suffit ; seul le lissage reste a couper. */
   body.px #fly{box-shadow:none}
 
-  #over .couronne{height:clamp(24px,6.6vw,34px);width:auto;display:block}
-  #over .tirets{width:100%;height:0;margin:clamp(10px,3vw,16px) 0 0;border:0;
+  #over .couronne{height:clamp(21px,5.7vw,29px);width:auto;display:block}
+  #over .tirets{width:100%;height:0;margin:clamp(6px,1.9vw,10px) 0 0;border:0;
     border-top:2px dashed #D5C9B4}
-  #over .totaux{margin:clamp(8px,2.4vw,12px) 0 0;font-size:clamp(10px,2.7vw,13px);
+  #over .totaux{margin:clamp(6px,1.7vw,9px) 0 0;font-size:clamp(10px,2.7vw,13px);
     letter-spacing:.04em;font-weight:900;text-transform:uppercase;color:#8B7C69}
   /* Le bouton est en bas, la ou le contour se recourbe : a pleine largeur ses bouts
      venaient toucher la bosse du coin. */
   #over .btn{display:flex;align-items:center;justify-content:center;
     gap:clamp(8px,2.4vw,12px);width:62%;
-    padding:clamp(12px,3.4vw,16px) 18px;font-size:clamp(14px,3.9vw,17px);
-    letter-spacing:.08em;white-space:nowrap;margin-top:clamp(12px,3.4vw,18px);
+    padding:clamp(10px,2.7vw,13px) 18px;font-size:clamp(13px,3.6vw,16px);
+    letter-spacing:.08em;white-space:nowrap;margin-top:clamp(8px,2.3vw,12px);
     background:#D6342B;border:1px solid #D6342B;color:#fff}
   /* Rouge plein, ecriture blanche : a l'appui c'est un rouge plus sombre, pas
      l'inversion des autres boutons — il n'y a plus de blanc a inverser. */
@@ -389,8 +396,8 @@
      carte, celui sur lequel se lit le nombre de mouches. Trois boutons, trois poids —
      rouge plein pour la reprise au point de controle, blanc a filet rouge pour
      recommencer, gris sourd pour la sortie. */
-  #over .btn.creux{width:52%;margin-top:clamp(7px,2vw,11px);
-    padding:clamp(9px,2.6vw,12px) 16px;font-size:clamp(12px,3.3vw,14px);
+  #over .btn.creux{width:52%;margin-top:clamp(5px,1.4vw,8px);
+    padding:clamp(7px,2vw,10px) 16px;font-size:clamp(12px,3.3vw,14px);
     background:#EDE4D3;border:1.5px solid transparent;color:#3A322C}
   #over .btn.creux svg{width:clamp(14px,3.8vw,18px);color:#D6342B}
   #over .btn.creux:active{background:#1A1614;border-color:#1A1614;color:#FAF3EC}
@@ -546,7 +553,7 @@
          de reveil.
      Rien de tout cela a l'appui : le bouton doit se sentir ferme sous le doigt, pas
      continuer a bouger. Et rien non plus pour qui a demande moins d'animation. */
-  #over .btn.point{margin-bottom:clamp(6px,1.6vw,10px);
+  #over .btn.point{margin-bottom:clamp(4px,1.1vw,7px);
     animation:pointRespire 1.9s ease-out infinite}
   #over .btn.point svg{flex:none;animation:pointBat 1.9s ease-out infinite;
     transform-origin:50% 50%}
@@ -577,7 +584,7 @@
   @media (prefers-reduced-motion:reduce){
     #over .btn.point, #over .btn.point svg{animation:none}
   }
-  #over .ptdetail{margin:0 0 clamp(8px,2vw,12px);text-align:center;
+  #over .ptdetail{margin:0 0 clamp(5px,1.4vw,8px);text-align:center;
     font-size:clamp(10px,2.8vw,12px);letter-spacing:.04em;color:#8A7F76}
   /* La croix, a cheval sur le coin de la carte comme sur la maquette. */
   #pause .croix{position:absolute;top:-16px;right:-14px;width:44px;height:44px;
@@ -10512,11 +10519,17 @@ function txtP(txt, x, y, taille, coul, align, base, halo){
    TOUT DESCEND DU CORPS DU SCORE : les marges, l'ecart des deux lignes, le rayon des
    coins et la taille du cartouche lui-meme. Il n'a donc pas de largeur a lui — il fait
    celle de ses nombres — et un record a six chiffres l'allonge au lieu de le serrer. */
-const CART_CORPS=0.044;             // le corps du score, en parts du cadre de jeu
-const CART_MIN=13, CART_MAX=18;     // et ses bornes, en pixels CSS
+/* PLUS GRAND ET MOINS VISIBLE A LA FOIS, ET LES DEUX VONT ENSEMBLE. Ce qu'on veut d'un
+   cartouche pose sur la terre, ce n'est pas qu'il soit discret par sa PETITESSE — un petit
+   bloc sombre reste un bloc sombre, et on plisse les yeux pour le lire — mais qu'il soit
+   discret par son FOND. Les chiffres grossissent donc d'un cinquieme, et le rectangle qui
+   les porte s'efface d'autant : de vingt-deux centiemes d'encre a treize. Le blanc des
+   nombres, lui, ne bouge pas — c'est la seule chose qu'on cherche quand on le regarde. */
+const CART_CORPS=0.053;             // le corps du score, en parts du cadre de jeu
+const CART_MIN=15, CART_MAX=22;     // et ses bornes, en pixels CSS
 const CART_PETIT=0.59;              // la seconde ligne, en parts de la premiere
 const CART_FOND="rgba(26,22,20,";   // l'encre du fond, son alpha se pose juste apres
-const CART_ALPHA=0.22;              // a peine pose : on doit voir la terre au travers
+const CART_ALPHA=0.13;              // a peine pose : on doit voir la terre au travers
 /* TOUT EST DU MEME BLANC, ET SANS LISERE. Les trois textes se distinguaient par leur
    teinte — blanc pour le score, creme pour la ligne du bas, gris pour le mot — ce qui
    faisait trois valeurs a lire dans un cartouche qui tient dans un timbre. Ils sont
