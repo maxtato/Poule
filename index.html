@@ -90,6 +90,17 @@
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;
     -webkit-user-select:none;-moz-user-select:none;user-select:none;
     -webkit-touch-callout:none;-webkit-user-drag:none;touch-action:none}
+  /* ---------- CE QUI DEFILE DOIT POUVOIR DEFILER ----------
+     La regle ci-dessus coupe `touch-action` sur TOUS les elements, et c'est voulu : un jeu
+     ou l'on maintient le doigt appuye ne doit pas se mettre a glisser sous lui. Mais elle
+     coupe aussi le defilement des LISTES, qui en ont besoin — et comme elle porte sur
+     l'element lui-meme, aucun heritage ne la rattrape : il faut la rendre a la main a
+     chaque conteneur qui defile. Sans ca, une liste plus longue que son cadre est
+     parfaitement immobile sous le doigt.
+     Un second verrou l'accompagne, du cote du code : le jeu annule tous les `touchmove`
+     pour empecher la loupe de Safari de s'inviter. Les deux doivent ceder ensemble — voir
+     `laisseGlisser` — sinon on rend le defilement d'une main et on le reprend de l'autre. */
+  .defile{touch-action:pan-y}
   html,body{height:100%;overflow:hidden;background:#FAF3EC;
     font-family:Fredoka,"Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif;
     color:#1A1614;touch-action:none;overscroll-behavior:none;
@@ -870,7 +881,7 @@
      grande. Rigide, il deborde franchement, et le rabotage voit ce qu'il a a raboter. */
   .carrousel{position:relative;align-self:stretch;min-width:0;flex:none;
     width:calc(100% + 52px);margin:0 -26px;
-    overflow-x:auto;overflow-y:hidden;
+    overflow-x:auto;overflow-y:hidden;touch-action:pan-x;
     scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
     scrollbar-width:none;overscroll-behavior-x:contain}
   .carrousel::-webkit-scrollbar{display:none}
@@ -1082,7 +1093,7 @@
   <div class="card">
     <h2 data-t="trophees">Trophées</h2>
     <p class="compte" id="trophcompte"></p>
-    <div class="dedans" id="trophliste"></div>
+    <div class="dedans defile" id="trophliste"></div>
     <button class="btn ferme" data-t="fermer">Fermer</button>
   </div>
 </div>
@@ -1222,7 +1233,7 @@
     <!-- SEULES LES RUBRIQUES DEFILENT. Le titre et les deux boutons du pied restent en
          place ; sans quoi ces derniers partiraient en bas de la course, la ou l'on ne pense
          pas a les chercher. -->
-    <div class="dedans">
+    <div class="dedans defile">
     <h3>
       <svg viewBox="0 0 24 24" aria-hidden="true" fill="none">
         <path d="M4.4 9.6h3.3l4.4-3.9v12.6l-4.4-3.9H4.4z" fill="currentColor"
@@ -5228,9 +5239,18 @@ addEventListener("contextmenu", e=>{ if(e.target.closest && e.target.closest("#s
    Les boutons sont epargnes : annuler leur touchstart supprimerait le clic qui les
    actionne. Le reste du jeu ne passe pas par le clic mais par les evenements pointeur,
    qui continuent d'etre emis. */
-const surBouton=e=>!!(e.target && e.target.closest && e.target.closest("button"));
+/* ET ON EPARGNE AUSSI CE QUI DEFILE, pour la meme raison qu'on epargne les boutons :
+   annuler le `touchmove` d'une liste, c'est l'empecher de glisser sous le doigt. La liste
+   des trophees en fait quarante lignes pour un cadre qui en montre onze — sans cette
+   exception elle etait parfaitement immobile, et le carrousel des terrains ne devait son
+   glissement qu'au hasard : ses cartes sont des BOUTONS, donc deja epargnees, mais les
+   deux cales vides de ses bouts ne le sont pas.
+   Le CSS a son propre verrou, `touch-action`, coupe partout par la regle generale ; les
+   deux se levent ensemble ou pas du tout — voir la classe `.defile`. */
+const laisseGlisser=e=>!!(e.target && e.target.closest &&
+  e.target.closest("button, .defile, .carrousel"));
 for(const ev of ["touchstart","touchmove"])
-  addEventListener(ev, e=>{ if(!surBouton(e)) e.preventDefault(); }, {passive:false});
+  addEventListener(ev, e=>{ if(!laisseGlisser(e)) e.preventDefault(); }, {passive:false});
 
 /* ---------- le panneau de fin ----------
    Son fond est un contour festonne, pas un rectangle : deux chemins concentriques
