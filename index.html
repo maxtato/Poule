@@ -4512,60 +4512,6 @@ function ralenti(){
 }
 function cool(){ return t<coolJusqu && !hen.dead; }
 
-/* ---------- LE MONDE AVANCE PAR CRANS ----------
-   LE RALENTI NE SE VOYAIT PAS. Il se sent dans la main, il s'entend dans le haut-parleur,
-   mais une image qui defile moins vite reste une image normale : on ne la compare pas a
-   celle qu'on ne voit plus. Des barres de bande magnetique l'ont dit un temps ; elles le
-   disaient SUR l'image, comme un ecran qui se detraque, et pas du monde.
-   CE QUI LE DIT VRAIMENT, C'EST DEUX TEMPS DANS LA MEME IMAGE. Le decor n'avance plus en
-   continu mais par crans, sept fois et demie par seconde, pendant que la poule, elle,
-   continue de courir sans rupture — ses pattes, son vol, sa chute gardent le temps reel.
-   L'oeil n'a rien a comparer avec l'exterieur : il compare les deux temps entre eux, dans
-   la meme image, et il lit « ralenti » sans qu'on ait rien pose dessus. C'est ce que fait
-   une camera qui echantillonne moins souvent que le mouvement qu'elle filme.
-   COMMENT, SANS DEUX HORLOGES A TENIR. Tout ce qui defile se deplace en `speed*dt`, et
-   rien d'autre. On ne touche donc ni a `speed` — dont une dizaine de calculs de rendez-vous
-   se servent, et qui vaudrait zero trois images sur quatre, avec des divisions par zero au
-   bout — ni au pas de temps du jeu. On remplace `dt` par `dtMonde` AUX SEULS ENDROITS OU
-   QUELQUE CHOSE SE DEPLACE : il vaut zero pendant qu'un cran se remplit, puis rend d'un
-   seul coup tout le temps mis en reserve. La distance parcourue est donc la meme a un
-   millieme pres, cran ou pas — c'est la meme somme, versee en une fois au lieu de huit.
-   OU PASSE LA LIGNE DE PARTAGE : ce qui appartient au MONDE avance par crans — decor,
-   collines, sol, obstacles, oiseaux, mouches, drapeaux, nuages, et la distance elle-meme.
-   Ce qui appartient a la POULE garde le temps reel : ses pattes, sa hauteur, son vol, et
-   aussi la poussiere sous ses pieds et les plumes qu'elle lache. Une plume qui se
-   figerait en l'air trois images sur quatre se lirait comme un blocage, pas comme un
-   ralenti ; elle tombe de la poule, elle suit la poule.
-   ET LA PHYSIQUE SUIT LE DESSIN. Les obstacles sautent avec le decor, donc ce qu'on voit
-   est exactement ce qui touche : rien ne se decale entre l'image et le contact. Le cran
-   dure treize centiemes de seconde, bien en dessous du temps de reaction — il ne retire
-   donc rien au joueur, il ne fait que grossir le grain du temps.
-   DIX-SEPT ENDROITS, ET AUCUN OUBLI POSSIBLE : le monde defile depuis dix-sept lignes, et
-   s'il en restait une en `dt`, l'objet qu'elle deplace glisserait tout seul pendant que le
-   reste saute. On ne l'a pas cherche a l'oeil : `saccade.js` FORCE le pas du monde a zero
-   et releve l'abscisse de tout ce qui defile pendant cinquante images. Rien n'a bouge. */
-/* LA DUREE DU CRAN EST LE SEUL REGLAGE, et c'est lui qui separe « ralenti » de « ca
-   rame ». Treize centiemes de seconde, soit sept crans et demi par seconde : c'est la
-   cadence de la maquette sur laquelle l'effet a ete choisi. Mesure a ce reglage : le
-   monde tient huit images puis saute de 35 points a l'ecran en croisiere, de 33 au coup
-   de frein. Un premier essai a 0,09 s donnait dix crans par seconde et 26 points — plus
-   propre, mais l'effet se lisait deja beaucoup moins.
-   CE QUE LE CRAN COUTE EN METRES : rien, ou presque. La reserve rend exactement ce
-   qu'elle a pris, mais elle le rend a la vitesse de l'instant du versement, et cette
-   vitesse change pendant que le ralenti se releve. Mesure sur dix secondes de mode cool :
-   593,3 metres avec le cran contre 591,7 sans, soit 1,7 metre de PLUS. */
-const SAC_PAS=0.13;       // la duree d'un cran du monde, en secondes
-let dtMonde=0, sacRes=0;  // le pas du monde, et le temps mis en reserve
-function pasMonde(dt, vivant){
-  if(!vivant || ralenti()>=0.999){
-    /* on rend la reserve en sortant : sans quoi le monde perdrait le bout de cran
-       commence, et la distance ne serait plus la meme avec et sans l'effet */
-    const r=sacRes; sacRes=0; return dt+r;
-  }
-  sacRes+=dt;
-  if(sacRes<SAC_PAS) return 0;
-  const d=sacRes; sacRes=0; return d;
-}
 let deadLand=-9;      // instant du contact au sol
 /* D'ou vient le choc : en vol ou en course. Fige au moment du coup, sinon la pose
    changerait au premier dixieme de seconde, quand elle quitte le sol. */
@@ -8675,9 +8621,6 @@ function heurte(o, hb){
 function update(dt){
   t+=dt;
   horlogeBorne(dt);
-  /* le pas du monde se calcule ici, avant tout le reste : la terre remuee par la pierre
-     s'en sert elle aussi, et elle se met a jour bien avant le decor */
-  dtMonde=pasMonde(dt, state===S.PLAY);
   /* Le coeur perdu monte et s'evapore, quel que soit l'etat : il est lache pendant la
      culbute, ou le jeu n'est plus en course, et il doit finir sa montee. */
   for(const c of coeurs){ c.l-=dt/COEUR_VOL; c.y-=dt*COEUR_MONTE; c.ph+=dt*3.1; }
@@ -8698,7 +8641,7 @@ function update(dt){
     /* Posee, elle appartient au sol et le suit ; en l'air, elle garde son elan et le
        sol glisse dessous. Les mottes de la pierre ne defilent ni dans un cas ni dans
        l'autre — voir giclee(). */
-    if(p.file) p.x-=speed*dtMonde;
+    if(p.file) p.x-=speed*dt;
     if(p.pose){ p.l-=dt/TERRE_VIE; continue; }
     p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=1250*dt; p.rot+=p.vr*dt;
     p.l-=dt/TERRE_VIE;
@@ -8789,8 +8732,8 @@ function update(dt){
   /* LE RALENTI SE POSE ICI, ET NULLE PART AILLEURS. Tout ce qui defile part de `speed` —
      voir ralenti() juste au-dessus pour la raison. */
   speed=Math.min(500+dist*0.33,900)*ralenti();
-  dist+=speed*dtMonde/9.2;
-  avanceJalons(dtMonde);
+  dist+=speed*dt/9.2;
+  avanceJalons(dt);
   /* LE RECORD SE FRANCHIT PENDANT LA COURSE, ET C'EST LA QU'IL FAUT LE DIRE. Annonce a
      l'ecran de fin, il arrive quand tout est joue ; annonce ici, il dit qu'il reste
      quelque chose a defendre. Une seule fois par partie, et seulement s'il y avait un
@@ -8925,7 +8868,7 @@ function update(dt){
       bonus.push({x:VIEW_W+90, y:hauteurLibre(), ph:Math.random()*7});
   }
   for(const b of bonus){
-    b.x-=speed*dtMonde;
+    b.x-=speed*dt;
     b.y+=Math.sin(t*1.6+b.ph)*10*dt*2.4;
   }
   bonus=bonus.filter(b=>b.x>-90);
@@ -8940,7 +8883,7 @@ function update(dt){
 
   const FLY_MIN=-52-MOU_H/2;
   for(const f of flies){
-    f.x-=(speed+f.drift)*dtMonde;
+    f.x-=(speed+f.drift)*dt;
     f.y+=Math.sin(t*f.sp+f.ph)*f.amp*dt*2.4;      // vol saccade, jamais tout a fait droit
     if(f.y>FLY_MIN) f.y=FLY_MIN;                  // le sol reste infranchissable
     for(const o of obs){                          // et elle ne se pose pas sur les obstacles
@@ -9001,17 +8944,17 @@ function update(dt){
   for(const o of obs){
     /* Le cerf-volant fuit dans le meme sens que la poule mais moins vite : ce qui
        reste de l'ecart, c'est elle qui le comble. */
-    if(o.k==="kite"){ o.x-=Math.max(60, speed-KITE_VOL)*dtMonde; vole(o); }
+    if(o.k==="kite"){ o.x-=Math.max(60, speed-KITE_VOL)*dt; vole(o); }
     /* Le journal ne recule pas a une vitesse : il est porte. La bourrasque le fait passer
        du quasi-surplace a plus vite que le decor, et sa hauteur suit ses deux souffles. */
     else if(o.k==="journal"){ o.t+=dt;
       const souffle = JOURNAL_VENT + JOURNAL_RAFALE*souffleJournal(o).rafale;
-      o.x -= speed*souffle*dtMonde;
+      o.x -= speed*souffle*dt;
       poseJournal(o);
       semeTraitsJournal(o, souffle, dt); }
     /* La borne crache : elle defile comme le sol, et son jet change de cran. */
     else if(o.k==="ville_borne"){
-      o.x -= speed*dtMonde;
+      o.x -= speed*dt;
       avanceBruine(o, dt);
       o.tEau-=dt;
       if(o.tEau<=0){
@@ -9025,13 +8968,13 @@ function update(dt){
       }
     }
     /* La taupe sort de terre : elle defile comme le sol, et sa pose suit son programme. */
-    else if(o.k==="taupe"){ o.x -= speed*dtMonde; avanceTaupe(o, dt); }
+    else if(o.k==="taupe"){ o.x -= speed*dt; avanceTaupe(o, dt); }
     /* Le scorpion marche : il defile avec le sol, plus son va-et-vient. */
     else if(o.k==="desert_scorpion"){
       o.t+=dt;
       const a=phaseScorp(o);
       const dx=Math.sin(a)*SCORP_RAYON;
-      o.x -= speed*dtMonde;
+      o.x -= speed*dt;
       o.x += dx-o.dx; o.dx=dx;
       /* sa vitesse propre, en parts de son maximum : le signe dit ou il regarde, la
          valeur absolue dit a quelle cadence il remue les pattes */
@@ -9046,7 +8989,7 @@ function update(dt){
       const u=speed*ventVireve(o);
       /* sa vitesse par rapport au SOL, a l'ecran ; le decor, lui, va a -speed */
       const rel=-u;
-      o.x -= (speed+u)*dtMonde;
+      o.x -= (speed+u)*dt;
       /* ROULEMENT SANS GLISSEMENT sur le sable : l'angle suit la course relative divisee
          par le rayon. Une boule qui ne bouge pas par rapport au sable ne tourne pas. */
       o.rot += (rel/(o.h/2))*dt;
@@ -9057,7 +9000,7 @@ function update(dt){
     }
     /* La stalactite tombe. Brisee, elle ne fait plus que defiler et palir. */
     else if(o.k==="mont_stalac"){
-      o.x-=speed*dtMonde;
+      o.x-=speed*dt;
       if(o.pose){ o.age+=dt; }
       else { o.vy+=STALAC_G*dt; o.y+=o.vy*dt;
              if(Math.random()<dt*STALAC_TRAITS)
@@ -9082,7 +9025,7 @@ function update(dt){
     }
     /* La fiente tombe. Posee, elle ne fait plus que defiler et palir. */
     else if(o.k==="fiente"){
-      o.x-=speed*dtMonde;
+      o.x-=speed*dt;
       if(o.pose){ o.age+=dt; }
       else { o.vy+=FIENTE_G*dt; o.y+=o.vy*dt;
              /* Les traits de sa chute, semes comme ceux de la poule en panique : ils
@@ -9105,7 +9048,7 @@ function update(dt){
        seule des qu'il arrive assez pres du bord. Une fois la noix partie il reste bras
        ballant jusqu'a sa sortie — c'est ce qui permet de voir qui l'a lancee. */
     else if(o.k==="singe"){
-      o.x-=speed*dtMonde;
+      o.x-=speed*dt;
       /* Quatre pas : il MONTRE sa noix, il TEND le bras, il LACHE, il REPLIE. Le premier
          et le dernier sont des durees — ils ne conditionnent rien d'autre qu'eux-memes et
          doivent se lire pareil a toutes les vitesses. Celui du lacher est une POSITION,
@@ -9132,7 +9075,7 @@ function update(dt){
     /* Celui qui double la poule remonte l'ecran vers la droite ; les autres le
        descendent vers la gauche, decor compris. */
     else if(estOiseau(o.k) && o.sens>0) o.x += OISEAU_DOUBLE*dt;
-    else o.x-=(estOiseau(o.k) ? speed+OISEAUX[o.k].vit : speed)*dtMonde;
+    else o.x-=(estOiseau(o.k) ? speed+OISEAUX[o.k].vit : speed)*dt;
   }
   for(const n of jets) obs.push(n);
   obs=obs.filter(o=>!o.eclate);
@@ -9162,16 +9105,16 @@ function update(dt){
      ramasse, il serait reste a courir hors du cadre jusqu'a la fin de la partie. */
   obs=obs.filter(o=>o.x>-380 && !(o.sens>0 && o.x>VIEW_W+520));
 
-  for(const c of clouds){ c.x-=c.v*speed*.10*dtMonde;
+  for(const c of clouds){ c.x-=c.v*speed*.10*dt;
     if(c.x<-180){ c.x=VIEW_W+140; c.f=.15+Math.random()*.6; c.forme=nuageForme(); } }
   for(const g of sol){
-    g.x-=speed*dtMonde;                              // solidaire du sol : aucune derive
+    g.x-=speed*dt;                                   // solidaire du sol : aucune derive
     /* On attend que le detail soit sorti PAR SON BORD DROIT. Une touffe de quarante
        unites tenait dans la marge de soixante ; une fissure de trois cents disparaissait
        en plein ecran. */
     if(g.x+g.d.w<-20) replanteSol(g);
   }
-  avanceFond(dtMonde, speed);                             // second plan puis fond
+  avanceFond(dt, speed);                             // second plan puis fond
 
   for(const p of puffs){ p.x+=p.vx*dt-speed*dt*.5; p.y+=p.vy*dt; p.vy+=140*dt; p.l-=dt*1.7; }
   puffs=puffs.filter(p=>p.l>0);
@@ -10736,6 +10679,13 @@ function draw(){
 
   drawTraits();                     // derriere la poule : le mouvement, pas le sujet
 
+  /* LE VOILE DU RALENTI SE POSE ICI, ET C'EST TOUT L'INTERET DE L'ENDROIT. Tout ce qui
+     est deja peint est le MONDE — ciel, decor, sol, obstacles, mouches, trainees. La
+     poule vient juste apres. Le voile n'a donc besoin d'aucun masque, d'aucun disque
+     fondu autour d'elle, d'aucune seconde toile : elle est peinte PAR-DESSUS, et elle
+     reste nette et en couleur sans qu'on ait a la decouper. */
+  voileRalenti();
+
   const im=henFrame();
   /* Le pouvoir se lit sur la poule elle-meme : elle passe par eclipses en silhouette
      blanche puis doree, comme l'invincibilite d'un jeu d'arcade. Le blanc et l'or
@@ -11384,6 +11334,98 @@ function panneauRecords(){
   ctx.imageSmoothingEnabled=false;
   ctx.drawImage(panT, x, y, w, h);
   ctx.imageSmoothingEnabled=!save.pixel;
+}
+
+/* ---------- LE VOILE DU RALENTI ----------
+   LE RALENTI NE SE VOYAIT PAS. Il se sent dans la main, il s'entend dans le haut-parleur,
+   mais une image qui defile moins vite reste une image normale : on ne la compare pas a
+   celle qu'on ne voit plus. Deux tentatives avant celle-ci — des barres de bande
+   magnetique, puis un decor qui avancait par crans — disaient toutes deux quelque chose
+   de l'ECRAN, l'une comme un magnetoscope detraque, l'autre comme un jeu qui rame.
+   CELLE-CI NE DIT RIEN DE L'ECRAN, ELLE DIT DEUX ETATS. Le monde perd ses couleurs et se
+   met a grener ; la poule, elle, reste nette et coloree. Rien ne bouge autrement, rien ne
+   clignote, rien ne se decale : c'est un ECART entre elle et le reste, et un ecart se lit
+   d'un coup d'oeil sans avoir a etre explique.
+   ET C'EST L'ENDROIT DU CODE QUI FAIT TOUT LE TRAVAIL. Peint apres la poule, il aurait
+   fallu la decouper : un disque fondu autour d'elle, une toile de service pour le grain,
+   un masque a redessiner a chaque image, et son bord aurait fini par se voir. Peint JUSTE
+   AVANT elle, il n'y a rien a decouper — le monde est deja la, la poule pas encore. Un
+   remplissage et une quinzaine de timbres, sans une seule recopie de la toile : quatre
+   millisecondes par image, mesurees.
+   CE QUE LA MESURE DIT, une fois l'effet en place. Sur un morceau de ciel — un degrade
+   lisse, donc sans grain propre — l'ecart type des clartes passe de 0,7 a 3,6 : le grain
+   est bien la. Et en comparant DEUX FOIS LE MEME INSTANT, voile eteint puis allume, les
+   points que le dessin de la poule couvre a fond sont RIGOUREUSEMENT identiques : elle ne
+   prend ni gris ni grain. Ce qui change encore d'elle, c'est le bord adouci de sa
+   silhouette et sa trainee bleue — tous deux transparents, donc le monde grise s'y voit
+   au travers, et c'est ce qu'il faut.
+   LE GRAIN EST TIRE D'AVANCE, EN TROIS TUILES QU'ON ALTERNE. Un grain calcule a chaque
+   image coute un tirage au sort par point ; trois tuiles posees bout a bout et changees
+   vingt-quatre fois par seconde donnent le meme fourmillement pour le prix d'une quinzaine
+   de timbres. Trois et non une : une seule tuile qu'on decale glisse a l'ecran au lieu de
+   fourmiller, et le glissement se voit tout de suite.
+   POURQUOI UN GRIS POSE ET NON UNE VRAIE DESATURATION. La bonne facon d'oter la couleur
+   sans toucher aux valeurs, c'est le mode de fusion « saturation ». Mesure : 19 ms pour
+   un seul remplissage du terrain, contre 1 ms pour le meme remplissage sans mode de
+   fusion — a lui seul il depassait le budget d'une image. C'est le prix de la peinture
+   LOGICIELLE, et sur un telephone il tomberait sans doute a presque rien ; mais je ne
+   peux pas le verifier ici, et un effet qui triple le cout d'une image sur les appareils
+   ou je ne l'ai pas mesure ne se pose pas dans un jeu. Un gris franc a faible opacite
+   coute donc le vingtieme et dit la meme chose : le monde s'eteint. */
+const RAL_VOILE=0.20;     // le gris pose sur le monde
+const RAL_TEINTE="#7C7975";
+const RAL_GRAIN=0.115;    // le grain
+const RAL_TUILE=512;      // le cote d'une tuile de grain, en points de la toile
+const RAL_TUILES=3;       // combien de tuiles differentes on alterne
+const RAL_GRAINHZ=24;     // et a quelle cadence
+let tuilesGrain=null;
+function grainRalenti(){
+  if(tuilesGrain) return tuilesGrain;
+  tuilesGrain=[];
+  for(let n=0;n<RAL_TUILES;n++){
+    const c=document.createElement("canvas");
+    c.width=RAL_TUILE; c.height=RAL_TUILE;
+    const g=c.getContext("2d");
+    const im=g.createImageData(RAL_TUILE, RAL_TUILE), d=im.data;
+    for(let i=0;i<d.length;i+=4){
+      /* UN GRAIN A DEUX FACES, sombre ET clair. Un grain uniquement sombre ne grene pas,
+         il salit : il assombrit l'image au lieu de la faire vibrer. Et la moitie des
+         points reste vide, sinon la tuile fait un aplat au lieu d'un semis. */
+      const clair=Math.random()<0.5;
+      d[i]=d[i+1]=d[i+2]= clair?255:0;
+      d[i+3]= Math.random()<0.5 ? 0 : (60+Math.random()*130)|0;
+    }
+    g.putImageData(im,0,0);
+    tuilesGrain.push(c);
+  }
+  return tuilesGrain;
+}
+/* rien au temps plein, la moitie en croisiere, tout au coup de frein */
+function forceRalenti(){
+  return Math.max(0, Math.min(1, (1-ralenti())/0.70));
+}
+function voileRalenti(){
+  const f=forceRalenti();
+  if(f<=0.02) return;
+  const k=save.pixel ? kPix : dpr;
+  const X=Math.round(bandX*k), W=Math.round(bandW*k), Hp=Math.round(H*k);
+  if(W<=0) return;
+  ctx.save();
+  /* en points de la toile : le voile couvre le terrain, pas les unites du monde */
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.beginPath(); ctx.rect(X,0,W,Hp); ctx.clip();
+  ctx.imageSmoothingEnabled=false;
+
+  /* le monde s'eteint : un gris neutre, sans mode de fusion */
+  ctx.globalAlpha=RAL_VOILE*f;
+  ctx.fillStyle=RAL_TEINTE; ctx.fillRect(X,0,W,Hp);
+
+  const tu=grainRalenti();
+  const im=tu[Math.floor(t*RAL_GRAINHZ)%tu.length];
+  ctx.globalAlpha=RAL_GRAIN*f;
+  for(let y=0;y<Hp;y+=RAL_TUILE)
+    for(let x=X;x<X+W;x+=RAL_TUILE) ctx.drawImage(im,x,y);
+  ctx.restore();
 }
 
 function drawHUD(){
