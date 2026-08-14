@@ -4068,7 +4068,11 @@ function tone(f, dur, {type="square", vol=0.3, to=0, at=0}={}){
 }
 /* Souffle : bruit filtre, pour tout ce qui n'a pas de hauteur (ailes, impact). */
 let noiseBuf=null;
-function souffle(dur, {vol=0.2, cut=1200, at=0}={}){
+/* `vers` fait GLISSER la coupure pendant que le souffle sonne. Un bruit filtre a
+   frequence fixe se lit comme un grattement, toujours le meme ; un bruit dont la coupure
+   descend se lit comme de l'air qui passe et retombe — c'est ce glissement, et non la
+   couleur du bruit, qui fait entendre un mouvement. */
+function souffle(dur, {vol=0.2, cut=1200, at=0, vers=0}={}){
   const a=audio(); if(!a||muted) return;
   if(a.state==="suspended") a.resume();
   if(!noiseBuf){
@@ -4079,6 +4083,7 @@ function souffle(dur, {vol=0.2, cut=1200, at=0}={}){
   const T=a.currentTime+at;
   const s=a.createBufferSource(); s.buffer=noiseBuf; s.loop=true;
   const f=a.createBiquadFilter(); f.type="lowpass"; f.frequency.setValueAtTime(cut,T);
+  if(vers) f.frequency.exponentialRampToValueAtTime(Math.max(60,vers), T+dur);
   const g=a.createGain();
   g.gain.setValueAtTime(0.0001,T);
   g.gain.exponentialRampToValueAtTime(vol,T+0.012);
@@ -4102,11 +4107,22 @@ const SFX={
          deux fois plus fort   9 a 14 %  — on gagne peu, on perd toujours autant
          plus haut, meme force  10 %     — la part utile passe a 78 %
          les deux ensemble      32 %     — dont 86 % au-dessus de la barre
-     C'est le dernier qui est pose ici. Le souffle s'ouvre a 3 200 Hz, ce qui lui donne
-     l'air d'une plume et non d'un coup sourd, et la note remonte a 400 : ses harmoniques
-     tombent alors en plein dans ce qu'un telephone sait rendre. */
-  aile:  (f=1)=>{ souffle(.14,{vol:.15*f,cut:3200});
-                  tone(400,.10,{type:"triangle",vol:.095*f,to:250}); },
+     ---------- ET IL EST DEVENU « LA PLUME » ----------
+     Cinq battements ont ete rendus en fichier et ecoutes cote a cote, cinq coups chacun a
+     la cadence du jeu — un son qui passe seul peut devenir insupportable au dixieme, et
+     c'est la repetition qu'il fallait juger, pas le coup. Celui-ci a ete choisi.
+     IL EST COURT AVANT D'ETRE FORT, et c'est tout son principe : soixante millisecondes
+     de souffle au lieu de cent quarante, mais ouvert a 7 000 Hz, avec une coupure qui
+     REDESCEND a 3 000 pendant qu'il sonne. Le coup se lit alors a l'instant ou il tombe
+     plutot qu'a sa masse — c'est une plume qui claque, pas un sac qu'on secoue — et trois
+     fois par seconde il reste au fond de l'image au lieu de la remplir. La pointe qui
+     l'accompagne est haute et breve, 1 400 Hz sur quatre centiemes de seconde : elle
+     donne au souffle un bord net, ce qu'un bruit seul n'a jamais.
+     Il rend un peu moins d'energie utile que le reglage precedent — 96 pour cent, mesure
+     au-dessus de 500 Hz — mais elle est concentree sur trois fois moins de temps, si bien
+     qu'il s'entend mieux tout en pesant moins. */
+  aile:  (f=1)=>{ souffle(.06,{vol:.20*f,cut:7000,vers:3000});
+                  tone(1400,.04,{type:"triangle",vol:.045*f,to:900}); },
   pose:  ()=>{ souffle(.10,{vol:.10,cut:420}); },
   /* La noix qui se casse : un claquement sec et court, tres haut de spectre. Rien a voir
      avec le choc de la poule, qui est long et grave — celui-ci ne doit pas se lire comme
