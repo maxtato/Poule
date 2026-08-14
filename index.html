@@ -9641,9 +9641,30 @@ const SOL_X=[0.04, 1.03], LUNE_X=[-0.02, 0.86];
    matin — son tour passe donc par-dessus le rebouclage du compteur, d'ou la borne au-dela
    de un. */
 const SOL_TOUR=[0, 0.70], LUNE_TOUR=[0.62, 1.04];
-const SOL_COEUR="#FFE9A8", SOL_BORD="#F3B13F", SOL_HALO="255,205,110";
-const LUNE_COEUR="#F7F2DF", LUNE_TACHE="#E2DAC0", LUNE_HALO="238,240,220";
+const SOL_COEUR="#FFE9A8", SOL_BORD="#F3B13F";
+const LUNE_COEUR="#F7F2DF", LUNE_TACHE="#E2DAC0";
 const ETOILE_N=38, ETOILE_COUL="#FFF8E4";
+/* ---------- ILS SONT DU CIEL, PAS DE LA COURSE ----------
+   Premiere version : un soleil jaune franc, cercle d'encre comme tout le reste du jeu.
+   C'etait une erreur de langage. DANS CE JEU, LE TRAIT D'ENCRE VEUT DIRE « CHOSE » — un
+   ballot, un pneu, un aigle, tout ce qui se heurte en porte un — et un disque cercle
+   d'encre au milieu du ciel se lit donc comme un obstacle qui arrive. On regardait le
+   soleil au lieu de regarder la piste.
+   Le contour part, et la couleur AUSSI. Les deux astres ne sont plus peints avec une
+   teinte a eux : ils sont peints avec LA COULEUR DU CIEL A LEUR HAUTEUR — celle-la meme
+   que le degrade y depose — a laquelle on ne rend qu'un quart de leur propre teinte. Ils
+   restent donc lisibles comme une forme plus claire dans le ciel, jamais comme un objet
+   pose dessus, et ils suivent l'heure sans qu'on ait a leur ecrire une couleur par heure :
+   dores a midi, roses au crepuscule, bleutes la nuit, toujours a la meme distance de leur
+   fond. Le halo suit le meme chemin, en deux fois plus discret encore. */
+const ASTRE_PART=0.26;              // ce qu'on garde de la couleur propre a l'astre
+const ASTRE_HALO=0.05;              // la force d'un anneau de halo, contre 0,13 avant
+/* La couleur du ciel a une hauteur donnee : le degrade va de `haut` en haut du ciel a
+   `bas` sur l'horizon, et c'est exactement le calcul que fait peintCiel. */
+function cielA(jour, y){
+  return mixCss(jour.haut, jour.bas, Math.max(0, Math.min(1, (y+groundY)/groundY)));
+}
+const teinteAstre=(jour, y, coul, part)=>mixCss(cielA(jour,y), coul, part||ASTRE_PART);
 /* De combien il fait nuit, LU SUR LE CIEL LUI-MEME et non sur le numero de l'heure. Les
    etoiles et l'eclat de la lune se reglent ainsi tout seuls si les palettes bougent, et
    ils se rallument au bon moment dans les cinq mondes sans qu'aucun ait sa constante. */
@@ -9667,10 +9688,10 @@ function poseAstre(u, arc, bx, cielH){
 /* Le halo : trois anneaux de plus en plus larges et de plus en plus pales. Pas de flou —
    le mode pixel n'en veut pas, et un flou pose sur une grille de trois pixels bave sur
    tout le ciel. Trois disques suffisent a dire la lumiere. */
-function halo(c, x, y, r, rgb, force){
+function halo(c, x, y, r, coul, force){
+  c.fillStyle=coul;
   for(let i=3;i>=1;i--){
-    c.globalAlpha=force*0.13*(4-i)/3;
-    c.fillStyle="rgba("+rgb+","+1+")";
+    c.globalAlpha=force*ASTRE_HALO*(4-i)/3;
     c.beginPath(); c.arc(x, y, r*(1+0.38*i), 0, 6.2832); c.fill();
   }
   c.globalAlpha=1;
@@ -9700,9 +9721,9 @@ function astres(c, jour){
     c.globalAlpha=1;
   }
 
-  /* LA LUNE. Un disque pale, ses trois mers, et le trait d'encre de tout le jeu — celui
-     des nuages, a la meme force. Elle est deja levee dans le crepuscule, ou elle se voit
-     a peine, et c'est la nuit qu'elle prend son eclat. */
+  /* LA LUNE. Un disque a peine plus clair que le ciel qui l'entoure, et ses trois mers a
+     peine plus sombres que lui. Elle est deja levee dans le crepuscule, ou elle se devine
+     a peine, et c'est la nuit qu'elle se laisse voir. */
   const ul=tourAstre(p, LUNE_TOUR);
   if(ul>=0){
     const [x,y]=poseAstre(ul, LUNE_ARC, LUNE_X, cielH);
@@ -9711,35 +9732,32 @@ function astres(c, jour){
          lune pleine posee sur un ciel de midi se lisait comme un ballon. Elle n'a son
          plein eclat que dans le noir, et se devine a peine le reste du temps. */
       const vu=Math.min(1, -y/(cielH*0.10))*(0.22+0.78*noir);
-      halo(c, x, y, RL, LUNE_HALO, vu);
+      halo(c, x, y, RL, teinteAstre(jour, y, LUNE_COEUR), vu);
       c.globalAlpha=vu;
-      c.fillStyle=LUNE_COEUR;
+      c.fillStyle=teinteAstre(jour, y, LUNE_COEUR);
       c.beginPath(); c.arc(x, y, RL, 0, 6.2832); c.fill();
-      c.fillStyle=LUNE_TACHE;
+      c.fillStyle=teinteAstre(jour, y, LUNE_TACHE);
       for(const [dx,dy,dr] of [[-0.34,-0.22,0.24],[0.28,0.12,0.19],[-0.08,0.42,0.14]]){
         c.beginPath(); c.arc(x+RL*dx, y+RL*dy, RL*dr, 0, 6.2832); c.fill();
       }
-      c.strokeStyle=INK; c.globalAlpha=vu*NUAGE_ENCRE; c.lineWidth=3;
-      c.beginPath(); c.arc(x, y, RL, 0, 6.2832); c.stroke();
       c.globalAlpha=1;
     }
   }
 
-  /* LE SOLEIL, DEVANT LA LUNE quand les deux se croisent au crepuscule : c'est lui qu'on
-     regarde tant qu'il est la. */
+  /* LE SOLEIL, DEVANT LA LUNE quand les deux se croisent au crepuscule. Deux teintes
+     seulement, et si proches l'une de l'autre qu'elles ne font qu'un disque un peu plus
+     dense en son milieu — c'est tout ce qu'il reste de son ancien jaune franc. */
   const us=tourAstre(p, SOL_TOUR);
   if(us>=0){
     const [x,y]=poseAstre(us, SOL_ARC, SOL_X, cielH);
     if(y<0){
       const vu=Math.min(1, -y/(cielH*0.09));
-      halo(c, x, y, R, SOL_HALO, vu*0.9);
+      halo(c, x, y, R, teinteAstre(jour, y, SOL_COEUR), vu*0.9);
       c.globalAlpha=vu;
-      c.fillStyle=SOL_BORD;
+      c.fillStyle=teinteAstre(jour, y, SOL_BORD);
       c.beginPath(); c.arc(x, y, R, 0, 6.2832); c.fill();
-      c.fillStyle=SOL_COEUR;
+      c.fillStyle=teinteAstre(jour, y, SOL_COEUR);
       c.beginPath(); c.arc(x, y, R*0.82, 0, 6.2832); c.fill();
-      c.strokeStyle=INK; c.globalAlpha=vu*NUAGE_ENCRE; c.lineWidth=3;
-      c.beginPath(); c.arc(x, y, R, 0, 6.2832); c.stroke();
       c.globalAlpha=1;
     }
   }
