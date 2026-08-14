@@ -847,21 +847,43 @@
     transform:scale(.88);opacity:.62;
     transition:transform .22s ease,opacity .22s ease,box-shadow .22s ease}
   .niv.actif{transform:scale(1);opacity:1;box-shadow:0 7px 22px rgba(26,22,20,.22)}
-  .niv .vue{position:relative;display:block;border-radius:13px;overflow:hidden}
+  /* ---------- L'ORDRE DES CALQUES DE LA VIGNETTE, ECRIT PLUTOT QUE SUPPOSE ----------
+     Le verrou passait par-dessus le dessin parce qu'il vient apres lui dans le document,
+     et rien de plus. Ca suffit tant que les deux sont peints dans le meme calque ; ca ne
+     suffit plus des que l'un d'eux part dans un calque a lui, et c'est exactement ce qui
+     arrive ici : le dessin d'un terrain ferme porte un FILTRE, ce qui en fait un calque
+     separe, et la carte du premier plan est la seule des cinq a ne pas etre elle-meme
+     composee — les voisines ont une opacite de 0,62 qui les regroupe. Sur un moteur qui
+     compose ces calques dans un autre ordre que le document, le dessin filtre repasse
+     alors PAR-DESSUS le verrou, et le mot disparait — sur la carte du milieu seulement.
+     Le defaut ne se voit pas sur le moteur dont je dispose ici ; ce qui suit ne le repare
+     donc pas au vu d'une mesure, mais retire la SUPPOSITION qui le rend possible. La
+     vignette devient un contexte d'empilement a elle, le dessin y prend l'etage zero et le
+     verrou l'etage un. L'ordre est alors ecrit dans la feuille de style, et plus aucun
+     moteur n'a le droit de l'intervertir. */
+  .niv .vue{position:relative;display:block;border-radius:13px;overflow:hidden;
+    isolation:isolate}
   /* LE VERROU. La vignette passe au gris et s'assombrit, et le mot vient par-dessus. On
      grise par un filtre plutot qu'en repeignant le canevas : le dessin reste ce qu'il est,
      et l'ouverture d'un terrain n'a rien a refaire. */
   .niv.bloque canvas{filter:grayscale(1) brightness(1.06) contrast(.72)}
-  .niv .verrou{position:absolute;inset:0;display:none;
+  .niv .vue canvas{position:relative;z-index:0}
+  .niv .verrou{position:absolute;inset:0;z-index:1;display:none;
     flex-direction:column;align-items:center;justify-content:center;gap:6px;
     padding:8px 10px;text-align:center;
     background:rgba(38,33,30,.46);color:#FFFDF8}
   .niv.bloque .verrou{display:flex}
   .niv .verrou svg{width:clamp(18px,calc(var(--carte,220px)*.13),30px);height:auto;
     flex:none;opacity:.95}
+  /* L'OMBRE DU MOT PORTE PLUS LOIN QU'AVANT, et c'est une ceinture en plus des bretelles.
+     Le mot est blanc et ne se lit que parce qu'un voile sombre le porte ; si ce voile
+     venait a manquer — c'est l'autre explication possible du mot disparu — il resterait
+     du blanc sur un gris pale, c'est-a-dire rien. Une ombre serree et franche le tient
+     desormais tout seul, sur n'importe quel fond. Elle ne coute rien la ou le voile est
+     bien la : sous lui, on ne la distingue pas. */
   .niv .verrou .mot{font-size:clamp(9px,calc(var(--carte,220px)*.055),13px);
     font-weight:800;line-height:1.25;text-wrap:balance;
-    text-shadow:0 1px 3px rgba(20,16,14,.5)}
+    text-shadow:0 1px 2px rgba(20,16,14,.85), 0 0 6px rgba(20,16,14,.65)}
   .niv.bloque .ligne{opacity:.55}
   /* Le bouton de depart devant un terrain ferme : eteint, mais toujours la. Le selecteur
      porte l'identifiant parce que celui du bouton rouge le porte : sans lui, le rouge
