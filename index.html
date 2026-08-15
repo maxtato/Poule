@@ -10675,22 +10675,20 @@ function teinterIle(k, coul, cle){
    donc le nombre a la place ou il est : la meme entree rend toujours la meme sortie, sans
    rien garder. */
 const ecumeHasard = i => { const v=Math.sin(i*12.9898)*43758.5453; return v-Math.floor(v); };
-/* DEUX FAMILLES, DEUX VITESSES, ET C'EST LA PROFONDEUR QUI LE DIT. Tout ce qui flottait
-   derivait au meme pas, plus lentement que l'ecume : une seule parallaxe pour la mer
-   entiere. Or ces choses ne sont pas a la meme distance, et deux d'entre elles le sont
-   meme exactement autant que quelque chose qu'on voit deja bouger.
-   UN BATEAU EST SUR L'EAU QU'ON VOIT, il derive donc au pas de cette eau — celui de
-   l'ecume. Les deux defilent ensemble, et le bateau appartient alors a la mer au lieu de
-   glisser dessus.
-   UNE ILE EST DERRIERE, a l'horizon, et l'horizon ne bouge presque pas : elle prend un
-   cinquieme de ce pas. C'est le meme etagement que les autres mondes donnent a leurs trois
-   plans, applique a la seule bande dont celui-ci dispose.
-   ET L'ECART S'EST CREUSE EN MEME TEMPS QUE LA MER RALENTISSAIT. Elle valait le tiers du
-   pas de l'ecume quand celui-ci etait de neuf dixiemes ; garder le tiers d'un pas plus lent
-   aurait rapproche l'ile de l'eau au lieu de l'en eloigner, et les deux plans se seraient
-   rejoints par le bas. Le rapport passe donc au cinquieme : la mer ralentit, et l'ile
-   ralentit davantage. */
-const MER_DERIVE_ILE=0.11;   // un cinquieme du pas de l'ecume : c'est bien plus loin
+/* DEUX FAMILLES, UNE SEULE VITESSE, ET C'EST CE QU'ON VOIT QUI LE DIT. Elles ont eu deux
+   pas : le bateau celui de l'eau, l'ile le tiers puis le cinquieme de ce pas — l'idee etant
+   qu'une ile est derriere et que l'horizon ne bouge presque pas. Sur le papier c'est la
+   parallaxe ordinaire. A l'ecran c'est un depassement : deux silhouettes posees sur LA MEME
+   LIGNE d'eau, a la meme hauteur, et l'une qui rattrape l'autre puis lui passe devant. Rien
+   dans l'image ne dit qu'elles sont a des distances differentes — ni leur taille, ni leur
+   teinte, ni leur position, qui sont identiques — donc l'oeil ne lit pas de la profondeur,
+   il lit une glissade.
+   ELLES PRENNENT DONC TOUTES DEUX LE PAS DE L'EAU SUR LAQUELLE ELLES SONT POSEES, celui du
+   premier etage de la planche. Une ile et un bateau gardent alors leur ecart pour toujours,
+   et la profondeur de la mer reste dite par les trois etages de l'eau, qui eux se
+   superposent au lieu de se croiser.
+   ON GARDE LES DEUX PASSES, mais pour l'ORDRE et non pour la vitesse : les iles se peignent
+   avant, les bateaux apres, et un bateau qui recouvre une ile passe donc devant elle. */
 function ilots(c, m, jour, larg, eau, rive){
   const bande=rive-eau; if(bande<=0) return;
   const coul=MER_CIME;                 // la premiere rangee de la planche, pour tout le monde
@@ -10701,7 +10699,7 @@ function ilots(c, m, jour, larg, eau, rive){
      deux, ce pas-la est celui de l'eau qui touche le sable — et un bateau pose sur
      l'horizon qui filerait comme l'ecume traverserait l'ecran en deux secondes. Il prend
      donc le pas de la moitie haute de la planche, celle sur laquelle il flotte. */
-  for(const [der, sel] of [[MER_DERIVE_ILE, 0], [MER_DERIVE_LOIN, 1]]){
+  for(const [der, sel] of [[MER_DERIVE_LOIN, 0], [MER_DERIVE_LOIN, 1]]){
     const d=dist*9.2*der;
     const i0=Math.floor((d-MER_ECART)/MER_ECART), i1=Math.ceil((d+larg)/MER_ECART);
     for(let i=i0;i<=i1;i++){
