@@ -7701,10 +7701,12 @@ const MONDES = {
      sait deja faire cela, c'est `fondLevee` — invente pour la ville, dont les immeubles
      laissaient passer du ciel sous leur pied. Ici il ne bouche pas un defaut, il fait tout
      le travail : aucune planche de fond, et l'aplat pour seul horizon.
-     LES COCOTIERS SONT CEUX DE LA JUNGLE. Ils y poussent deja, ils sont dessines, et un
-     cocotier est un cocotier — le reprendre coute une ligne et evite une planche de plus a
-     tenir. Ils sont plus espaces qu'en jungle : la-bas ils se touchent bord a bord pour
-     faire une masse, ici il en faut trois ou quatre par ecran, pas une haie. */
+     ELLE N'A PAS DE SECOND PLAN, ET C'EST UN CHOIX. Les cocotiers de la jungle y ont
+     pousse un temps — ils etaient dessines, et un cocotier est un cocotier. Mais un second
+     plan est fait pour se dresser entre le fond et la course, et sur une plage il n'y a
+     rien entre la mer et le sable : c'est un monde OUVERT, et son fond se voit d'un bout a
+     l'autre. Ils s'en vont donc, et la mer occupe seule l'horizon. La montagne fait de
+     meme, pour une autre raison — chez elle le fond compte trois etages a lui tout seul. */
   plage: {
     nom:"plage",
     brouillon:true,
@@ -7722,10 +7724,7 @@ const MONDES = {
     mer:150,                               // la hauteur d'eau au-dessus de la greve
     sansLigne:true,                        // l'ecume fait la frontiere, pas un trait
     fondLevee:0, fondEnfonce:0,
-    plan2:{jung_palmier:470, jung_palmiers:520},
-    plan2Poids:{jung_palmier:11, jung_palmiers:5},
-    plan2Varie:tailleArbre, plan2Miroir:true, pousse:0.34,
-    plan2Ecart:[150, 420],
+    plan2:{}, plan2Ecart:[0,0], plan2Varie:tailleArbre,
     trottoir:0,
     obstacles:[], oiseaux:[], evenements:[],
   },
