@@ -3771,6 +3771,38 @@ const HEURES_MONTAGNE=[
   {haut:"#677592", bas:"#8392AF", coll:"#6C7FA3", terre:"#C4CBD9", dec:"#6C7589"}   // nuit
 ];
 const BANDEAU_MONTAGNE = "#F7F9FC", FILET_MONTAGNE = "#E2E8F0";
+/* ---------- l'heure de la plage ----------
+   SIXIEME MONDE, ET LE PREMIER DONT LE FOND N'EST PAS DU TERRAIN. Partout ailleurs, `coll`
+   est la teinte d'une silhouette — collines, immeubles, canopee, mesas, cretes — c'est-a-
+   dire une couleur de MATIERE vue de loin, donc sourde. Ici c'est de l'EAU, et l'eau ne se
+   tait pas : c'est la seule couleur franche de toutes les palettes du jeu, 88 d'ecart entre
+   son canal fort et son canal faible la ou la jungle en a 24.
+   LE SABLE EST PLUS CLAIR QUE TOUTES LES AUTRES TERRES, et c'est necessaire : l'ecume est
+   blanche, elle se pose dessus, et il faut qu'elle s'en detache encore. Mesure de l'ecart a
+   l'encre sur la terre : 12,5 pour un a midi, la plus lisible des six.
+   LE CREPUSCULE ET LA NUIT sortent du meme generateur que les cinq autres — meme melange,
+   memes clartes visees. La mer y reste bleue quand les autres mondes virent au violet : ce
+   n'est pas une exception qu'on s'accorde, c'est ce que le generateur produit quand on lui
+   donne une couleur franche, parce qu'il baisse la clarte sans tourner la teinte. */
+const HEURES_PLAGE=[
+  {haut:"#C6DBE5", bas:"#F2F1E8", coll:"#8FC6DE", terre:"#EBDCBC", dec:"#ABB79A"},  // matin
+  {haut:"#B4D9EC", bas:"#EDF2EC", coll:"#8CC7E4", terre:"#E7D6B2", dec:"#A6B392"},  // plein midi
+  {haut:"#E1DBCB", bas:"#F7F1E2", coll:"#8FBCCB", terre:"#E9D2A4", dec:"#B0AC89"},  // fin d'apres-midi
+  {haut:"#77A2CA", bas:"#BFC1B8", coll:"#70AAD1", terre:"#C8A974", dec:"#8B947A"},  // crepuscule
+  {haut:"#5A80A0", bas:"#909CA2", coll:"#5C90B3", terre:"#C7BBA3", dec:"#778273"}   // nuit
+];
+const BANDEAU_PLAGE = "#F6F1E4", FILET_PLAGE = "#DED6C2";
+/* LES CAILLOUX DE LA PLAGE SONT PLUS RARES QUE CEUX D'UN CHAMP. Le meme ecart aurait fait
+   une greve de galets ; une plage est d'abord du sable, et le caillou y est un accident.
+   On garde le tirage a trois etages du champ — serre, moyen, vide franc — mais chaque
+   etage est ecarte, et l'etage serre ne tombe plus qu'une fois sur huit : les galets
+   trainent par deux de temps en temps, pas tout le temps. */
+function solEcartPlage(){
+  const r=Math.random();
+  if(r<0.13) return 22+Math.random()*36;
+  if(r<0.82) return 120+Math.random()*200;
+  return 320+Math.random()*300;
+}
 /* `pas` arrondit chaque canal : les teintes du fond et du second plan servent de
    cle de cache et ne doivent pas changer a chaque image, sinon on repeint tous les
    calques par frame. Le fond couvre de larges aplats, ou un palier trop gros se
@@ -7657,6 +7689,43 @@ const MONDES = {
      CHAINES, parce que les feuilles ne se raboutent pas bord a bord, quand le second plan
      se seme avec des ecarts et ne sait pas chainer. Ce qui devait s'y planter — sapins et
      rochers — s'est finalement plante sur les vallons, ou il suit leur ligne. */
+  /* ---------- LE MONDE « PLAGE » ----------
+     SIXIEME MONDE, ET IL PORTE LE DRAPEAU `brouillon` : il n'a encore ni obstacle, ni
+     oiseau, ni evenement, et un monde ou l'on court sans jamais rien rencontrer n'est pas
+     un monde. Le desert l'a porte avant lui, le temps que ses dessins arrivent. Il ne
+     parait donc pas au carrousel ; c'est un decor qu'on regarde, pas encore un terrain.
+     SON FOND N'EST PAS UNE SILHOUETTE MAIS UN APLAT. Les cinq autres mondes posent au fond
+     des planches decoupees — collines, immeubles, canopee, mesas, cretes — et le ciel se
+     voit entre elles. La mer, elle, n'a pas de decoupe : c'est une bande pleine du haut de
+     la greve jusqu'a l'horizon, et son bord superieur EST la ligne d'horizon. Le moteur
+     sait deja faire cela, c'est `fondLevee` — invente pour la ville, dont les immeubles
+     laissaient passer du ciel sous leur pied. Ici il ne bouche pas un defaut, il fait tout
+     le travail : aucune planche de fond, et l'aplat pour seul horizon.
+     LES COCOTIERS SONT CEUX DE LA JUNGLE. Ils y poussent deja, ils sont dessines, et un
+     cocotier est un cocotier — le reprendre coute une ligne et evite une planche de plus a
+     tenir. Ils sont plus espaces qu'en jungle : la-bas ils se touchent bord a bord pour
+     faire une masse, ici il en faut trois ou quatre par ecran, pas une haie. */
+  plage: {
+    nom:"plage",
+    brouillon:true,
+    heures:HEURES_PLAGE,
+    bandeau:BANDEAU_PLAGE, filet:FILET_PLAGE,
+    /* Une greve ondule a peine — moins qu'un champ laboure, plus qu'un trottoir. */
+    relief:0.5,
+    /* Rien que des cailloux : c'est du sable, et ce qui y traine est un galet. */
+    sol:{natures:[SOL_CAILLOU], suite:()=>0, ecart:solEcartPlage, enfonce:solEnfonce},
+    /* pas une seule planche au fond : la mer est l'aplat, et rien d'autre */
+    fond:{}, fondEcart:[600, 400],
+    fondLevee:150,                         // la hauteur de mer au-dessus de la greve
+    fondEnfonce:0,
+    plan2:{jung_palmier:640, jung_palmiers:700},
+    plan2Poids:{jung_palmier:11, jung_palmiers:5},
+    plan2Varie:tailleArbre, plan2Miroir:true, pousse:0.34,
+    plan2Ecart:[150, 420],
+    trottoir:0,
+    ecume:true,                            // le bord mouille, a la place de la ligne d'horizon
+    obstacles:[], oiseaux:[], evenements:[],
+  },
   montagne: {
     nom:"montagne",
     heures:HEURES_MONTAGNE,
@@ -10226,6 +10295,78 @@ function astres(c, jour){
   c.restore();
 }
 
+/* ---------- L'ECUME ----------
+   LA LIGNE D'HORIZON DE LA PLAGE N'EST PAS UNE LIGNE, C'EST UN BORD MOUILLE. Partout
+   ailleurs le sol rencontre le fond sur un trait de deux unites ; ici la mer rencontre le
+   sable, et ce qu'on voit d'une plage, c'est justement cette frange festonnee que la vague
+   laisse en se retirant.
+   ELLE EST TRACEE ET NON DESSINEE, et c'est un choix. Une planche d'ecume aurait demande
+   une image a raccorder bout a bout, avec le raccord qui se voit ; des disques poses le
+   long du profil du sol epousent le relief tout seuls, ne se repetent jamais tout a fait,
+   et suivent la teinte de l'heure sans qu'on ait a les reteindre.
+   TROIS RANGS, ET C'EST LE MINIMUM POUR QUE CA NE FASSE PAS UN CHAPELET : une nappe pale
+   et large en dessous, les lobes clairs par-dessus, et quelques bulles dedans. Un seul rang
+   de disques se lit comme une rangee de perles ; trois rangs de tailles inegales se lisent
+   comme de la mousse.
+   TOUT EST CALE SUR LA POSITION DANS LE MONDE et non sur l'ecran : chaque lobe tire sa
+   taille d'une suite sans hasard indexee par son abscisse reelle, donc il garde la meme
+   tete d'une image a l'autre et defile avec le sable au lieu de grouiller sur place. */
+const ECUME_PAS = 46;        // l'ecart moyen de deux festons, en unites de monde
+const ECUME_R = [11, 34];    // leur rayon, du plus petit au plus gros
+const ECUME_H = 26;          // la hauteur de la nappe, AU-DESSUS de la ligne d'eau
+const ECUME_CLAIR = 0.90;    // ce que la nappe prend de blanc sur la couleur de la mer
+const ECUME_TROU = 0.45;     // ce qu'en prennent les trous : la mer qui se voit au travers
+const ECUME_TOMBE = 0.30;    // de combien le feston deborde SOUS la ligne, en parts du rayon
+/* une suite sans hasard : meme entree, meme sortie, a jamais */
+const ecumeHasard = i => { const v=Math.sin(i*12.9898)*43758.5453; return v-Math.floor(v); };
+function ecume(c, jour, relief, off, larg){
+  const clair=mixCss(jour.coll, "#FFFFFF", ECUME_CLAIR);
+  const trou=mixCss(jour.coll, "#FFFFFF", ECUME_TROU);
+  const i0=Math.floor((-80+off)/ECUME_PAS), i1=Math.ceil((larg+80+off)/ECUME_PAS);
+  /* UN SEUL CHEMIN, ET C'EST TOUT LE POINT. La premiere version posait des disques isoles
+     le long de la ligne : chacun se lisait pour lui-meme et l'on obtenait un collier de
+     perles. Ici la nappe et les festons sont remplis EN UNE FOIS — la bande rectangulaire
+     au-dessus de la ligne, et les disques qui debordent dessous — de sorte qu'ils fusionnent
+     en une seule masse a bord decoupe. C'est la difference entre des bulles et de la mousse. */
+  c.fillStyle=clair;
+  c.beginPath();
+  c.moveTo(-80-1, relief(-80+off)-ECUME_H);
+  for(let x=-80; x<=larg+80; x+=10) c.lineTo(x, relief(x+off)-ECUME_H);
+  for(let x=larg+80; x>=-80; x-=10) c.lineTo(x, relief(x+off)+1);
+  c.closePath();
+  for(let i=i0;i<=i1;i++){
+    const a=ecumeHasard(i), b2=ecumeHasard(i+0.37);
+    /* l'abscisse est ecartee elle aussi : des festons regulierement espaces se comptent,
+       et ce qui se compte ne ressemble plus a de l'ecume */
+    const q=i*ECUME_PAS+(b2-0.5)*ECUME_PAS*0.7;
+    const r=ECUME_R[0]+a*a*(ECUME_R[1]-ECUME_R[0]);   // a*a : beaucoup de petits, peu de gros
+    const x=q-off, y=relief(q)-r+r*ECUME_TOMBE;
+    c.moveTo(x+r, y); c.arc(x, y, r, 0, 6.2832);
+  }
+  c.fill();
+  /* LES TROUS. Ce ne sont pas des points poses sur la mousse : c'est la mer qu'on voit AU
+     TRAVERS, donc ils prennent la teinte de la mer eclaircie et se tiennent DANS la nappe.
+     Perces dans une masse continue ils se lisent comme des trous ; perces au centre d'un
+     disque isole, comme dans la premiere version, ils en faisaient un anneau. */
+  c.fillStyle=trou;
+  c.beginPath();
+  for(let i=i0;i<=i1;i++){
+    const a=ecumeHasard(i);
+    const r=ECUME_R[0]+a*a*(ECUME_R[1]-ECUME_R[0]);
+    if(r<ECUME_R[0]*1.5) continue;                 // les petits festons n'ont pas de trou
+    const n=1+((ecumeHasard(i*7.1)*3)|0);
+    for(let j=0;j<n;j++){
+      const u=ecumeHasard(i*3+j*7.7), v=ecumeHasard(i*5+j*3.3);
+      const q=i*ECUME_PAS+(ecumeHasard(i+0.37)-0.5)*ECUME_PAS*0.7;
+      const x=q-off+(u-0.5)*r*1.2;
+      const y=relief(q)-r*0.55+(v-0.5)*r*0.7;
+      const rb=r*(0.10+u*0.16);
+      c.moveTo(x+rb, y); c.arc(x, y, rb, 0, 6.2832);
+    }
+  }
+  c.fill();
+}
+
 function peintBandes(c, m, jour, ch, larg, hautGuir, nuages, bd, sm){
   /* LES NUAGES D'ABORD, DERRIERE TOUT LE RESTE. Ils etaient traces apres la crete et ce
      qui se tient au loin : un nuage passait donc DEVANT une colline, devant un immeuble,
@@ -10540,6 +10681,10 @@ function draw(){
      elle marque le fond du champ, elle n'y appartient pas. */
   ctx.strokeStyle=jour.dec; ctx.lineWidth=2; ctx.lineJoin="round"; ctx.lineCap="round";
   ctx.beginPath(); profil(); ctx.stroke();
+
+  /* L'ECUME, LA OU LA MER TOUCHE LE SABLE. Elle se peint APRES le sable et AVANT les
+     cailloux : la nappe passe sur la greve, et les galets emergent au travers. */
+  if(monde.ecume) ecume(ctx, jour, relief, off, VIEW_W);
 
   /* Les details du sol, cales sur la ligne par leur ANCRAGE : le bas du dessin pour ce
      qui pousse dessus, la ligne dessinee pour ce qui la traverse. */
