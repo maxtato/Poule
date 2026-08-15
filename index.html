@@ -3652,7 +3652,7 @@ const HEURES=[
   {haut:"#DCEAF2", bas:"#FBF7F0", coll:"#DBDDD3", terre:"#DED5C2", dec:"#B4B4AE"},  // plein midi
   {haut:"#F8DFB2", bas:"#FDF1DE", coll:"#E6D1AB", terre:"#DFCBA6", dec:"#C3B29A"},  // fin d'apres-midi
   {haut:"#B28DB4", bas:"#E0AD99", coll:"#B19096", terre:"#B2988A", dec:"#927C85"},  // crepuscule
-  {haut:"#685B76", bas:"#90798B", coll:"#796B7B", terre:"#AA9CA3", dec:"#685F6D"}   // nuit
+  {haut:"#726581", bas:"#97878A", coll:"#837780", terre:"#B0A6A5", dec:"#726B75"}   // nuit
 ];
 /* ---------- l'heure de la ville ----------
    La ferme est beige, la ville est GRISE. Ce n'est pas une autre journee : c'est la
@@ -3667,7 +3667,7 @@ const HEURES_VILLE=[
   {haut:"#E4E7E9", bas:"#F8F7F6", coll:"#DBDCD9", terre:"#D0CECA", dec:"#B3B3B2"},  // plein midi
   {haut:"#E6E1D7", bas:"#F5F2EE", coll:"#D7D3CA", terre:"#CBC6BE", dec:"#B8B4AF"},  // fin d'apres-midi
   {haut:"#A698AA", bas:"#C7B3B2", coll:"#A79AA3", terre:"#A39A99", dec:"#8C838B"},  // crepuscule
-  {haut:"#645F72", bas:"#827792", coll:"#6F6A7C", terre:"#A29DA9", dec:"#635F6D"}   // nuit
+  {haut:"#6B6B7B", bas:"#888896", coll:"#787783", terre:"#A9A8AE", dec:"#6C6B75"}   // nuit
 ];
 /* ---------- l'heure de la jungle ----------
    Troisieme monde en preparation : le decor n'est pas encore la, mais sa couleur, si.
@@ -3690,7 +3690,7 @@ const HEURES_JUNGLE=[
   {haut:"#E1E9EC", bas:"#FAF7F0", coll:"#DADFCB", terre:"#DED8B5", dec:"#B0B8A4"},  // plein midi
   {haut:"#EFE0C3", bas:"#F9F2E4", coll:"#DDD5B0", terre:"#DBCEA1", dec:"#B9B798"},  // fin d'apres-midi
   {haut:"#AC94AD", bas:"#D4B4A5", coll:"#AD9E94", terre:"#B6A686", dec:"#8E8980"},  // crepuscule
-  {haut:"#665E73", bas:"#8B7A8F", coll:"#756E77", terre:"#AAA19C", dec:"#656369"}   // nuit
+  {haut:"#6F687D", bas:"#928B91", coll:"#7F7B7C", terre:"#B4AEA2", dec:"#6F7171"}   // nuit
 ];
 /* Le bandeau ne se choisit pas non plus : ce qui compte n'est pas sa couleur mais son
    CONTRASTE avec le ciel qu'il surmonte. Il subit la meme transformation que les heures,
@@ -3719,7 +3719,7 @@ const HEURES_DESERT=[
   {haut:"#EAE7DD", bas:"#FEF6EB", coll:"#EAD9C0", terre:"#ECD2AC", dec:"#C4B194"},  // plein midi
   {haut:"#F8DEB5", bas:"#FEF1DE", coll:"#EDCFA5", terre:"#EAC997", dec:"#CDB088"},  // fin d'apres-midi
   {haut:"#B58C96", bas:"#DFB39A", coll:"#BF9382", terre:"#C79C75", dec:"#A27F6D"},  // crepuscule
-  {haut:"#6E6170", bas:"#8F7A8A", coll:"#7D696F", terre:"#B39B94", dec:"#6E5E60"}   // nuit
+  {haut:"#7A6C77", bas:"#968888", coll:"#897471", terre:"#BDA999", dec:"#7A6B67"}   // nuit
 ];
 /* Le bandeau du desert subit la meme transformation, et l'ecart est verifie comme pour
    les autres — bandeau moins ciel : -7,3 contre -6,9 au champ ; filet moins bandeau :
@@ -3759,7 +3759,7 @@ const HEURES_MONTAGNE=[
      de la roche, pas de la neige. Il garde donc dix points de clarte de plus le soir
      comme la nuit : la neige est ce qui reste visible quand tout s'eteint. */
   {haut:"#878CBA", bas:"#A9AFD1", coll:"#7E8FC3", terre:"#A9B0C6", dec:"#787E97"},  // crepuscule
-  {haut:"#5B5D76", bas:"#71709A", coll:"#5F6486", terre:"#B4B6CA", dec:"#5B5E71"}   // nuit
+  {haut:"#616B85", bas:"#7987A5", coll:"#647596", terre:"#B9C0D0", dec:"#636B7D"}   // nuit
 ];
 const BANDEAU_MONTAGNE = "#F7F9FC", FILET_MONTAGNE = "#E2E8F0";
 /* `pas` arrondit chaque canal : les teintes du fond et du second plan servent de
@@ -11352,9 +11352,9 @@ function panneauRecords(){
    ET C'EST L'ENDROIT DU CODE QUI FAIT TOUT LE TRAVAIL. Peint apres la poule, il aurait
    fallu la decouper : un disque fondu autour d'elle, une toile de service pour le grain,
    un masque a redessiner a chaque image, et son bord aurait fini par se voir. Peint JUSTE
-   AVANT elle, il n'y a rien a decouper — le monde est deja la, la poule pas encore. Un
-   remplissage, une quinzaine de timbres et un depot, sans une seule recopie de la toile :
-   sept millisecondes par image, mesurees.
+   AVANT elle, il n'y a rien a decouper — le monde est deja la, la poule pas encore. Trois
+   des quatre couches — le gris, le grain, le vignettage — tiennent ensemble dans sept
+   millisecondes par image ; la quatrieme, le flou, en demande douze a elle seule.
    CE QUE LA MESURE DIT, une fois l'effet en place. Sur un morceau de ciel — un degrade
    lisse, donc sans grain propre — l'ecart type des clartes passe de 0,7 a 3,6 : le grain
    est bien la. Et en comparant DEUX FOIS LE MEME INSTANT, voile eteint puis allume, les
@@ -11424,6 +11424,45 @@ const VIGN_DIV=4;         // on le peint au quart, puis on l'agrandit
    donc la force dans une seconde petite image, refaite seulement quand la force bouge —
    un depot de 195 sur 422, autant dire rien — et le grand depot se fait toujours a pleine
    opacite. Deux images de 330 ko, et 2,2 ms par image quoi qu'il arrive. */
+/* ---------- LA MISE AU POINT QUI LACHE ----------
+   Le monde passe hors de mise au point pendant le ralenti, et la poule reste nette : elle
+   est peinte apres, comme le reste de l'effet, donc il n'y a rien a decouper autour d'elle.
+   TROIS FACONS DE FLOUTER, TOUTES MESUREES, et l'ecart est enorme :
+     - le filtre du navigateur, qui fait un vrai flou gaussien : 72 ms. Sans appel.
+     - quatre depots decales a un quart d'opacite, qui font une moyenne de voisinage :
+       11,1 ms, mais il faut garder une copie du terrain a sa taille reelle, 11 Mo.
+     - LE FLOU DU PAUVRE : on descend le terrain dans une toile trois fois plus petite, et
+       on la remonte EN LISSANT. C'est l'interpolation qui fait le flou, et elle est faite
+       par la meme machinerie qui agrandit les images. 12,5 ms, et 1,3 Mo.
+   On prend le dernier : a une milliseconde et demie pres du plus rapide, il tient dans un
+   dixieme de sa memoire. Les deux copies vers les toiles de service, elles, ne coutent
+   rien du tout — c'est toujours le grand depot final qui se paie.
+   C'EST DE LOIN LE PLUS CHER DE L'EFFET, et il faut le dire : le gris, le grain et le
+   vignettage tiennent a eux trois dans 7 ms, le flou en demande 12 a lui seul. Ces
+   chiffres sont ceux d'un navigateur qui peint SANS CARTE GRAPHIQUE ; sur un telephone
+   ils tombent, mais je ne peux pas mesurer de combien. RAL_FLOU a zero l'eteint. */
+const RAL_FLOU=3;         // de combien on rapetisse avant de remonter ; 0 pour l'eteindre
+let flouT=null, flouCle="";
+function flouRalenti(f, X, W, Hp){
+  if(!RAL_FLOU) return;
+  const cle=W+"x"+Hp;
+  if(flouCle!==cle){
+    flouCle=cle;
+    flouT=document.createElement("canvas");
+    flouT.width=Math.max(8, Math.round(W/RAL_FLOU));
+    flouT.height=Math.max(8, Math.round(Hp/RAL_FLOU));
+  }
+  const g=flouT.getContext("2d");
+  g.globalCompositeOperation="copy";
+  g.imageSmoothingEnabled=true;
+  g.drawImage(ctx.canvas, X,0,W,Hp, 0,0,flouT.width,flouT.height);
+  /* repose par-dessus a l'opacite de la force : au ralenti naissant l'image n'est
+     qu'a moitie floue, et la mise au point lache progressivement */
+  ctx.imageSmoothingEnabled=true;
+  ctx.globalAlpha=f;
+  ctx.drawImage(flouT, X, 0, W, Hp);
+  ctx.globalAlpha=1;
+}
 const VIGN_MARCHE=0.02;   // de combien la force doit bouger pour refaire la petite image
 let vignBase=null, vignPose=null, vignCle="", vignForce=-1;
 function faisVignette(W, Hp){
@@ -11481,6 +11520,13 @@ function prepareRalenti(){
   if(W<=0||Hp<=0) return;
   grainRalenti();
   poseVignette(0, 0, W, Hp);
+  /* la toile du flou n'a rien a calculer, mais autant qu'elle soit allouee ici aussi */
+  if(RAL_FLOU && flouCle!==W+"x"+Hp){
+    flouCle=W+"x"+Hp;
+    flouT=document.createElement("canvas");
+    flouT.width=Math.max(8, Math.round(W/RAL_FLOU));
+    flouT.height=Math.max(8, Math.round(Hp/RAL_FLOU));
+  }
 }
 let tuilesGrain=null;
 function grainRalenti(){
@@ -11519,6 +11565,10 @@ function voileRalenti(){
   ctx.setTransform(1,0,0,1,0,0);
   ctx.beginPath(); ctx.rect(X,0,W,Hp); ctx.clip();
   ctx.imageSmoothingEnabled=false;
+
+  /* LA MISE AU POINT LACHE EN PREMIER, avant le gris et surtout avant le grain : un grain
+     floute n'est plus un grain, c'est une salissure. La pellicule est devant l'objectif. */
+  flouRalenti(f, X, W, Hp);
 
   /* le monde s'eteint : un gris neutre, sans mode de fusion */
   ctx.globalAlpha=RAL_VOILE*f;
