@@ -10389,19 +10389,24 @@ function mer(c, m, jour, larg){
    tirage ne depend que du numero de l'emplacement, jamais de l'instant. Une ile vue puis
    revue apres un demi-tour reste la meme ile, au meme endroit ; et rien n'a besoin d'etre
    retenu d'une image a l'autre.
-   LEUR PROFONDEUR CHOISIT DEUX CHOSES A LA FOIS : ou se pose leur pied dans la bande d'eau,
-   et de combien elles grandissent. Une ile ne se promene que dans le tiers haut de l'eau,
-   pres de l'horizon, ou est sa place ; une barque descend beaucoup plus bas, jusqu'a la
-   rive. C'est ce qui empeche une montagne d'apparaitre a trois metres du sable. */
+   LA TERRE EST AU FOND, CE QUI FLOTTE EST DEVANT, et les deux ne se melangent pas. Une ile
+   est de la terre : elle ne se pose que sur l'horizon meme, tout au fond, pied a la ligne
+   d'eau — c'est la que se tient une cote, et une seule ligne partagee vaut mieux que cinq
+   iles echelonnees, qui donneraient un archipel au lieu d'un large. Un bateau, lui, est
+   dessus : il se promene dans la moitie basse de l'eau, entre le fond et la rive, la ou il
+   croise le regard.
+   ET LA PROFONDEUR REGLE LEUR TAILLE. Un bateau pris a mi-mer est plus pres que l'horizon ;
+   il grossit donc, un peu, a mesure qu'il descend. La regle est la meme pour tout le monde,
+   mais seules les silhouettes qui descendent en profitent : au fond, elle ne fait rien. */
 const MER_OBJ=[
-  {k:"plage_ile_mont",  h:62, p0:0.00, p1:0.20, part:1},
-  {k:"plage_ile_palm",  h:48, p0:0.02, p1:0.26, part:1},
-  {k:"plage_ile_palm2", h:46, p0:0.02, p1:0.26, part:1},
-  {k:"plage_ile",       h:32, p0:0.00, p1:0.30, part:2},
-  {k:"plage_ile2",      h:30, p0:0.00, p1:0.30, part:2},
-  {k:"plage_voile",     h:24, p0:0.12, p1:0.80, part:2},
-  {k:"plage_voile2",    h:28, p0:0.12, p1:0.72, part:2},
-  {k:"plage_barque",    h:24, p0:0.30, p1:0.86, part:2}
+  {k:"plage_ile_mont",  h:40, p0:0.00, p1:0.00, part:1},
+  {k:"plage_ile_palm",  h:32, p0:0.00, p1:0.00, part:1},
+  {k:"plage_ile_palm2", h:31, p0:0.00, p1:0.00, part:1},
+  {k:"plage_ile",       h:21, p0:0.00, p1:0.00, part:2},
+  {k:"plage_ile2",      h:20, p0:0.00, p1:0.00, part:2},
+  {k:"plage_voile",     h:26, p0:0.34, p1:0.88, part:2},
+  {k:"plage_voile2",    h:30, p0:0.34, p1:0.84, part:2},
+  {k:"plage_barque",    h:26, p0:0.38, p1:0.90, part:2}
 ];
 const MER_TIRAGE=(()=>{ const t=[]; MER_OBJ.forEach((o,i)=>{ for(let n=0;n<o.part;n++) t.push(i); });
   return t; })();
@@ -10410,7 +10415,7 @@ const MER_VIDE=0.42;         // la part des emplacements qu'on laisse vides : la
 const MER_FLOTTE=0.55;       // de combien un objet peut glisser dans son emplacement
 const MER_DERIVE_ILE=0.055;  // plus lent que l'ecume : c'est plus loin
 const MER_ILE_TON=0.22;      // de combien la silhouette descend vers le noir
-const MER_ILE_PRES=0.38;     // ce que la profondeur ajoute a la taille
+const MER_ILE_PRES=0.28;     // ce que la profondeur ajoute a la taille
 /* UN HASARD QUI NE BOUGE PAS. Un Math.random() par image redistribuerait les iles a chaque
    trait ; un tirage retenu dans une liste demanderait d'entretenir cette liste. On prend
    donc le nombre a la place ou il est : la meme entree rend toujours la meme sortie, sans
@@ -10426,7 +10431,7 @@ function ilots(c, m, jour, larg, eau, rive){
     const o=MER_OBJ[MER_TIRAGE[Math.floor(ecumeHasard(i*4+12)*MER_TIRAGE.length)]];
     const im=SPR[o.k]; if(!im || !im.naturalWidth) continue;
     const p=o.p0+ecumeHasard(i*4+13)*(o.p1-o.p0);
-    const hh=o.h*(1-MER_ILE_PRES+MER_ILE_PRES*(p-o.p0)/Math.max(0.01,1-o.p0));
+    const hh=o.h*(1+MER_ILE_PRES*p);
     const ww=hh*im.naturalWidth/im.naturalHeight;
     const x=i*MER_ECART-d+(ecumeHasard(i*4+14)-0.5)*MER_ECART*MER_FLOTTE;
     c.drawImage(teinter(o.k, coul), x, eau+p*bande-hh, ww, hh);
