@@ -4427,6 +4427,9 @@ function resize(){
   const bandU=hautBandeau()/scale;
   bandBas=-skyH+bandU;
   flyCeil=Math.min(-320, -(skyH-HEN_TETE-bandU-PLAF_MARGE));
+  /* le grain et le vignettage du ralenti se taillent sur le terrain : c'est ici qu'on
+     connait sa taille, et c'est ici qu'il faut les fabriquer — jamais pendant le jeu */
+  if(typeof prepareRalenti==="function") prepareRalenti();
 }
 /* La grille des terrains se remesure avec la fenetre : sa taille est deduite de la place
    qui reste, et cette place vient de changer. Elle n'existe pas encore quand resize()
@@ -11350,8 +11353,8 @@ function panneauRecords(){
    fallu la decouper : un disque fondu autour d'elle, une toile de service pour le grain,
    un masque a redessiner a chaque image, et son bord aurait fini par se voir. Peint JUSTE
    AVANT elle, il n'y a rien a decouper — le monde est deja la, la poule pas encore. Un
-   remplissage et une quinzaine de timbres, sans une seule recopie de la toile : quatre
-   millisecondes par image, mesurees.
+   remplissage, une quinzaine de timbres et un depot, sans une seule recopie de la toile :
+   sept millisecondes par image, mesurees.
    CE QUE LA MESURE DIT, une fois l'effet en place. Sur un morceau de ciel — un degrade
    lisse, donc sans grain propre — l'ecart type des clartes passe de 0,7 a 3,6 : le grain
    est bien la. Et en comparant DEUX FOIS LE MEME INSTANT, voile eteint puis allume, les
@@ -11371,13 +11374,114 @@ function panneauRecords(){
    LOGICIELLE, et sur un telephone il tomberait sans doute a presque rien ; mais je ne
    peux pas le verifier ici, et un effet qui triple le cout d'une image sur les appareils
    ou je ne l'ai pas mesure ne se pose pas dans un jeu. Un gris franc a faible opacite
-   coute donc le vingtieme et dit la meme chose : le monde s'eteint. */
+   coute donc le vingtieme et dit la meme chose : le monde s'eteint.
+   ---- LE VIGNETTAGE ----
+   Le gris et le grain disaient « vieille pellicule » a moitie : il leur manquait ce qui,
+   sur une vraie, vient de l'OBJECTIF et non de la pellicule — les bords qui s'eteignent.
+   Un cercle noir en degre autour du centre du terrain, donc, qui ne touche a rien au
+   milieu et qui va au noir aux quatre coins.
+   CE N'EST PAS UNE ELLIPSE, ET LA PREMIERE VERSION L'A APPRIS DUREMENT. Un degre radial
+   s'arrete a son rayon et garde ensuite sa derniere couleur : sur un ecran deux fois et
+   demie plus haut que large, le rayon posé sur la demi-largeur laissait TOUT le haut et
+   tout le bas au noir plein, et il restait un grand ovale clair au milieu du ciel. On ne
+   lisait pas un vignettage mais un projecteur braque sur les nuages, avec le sol dans le
+   noir — c'est-a-dire exactement l'inverse de ce qu'il faut, puisque le jeu se passe en
+   bas de l'image.
+   ON LE CALCULE DONC POINT PAR POINT, en cadre legerement arrondi. La distance au centre
+   n'est pas prise en rond mais en SUPER-ELLIPSE : |x|^n + |y|^n, chaque axe rapporte a sa
+   propre demi-mesure. Avec n autour de trois, les lignes d'egale obscurite epousent la
+   forme de l'ecran — les quatre bords s'eteignent pareil, les coins un peu plus — et c'est
+   ce que fait un vieil objectif. C'est aussi ce que veut dire « ecrase » : un rond aurait
+   laisse le haut et le bas intacts.
+   IL PASSE AU MEME ENDROIT QUE LE RESTE, donc avant la poule : elle court dans le bas de
+   l'image, la ou le vignettage mord, et un objectif l'aurait eteinte avec le reste. Ici
+   elle reste allumee — ce n'est plus tout a fait de l'optique, c'est un projecteur braque
+   sur elle, et c'est exactement ce que l'effet cherche a dire. */
 const RAL_VOILE=0.20;     // le gris pose sur le monde
 const RAL_TEINTE="#7C7975";
 const RAL_GRAIN=0.115;    // le grain
 const RAL_TUILE=512;      // le cote d'une tuile de grain, en points de la toile
 const RAL_TUILES=3;       // combien de tuiles differentes on alterne
 const RAL_GRAINHZ=24;     // et a quelle cadence
+const VIGN_NOIR=0.42;     // le noir des quatre coins
+const VIGN_COEUR=0.42;    // jusqu'ou il ne se passe encore rien, en parts du cadre
+const VIGN_FORME=3.0;     // 2 donne une ellipse, l'infini un rectangle : entre les deux
+const VIGN_COURBE=1.7;    // plus c'est haut, plus le noir se concentre sur les bords
+const VIGN_DIV=4;         // on le peint au quart, puis on l'agrandit
+/* IL EST PEINT UNE FOIS, ET AU QUART. Calcule sur tout le terrain a chaque image, il
+   coutait 16 ms — le meme piege que le mode de fusion plus haut : ce qui a l'air d'un seul
+   remplissage se paie par point. Or un vignettage n'a AUCUN detail : c'est la chose la
+   plus lisse qu'on puisse peindre, et un quart de resolution agrandi AU PLUS PROCHE VOISIN
+   ne s'en distingue pas — d'un point de la petite image a l'autre son opacite ne bouge que
+   d'un demi-centieme, ses marches sont plus fines que ce qu'un ecran montre. Mesure des
+   trois facons de le poser : agrandi en lissant 12,9 ms, au plus proche voisin 2,2, a la
+   taille reelle 1,6 — mais cette derniere demanderait 11 Mo de memoire contre 700 ko.
+   MAIS IL NE SE DEPOSE JAMAIS A OPACITE PARTIELLE, et c'est la mesure qui l'impose. Un
+   agrandissement coute 2,2 ms a pleine opacite et 7,4 a opacite intermediaire : c'est le
+   couple agrandir + doser qui perd le chemin rapide, ni l'un ni l'autre seul (a la taille
+   reelle, doser ne coute que 1,2 ms de plus — mais il faudrait 11 Mo). Or le ralenti passe
+   les neuf dixiemes de sa duree a une force CONSTANTE, celle de la croisiere : on porte
+   donc la force dans une seconde petite image, refaite seulement quand la force bouge —
+   un depot de 195 sur 422, autant dire rien — et le grand depot se fait toujours a pleine
+   opacite. Deux images de 330 ko, et 2,2 ms par image quoi qu'il arrive. */
+const VIGN_MARCHE=0.02;   // de combien la force doit bouger pour refaire la petite image
+let vignBase=null, vignPose=null, vignCle="", vignForce=-1;
+function faisVignette(W, Hp){
+  const w=Math.max(8, Math.round(W/VIGN_DIV)), h=Math.max(8, Math.round(Hp/VIGN_DIV));
+  const c=document.createElement("canvas"); c.width=w; c.height=h;
+  const g=c.getContext("2d");
+  const im=g.createImageData(w,h), d=im.data;
+  const hx=(w-1)/2, hy=(h-1)/2, n=VIGN_FORME;
+  /* la distance des COINS dans la meme mesure : c'est la que le noir est plein */
+  const dCoin=Math.pow(2, 1/n);
+  for(let y=0;y<h;y++){
+    const py=Math.pow(Math.abs((y-hy)/hy), n);
+    for(let x=0;x<w;x++){
+      const px=Math.pow(Math.abs((x-hx)/hx), n);
+      const r=Math.pow(px+py, 1/n);
+      const u=Math.max(0, Math.min(1, (r-VIGN_COEUR)/(dCoin-VIGN_COEUR)));
+      const i=(y*w+x)*4;
+      d[i]=d[i+1]=d[i+2]=0;
+      d[i+3]=Math.round(255*VIGN_NOIR*Math.pow(u, VIGN_COURBE));
+    }
+  }
+  g.putImageData(im,0,0);
+  return c;
+}
+/* le vignettage a la force du moment, dans une petite image qu'on ne refait que si la
+   force a bouge — et qui se depose ensuite a pleine opacite */
+function poseVignette(f, X, W, Hp){
+  const cle=W+"x"+Hp;
+  if(vignCle!==cle){
+    vignCle=cle;
+    vignBase=faisVignette(W, Hp);
+    vignPose=document.createElement("canvas");
+    vignPose.width=vignBase.width; vignPose.height=vignBase.height;
+    vignForce=-1;
+  }
+  if(Math.abs(f-vignForce)>VIGN_MARCHE){
+    vignForce=f;
+    const g=vignPose.getContext("2d");
+    /* « copy » remplace tout : l'opacite du depot devient celle de l'image */
+    g.globalCompositeOperation="copy"; g.globalAlpha=f;
+    g.drawImage(vignBase, 0, 0);
+  }
+  ctx.imageSmoothingEnabled=false;
+  ctx.globalAlpha=1;
+  ctx.drawImage(vignPose, X, 0, W, Hp);
+}
+/* LES TUILES SE FABRIQUENT D'AVANCE, ET C'EST MESURE : le grain coute 43 ms a tirer et le
+   vignettage 23 : soixante-six millisecondes, quatre images perdues. Tirees a la premiere
+   utilisation, elles tombaient exactement au declenchement du mode cool — le pire instant
+   du jeu pour un a-coup, celui ou l'on vient de gober la mouche doree. On les fabrique
+   donc au moment ou l'ecran prend sa taille, c'est-a-dire au chargement. */
+function prepareRalenti(){
+  const k=save.pixel ? kPix : dpr;
+  const W=Math.round(bandW*k), Hp=Math.round(H*k);
+  if(W<=0||Hp<=0) return;
+  grainRalenti();
+  poseVignette(0, 0, W, Hp);
+}
 let tuilesGrain=null;
 function grainRalenti(){
   if(tuilesGrain) return tuilesGrain;
@@ -11425,6 +11529,14 @@ function voileRalenti(){
   ctx.globalAlpha=RAL_GRAIN*f;
   for(let y=0;y<Hp;y+=RAL_TUILE)
     for(let x=X;x<X+W;x+=RAL_TUILE) ctx.drawImage(im,x,y);
+
+  /* le vignettage en dernier : il doit eteindre le grain des bords avec le reste,
+     sinon les coins noirs fourmillent.
+     SANS LISSAGE, et c'est mesure : agrandir en lissant coute 12,9 ms, au plus proche
+     voisin 2,2. Un vignettage n'a aucun detail — d'un point de la petite image a l'autre
+     son opacite ne bouge que d'un demi-centieme — et ses marches d'agrandissement sont
+     donc plus fines que ce qu'un ecran sait montrer. */
+  poseVignette(f, X, W, Hp);
   ctx.restore();
 }
 
