@@ -4486,18 +4486,24 @@ let coolJusqu=-9, coolDepuis=-9, coolArme=true;
    physique de la poule, qui n'en depend pas. Ni pas de temps trafique, ni deux horloges a
    tenir : le compteur `t` reste le temps reel, les dix secondes du pouvoir restent dix
    vraies secondes, et le vol coute toujours autant de plumes par seconde.
-   CE QU'IL EN COUTE, ET C'EST MESURE : la distance avance au meme rythme ralenti, soit
-   27 metres perdus sur les dix secondes a pleine vitesse — 2,7 % d'une course de mille.
-   On ne compense pas : truquer le compteur de metres decrocherait le semis des obstacles
-   et l'heure du jour, qui se reglent tous deux sur lui. Vingt-sept metres contre une
-   demi-seconde de marge a chaque obstacle, le marche est vite fait.
+   CE QU'IL EN COUTE, ET C'EST MESURE — ET LE CHIFFRE QUI ETAIT ECRIT ICI ETAIT FAUX. Il
+   annoncait 27 metres perdus sur les dix secondes, soit 2,7 % d'une course de mille ; la
+   mesure en donne 393, soit 37 % de ce qu'on aurait parcouru. C'est enorme, et c'est
+   normal : le monde tourne a trois dixiemes de sa vitesse pendant dix secondes, il ne peut
+   pas en etre autrement. Le ralenti n'est pas un bonus gratuit, c'est un ECHANGE — on paie
+   des metres pour de la marge a chaque obstacle. On ne compense pas : truquer le compteur
+   decrocherait le semis des obstacles et l'heure du jour, qui se reglent tous deux sur lui.
    LE COUP DE FREIN D'ABORD. Un ralenti qui s'installe en douceur ne se remarque pas ; ce
-   qui se remarque, c'est le CHANGEMENT de vitesse. Le monde tombe donc d'un coup a trois
-   dixiemes de sa vitesse a l'instant ou les lunettes arrivent, y reste un sixieme de
-   seconde, puis remonte au regime de croisiere. Et il reprend sa vitesse pleine en un
-   demi-tour de roue a la fin, plutot que d'un coup sec. */
-const RAL_MONDE=0.62;     // le regime de croisiere du monde pendant le mode cool
-const RAL_COUP=0.30;      // le coup de frein a l'entree
+   qui se remarque, c'est le CHANGEMENT de vitesse. Le monde tombe donc d'un coup sous sa
+   vitesse de croisiere a l'instant ou les lunettes arrivent, y reste un sixieme de seconde,
+   puis remonte. Et il reprend sa vitesse pleine en un demi-tour de roue a la fin, plutot
+   que d'un coup sec.
+   LE REGIME DE CROISIERE EST PASSE DE 62 A 30 CENTIEMES. Le coup de frein descend avec lui
+   — il ne servirait a rien s'il ne mordait plus sous la croisiere. Une consequence a
+   connaitre : la force de l'effet a l'ecran se lit sur ce meme nombre, et elle est
+   desormais au maximum pendant tout le mode cool au lieu de la moitie. */
+const RAL_MONDE=0.30;     // le regime de croisiere du monde pendant le mode cool
+const RAL_COUP=0.18;      // le coup de frein a l'entree
 const RAL_TENUE=0.15;     // ce qu'il tient a fond
 const RAL_REPRISE=0.45;   // et le temps qu'il met a lacher vers le regime de croisiere
 const RAL_SORTIE=0.55;    // le temps que le monde met a reprendre sa vitesse a la fin
@@ -11440,26 +11446,60 @@ const VIGN_DIV=4;         // on le peint au quart, puis on l'agrandit
    C'EST DE LOIN LE PLUS CHER DE L'EFFET, et il faut le dire : le gris, le grain et le
    vignettage tiennent a eux trois dans 7 ms, le flou en demande 12 a lui seul. Ces
    chiffres sont ceux d'un navigateur qui peint SANS CARTE GRAPHIQUE ; sur un telephone
-   ils tombent, mais je ne peux pas mesurer de combien. RAL_FLOU a zero l'eteint. */
+   ils tombent, mais je ne peux pas mesurer de combien. RAL_FLOU a zero l'eteint.
+   ---- ET LE SILLAGE PAR-DESSUS LE MARCHE ----
+   Le decor traine derriere lui ce qu'il vient d'etre : l'obturateur reste ouvert trop
+   longtemps, tout ce qui bouge s'etire, tout ce qui est immobile reste net. Ecrit tout
+   seul, il faudrait garder une copie du terrain a sa taille reelle et la reposer a chaque
+   image — 11 Mo et un depot de plus.
+   Il ne coute RIEN parce qu'il se greffe sur la toile du flou. Cette toile contient deja
+   une reduction du terrain, et elle est remontee une fois par image ; au lieu de la
+   REMPLACER par le terrain de l'instant, on l'y fond : elle devient une memoire qui
+   s'efface toute seule, chaque image comptant pour trois dixiemes et tout le passe pour
+   sept. Une seule remontee produit alors le flou ET le sillage. C'est aussi coherent : un
+   filet de mouvement est flou par nature.
+   ELLE SE REAMORCE A CHAQUE ENTREE EN RALENTI. Entre deux modes cool la memoire n'est pas
+   tenue a jour ; sans reamorcage, le ralenti s'ouvrirait sur le fantome d'un decor vieux
+   de plusieurs centaines de metres. */
 const RAL_FLOU=3;         // de combien on rapetisse avant de remonter ; 0 pour l'eteindre
-let flouT=null, flouCle="";
+const RAL_SILLAGE=0.76;   // ce que le passe garde d'une image a l'autre ; 0 pour l'eteindre
+/* CE QUE LA MEMOIRE PESE DANS L'IMAGE FINALE, et ce nombre n'est pas un detail. Posee a
+   pleine opacite, elle REMPLACE le terrain : l'image du moment ne compte alors que pour ce
+   que la memoire lui laisse, soit un quart, et les objets deviennent des fantomes — on
+   voyait la colline a travers la fourche. Posee a six dixiemes, le terrain net reste
+   dessous et la memoire ne fait que le prolonger : l'objet est solide, sa trainee ne l'est
+   pas. C'est la difference entre un sillage et une surimpression.
+   Et c'est bien la MEMOIRE qu'il faut allonger, pas son opacite : a soixante images par
+   seconde et au tiers de la vitesse, le monde n'avance que de deux points par image, et
+   une memoire courte ne trainerait sur rien du tout. */
+const RAL_MELANGE=0.62;   // ce que la memoire pese dans l'image finale
+let flouT=null, flouCle="", flouVu=false;
 function flouRalenti(f, X, W, Hp){
   if(!RAL_FLOU) return;
   const cle=W+"x"+Hp;
   if(flouCle!==cle){
-    flouCle=cle;
+    flouCle=cle; flouVu=false;
     flouT=document.createElement("canvas");
     flouT.width=Math.max(8, Math.round(W/RAL_FLOU));
     flouT.height=Math.max(8, Math.round(Hp/RAL_FLOU));
   }
   const g=flouT.getContext("2d");
-  g.globalCompositeOperation="copy";
   g.imageSmoothingEnabled=true;
+  if(!flouVu || !RAL_SILLAGE){
+    /* premiere image du ralenti : on remplace, il n'y a pas encore de passe */
+    g.globalCompositeOperation="copy"; g.globalAlpha=1;
+  }else{
+    /* « source-over » a l'opacite a donne fond*(1-a) + present*a : c'est exactement la
+       memoire qui s'efface, et le navigateur la calcule pour nous */
+    g.globalCompositeOperation="source-over"; g.globalAlpha=1-RAL_SILLAGE;
+  }
   g.drawImage(ctx.canvas, X,0,W,Hp, 0,0,flouT.width,flouT.height);
+  g.globalAlpha=1;
+  flouVu=true;
   /* repose par-dessus a l'opacite de la force : au ralenti naissant l'image n'est
      qu'a moitie floue, et la mise au point lache progressivement */
   ctx.imageSmoothingEnabled=true;
-  ctx.globalAlpha=f;
+  ctx.globalAlpha=RAL_MELANGE*f;
   ctx.drawImage(flouT, X, 0, W, Hp);
   ctx.globalAlpha=1;
 }
@@ -11556,7 +11596,9 @@ function forceRalenti(){
 }
 function voileRalenti(){
   const f=forceRalenti();
-  if(f<=0.02) return;
+  /* hors ralenti, la memoire du sillage n'est plus tenue a jour : on la declare perimee
+     pour qu'elle se reamorce sur le decor du moment a la prochaine entree */
+  if(f<=0.02){ flouVu=false; return; }
   const k=save.pixel ? kPix : dpr;
   const X=Math.round(bandX*k), W=Math.round(bandW*k), Hp=Math.round(H*k);
   if(W<=0) return;
