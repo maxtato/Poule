@@ -10541,7 +10541,15 @@ const MER_FILTRE=0.22;       // ce que la mer prend du sable de l'heure
    une planche retrecie est une planche floue. Elle porte donc sa propre hauteur, en clair,
    et la bande de mer se regle desormais sans rien lui demander. */
 const MER_PLANCHE=85.5;      // la hauteur de la planche d'ecume, en unites de monde
-const MER_DERIVE=0.10;       // sa parallaxe : la mer est loin, elle defile lentement
+/* LA LIGNE D'EAU N'EST PAS AU LOIN, ELLE EST SOUS LES PATTES DE LA POULE. Sa parallaxe a
+   longtemps valu un dixieme du sol, comme si l'ecume etait a l'horizon : elle avancait donc
+   dix fois moins vite que le sable sur lequel elle mord, et la greve semblait glisser sous
+   une mer immobile. Or l'ecume touche la greve — c'est la meme distance, ou presque.
+   ELLE PASSE A NEUF DIXIEMES, ET PAS A UN. Un tout petit peu moins vite que les obstacles
+   suffit a dire que c'est du fond : au-dela, l'oeil ne verrait plus deux plans mais un
+   seul, et l'on perdrait la profondeur qu'on vient de gagner. Ce qui flotte suit — voir
+   `ilots` — puisque les bateaux derivent au pas de l'ecume et les iles au tiers de ce pas. */
+const MER_DERIVE=0.88;       // sa parallaxe : la ligne d'eau est presque a nos pieds
 const MER_NOIE=7;            // de combien l'ecume mord sur le sable
 /* L'EAU S'ARRETE AU HAUT DE LA PLANCHE, ET PAS UNE UNITE PLUS BAS. Premiere version : le
    degrade descendait jusqu'a la ligne d'eau, sous la planche d'ecume. Or la planche est
@@ -10734,7 +10742,7 @@ const ecumeHasard = i => { const v=Math.sin(i*12.9898)*43758.5453; return v-Math
    UNE ILE EST DERRIERE, a l'horizon, et l'horizon ne bouge presque pas : elle prend le
    tiers de ce pas. C'est le meme etagement que les autres mondes donnent a leurs trois
    plans, applique a la seule bande dont celui-ci dispose. */
-const MER_DERIVE_ILE=0.033;  // l'horizon ne bouge presque pas
+const MER_DERIVE_ILE=0.29;   // le tiers du pas de l'ecume : c'est plus loin
 function ilots(c, m, jour, larg, eau, rive){
   const bande=rive-eau; if(bande<=0) return;
   const cle=merHaut(jour)+"|"+merBas(jour)+"|"+jour.coll;
