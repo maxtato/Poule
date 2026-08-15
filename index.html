@@ -10980,6 +10980,19 @@ function merPlanche(c, m, jour, larg){
   /* LES COUPES TOMBENT SUR DES RANGEES DE LA TOILE, ET NON ENTRE DEUX. La planche etant
      collee au point pres, sa rangee vaut exactement autant de points d'ecran : les trois
      morceaux se touchent alors sans laisser de fente ni se recouvrir. */
+  /* LES SILHOUETTES AVANT LA PLANCHE, PARCE QU'ELLES SONT DERRIERE.
+     Elles ont d'abord ete peintes avec le fond, et la planche les effacait entierement :
+     elle est opaque, et elles etaient dessous d'un bout a l'autre. On les a donc passees
+     APRES, ou elles se voyaient — mais alors elles se voyaient TROP. Leur pied, celui qui
+     devrait etre sous l'eau, se posait sur la mer et la couvrait d'un aplat : la planche
+     est une photo, elle a du grain et un degrade, et un aplat de la couleur de sa premiere
+     rangee s'y detache comme une gommette. L'ile n'etait plus DANS la mer, elle etait
+     DEVANT.
+     ELLES REVIENNENT DONC AVANT, MAIS ICI ET NON AVEC LE FOND. La difference est tout :
+     peintes ici, elles ont deja le sable derriere elles et la planche par-dessus. Ce qui
+     depasse de l'horizon se detache sur le ciel, ce qui est dessous disparait sous l'eau —
+     et c'est la mer elle-meme, avec son grain, qui fait la coupure. */
+  ilots(c, m, jour, larg, y, COLLINE_BASE);
   const pas=ww*2;
   const bande=(sy, sh, yy, hy, der)=>{
     const d=((dist*9.2*der)%pas+pas)%pas;
@@ -10995,11 +11008,7 @@ function merPlanche(c, m, jour, larg){
     const r0=MER_ETAGES[i][0], r1=(i+1<MER_ETAGES.length)? MER_ETAGES[i+1][0] : H;
     bande(r0, r1-r0, y+hh*r0/H, hh*(r1-r0)/H, MER_ETAGES[i][1]);
   }
-  /* LES SILHOUETTES APRES LA PLANCHE, PARCE QU'ELLES SONT DESSUS. Peintes avec le fond,
-     elles passaient SOUS l'eau : la planche est opaque et les effacait entierement. Elles
-     se posent donc ici, une fois l'eau collee, et prennent la couleur de sa premiere
-     rangee — celle du large — pour que rien ne les detache du bord ou elles se tiennent. */
-  ilots(c, m, jour, larg, y, COLLINE_BASE);
+
 }
 
 function peintBandes(c, m, jour, ch, larg, hautGuir, nuages, bd, sm){
