@@ -10528,11 +10528,13 @@ const MER_PLANCHE=89;        // la hauteur de la bande de mer, en unites de mond
    longtemps valu un dixieme du sol, comme si l'ecume etait a l'horizon : elle avancait donc
    dix fois moins vite que le sable sur lequel elle mord, et la greve semblait glisser sous
    une mer immobile. Or l'ecume touche la greve — c'est la meme distance, ou presque.
-   ELLE PASSE A NEUF DIXIEMES, ET PAS A UN. Un tout petit peu moins vite que les obstacles
-   suffit a dire que c'est du fond : au-dela, l'oeil ne verrait plus deux plans mais un
-   seul, et l'on perdrait la profondeur qu'on vient de gagner. Ce qui flotte suit — voir
-   `ilots` — puisque les bateaux derivent au pas de l'ecume et les iles au tiers de ce pas. */
-const MER_DERIVE=0.88;       // sa parallaxe : la ligne d'eau est presque a nos pieds
+   ELLE EST REDESCENDUE A ONZE VINGTIEMES, APRES ETRE MONTEE A NEUF DIXIEMES. A neuf
+   dixiemes la mer suivait le sable de si pres que les deux plans n'en faisaient plus qu'un :
+   la profondeur qu'on cherchait a gagner en collant l'ecume a la greve, on la reperdait a
+   voir tout le decor filer d'un bloc. A onze vingtiemes l'ecume mord toujours sur le meme
+   sable, mais l'oeil retrouve deux plans. Ce qui flotte suit — voir `ilots` — puisque les
+   bateaux derivent au pas de l'ecume et les iles a un cinquieme de ce pas. */
+const MER_DERIVE=0.55;       // sa parallaxe : la ligne d'eau est presque a nos pieds
 const MER_NOIE=7;            // de combien l'ecume mord sur le sable
 /* LA GREVE DERRIERE LA PLANCHE, ET SUR TOUTE SA HAUTEUR. La mer ne se termine pas sur une
    ligne droite mais sur le bord DECOUPE du dessin : entre deux festons elle ne porte rien.
@@ -10680,10 +10682,15 @@ const ecumeHasard = i => { const v=Math.sin(i*12.9898)*43758.5453; return v-Math
    UN BATEAU EST SUR L'EAU QU'ON VOIT, il derive donc au pas de cette eau — celui de
    l'ecume. Les deux defilent ensemble, et le bateau appartient alors a la mer au lieu de
    glisser dessus.
-   UNE ILE EST DERRIERE, a l'horizon, et l'horizon ne bouge presque pas : elle prend le
-   tiers de ce pas. C'est le meme etagement que les autres mondes donnent a leurs trois
-   plans, applique a la seule bande dont celui-ci dispose. */
-const MER_DERIVE_ILE=0.29;   // le tiers du pas de l'ecume : c'est plus loin
+   UNE ILE EST DERRIERE, a l'horizon, et l'horizon ne bouge presque pas : elle prend un
+   cinquieme de ce pas. C'est le meme etagement que les autres mondes donnent a leurs trois
+   plans, applique a la seule bande dont celui-ci dispose.
+   ET L'ECART S'EST CREUSE EN MEME TEMPS QUE LA MER RALENTISSAIT. Elle valait le tiers du
+   pas de l'ecume quand celui-ci etait de neuf dixiemes ; garder le tiers d'un pas plus lent
+   aurait rapproche l'ile de l'eau au lieu de l'en eloigner, et les deux plans se seraient
+   rejoints par le bas. Le rapport passe donc au cinquieme : la mer ralentit, et l'ile
+   ralentit davantage. */
+const MER_DERIVE_ILE=0.11;   // un cinquieme du pas de l'ecume : c'est bien plus loin
 function ilots(c, m, jour, larg, eau, rive){
   const bande=rive-eau; if(bande<=0) return;
   const coul=MER_CIME;                 // la premiere rangee de la planche, pour tout le monde
