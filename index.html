@@ -2559,45 +2559,64 @@ function houleDu(m){
     return y*amp; };
 }
 /* LES NUAGES SONT TRACES, ET CHACUN A SA FORME.
-   Ils l'ont toujours ete — quelques arcs poses sur une ligne — mais c'etait la MEME forme
-   pour les cinq, a l'echelle pres : deux bosses, toujours les memes deux bosses, et un ciel
-   qui se repetait d'un bout a l'autre. La forme se tire maintenant au sort a la naissance
-   de chaque nuage, et de nouveau chaque fois qu'il ressort par la droite.
-   Ce qu'on tire : DEUX ou TROIS bosses posees sur une meme ligne, chacune de son rayon et
-   de sa hauteur ; quand il y en a trois, celle d'un des deux bouts est une PETITE, moitie
-   moins large que ses voisines. C'est ce qui donne au nuage son cote de travers.
+   Ils l'ont toujours ete — quelques arcs poses sur une ligne — mais c'etait d'abord la MEME
+   forme pour les cinq, puis un tirage au sort : deux ou trois bosses, un rayon et une
+   assise pris au hasard dans une fourchette. Ce sont maintenant NEUF FORMES RELEVEES sur un
+   dessin, et chaque nuage en prend une a sa naissance, et de nouveau chaque fois qu'il
+   ressort par la droite.
    Le contour est celui de la REUNION des cercles : chaque arc s'arrete exactement la ou il
    rencontre le suivant, et ce point-la fait le creux entre deux bosses. Le bas reste
-   ouvert, comme avant — un nuage n'a pas de dessous — et les deux bouts descendent en
-   petits pieds vers la ligne. */
+   ouvert — un nuage n'a pas de dessous — et les deux bouts descendent en petits pieds vers
+   la ligne. C'est ce trace-la qu'on a garde ; seule la table des bosses a change. */
 const NUAGE_ENCRE = 0.25;          // l'encre de leur trait
-const NUAGE_RAYON = [14, 19];      // le rayon d'une grosse bosse, avant l'echelle du nuage
-const NUAGE_PETITE = [0.42, 0.60]; // celui d'une petite, en parts d'une grosse
-const NUAGE_SERRE = [0.66, 0.82];  // la distance entre deux centres, en parts de leurs rayons
-const NUAGE_ASSISE = [0.62, 0.80]; // de combien une bosse est levee, en parts de son rayon
-const NUAGE_PIED = 0.12;           // de combien les deux bouts s'ecartent de la ligne
+const NUAGE_RAYON = [14, 19];      // le rayon de la PLUS GROSSE bosse, avant l'echelle
 const NUAGE_JUPE = 3;              // de combien le remplissage descend SOUS la ligne de pose
+/* LES NEUF FORMES, RELEVEES SUR LE DESSIN ET NON REDESSINEES A VUE.
+   On ne pouvait pas les decouper en planches : un nuage du jeu se remplit du CIEL lui-meme
+   pour cacher celui qui passe derriere, et son trait change de teinte avec l'heure. Il
+   fallait donc retrouver les CERCLES de chaque dessin, pas ses pixels.
+   Deux facons d'y arriver ont echoue avant celle-ci, et toutes deux cherchaient les CREUX
+   du profil pour decouper le contour en bosses. Le releve du profil dit pourquoi c'etait
+   sans espoir : sur ces dessins une bosse ne depasse parfois sa voisine que d'UN pixel, et
+   un creux d'un pixel ne se distingue pas du tremblement du trait.
+   CE QUI A MARCHE, c'est de renoncer aux creux et de mesurer ce qu'on veut vraiment : une
+   reunion de cercles dont le DESSUS soit celui du dessin. On part du sommet, on ajoute un
+   cercle partout ou l'enveloppe passe trop bas, on les laisse tous glisser ensemble, puis
+   on jette ceux qui font double emploi. L'ecart restant se lit en pixels sur le dessin
+   d'origine : de 2,1 a 7,3 selon le nuage, pour un trait qui en fait 6 d'epais.
+   Les nombres : x et y le centre d'une bosse, r son rayon, tous en parts du rayon de la
+   plus grosse — c'est le jeu qui donne l'echelle. y compte vers le HAUT depuis la ligne de
+   pose. p0 et p1 sont les deux pieds, releves sur les pointes du trait. */
+const NUAGE_FORMES=[
+ {b:[{x:0.744,y:-0.317,r:0.709},{x:1.686,y:-1.221,r:1.000},{x:3.144,y:-0.925,r:0.815},
+     {x:4.072,y:-0.050,r:0.672}], p0:-0.011, p1:0.096},
+ {b:[{x:0.564,y:-0.261,r:0.537},{x:1.268,y:-0.742,r:0.571},{x:2.660,y:-0.758,r:0.977},
+     {x:3.818,y:-0.143,r:1.000},{x:4.230,y:-0.473,r:0.563},{x:4.862,y:-0.024,r:0.426}],
+  p0:-0.002, p1:0.105},
+ {b:[{x:0.659,y:-0.235,r:0.628},{x:1.880,y:-0.836,r:1.000},{x:3.159,y:-0.648,r:0.540},
+     {x:4.002,y:-0.030,r:0.570}], p0:-0.069, p1:0.090},
+ {b:[{x:0.838,y:-0.095,r:0.798},{x:2.152,y:-0.743,r:0.940},{x:3.372,y:-0.051,r:1.000}],
+  p0:0.026, p1:0.052},
+ {b:[{x:0.756,y:-0.126,r:0.720},{x:1.568,y:-0.853,r:0.805},{x:3.051,y:-0.831,r:1.000},
+     {x:4.334,y:-0.356,r:0.715},{x:5.282,y:-0.026,r:0.518}], p0:0.019, p1:0.094},
+ {b:[{x:0.627,y:-0.298,r:0.597},{x:1.726,y:-0.931,r:1.000},{x:3.179,y:-0.509,r:0.695},
+     {x:4.235,y:-0.032,r:0.633}], p0:-0.048, p1:0.099},
+ {b:[{x:0.671,y:-0.280,r:0.639},{x:1.667,y:-0.752,r:1.000},{x:2.668,y:-0.708,r:0.585},
+     {x:3.445,y:-0.027,r:0.521}], p0:-0.024, p1:0.083},
+ {b:[{x:0.632,y:-0.208,r:0.602},{x:1.720,y:-0.828,r:0.918},{x:2.846,y:-0.075,r:1.000}],
+  p0:-0.071, p1:0.053},
+ {b:[{x:0.781,y:-0.043,r:0.744},{x:1.939,y:-0.675,r:1.000},{x:3.268,y:-0.051,r:0.976}],
+  p0:0.051, p1:0.075}
+];
 function nuageForme(){
-  const T=(p)=>p[0]+Math.random()*(p[1]-p[0]);
-  const R=T(NUAGE_RAYON);
-  const n=Math.random()<0.45 ? 2 : 3;
-  /* La petite bosse va sur un BOUT : au milieu elle disparaitrait entre ses deux voisines,
-     qui la recouvriraient toutes les deux. */
-  const petite = n===3 ? (Math.random()<0.5 ? 0 : 2) : -1;
-  const b=[];
-  for(let i=0;i<n;i++){
-    const r=R*(i===petite ? T(NUAGE_PETITE) : 0.86+Math.random()*0.28);
-    const y=-r*T(NUAGE_ASSISE);
-    if(i===0){ b.push({x:r*1.05, y, r}); continue; }
-    /* On pose la DISTANCE entre les deux centres, pas l'ecart horizontal : deux bosses de
-       hauteurs tres differentes sont deja eloignees verticalement, et ne compter que
-       l'horizontale les aurait laissees se decoller l'une de l'autre. */
-    const q=b[i-1], d=(q.r+r)*T(NUAGE_SERRE);
-    b.push({x:q.x+Math.sqrt(Math.max(1, d*d-(y-q.y)*(y-q.y))), y, r});
-  }
-  return {b, w:b[n-1].x+b[n-1].r*1.05,
+  const R=NUAGE_RAYON[0]+Math.random()*(NUAGE_RAYON[1]-NUAGE_RAYON[0]);
+  const f=NUAGE_FORMES[(Math.random()*NUAGE_FORMES.length)|0];
+  const b=f.b.map(o=>({x:o.x*R, y:o.y*R, r:o.r*R}));
+  /* La largeur se lit sur TOUTES les bosses, pas sur la derniere : la derniere est la plus
+     a droite par son centre, mais une voisine plus grosse peut deborder plus loin qu'elle. */
+  return {b, w:Math.max(...b.map(o=>o.x+o.r*1.05)),
           haut:Math.min(...b.map(o=>o.y-o.r)),      // son point le plus haut
-          p0:Math.random()*NUAGE_PIED, p1:Math.random()*NUAGE_PIED};
+          p0:f.p0, p1:f.p1};
 }
 /* LE CREUX ENTRE DEUX BOSSES : le plus haut des deux points ou leurs cercles se croisent. */
 function nuageCreux(x0,y0,r0, x1,y1,r1){
