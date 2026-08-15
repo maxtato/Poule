@@ -10643,17 +10643,49 @@ function bandeMer(jour, i){ return eauMer(jour, (i+0.5)/MER_MARCHES); }
    des colonnes voisines partagent presque toujours la meme. On avance donc colonne par
    colonne mais on ne FERME un rectangle qu'au moment ou la hauteur change — une centaine de
    rectangles au lieu de onze cents, pour exactement le meme dessin. */
-const HOULE_AMP=2.5;         // de combien la ligne monte et descend
-const HOULE_ONDES=[[311,1.0],[137,0.6],[59,0.35]];   // periode, poids
-const HOULE_POIDS=HOULE_ONDES.reduce((a,o)=>a+o[1],0);
+/* DEUX TABLES ET NON UNE, PARCE QU'ELLES NE FONT PAS LE MEME TRAVAIL.
+   Une table unique normalisee a une seule amplitude oppose les deux besoins l'un a l'autre :
+   pour que le bord se brise a l'echelle du point, il faut des ondes courtes et raides — et
+   des qu'on leur donne le poids qu'il faut, elles mangent l'amplitude de la houle longue,
+   qui n'est plus visible. Mesure : en poussant les courtes jusqu'a un palier de 2,3
+   colonnes, l'onde de trois cent onze unites ne pesait plus qu'un cinquieme d'unite. La
+   ligne etait devenue un peigne parfaitement regulier — fine, mais sans houle.
+   LA HOULE PORTE LA FORME, LE FRISSON PORTE LE PIXEL. La premiere table est lente et large :
+   c'est elle qui fait monter et descendre la ligne d'eau de deux unites sur la largeur de
+   l'ecran. La seconde est courte et menue — moins d'une unite — et ne sert qu'a faire
+   traverser souvent la grille de l'ecran, ce qui brise le bord au point pres. Chacune garde
+   son amplitude, et l'on n'a plus a arbitrer entre les deux. Le frisson a ete regle par
+   balayage : 0,9 donnait un palier de 4,5 colonnes, 1,2 en donnait 3,3, et 1,5 en donne
+   2,5 — c'est-a-dire celui de l'ecume, a un dixieme pres.
+   LA FINESSE EST UNE MESURE, PAS UN GOUT. On compte la longueur moyenne d'un PALIER — le
+   nombre de colonnes consecutives a la meme hauteur — sur trois bords de la meme image : le
+   contour de la poule en donne 2,1, le bord de l'ecume 2,5, et la ligne d'eau doit en
+   donner autant. Elle en donnait 19,8 avec des dalles choisies a la main, 6 avec une seule
+   table d'ondes moyennes. C'est ce nombre-la qu'il faut regarder, et non la hauteur de la
+   marche : celle-ci vaut deja une rangee de toile, elle ne peut pas etre plus petite, et
+   elle ne dit rien de ce que l'oeil voit. */
+const HOULE_AMP=2.2;         // la houle longue : de combien la ligne monte et descend
+const HOULE_ONDES=[[311,1.0],[137,0.6],[59,0.35]];
+const HOULE_FIN=1.5;         // le frisson court, qui brise le bord au point pres
+const HOULE_FRISSON=[[13.7,1.0],[8.3,1.3],[5.1,0.9]];
+const HOULE_P1=HOULE_ONDES.reduce((a,o)=>a+o[1],0);
+const HOULE_P2=HOULE_FRISSON.reduce((a,o)=>a+o[1],0);
+/* LA MARCHE FAIT UN POINT DE LARGE, PAS DAVANTAGE. On ne choisit pas la largeur d'un gradin,
+   on la demande a la toile : une colonne, exactement, comme la hauteur se cale deja sur une
+   rangee. En mode trait c'est le point d'ecran, en mode pixel le point du tampon — dans les
+   deux cas la finesse meme du dessin de la poule.
+   ET L'ON NE PEINT PAS ONZE CENTS RECTANGLES POUR AUTANT. La hauteur etant quantifiee, des
+   colonnes voisines partagent souvent la meme : on avance colonne par colonne mais on ne
+   FERME un rectangle qu'au moment ou la hauteur change. */
 function houleMer(c, larg, eau, bas, grille, M){
   const d=dist*9.2*MER_DERIVE;
   const pas=(M && M.a) ? 1/Math.abs(M.a) : 1;      // une colonne de la toile, en unites
   const x0=-20, x1=larg+20;
   const hauteur=(x)=>{
-    let v=0;
-    for(const o of HOULE_ONDES) v+=o[1]*Math.sin(2*Math.PI*(x+d)/o[0]);
-    return grille(eau+HOULE_AMP*v/HOULE_POIDS);
+    let v=0, f=0;
+    for(const o of HOULE_ONDES)   v+=o[1]*Math.sin(2*Math.PI*(x+d)/o[0]);
+    for(const o of HOULE_FRISSON) f+=o[1]*Math.sin(2*Math.PI*(x+d)/o[0]);
+    return grille(eau + HOULE_AMP*v/HOULE_P1 + HOULE_FIN*f/HOULE_P2);
   };
   let xa=x0, ya=hauteur(x0);
   for(let x=x0+pas; x<=x1; x+=pas){
