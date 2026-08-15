@@ -10600,19 +10600,33 @@ function eauMer(jour, p){
    la greve est un aplat — et le mode pixel taille toute l'image sur une grille grossiere.
    Une seule surface fondue au milieu de tout cela se voit comme un corps etranger, et en
    mode pixel elle se fait trancher par la grille en marches que personne n'a choisies.
-   ON LES CHOISIT DONC. Sept bandes d'egale hauteur, chacune d'un aplat pris au MILIEU de
-   ce que le degrade continu y aurait mis : le grain est le meme du haut en bas, il ne
-   depend pas de l'endroit ou la grille de l'ecran tombe, et l'etagement de la mer devient
-   une chose qu'on lit au lieu d'une chose qu'on devine. Sept parce que la bande d'eau fait
-   43 unites : chaque marche en prend 6, soit neuf points d'ecran sur le telephone de
-   reference — assez pour se voir, trop peu pour faire escalier.
+   ON LES CHOISIT DONC. Des bandes d'egale hauteur, chacune d'un aplat pris au MILIEU de ce
+   que le degrade continu y aurait mis : le grain est le meme du haut en bas, il ne depend
+   pas de l'endroit ou la grille de l'ecran tombe, et l'etagement de la mer devient une
+   chose qu'on lit au lieu d'une chose qu'on devine.
+   ELLES ETAIENT SEPT, ELLES SONT QUATORZE, et c'est un reglage d'oeil regle sur une mesure.
+   A sept, deux marches voisines etaient separees de DIX crans de clarte pour huit points
+   d'ecran de haut : le degrade se lisait comme une pile de traits, ce qui est le defaut
+   inverse de celui qu'on corrigeait. A quatorze, l'ecart tombe a cinq crans pour quatre
+   points, et le degrade redevient un degrade — mais toujours en aplats, jamais en fondu.
+   Quatre copies de la page ont ete comparees, a sept, onze, quatorze et dix-huit marches ;
+   au-dela de quatorze les marches deviennent invisibles et l'on aurait aussi bien pu garder
+   le degrade continu.
    ELLES SE POSENT SUR LA GRILLE DE L'ECRAN, ET C'EST CE QUI LES REND NETTES. Une marche
    dont le bord tombe entre deux points est adoucie par le navigateur : on retrouve un
    fondu, en pire, puisqu'il ne dure qu'un point. On arrondit donc chaque frontiere au
    point d'ecran le plus proche — pas au point de monde — et les sept aplats sortent francs.
    LA DERNIERE MARCHE DONNE SA COULEUR A TOUT CE QUI FLOTTE, voir `ilots`. */
-const MER_MARCHES=7;
-function bandeMer(jour, i){ return eauMer(jour, (i+0.5)/MER_MARCHES); }
+const MER_MARCHES=14;
+/* LA PREMIERE MARCHE EST LE HAUT DU DEGRADE, LA DERNIERE EN EST LE BAS — exactement, et
+   non « le milieu de la tranche ». Prises au milieu, les deux marches des extremites
+   tombaient un peu en dedans : la derniere valait 208 quand la rangee de coupe de la
+   planche d'ecume en vaut 210, et le raccord — invisible par chance a sept marches — s'est
+   mis a se voir des qu'on est passe a quatorze. Le compte doit tenir pour TOUT nombre de
+   marches, pas pour celui qu'on a sous la main : on repartit donc les marches d'un bout a
+   l'autre, ce qui fait tomber la derniere pile sur la couleur de la planche et la premiere
+   sur celle que portent les iles. */
+function bandeMer(jour, i){ return eauMer(jour, i/Math.max(1,MER_MARCHES-1)); }
 /* ---------- ET LA LIGNE D'HORIZON ONDULE, PAR DALLES ----------
    Une ligne d'eau parfaitement droite d'un bord a l'autre de l'ecran est la seule chose
    du decor qui n'ait aucune irregularite : la crete des collines ondule, le trottoir de
@@ -10777,10 +10791,15 @@ const MER_OBJ=[
 ];
 const MER_TIRAGE=(()=>{ const t=[]; MER_OBJ.forEach((o,i)=>{ for(let n=0;n<o.part;n++) t.push(i); });
   return t; })();
-const MER_ECART=520;         // l'espace nominal entre deux emplacements
-const MER_VIDE=0.42;         // la part des emplacements qu'on laisse vides : la mer respire
+/* PLUS SERRE, ET MOINS DE VIDES. L'emplacement passe de 520 unites a 330 et la part
+   laissee vide de 42 a 28 pour cent : l'ecran montre desormais 1,7 silhouette au lieu de
+   0,9. Une mer nue traversee par une voile toutes les deux largeurs d'ecran ne se lit pas
+   comme un large habite ; c'est un large vide ou passe parfois quelque chose. */
+const MER_ECART=330;         // l'espace nominal entre deux emplacements
+const MER_VIDE=0.28;         // la part des emplacements qu'on laisse vides : la mer respire
 const MER_FLOTTE=0.55;       // de combien un objet peut glisser dans son emplacement
 const MER_ILE_PRES=0.28;     // ce que la profondeur ajoute a la taille
+const MER_ILE_NOIE=3;        // de combien le pied s'enfonce sous la ligne d'eau
 /* TOUTES LES SILHOUETTES PORTENT LA COULEUR DE LA DERNIERE MARCHE, ET UNE SEULE.
    Elles ont d'abord pris la couleur de l'eau de LEUR hauteur, assombrie d'un rapport
    constant : cela se defendait tant que la mer fondait d'un bout a l'autre, puisque chaque
@@ -10870,8 +10889,12 @@ function ilots(c, m, jour, larg, eau, rive){
       const p=o.p0+ecumeHasard(i*4+13)*(o.p1-o.p0);
       const hh=o.h*(1+MER_ILE_PRES*p);
       const ww=hh*im.naturalWidth/im.naturalHeight;
-      const x=i*MER_ECART-d+(ecumeHasard(i*4+14)-0.5)*MER_ECART*MER_FLOTTE;
-      c.drawImage(teinterIle(o.k, coul, cle), x, eau+p*bande-hh, ww, hh);
+        const x=i*MER_ECART-d+(ecumeHasard(i*4+14)-0.5)*MER_ECART*MER_FLOTTE;
+      /* LE PIED PASSE SOUS LA LIGNE D'EAU, ET NON DESSUS. Pose exactement sur l'horizon, une
+         coque montrait sous elle un liseré clair — le bord adouci de la decoupe, pris entre
+         la silhouette et l'eau sombre du large. Trois unites d'enfoncement, et la coque
+         entre dans l'eau comme une coque doit le faire : ce qui depassait est noye. */
+      c.drawImage(teinterIle(o.k, coul, cle), x, eau+p*bande-hh+MER_ILE_NOIE, ww, hh);
     }
   }
 }
