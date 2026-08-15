@@ -10629,20 +10629,40 @@ function bandeMer(jour, i){ return eauMer(jour, (i+0.5)/MER_MARCHES); }
    c'est « un tout petit peu », et au-dela la mer se met a rouler.
    ELLE DEFILE AVEC L'EAU, au pas de l'ecume, sinon la houle serait collee a l'ecran et
    l'on verrait la mer glisser sous une bosse immobile. */
-const HOULE_DALLE=26;        // largeur d'une dalle, en unites de monde
+/* LA MARCHE FAIT UN POINT DE LARGE, PAS DAVANTAGE. Premiere version : des dalles de vingt-
+   six unites, un nombre choisi. C'etait une houle en gros carreaux, plus grossiere que tout
+   ce qui l'entoure — la poule, les obstacles et l'ecume sont tous dessines a l'echelle un,
+   donc au point d'ecran, et la ligne d'eau se voyait crenelee douze fois plus gros qu'eux.
+   ON NE CHOISIT DONC PLUS LA LARGEUR, ON LA DEMANDE A LA TOILE : une colonne de la toile,
+   exactement, comme la hauteur se cale deja sur une rangee de la toile. En mode trait c'est
+   le point d'ecran, en mode pixel c'est le point du tampon — c'est-a-dire, dans les deux
+   cas, la finesse meme de la poule. La houle devient un escalier de vrais pixels au lieu
+   d'un damier.
+   ET L'ON NE PEINT PAS MILLE RECTANGLES POUR AUTANT. La hauteur, elle, est quantifiee : sur
+   toute la largeur de l'ecran la ligne ne prend qu'une poignee de valeurs distinctes, et
+   des colonnes voisines partagent presque toujours la meme. On avance donc colonne par
+   colonne mais on ne FERME un rectangle qu'au moment ou la hauteur change — une centaine de
+   rectangles au lieu de onze cents, pour exactement le meme dessin. */
 const HOULE_AMP=2.5;         // de combien la ligne monte et descend
 const HOULE_ONDES=[[311,1.0],[137,0.6],[59,0.35]];   // periode, poids
-function houleMer(c, larg, eau, bas, grille){
+const HOULE_POIDS=HOULE_ONDES.reduce((a,o)=>a+o[1],0);
+function houleMer(c, larg, eau, bas, grille, M){
   const d=dist*9.2*MER_DERIVE;
-  const n=Math.ceil((larg+40)/HOULE_DALLE)+2;
-  for(let i=-1;i<n;i++){
-    const x=-20+i*HOULE_DALLE;
-    const xm=x+HOULE_DALLE/2+d;                    // le milieu de la dalle, dans le monde
-    let v=0, p=0;
-    for(const [per,poids] of HOULE_ONDES){ v+=poids*Math.sin(2*Math.PI*xm/per); p+=poids; }
-    const y=grille(eau+HOULE_AMP*v/p);
-    if(bas>y) c.fillRect(x, y, HOULE_DALLE+1, bas-y);
+  const pas=(M && M.a) ? 1/Math.abs(M.a) : 1;      // une colonne de la toile, en unites
+  const x0=-20, x1=larg+20;
+  const hauteur=(x)=>{
+    let v=0;
+    for(const o of HOULE_ONDES) v+=o[1]*Math.sin(2*Math.PI*(x+d)/o[0]);
+    return grille(eau+HOULE_AMP*v/HOULE_POIDS);
+  };
+  let xa=x0, ya=hauteur(x0);
+  for(let x=x0+pas; x<=x1; x+=pas){
+    const y=hauteur(x);
+    if(y===ya) continue;
+    if(bas>ya) c.fillRect(xa, ya, x-xa, bas-ya);
+    xa=x; ya=y;
   }
+  if(bas>ya) c.fillRect(xa, ya, x1-xa+pas, bas-ya);
 }
 function mer(c, m, jour, larg){
   const H=m.mer, y1=COLLINE_BASE, hh=MER_PLANCHE;
@@ -10670,7 +10690,7 @@ function mer(c, m, jour, larg){
      quelques unites. Elle descend jusqu'a la DEUXIEME marche et non jusqu'a la sienne : la
      houle creuse par endroits, et sans ce recouvrement on verrait le ciel par les creux. */
   c.fillStyle=bandeMer(jour, 0);
-  houleMer(c, larg, eau, grille(eau+bande), grille);
+  houleMer(c, larg, eau, grille(eau+bande), grille, M);
   ilots(c, m, jour, larg, eau, haut);
   c.fillStyle=jour.terre;
   c.fillRect(-20, haut, larg+40, y1-haut+40);
