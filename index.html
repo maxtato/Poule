@@ -2949,8 +2949,17 @@ const PIGEON_PATTES = {x:26, y:33};
    la MOITIE de la hauteur de vol — la moitie du plafond, pas une valeur ronde — ce qui
    est le cas de 70 % d'entre eux, mesure sur soixante-sept kilometres.
    La part de lacheurs monte de 35 a 50 % en echange, ce qui redonne exactement les 35 %
-   de pigeons d'avant : autant de fientes, mais toutes tombees de haut. */
-const FIENTE_CHANCE = 0.50;              // part des pigeons HAUTS qui en lachent une
+   de pigeons d'avant : autant de fientes, mais toutes tombees de haut.
+   ---- PERSONNE N'EN LACHE PLUS, ET LE MECANISME RESTE ENTIER ----
+   Le pigeon n'en lache plus. Tout ce qui suit — la goutte, sa chute, sa boite de collision
+   rentree d'un quart, ses traits de vitesse, la tache qui palit au sol, l'exception qui la
+   rend inoffensive une fois posee — reste en place et n'attend qu'un lacheur : ce sera la
+   mouette du monde de la plage. On ne SUPPRIME pas un mecanisme qu'on veut reutiliser
+   ailleurs, et on ne le laisse pas non plus tourner en attendant : on debranche celui qui
+   le declenchait, en un seul endroit et sous un nom qui dit pourquoi.
+   Le jour ou la mouette arrive, il n'y a qu'a ecrire son nom ici. */
+const FIENTE_LACHEUR = null;             // qui en lache une ; null = personne, pour l'instant
+const FIENTE_CHANCE = 0.50;              // part des lacheurs HAUTS qui en lachent une
 const FIENTE_HAUTEUR = 0.5;              // part du plafond de vol au-dessus de laquelle il lache
 /* La plage de lacher va d'un bord a l'autre, a cette marge pres. Elle s'ecrit en marge et
    non en abscisses parce que VIEW_W n'existe pas encore ici. */
@@ -3652,7 +3661,7 @@ const HEURES=[
   {haut:"#DCEAF2", bas:"#FBF7F0", coll:"#DBDDD3", terre:"#DED5C2", dec:"#B4B4AE"},  // plein midi
   {haut:"#F8DFB2", bas:"#FDF1DE", coll:"#E6D1AB", terre:"#DFCBA6", dec:"#C3B29A"},  // fin d'apres-midi
   {haut:"#B28DB4", bas:"#E0AD99", coll:"#B19096", terre:"#B2988A", dec:"#927C85"},  // crepuscule
-  {haut:"#726581", bas:"#97878A", coll:"#837780", terre:"#B0A6A5", dec:"#726B75"}   // nuit
+  {haut:"#7F6D8D", bas:"#A48F8E", coll:"#8F7F86", terre:"#BCB1AE", dec:"#7F767F"}   // nuit
 ];
 /* ---------- l'heure de la ville ----------
    La ferme est beige, la ville est GRISE. Ce n'est pas une autre journee : c'est la
@@ -3667,7 +3676,7 @@ const HEURES_VILLE=[
   {haut:"#E4E7E9", bas:"#F8F7F6", coll:"#DBDCD9", terre:"#D0CECA", dec:"#B3B3B2"},  // plein midi
   {haut:"#E6E1D7", bas:"#F5F2EE", coll:"#D7D3CA", terre:"#CBC6BE", dec:"#B8B4AF"},  // fin d'apres-midi
   {haut:"#A698AA", bas:"#C7B3B2", coll:"#A79AA3", terre:"#A39A99", dec:"#8C838B"},  // crepuscule
-  {haut:"#6B6B7B", bas:"#888896", coll:"#787783", terre:"#A9A8AE", dec:"#6C6B75"}   // nuit
+  {haut:"#767486", bas:"#95939F", coll:"#84828C", terre:"#B5B3B7", dec:"#77767F"}   // nuit
 ];
 /* ---------- l'heure de la jungle ----------
    Troisieme monde en preparation : le decor n'est pas encore la, mais sa couleur, si.
@@ -3690,7 +3699,7 @@ const HEURES_JUNGLE=[
   {haut:"#E1E9EC", bas:"#FAF7F0", coll:"#DADFCB", terre:"#DED8B5", dec:"#B0B8A4"},  // plein midi
   {haut:"#EFE0C3", bas:"#F9F2E4", coll:"#DDD5B0", terre:"#DBCEA1", dec:"#B9B798"},  // fin d'apres-midi
   {haut:"#AC94AD", bas:"#D4B4A5", coll:"#AD9E94", terre:"#B6A686", dec:"#8E8980"},  // crepuscule
-  {haut:"#6F687D", bas:"#928B91", coll:"#7F7B7C", terre:"#B4AEA2", dec:"#6F7171"}   // nuit
+  {haut:"#7B7188", bas:"#9E9496", coll:"#8C8783", terre:"#BFB9AB", dec:"#7B7C79"}   // nuit
 ];
 /* Le bandeau ne se choisit pas non plus : ce qui compte n'est pas sa couleur mais son
    CONTRASTE avec le ciel qu'il surmonte. Il subit la meme transformation que les heures,
@@ -3719,7 +3728,7 @@ const HEURES_DESERT=[
   {haut:"#EAE7DD", bas:"#FEF6EB", coll:"#EAD9C0", terre:"#ECD2AC", dec:"#C4B194"},  // plein midi
   {haut:"#F8DEB5", bas:"#FEF1DE", coll:"#EDCFA5", terre:"#EAC997", dec:"#CDB088"},  // fin d'apres-midi
   {haut:"#B58C96", bas:"#DFB39A", coll:"#BF9382", terre:"#C79C75", dec:"#A27F6D"},  // crepuscule
-  {haut:"#7A6C77", bas:"#968888", coll:"#897471", terre:"#BDA999", dec:"#7A6B67"}   // nuit
+  {haut:"#87737D", bas:"#A5938D", coll:"#987F76", terre:"#C8B3A2", dec:"#88766C"}   // nuit
 ];
 /* Le bandeau du desert subit la meme transformation, et l'ecart est verifie comme pour
    les autres — bandeau moins ciel : -7,3 contre -6,9 au champ ; filet moins bandeau :
@@ -3759,7 +3768,7 @@ const HEURES_MONTAGNE=[
      de la roche, pas de la neige. Il garde donc dix points de clarte de plus le soir
      comme la nuit : la neige est ce qui reste visible quand tout s'eteint. */
   {haut:"#878CBA", bas:"#A9AFD1", coll:"#7E8FC3", terre:"#A9B0C6", dec:"#787E97"},  // crepuscule
-  {haut:"#616B85", bas:"#7987A5", coll:"#647596", terre:"#B9C0D0", dec:"#636B7D"}   // nuit
+  {haut:"#677592", bas:"#8392AF", coll:"#6C7FA3", terre:"#C4CBD9", dec:"#6C7589"}   // nuit
 ];
 const BANDEAU_MONTAGNE = "#F7F9FC", FILET_MONTAGNE = "#E2E8F0";
 /* `pas` arrondit chaque canal : les teintes du fond et du second plan servent de
@@ -9092,7 +9101,7 @@ function update(dt){
      seulement s'il vole dans la moitie haute du ciel. Une seule par oiseau : le drapeau
      reste sur lui, qu'il ait lache ou non. */
   for(const o of obs){
-    if(o.k!=="pigeon" || o.lache) continue;
+    if(o.k!==FIENTE_LACHEUR || o.lache) continue;
     if(o.lacheX===undefined)
       o.lacheX=FIENTE_MARGE+Math.random()*(VIEW_W-2*FIENTE_MARGE);
     if(o.x>o.lacheX) continue;
