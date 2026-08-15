@@ -7720,6 +7720,7 @@ const MONDES = {
     /* pas une seule planche au fond : la mer prend toute la place */
     fond:{}, fondEcart:[600, 400],
     mer:150,                               // la hauteur d'eau au-dessus de la greve
+    sansLigne:true,                        // l'ecume fait la frontiere, pas un trait
     fondLevee:0, fondEnfonce:0,
     plan2:{jung_palmier:470, jung_palmiers:520},
     plan2Poids:{jung_palmier:11, jung_palmiers:5},
@@ -10329,20 +10330,34 @@ const MER_HEURE=0.62;        // ce que l'heure du jour pose de sa couleur sur la
 const MER_ECUME=0.56;        // la part de la bande d'eau qu'occupe la planche d'ecume
 const MER_DERIVE=0.10;       // sa parallaxe : la mer est loin, elle defile lentement
 const MER_NOIE=7;            // de combien l'ecume mord sur le sable
+/* L'EAU S'ARRETE AU HAUT DE LA PLANCHE, ET PAS UNE UNITE PLUS BAS. Premiere version : le
+   degrade descendait jusqu'a la ligne d'eau, sous la planche d'ecume. Or la planche est
+   TROUEE — entre deux festons elle ne porte rien — et par ces creux on voyait le degrade
+   continuer jusqu'au sable : une bande bleue sous l'ecume, large de tout ce que les
+   festons ne descendent pas.
+   C'est que la mer, ici, ne se termine pas sur une ligne droite mais sur le bord DECOUPE
+   de la planche. Ce qui doit se trouver derriere elle n'est donc pas de l'eau mais la
+   GREVE, remontee jusqu'au haut de la planche. On peint donc le sable ici, sous la
+   planche et avant elle : ses creux montrent alors du sable, ce qui est le sujet meme du
+   dessin qu'on a decoupe. */
 function mer(c, m, jour, larg){
   const H=m.mer, y1=COLLINE_BASE, hh=H*MER_ECUME;
-  const g=c.createLinearGradient(0, y1-H, 0, y1-hh);
+  const haut=y1-hh+MER_NOIE;                       // le haut de la planche d'ecume
+  const g=c.createLinearGradient(0, y1-H, 0, haut);
   g.addColorStop(0, MER_HAUT); g.addColorStop(1, MER_BAS);
   c.fillStyle=g;
-  c.fillRect(-20, y1-H-JOINT, larg+40, H+JOINT+40);
-  /* l'heure du jour, posee sur l'eau : a midi elle ne fait rien, la nuit elle ramene la
-     mer a la couleur de la palette. C'est ce qui rattache une image fixe a un cycle. */
+  c.fillRect(-20, y1-H-JOINT, larg+40, haut-(y1-H)+JOINT);
+  /* l'heure du jour, posee sur la seule eau : a midi elle ne fait rien, la nuit elle
+     ramene la mer a la couleur de la palette. C'est ce qui rattache une image fixe a un
+     cycle. Le sable, lui, a deja la sienne. */
   const a=MER_HEURE*obscurite(jour.coll);
   if(a>0.004){
     c.globalAlpha=a; c.fillStyle=jour.coll;
-    c.fillRect(-20, y1-H-JOINT, larg+40, H+JOINT+40);
+    c.fillRect(-20, y1-H-JOINT, larg+40, haut-(y1-H)+JOINT);
     c.globalAlpha=1;
   }
+  c.fillStyle=jour.terre;
+  c.fillRect(-20, haut, larg+40, y1-haut+40);
 }
 /* LA PLANCHE D'ECUME TEINTEE A L'HEURE, gardee en reserve. On ne peut pas poser la teinte
    par un rectangle : entre les festons la planche est TRANSPARENTE, et le rectangle
@@ -10699,9 +10714,14 @@ function draw(){
   ctx.lineTo(VIEW_W+20, worldH+40); ctx.lineTo(-20, worldH+40); ctx.closePath();
   ctx.fillStyle=jour.terre; ctx.fill();
   /* La ligne d'horizon prend la teinte des arbres, pas l'encre du premier plan :
-     elle marque le fond du champ, elle n'y appartient pas. */
-  ctx.strokeStyle=jour.dec; ctx.lineWidth=2; ctx.lineJoin="round"; ctx.lineCap="round";
-  ctx.beginPath(); profil(); ctx.stroke();
+     elle marque le fond du champ, elle n'y appartient pas.
+     LA PLAGE N'EN A PAS. Sa frontiere avec le fond n'est pas une ligne mais le bord
+     decoupe de l'ecume ; un trait droit tire par-dessus se lisait comme une bavure — on
+     voyait la mer finir en festons, puis un trait olive traverser le sable dessous. */
+  if(!monde.sansLigne){
+    ctx.strokeStyle=jour.dec; ctx.lineWidth=2; ctx.lineJoin="round"; ctx.lineCap="round";
+    ctx.beginPath(); profil(); ctx.stroke();
+  }
 
   /* L'ECUME, LA OU LA MER TOUCHE LE SABLE. Elle se peint APRES le sable et AVANT les
      cailloux : ses festons mordent sur la greve, et les galets emergent au travers.
