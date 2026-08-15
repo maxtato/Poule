@@ -10505,42 +10505,24 @@ function astres(c, jour){
    l'eau, ses etincelles, et l'ecume au bas. Rien a raccorder puisqu'il n'y a plus deux
    morceaux, rien a quantifier puisque le degrade est celui d'un dessin et non d'un calcul,
    et rien a choisir puisque la main qui l'a fait a deja choisi.
-   CE QUE LE CODE GARDE, ET C'EST TOUT : le filtre de sable et l'heure du jour, poses sur la
-   planche entiere comme ils l'etaient sur l'ecume seule ; la houle, qui monte au-dessus du
-   bord droit de la planche ; le sable derriere, qu'on voit par les trous de l'ecume ; et
-   les silhouettes, qui prennent la couleur de la premiere rangee.
-   LE TRAVAIL EST FAIT HORS DU JEU, une fois pour toutes — voir merbande2.js. La planche est
-   tournee vers la teinte de la mer du monde, sa saturation coupee de moitie a clarte
-   constante, et son large CREUSE par une rampe d'assombrissement qui vaut tout en haut et
-   rien en bas : le visuel est une eau de lagon lumineuse de bout en bout, quand le monde
-   demande que le large soit plus sombre que le sable et le rivage plus clair. */
+   ET LE CODE NE LUI FAIT PLUS RIEN. Il a longtemps pose deux couleurs par-dessus — un
+   filtre de sable pour l'accorder au jaune du monde, et l'heure du jour pour la coucher
+   avec le reste — et prolonge son bord haut par une houle peinte a la main. Chacune de ces
+   trois choses etait un raccord de plus a tenir, et chacune eloignait l'ecran du dessin.
+   Elles disparaissent : la planche est collee telle qu'elle a ete faite, son bord haut est
+   celui du dessin, et ce qu'on voit a l'ecran est ce qu'on voit sur la feuille.
+   CE QUE LE CODE GARDE, ET C'EST TOUT : le sable derriere, qu'on voit par les trous de
+   l'ecume ; et les silhouettes, qui prennent la couleur de la premiere rangee.
+   LE TRAVAIL EST FAIT HORS DU JEU, une fois pour toutes — voir merbande3.js — et il se
+   reduit desormais a un decoupage : on evide le papier par connexite, on pele la frange, on
+   ne touche pas a la couleur. */
 const MER_CIME="#91A4B0";    // la premiere rangee de la planche, relevee sur elle
-const MER_HEURE=0.62;        // ce que l'heure du jour pose de sa couleur sur la mer
-/* LE FILTRE DE SABLE. La couleur dominante du monde est le jaune du sable, et une mer prise
-   telle quelle sur un visuel a part n'en sait rien : posee a cote, son bleu franc tirait
-   l'image vers le froid et les deux moities du decor ne semblaient plus venir du meme
-   endroit. Chaque monde du jeu porte un filtre — c'est ce qui fait qu'un champ, une ville et
-   une jungle sont la meme journee sous un autre soleil ; celui-ci est jaune, et la mer en
-   prend sa part.
-   ELLE LE PREND SUR LE SABLE DE L'HEURE, et non sur un jaune fixe : le filtre suit alors le
-   crepuscule et la nuit tout seul, sans une table de plus a tenir. */
-const MER_FILTRE=0.22;       // ce que la mer prend du sable de l'heure
-/* CE NOMBRE N'EST PAS UN GOUT, C'EST UNE ECHELLE, ET IL NE DOIT DEPENDRE DE RIEN D'AUTRE.
-   Le jeu dessine toutes ses planches a l'echelle UN — mesure sur les siennes : le palmier
-   de la jungle fait 1041 sur 1214 et s'affiche 1214 de haut. La planche d'ecume en fait
-   125 ; a 1,4625 point d'ecran par unite de monde, sa hauteur vaut donc 85,5 unites, et
-   pas une de plus.
-   ELLE S'ECRIVAIT EN PART DE LA BANDE D'EAU, et c'etait un piege arme. Le compte tombait
-   juste — 0,571 de 150 font bien 85,5 — mais il liait deux choses qui n'ont rien a voir :
-   la hauteur d'une image, qui est fixe, et l'epaisseur de la mer, qui est un choix de
-   cadrage. Affiner la bande de mer d'un cinquieme aurait retreci la planche d'autant, et
-   une planche retrecie est une planche floue. Elle porte donc sa propre hauteur, en clair,
-   et la bande de mer se regle desormais sans rien lui demander. */
-/* LA HAUTEUR DE LA BANDE EST CELLE DU DESSIN, ET NON L'INVERSE. La feuille porte 130
-   rangees d'eau franche ; a l'echelle un du jeu, 130 points d'ecran valent 89 unites de
-   monde. Choisir d'abord la hauteur puis etirer le dessin pour l'atteindre, c'etait
-   troquer la nettete de l'ecume — la reference meme du grain du jeu, celle a laquelle on
-   accorde le bord de la houle et le contour de la poule — contre un reglage. */
+/* CE NOMBRE N'EST PAS UN GOUT, C'EST UNE ECHELLE. Le jeu dessine toutes ses planches a
+   l'echelle UN — mesure sur les siennes : le palmier de la jungle fait 1041 sur 1214 et
+   s'affiche 1214 de haut. LA HAUTEUR DE LA BANDE EST DONC CELLE DU DESSIN, ET NON
+   L'INVERSE : la feuille porte 130 rangees d'eau franche, et a 1,4625 point d'ecran par
+   unite de monde, 130 points valent 89 unites. Choisir d'abord la hauteur puis etirer le
+   dessin pour l'atteindre, c'est troquer la nettete de l'ecume contre un reglage. */
 const MER_PLANCHE=89;        // la hauteur de la bande de mer, en unites de monde
 /* LA LIGNE D'EAU N'EST PAS AU LOIN, ELLE EST SOUS LES PATTES DE LA POULE. Sa parallaxe a
    longtemps valu un dixieme du sol, comme si l'ecume etait a l'horizon : elle avancait donc
@@ -10552,156 +10534,25 @@ const MER_PLANCHE=89;        // la hauteur de la bande de mer, en unites de mond
    `ilots` — puisque les bateaux derivent au pas de l'ecume et les iles au tiers de ce pas. */
 const MER_DERIVE=0.88;       // sa parallaxe : la ligne d'eau est presque a nos pieds
 const MER_NOIE=7;            // de combien l'ecume mord sur le sable
-/* L'EAU S'ARRETE AU HAUT DE LA PLANCHE, ET PAS UNE UNITE PLUS BAS. Premiere version : le
-   degrade descendait jusqu'a la ligne d'eau, sous la planche d'ecume. Or la planche est
-   TROUEE — entre deux festons elle ne porte rien — et par ces creux on voyait le degrade
-   continuer jusqu'au sable : une bande bleue sous l'ecume, large de tout ce que les
-   festons ne descendent pas.
-   C'est que la mer, ici, ne se termine pas sur une ligne droite mais sur le bord DECOUPE
-   de la planche. Ce qui doit se trouver derriere elle n'est donc pas de l'eau mais la
-   GREVE, remontee jusqu'au haut de la planche. On peint donc le sable ici, sous la
-   planche et avant elle : ses creux montrent alors du sable, ce qui est le sujet meme du
-   dessin qu'on a decoupe. */
-/* LES DEUX BOUTS DU DEGRADE, ET CE QUE L'EAU VAUT ENTRE LES DEUX. Le degrade etait ecrit
-   dans `mer` et nulle part ailleurs, ce qui suffisait tant que rien ne flottait dessus.
-   Depuis que la mer est une planche, il n'y a plus qu'une couleur a calculer : celle de sa
-   premiere rangee, que la houle prolonge et que les silhouettes portent. */
-/* LE FILTRE DE SABLE, ET NULLE PART AILLEURS. Les trois teintes de la mer — le large, le
-   rivage, et chaque hauteur entre les deux — passent toutes par ici, et la planche d'ecume
-   subit le meme filtre au meme poids. C'est ce qui garantit que le bas du degrade et la
-   rangee de coupe de la planche restent la meme couleur, quoi qu'on regle. */
-/* LE FILTRE DE SABLE ET L'HEURE, LES DEUX SEULES COULEURS QUE LE CODE POSE ENCORE. La
-   planche les subit en entier — voir `merTeinte` — et la houle, qui la prolonge vers le
-   haut, doit subir exactement la meme suite pour que le raccord ne se voie pas. */
-function teinteMer(base, jour){
-  let c=mixCss(base, jour.terre, MER_FILTRE);
-  const a=MER_HEURE*obscurite(jour.coll);
-  if(a>0.004) c=mixCss(c, mixCss(jour.coll, jour.terre, MER_FILTRE), a);
-  return c;
-}
-function cimeMer(jour){ return teinteMer(MER_CIME, jour); }
-/* ---------- ET LA LIGNE D'HORIZON ONDULE, PAR DALLES ----------
-   Une ligne d'eau parfaitement droite d'un bord a l'autre de l'ecran est la seule chose
-   du decor qui n'ait aucune irregularite : la crete des collines ondule, le trottoir de
-   la ville tremble a la main, la neige de la montagne bosselle. La mer, elle, etait tiree
-   a la regle, et cela se voyait d'autant plus qu'elle occupe toute la largeur.
-   ELLE ONDULE DONC — MAIS PAR MARCHES, COMME LE RESTE DE LA MER. Une courbe lissee serait
-   anticrenelee par le navigateur et rendrait un fil trouble d'un point de haut, ce qui est
-   precisement ce que les sept aplats ont ete faits pour eviter. On la peint donc en DALLES
-   de largeur fixe, chacune calee sur la grille de l'ecran comme les marches horizontales :
-   la houle devient une suite de petits gradins francs.
-   TROIS ONDES SUPERPOSEES, ET DES PERIODES SANS RAPPORT ENTRE ELLES — on evite ainsi que
-   le motif se referme sur lui-meme au bout de quelques ecrans, ce qu'une onde unique fait
-   toujours. L'amplitude est de deux unites et demie, soit moins de quatre points d'ecran :
-   c'est « un tout petit peu », et au-dela la mer se met a rouler.
-   ELLE DEFILE AVEC L'EAU, au pas de l'ecume, sinon la houle serait collee a l'ecran et
-   l'on verrait la mer glisser sous une bosse immobile.
-   ET ELLE NE DESCEND JAMAIS SOUS LE BORD DE LA PLANCHE. Depuis que la mer est une image,
-   son bord haut est droit : une houle qui creuserait au-dessous laisserait voir le ciel
-   dans ses creux, entre la vague et la planche. Elle est donc entierement AU-DESSUS —
-   l'onde va de zero a deux fois son amplitude au lieu d'aller de moins un a plus un — et
-   c'est le creux de la houle, et non son milieu, qui touche la planche. */
-/* LA MARCHE FAIT UN POINT DE LARGE, PAS DAVANTAGE. Premiere version : des dalles de vingt-
-   six unites, un nombre choisi. C'etait une houle en gros carreaux, plus grossiere que tout
-   ce qui l'entoure — la poule, les obstacles et l'ecume sont tous dessines a l'echelle un,
-   donc au point d'ecran, et la ligne d'eau se voyait crenelee douze fois plus gros qu'eux.
-   ON NE CHOISIT DONC PLUS LA LARGEUR, ON LA DEMANDE A LA TOILE : une colonne de la toile,
-   exactement, comme la hauteur se cale deja sur une rangee de la toile. En mode trait c'est
-   le point d'ecran, en mode pixel c'est le point du tampon — c'est-a-dire, dans les deux
-   cas, la finesse meme de la poule. La houle devient un escalier de vrais pixels au lieu
-   d'un damier.
-   ET L'ON NE PEINT PAS MILLE RECTANGLES POUR AUTANT. La hauteur, elle, est quantifiee : sur
-   toute la largeur de l'ecran la ligne ne prend qu'une poignee de valeurs distinctes, et
-   des colonnes voisines partagent presque toujours la meme. On avance donc colonne par
-   colonne mais on ne FERME un rectangle qu'au moment ou la hauteur change — une centaine de
-   rectangles au lieu de onze cents, pour exactement le meme dessin. */
-/* DEUX TABLES ET NON UNE, PARCE QU'ELLES NE FONT PAS LE MEME TRAVAIL.
-   Une table unique normalisee a une seule amplitude oppose les deux besoins l'un a l'autre :
-   pour que le bord se brise a l'echelle du point, il faut des ondes courtes et raides — et
-   des qu'on leur donne le poids qu'il faut, elles mangent l'amplitude de la houle longue,
-   qui n'est plus visible. Mesure : en poussant les courtes jusqu'a un palier de 2,3
-   colonnes, l'onde de trois cent onze unites ne pesait plus qu'un cinquieme d'unite. La
-   ligne etait devenue un peigne parfaitement regulier — fine, mais sans houle.
-   LA HOULE PORTE LA FORME, LE FRISSON PORTE LE PIXEL. La premiere table est lente et large :
-   c'est elle qui fait monter et descendre la ligne d'eau de deux unites sur la largeur de
-   l'ecran. La seconde est courte et menue — moins d'une unite — et ne sert qu'a faire
-   traverser souvent la grille de l'ecran, ce qui brise le bord au point pres. Chacune garde
-   son amplitude, et l'on n'a plus a arbitrer entre les deux. Le frisson a ete regle par
-   balayage : 0,9 donnait un palier de 4,5 colonnes, 1,2 en donnait 3,3, et 1,5 en donne
-   2,5 — c'est-a-dire celui de l'ecume, a un dixieme pres.
-   LA FINESSE EST UNE MESURE, PAS UN GOUT. On compte la longueur moyenne d'un PALIER — le
-   nombre de colonnes consecutives a la meme hauteur — sur trois bords de la meme image : le
-   contour de la poule en donne 2,1, le bord de l'ecume 2,5, et la ligne d'eau doit en
-   donner autant. Elle en donnait 19,8 avec des dalles choisies a la main, 6 avec une seule
-   table d'ondes moyennes. C'est ce nombre-la qu'il faut regarder, et non la hauteur de la
-   marche : celle-ci vaut deja une rangee de toile, elle ne peut pas etre plus petite, et
-   elle ne dit rien de ce que l'oeil voit. */
-const HOULE_AMP=2.2;         // la houle longue : de combien la ligne monte et descend
-const HOULE_ONDES=[[311,1.0],[137,0.6],[59,0.35]];
-/* LE FRISSON SE MESURE EN LONGUEUR DE PALIER, PAS EN HAUTEUR DE MARCHE. Le bord montait
-   deja d'un seul point a la fois — mais chaque palier durait trois points et demi, et
-   c'est le palier qu'on voit. La reference est donnee par l'image elle-meme : le bord de
-   l'ecume tient 2.3 colonnes, le dos de la poule 2.1. On raccourcit donc les ondes courtes
-   jusqu'a 2.4, ce qui met le bord de la mer dans la meme famille de points que le reste. */
-const HOULE_FIN=2.0;         // le frisson court, qui brise le bord au point pres
-const HOULE_FRISSON=[[6.7,1.0],[4.1,1.3],[2.3,0.9]];
-const HOULE_P1=HOULE_ONDES.reduce((a,o)=>a+o[1],0);
-const HOULE_P2=HOULE_FRISSON.reduce((a,o)=>a+o[1],0);
-/* LA MARCHE FAIT UN POINT DE LARGE, PAS DAVANTAGE. On ne choisit pas la largeur d'un gradin,
-   on la demande a la toile : une colonne, exactement, comme la hauteur se cale deja sur une
-   rangee. En mode trait c'est le point d'ecran, en mode pixel le point du tampon — dans les
-   deux cas la finesse meme du dessin de la poule.
-   ET L'ON NE PEINT PAS ONZE CENTS RECTANGLES POUR AUTANT. La hauteur etant quantifiee, des
-   colonnes voisines partagent souvent la meme : on avance colonne par colonne mais on ne
-   FERME un rectangle qu'au moment ou la hauteur change. */
-function houleMer(c, larg, eau, bas, grille, M){
-  const d=dist*9.2*MER_DERIVE;
-  const pas=(M && M.a) ? 1/Math.abs(M.a) : 1;      // une colonne de la toile, en unites
-  const x0=-20, x1=larg+20;
-  const hauteur=(x)=>{
-    let v=0, f=0;
-    for(const o of HOULE_ONDES)   v+=o[1]*Math.sin(2*Math.PI*(x+d)/o[0]);
-    for(const o of HOULE_FRISSON) f+=o[1]*Math.sin(2*Math.PI*(x+d)/o[0]);
-    return grille(eau - (HOULE_AMP+HOULE_FIN)
-                      + HOULE_AMP*(1+v/HOULE_P1) + HOULE_FIN*(1+f/HOULE_P2));
-  };
-  let xa=x0, ya=hauteur(x0);
-  for(let x=x0+pas; x<=x1; x+=pas){
-    const y=hauteur(x);
-    if(y===ya) continue;
-    if(bas>ya) c.fillRect(xa, ya, x-xa, bas-ya);
-    xa=x; ya=y;
-  }
-  if(bas>ya) c.fillRect(xa, ya, x1-xa+pas, bas-ya);
-}
+/* LA GREVE DERRIERE LA PLANCHE, ET SUR TOUTE SA HAUTEUR. La mer ne se termine pas sur une
+   ligne droite mais sur le bord DECOUPE du dessin : entre deux festons elle ne porte rien.
+   Ce qui doit se trouver derriere elle n'est donc pas de l'eau mais le sable, remonte
+   jusqu'au haut de la planche — ses creux montrent alors de la greve, ce qui est le sujet
+   meme de l'image qu'on a decoupee. */
 function mer(c, m, jour, larg){
-  const H=m.mer, y1=COLLINE_BASE;
-  const eau=y1-H;                                  // le bord haut de la planche
+  const y1=COLLINE_BASE, eau=y1-m.mer;              // le bord haut de la planche
   /* LA GRILLE SE DEMANDE A LA TOILE, ELLE NE SE RECALCULE PAS. Premiere version : on
      arrondissait au pas theorique, l'inverse de l'echelle du monde vers l'ecran. Or la
      transformation courante ne se resume pas a cette echelle : elle porte aussi un
-     DECALAGE, et un decalage fractionnaire suffit a faire tomber tous les bords entre deux
-     points, ou le navigateur les adoucit. On lit donc la matrice telle qu'elle est, ce qui
-     vaut aussi bien dans la course que sur la vignette du carrousel. */
+     DECALAGE, et un decalage fractionnaire suffit a faire tomber le bord entre deux points,
+     ou le navigateur l'adoucit — une rangee de sable a demi transparente se posait alors
+     juste au-dessus de la planche, et c'est ce lisere chaud qu'on voyait courir a
+     l'horizon. On lit donc la matrice telle qu'elle est, ce qui vaut aussi bien dans la
+     course que sur la vignette du carrousel. */
   const M=c.getTransform();
   const grille = M.d ? (v=>(Math.round(M.d*v+M.f)-M.f)/M.d) : (v=>v);
-  /* LE SABLE D'ABORD, DERRIERE LA PLANCHE, et sur toute sa hauteur. L'eau de la planche est
-     opaque et le couvre entierement ; ce qu'on en voit est ce que les trous de l'ecume
-     laissent passer, c'est-a-dire exactement le sujet du dessin qu'on a decoupe. */
-  /* SON BORD HAUT SE CALE SUR LA GRILLE, comme celui de la houle. Laisse a sa valeur
-     exacte, il tombait ENTRE deux points de la toile et le navigateur l'adoucissait :
-     une rangee de sable a demi transparente se posait juste au-dessus de la planche, et
-     c'est ce liseré chaud qu'on voyait courir a l'horizon. */
   c.fillStyle=jour.terre;
   c.fillRect(-20, grille(eau), larg+40, y1-eau+40);
-  /* LA HOULE ENSUITE, ET ELLE DESCEND SOUS LE BORD DE LA PLANCHE. Arretee pile a l'horizon,
-     elle laissait la premiere rangee du dessin — qui est adoucie, comme tout bord de
-     decoupe — se poser sur le SABLE : un liseré chaud traversait la mer a l'horizon, une
-     rangee a quarante pour cent. On la fait donc mordre deux unites dessous, la ou la
-     planche est franchement opaque. Ces deux unites sont invisibles puisqu'elles sont
-     couvertes, et le bord adouci a desormais de l'eau derriere lui au lieu de la greve. */
-  c.fillStyle=cimeMer(jour);
-  houleMer(c, larg, eau, grille(eau+2), grille, M);
 }
 /* CE QUI SE TIENT DANS L'EAU. Une bande d'eau nue, si bien teintee soit-elle, reste une
    bande : rien n'y dit a quelle distance elle s'arrete, et l'oeil la lit comme un aplat.
@@ -10835,7 +10686,7 @@ const ecumeHasard = i => { const v=Math.sin(i*12.9898)*43758.5453; return v-Math
 const MER_DERIVE_ILE=0.29;   // le tiers du pas de l'ecume : c'est plus loin
 function ilots(c, m, jour, larg, eau, rive){
   const bande=rive-eau; if(bande<=0) return;
-  const coul=cimeMer(jour);            // la premiere rangee de la planche, pour tout le monde
+  const coul=MER_CIME;                 // la premiere rangee de la planche, pour tout le monde
   const cle=coul;
   /* les iles d'abord, qui sont derriere ; les bateaux ensuite, qui passent devant */
   for(const [der, sel] of [[MER_DERIVE_ILE, 0], [MER_DERIVE, 1]]){
@@ -10933,47 +10784,43 @@ function grainSol(c, jour){
     for(let x=X-dx; x<X+W; x+=SABLE_TUILE) c.drawImage(t, x, y);
   c.restore();
 }
-let ecumeT=null, ecumeCle="";
-function merTeinte(im, sable, coul, a){
-  const cle=sable+"|"+coul+"|"+a.toFixed(2)+"|"+im.naturalWidth;
-  if(ecumeCle===cle) return ecumeT;
-  ecumeCle=cle;
-  if(!ecumeT) ecumeT=document.createElement("canvas");
-  ecumeT.width=im.naturalWidth; ecumeT.height=im.naturalHeight;
-  const g=ecumeT.getContext("2d");
-  g.clearRect(0,0,ecumeT.width,ecumeT.height);
-  g.globalCompositeOperation="source-over"; g.globalAlpha=1;
-  g.drawImage(im,0,0);
-  g.globalCompositeOperation="source-atop";
-  /* LE MEME ORDRE QUE L'EAU, SANS QUOI LE RACCORD SE VOIT : le filtre de sable d'abord, a
-     toute heure, l'heure du jour ensuite. La rangee de coupe de la planche et le bas du
-     degrade peint par le code sont la meme couleur au depart ; ils ne le restent que si on
-     leur fait subir exactement la meme suite. */
-  g.globalAlpha=MER_FILTRE; g.fillStyle=sable;
-  g.fillRect(0,0,ecumeT.width,ecumeT.height);
-  if(a>0.004){ g.globalAlpha=a; g.fillStyle=coul;
-    g.fillRect(0,0,ecumeT.width,ecumeT.height); }
-  g.globalAlpha=1;
-  return ecumeT;
-}
+/* LA PLANCHE, COLLEE TELLE QU'ELLE EST. Une reserve teintee la precedait : on recopiait le
+   dessin dans une toile a part, on y posait le filtre de sable et l'heure du jour en
+   « source-atop » — qui ne peint que la ou il y a deja quelque chose, car un rectangle
+   teindrait le sable au travers des festons — et l'on gardait le resultat. Il n'y a plus
+   rien a poser : le dessin part directement a l'ecran.
+   ET SON BORD HAUT SE CALE SUR LA GRILLE. Laisse a sa valeur exacte, il tombe ENTRE deux
+   rangees de la toile et le navigateur reechantillonne la planche entiere pour l'y mettre —
+   une image nette devient alors une image molle, pour un demi-point de decalage. On demande
+   donc la grille a la toile, comme le sable derriere. */
 function merPlanche(c, m, jour, larg){
   const im=SPR.plage_mer; if(!im || !im.naturalWidth) return;
-  const hh=MER_PLANCHE, ww=hh*im.naturalWidth/im.naturalHeight;
+  /* LA GRILLE DE LA TOILE, DANS LES DEUX SENS, ET POUR LA TAILLE AUSSI. Poser la planche a
+     sa valeur exacte la faisait tomber ENTRE deux rangees et entre deux colonnes, et lui
+     demandait en plus 130,16 points de haut pour 130 rangees de dessin : trois raisons de
+     reechantillonner, c'est-a-dire de rendre molle une image qu'on a decoupee nette. On
+     arrondit donc sa hauteur au point d'ecran — quatre centiemes d'unite, invisibles — puis
+     sa largeur dans le meme rapport, puis on cale son coin sur la grille. Le pas du collage
+     valant deux largeurs, toutes les copies suivantes y tombent d'elles-memes. */
+  const M=c.getTransform();
+  const gy = M.d ? (v=>(Math.round(M.d*v+M.f)-M.f)/M.d) : (v=>v);
+  const gx = M.a ? (v=>(Math.round(M.a*v+M.e)-M.e)/M.a) : (v=>v);
+  const hh = M.d ? Math.round(MER_PLANCHE*M.d)/M.d : MER_PLANCHE;
+  const w0 = hh*im.naturalWidth/im.naturalHeight;
+  const ww = M.a ? Math.round(w0*Math.abs(M.a))/Math.abs(M.a) : w0;
   /* SON BORD HAUT EST L'HORIZON, ET C'EST DIT ICI PLUTOT QUE CALCULE AILLEURS. La planche
-     couvre 129 unites ; la mer en compte 122 au-dessus de la greve ; les sept qui restent
+     couvre 89 unites ; la mer en compte 82 au-dessus de la greve ; les sept qui restent
      sont ce dont l'ecume mord sur le sable, et cela decoule de la planche au lieu d'etre
      un reglage de plus a tenir d'accord avec elle. */
-  const y=COLLINE_BASE-m.mer;
-  const plaque=merTeinte(im, jour.terre, mixCss(jour.coll, jour.terre, MER_FILTRE),
-                           MER_HEURE*obscurite(jour.coll));
+  const y=gy(COLLINE_BASE-m.mer);
   /* le pas est de DEUX planches : une a l'endroit, une en miroir */
   const pas=ww*2;
   const d=((dist*9.2*MER_DERIVE)%pas+pas)%pas;
-  for(let x=-d-pas; x<larg+pas; x+=pas){
-    c.drawImage(plaque, x, y, ww, hh);
+  for(let x=gx(-d-pas); x<larg+pas; x+=pas){
+    c.drawImage(im, x, y, ww, hh);
     c.save();
     c.translate(x+2*ww, 0); c.scale(-1,1);
-    c.drawImage(plaque, 0, y, ww, hh);
+    c.drawImage(im, 0, y, ww, hh);
     c.restore();
   }
   /* LES SILHOUETTES APRES LA PLANCHE, PARCE QU'ELLES SONT DESSUS. Peintes avec le fond,
