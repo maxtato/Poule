@@ -7775,7 +7775,13 @@ const MONDES = {
     sol:{natures:[SOL_CAILLOU], suite:()=>0, ecart:solEcartPlage, enfonce:solEnfonce},
     /* pas une seule planche au fond : la mer prend toute la place */
     fond:{}, fondEcart:[600, 400],
-    mer:150,                               // la hauteur d'eau au-dessus de la greve
+    /* LA BANDE DE MER SE COUPE PAR LE HAUT. C'est le seul reglage de cadrage du monde :
+       la planche d'ecume garde sa taille — elle porte la sienne, en clair — et ce nombre
+       ne decide que de la hauteur d'eau LIBRE qu'on laisse au-dessus d'elle. A 150 il en
+       restait 71 unites, ce qui faisait de la mer la bande la plus epaisse du decor et
+       repoussait le ciel ; a 122 il en reste 43, l'horizon descend de vingt-huit unites et
+       le ciel reprend ce que la mer laisse. */
+    mer:122,                               // la hauteur d'eau au-dessus de la greve
     sansLigne:true,                        // l'ecume fait la frontiere, pas un trait
     fondLevee:0, fondEnfonce:0,
     plan2:{}, plan2Ecart:[0,0], plan2Varie:tailleArbre,
@@ -10431,12 +10437,22 @@ const MER_BAS="#BEEBE0";     // et la rangee ou la planche d'ecume commence
    large l'eau est creuse et elle avale la lumiere, pres du bord elle est mince et le sable
    la traverse.
    ON N'EN INVENTE PAS UNE COULEUR NEUVE, on plonge celle du visuel vers une eau profonde,
-   ce qui garde sa teinte — 168 degres avant, 172 apres — et ne lui prend que de la clarte.
-   L'ecart passe a soixante crans. La couleur du BAS, elle, ne se touche pas : c'est celle
-   de la rangee ou la planche d'ecume a ete coupee, et le raccord entre les deux se verrait
-   au premier cran de decalage. */
-const MER_LARGE="#0F3F49";   // l'eau profonde, vers laquelle le large tire
-const MER_FOND=0.30;         // de combien il y tire
+   et l'on ne lui prend que de la clarte. L'ecart va maintenant a QUATRE-VINGTS crans, soit
+   presque le triple de ce que le visuel donnait et la moitie de plus qu'au premier reglage.
+   La dose n'a pas ete choisie sur le calcul : quatre pages ont ete fabriquees, une par
+   dose, et leurs bandes de mer mises cote a cote — 60, 68, 79 et 90 crans d'ecart mesures
+   sur l'image. Au-dela le large quitte le registre pale du jeu ; en deca il ne se voit pas
+   assez, d'autant que la bande de mer s'est affinee en meme temps et qu'un degrade qui
+   court sur moins de hauteur doit descendre plus bas pour se lire pareil. La couleur du BAS, elle, ne se touche pas : c'est celle de la rangee ou la
+   planche d'ecume a ete coupee, et le raccord entre les deux se verrait au premier cran.
+   LA COULEUR PROFONDE A ETE CORRIGEE EN MEME TEMPS QU'ON A FORCE LA DOSE, et il le fallait.
+   La premiere — un bleu d'encre a 190 degres — passait inapercue tant qu'on n'en mettait
+   qu'un tiers : elle ne tirait la teinte du large que de 168 a 172 degres. A la moitie, elle
+   l'aurait portee a 177, c'est-a-dire vers le cyan, et le large aurait cesse d'etre la meme
+   eau que le rivage. Celle-ci est prise a 171 degres, la teinte du visuel meme : on peut y
+   plonger autant qu'on veut, le large reste a 169 et ne perd que de la lumiere. */
+const MER_LARGE="#0D423A";   // l'eau profonde, vers laquelle le large tire
+const MER_FOND=0.62;         // de combien il y tire
 const MER_HEURE=0.62;        // ce que l'heure du jour pose de sa couleur sur la mer
 /* LE FILTRE DE SABLE. La couleur dominante du monde est le jaune du sable, et une mer prise
    telle quelle sur un visuel a part n'en sait rien : posee a cote, son bleu franc tirait
@@ -10447,12 +10463,18 @@ const MER_HEURE=0.62;        // ce que l'heure du jour pose de sa couleur sur la
    ELLE LE PREND SUR LE SABLE DE L'HEURE, et non sur un jaune fixe : le filtre suit alors le
    crepuscule et la nuit tout seul, sans une table de plus a tenir. */
 const MER_FILTRE=0.22;       // ce que la mer prend du sable de l'heure
-const MER_ECUME=0.571;       // la part de la bande d'eau qu'occupe la planche d'ecume
-/* CE NOMBRE N'EST PAS UN GOUT, C'EST UNE ECHELLE. Le jeu dessine toutes ses planches a
-   l'echelle UN — mesure sur les siennes : le palmier de la jungle fait 1041 sur 1214 et
-   s'affiche 1214 de haut. La planche d'ecume fait 1536 de large ; pour qu'elle sorte a 1536
-   points d'ecran sur le telephone de reference, sa hauteur doit valoir 0,571 de la bande de
-   mer. Reglee a 0,56 elle etait agrandie, et une planche agrandie est une planche floue. */
+/* CE NOMBRE N'EST PAS UN GOUT, C'EST UNE ECHELLE, ET IL NE DOIT DEPENDRE DE RIEN D'AUTRE.
+   Le jeu dessine toutes ses planches a l'echelle UN — mesure sur les siennes : le palmier
+   de la jungle fait 1041 sur 1214 et s'affiche 1214 de haut. La planche d'ecume en fait
+   125 ; a 1,4625 point d'ecran par unite de monde, sa hauteur vaut donc 85,5 unites, et
+   pas une de plus.
+   ELLE S'ECRIVAIT EN PART DE LA BANDE D'EAU, et c'etait un piege arme. Le compte tombait
+   juste — 0,571 de 150 font bien 85,5 — mais il liait deux choses qui n'ont rien a voir :
+   la hauteur d'une image, qui est fixe, et l'epaisseur de la mer, qui est un choix de
+   cadrage. Affiner la bande de mer d'un cinquieme aurait retreci la planche d'autant, et
+   une planche retrecie est une planche floue. Elle porte donc sa propre hauteur, en clair,
+   et la bande de mer se regle desormais sans rien lui demander. */
+const MER_PLANCHE=85.5;      // la hauteur de la planche d'ecume, en unites de monde
 const MER_DERIVE=0.10;       // sa parallaxe : la mer est loin, elle defile lentement
 const MER_NOIE=7;            // de combien l'ecume mord sur le sable
 /* L'EAU S'ARRETE AU HAUT DE LA PLANCHE, ET PAS UNE UNITE PLUS BAS. Premiere version : le
@@ -10480,7 +10502,7 @@ function eauMer(jour, p){
   return c;
 }
 function mer(c, m, jour, larg){
-  const H=m.mer, y1=COLLINE_BASE, hh=H*MER_ECUME;
+  const H=m.mer, y1=COLLINE_BASE, hh=MER_PLANCHE;
   const haut=y1-hh+MER_NOIE;                       // le haut de la planche d'ecume
   const g=c.createLinearGradient(0, y1-H, 0, haut);
   g.addColorStop(0, merHaut(jour));
@@ -10524,15 +10546,22 @@ function mer(c, m, jour, larg){
    ET LA PROFONDEUR REGLE LEUR TAILLE. Un bateau pris a mi-mer est plus pres que l'horizon ;
    il grossit donc, un peu, a mesure qu'il descend. La regle est la meme pour tout le monde,
    mais seules les silhouettes qui descendent en profitent : au fond, elle ne fait rien. */
+/* ET CE QUI FLOTTE SUIT LA BANDE QUAND ELLE MAIGRIT. L'eau libre est passee de 71 unites a
+   43 : les bateaux, qui vivent dedans, y tenaient a l'aise et n'y tiennent plus. Le plus
+   grand faisait 30 unites et grossissait jusqu'a 37 en approchant du bord — pose a
+   quatre-vingt-dix pour cent de la bande, il serait sorti par le haut, c'est-a-dire
+   au-dessus de l'horizon. Ils descendent donc au meme rapport que la bande. Les iles, elles,
+   ne perdent qu'un sixieme : leur pied est sur l'horizon et leur corps monte dans le ciel,
+   la largeur de l'eau ne les contraint pas — c'est leur poids dans l'image qui se regle. */
 const MER_OBJ=[
-  {k:"plage_ile_mont",  h:40, p0:0.00, p1:0.00, part:1},
-  {k:"plage_ile_palm",  h:32, p0:0.00, p1:0.00, part:1},
-  {k:"plage_ile_palm2", h:31, p0:0.00, p1:0.00, part:1},
-  {k:"plage_ile",       h:21, p0:0.00, p1:0.00, part:2},
-  {k:"plage_ile2",      h:20, p0:0.00, p1:0.00, part:2},
-  {k:"plage_voile",     h:26, p0:0.34, p1:0.88, part:2},
-  {k:"plage_voile2",    h:30, p0:0.34, p1:0.84, part:2},
-  {k:"plage_barque",    h:26, p0:0.38, p1:0.90, part:2}
+  {k:"plage_ile_mont",  h:34, p0:0.00, p1:0.00, part:1},
+  {k:"plage_ile_palm",  h:27, p0:0.00, p1:0.00, part:1},
+  {k:"plage_ile_palm2", h:26, p0:0.00, p1:0.00, part:1},
+  {k:"plage_ile",       h:18, p0:0.00, p1:0.00, part:2},
+  {k:"plage_ile2",      h:17, p0:0.00, p1:0.00, part:2},
+  {k:"plage_voile",     h:16, p0:0.34, p1:0.88, part:2},
+  {k:"plage_voile2",    h:19, p0:0.34, p1:0.84, part:2},
+  {k:"plage_barque",    h:16, p0:0.38, p1:0.90, part:2}
 ];
 const MER_TIRAGE=(()=>{ const t=[]; MER_OBJ.forEach((o,i)=>{ for(let n=0;n<o.part;n++) t.push(i); });
   return t; })();
@@ -10632,7 +10661,7 @@ function ecumeTeinte(im, sable, coul, a){
 }
 function ecume(c, m, jour, larg){
   const im=SPR.plage_ecume; if(!im || !im.naturalWidth) return;
-  const H=m.mer, hh=H*MER_ECUME, ww=hh*im.naturalWidth/im.naturalHeight;
+  const hh=MER_PLANCHE, ww=hh*im.naturalWidth/im.naturalHeight;
   const y=COLLINE_BASE-hh+MER_NOIE;
   const plaque=ecumeTeinte(im, jour.terre, mixCss(jour.coll, jour.terre, MER_FILTRE),
                            MER_HEURE*obscurite(jour.coll));
