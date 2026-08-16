@@ -5005,6 +5005,16 @@ const HEN_X=150;
 const hen={x:HEN_X,y:0,vy:0,ground:true,feathers:1,anim:0,flap:0,dead:false};
 let speed=0, dist=0, t=0, shake=0, hold=false, holdT=0, eaten=0;
 let speedBrut=0;                   // la meme, sans le freinage du ralenti
+/* LE CHEMIN PARCOURU, EN UNITES DE MONDE, ET POURQUOI IL NE SUFFIT PAS DE LIRE `dist`.
+   `dist` compte les metres de la COURSE : il vaut zero au menu et n'avance que la partie
+   lancee. Tout ce qui defile — le sol, les plans de fond, les nuages — a sa propre boucle
+   et tourne donc aussi derriere l'accueil, ou l'on voit la poule marcher. La mer, elle,
+   ne defile pas : elle est collee bout a bout et l'on decale l'origine du collage, decalage
+   qui se lisait sur `dist`. Elle etait donc la seule chose immobile d'un paysage qui bouge
+   — sur la plage, une mer peinte derriere un sol qui glisse.
+   ON COMPTE DONC LE CHEMIN A PART, et on le compte AUSSI au menu, ou le monde avance a
+   soixante. Le ralenti n'a rien a rattraper ici : il est deja dans `speed`. */
+let parcouru=0;
 /* ---------- le score ----------
    LE SCORE EST UNE SOMME, ET IL L'EST DEVENU POUR QU'ON PUISSE LE SUIVRE. C'etait un
    PRODUIT — la distance multipliee par les mouches — et le produit disait bien la regle
@@ -5093,6 +5103,9 @@ function reset(depuis){
      etait toujours a 1,1 s, donc toujours au meme metre. Le plancher garde de quoi le
      voir venir. */
   speed=500; dist=depuis||0; shake=0; hold=false; eaten=0;
+  /* Le chemin repart d'ou repart la course : reprise a un point de controle comprise, la
+     mer se retrouve exactement dans l'etat qu'elle avait a ce metre-la. */
+  parcouru=dist*9.2;
   /* L'horloge du jet reprend en cours de route et non a son debut : une partie sur
      quatre commence donc bouche ouverte, comme n'importe quel autre moment. */
   remetHorlogeBorne();
@@ -6326,7 +6339,7 @@ function dessineVignette(cvs, nom){
     g.strokeStyle=j.dec; g.lineWidth=2; g.lineJoin="round"; g.lineCap="round";
     g.beginPath(); profil(); g.stroke();
   }
-  if(m.mer) merPlanche(g, m, j, larg);
+  if(m.mer) merPlanche(g, m, j, larg, 0);      // la carte est une pose, pas un extrait
   for(const d of ch.sol){ const s=d.d;
     g.drawImage(SPR[s.k], d.x, relief(d.x)-(s.anc===undefined?s.h:s.anc)+d.s, s.w, s.h); }
   /* le premier plan descend d'un bloc, comme en course */
@@ -9184,6 +9197,7 @@ function update(dt){
       hen.anim+=dt*7;
       for(const g of sol){ g.x-=60*dt; if(g.x+g.d.w<-20) replanteSol(g); }
       avanceFond(dt, 60);                       // l'accueil respire au meme rythme
+      parcouru+=60*dt;                          // et la mer avec lui, au meme soixante
     }
     for(const p of plumes){ p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=520*dt; p.r+=p.vr*dt; p.l-=dt*.5; }
     plumes=plumes.filter(p=>p.l>0);
@@ -9207,6 +9221,7 @@ function update(dt){
   speedBrut=Math.min(500+dist*0.33,900);
   speed=speedBrut*ralenti();
   dist+=speed*dt/9.2;
+  parcouru+=speed*dt;
   avanceJalons(dt);
   /* LE RECORD SE FRANCHIT PENDANT LA COURSE, ET C'EST LA QU'IL FAUT LE DIRE. Annonce a
      l'ecran de fin, il arrive quand tout est joue ; annonce ici, il dit qu'il reste
@@ -11093,7 +11108,7 @@ const ecumeHasard = i => { const v=Math.sin(i*12.9898)*43758.5453; return v-Math
    superposent au lieu de se croiser.
    ON GARDE LES DEUX PASSES, mais pour l'ORDRE et non pour la vitesse : les iles se peignent
    avant, les bateaux apres, et un bateau qui recouvre une ile passe donc devant elle. */
-function ilots(c, m, jour, larg, eau, rive){
+function ilots(c, m, jour, larg, eau, rive, parc){
   const bande=rive-eau; if(bande<=0) return;
   const coul=MER_CIME;                 // la premiere rangee de la planche, pour tout le monde
   const cle=coul;
@@ -11104,7 +11119,7 @@ function ilots(c, m, jour, larg, eau, rive){
      l'horizon qui filerait comme l'ecume traverserait l'ecran en deux secondes. Il prend
      donc le pas de la moitie haute de la planche, celle sur laquelle il flotte. */
   for(const [der, sel] of [[MER_DERIVE_LOIN, 0], [MER_DERIVE_LOIN, 1]]){
-    const d=dist*9.2*der;
+    const d=parc*der;
     const i0=Math.floor((d-MER_ECART)/MER_ECART), i1=Math.ceil((d+larg)/MER_ECART);
     for(let i=i0;i<=i1;i++){
       if(ecumeHasard(i*4+11)<MER_VIDE) continue;
@@ -11189,7 +11204,7 @@ function grainSol(c, jour){
      c'est du sable. */
   const y0=Math.max(0, Math.round((groundY+(monde.mer?COLLINE_BASE-monde.mer:0))*scale*k));
   if(y0>=Hp) return;
-  const d=Math.round(dist*9.2*scale*k);
+  const d=Math.round(parcouru*scale*k);
   const dx=((-d)%SABLE_TUILE+SABLE_TUILE)%SABLE_TUILE;
   c.save();
   c.setTransform(1,0,0,1,0,0);
@@ -11234,7 +11249,12 @@ const MER_ETAGES=[[ 0, 0.25],   // le large : il ne bouge presque pas
                   [22, 0.55],   // l'entre-deux
                   [53, 0.92]];  // le bord, l'eau qui touche le sable
 const MER_DERIVE_LOIN=MER_ETAGES[0][1];   // ce que suivent les bateaux, poses sur l'horizon
-function merPlanche(c, m, jour, larg){
+/* LE CHEMIN LUI EST DONNE, IL NE LE LIT PAS. Deux appelants, et ils n'attendent pas la
+   meme chose : la course veut une mer qui avance, la carte du menu veut une mer POSEE. La
+   vignette est repeinte a chaque retour au menu, et un paysage qui se redistribue a chaque
+   coup d'oeil se lit comme un bug — c'est deja la raison pour laquelle son semis est garde
+   d'une peinture a l'autre. Elle passe donc zero, et sa mer ne bouge plus d'un pouce. */
+function merPlanche(c, m, jour, larg, parc){
   const im=SPR.plage_mer; if(!im || !im.naturalWidth) return;
   const H=im.naturalHeight, W=im.naturalWidth;
   /* LA GRILLE DE LA TOILE, DANS LES DEUX SENS, ET POUR LA TAILLE AUSSI. Poser la planche a
@@ -11270,10 +11290,10 @@ function merPlanche(c, m, jour, larg){
      peintes ici, elles ont deja le sable derriere elles et la planche par-dessus. Ce qui
      depasse de l'horizon se detache sur le ciel, ce qui est dessous disparait sous l'eau —
      et c'est la mer elle-meme, avec son grain, qui fait la coupure. */
-  ilots(c, m, jour, larg, y, COLLINE_BASE);
+  ilots(c, m, jour, larg, y, COLLINE_BASE, parc);
   const pas=ww*2;
   const bande=(sy, sh, yy, hy, der)=>{
-    const d=((dist*9.2*der)%pas+pas)%pas;
+    const d=((parc*der)%pas+pas)%pas;
     for(let x=gx(-d-pas); x<larg+pas; x+=pas){
       c.drawImage(im, 0, sy, W, sh, x, yy, ww, hy);
       c.save();
@@ -11611,7 +11631,12 @@ function draw(){
   /* L'amplitude ET LA FORME appartiennent au monde : de petites bosses rapprochees dans
      un champ, rien du tout sur un trottoir, une houle longue et basse dans un desert. */
   const relief = houleDu(monde);
-  const off = dist*9.2;
+  /* MEME CHEMIN QUE LA MER, ET POUR LA MEME RAISON. La houle du sol ne defile pas non
+     plus : c'est une forme calculee en fonction de la position dans le monde, et l'on
+     decale son origine. Sur `dist`, elle se figeait au menu pendant que les cailloux
+     poses dessus continuaient de glisser — ils descendaient et remontaient une bosse qui,
+     elle, ne bougeait pas. */
+  const off = parcouru;
   const profil = () => {
     ctx.moveTo(-20, relief(-20+off));
     for(let x=-20; x<=VIEW_W+20; x+=12) ctx.lineTo(x, relief(x+off));
@@ -11638,7 +11663,7 @@ function draw(){
      cailloux : ses festons mordent sur la greve, et les galets emergent au travers.
      Peinte avec la mer, c'est-a-dire avant le sable, elle aurait ete coupee net par lui a
      la ligne d'eau — et une ecume sans festons n'est plus qu'un trait. */
-  if(monde.mer) merPlanche(ctx, monde, jour, VIEW_W);
+  if(monde.mer) merPlanche(ctx, monde, jour, VIEW_W, parcouru);
 
   /* Les details du sol, cales sur la ligne par leur ANCRAGE : le bas du dessin pour ce
      qui pousse dessus, la ligne dessinee pour ce qui la traverse. */
