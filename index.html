@@ -4776,6 +4776,22 @@ const RAL_TENUE=0.15;     // ce qu'il tient a fond
 const RAL_REPRISE=0.45;   // et le temps qu'il met a lacher vers le regime de croisiere
 const RAL_SORTIE=0.55;    // le temps que le monde met a reprendre sa vitesse a la fin
 const douceur=u=>{ const c=Math.max(0,Math.min(1,u)); return c*c*(3-2*c); };
+/* LE TEMPS DU MONDE, QUI N'EST PAS CELUI DE L'HORLOGE.
+   Le ralenti freine le DEFILEMENT, parce que `speed` est multiplie par lui. Tout ce qui se
+   deplace autrement — une chute, une vitesse propre — s'integrait avec le dt de l'horloge et
+   traversait donc le ralenti a pleine vitesse. Mesure : pendant un ralenti a 0,30, la noix
+   de coco, la fiente, la stalactite et l'oiseau qui double parcouraient encore 1,00 de leur
+   course ordinaire, et l'oiseau qui recule 0,49 — sa vitesse propre n'etant pas freinee
+   quand celle du decor l'etait.
+   CE N'EST PAS QU'UNE AFFAIRE D'ALLURE : la noix est lachee pour tomber a un point calcule
+   depuis le defilement. Si elle tombe a pleine vitesse pendant que le decor rampe, elle
+   n'atterrit plus ou le singe l'a visee. Freiner les deux du meme facteur conserve la
+   trajectoire dans le monde et ne change que le rythme — c'est la seule facon de ralentir
+   sans deplacer les choses.
+   `dtMonde` est donc le dt vu par ce qui appartient au monde. Ce qui passe deja par `speed`
+   ne doit PAS le prendre en plus : `speed` porte deja le freinage, et l'appliquer deux fois
+   arreterait le decor. */
+function dtMonde(dt){ return dt*ralenti(); }
 function ralenti(){
   if(!cool()){
     const apres=t-coolJusqu;                       // vient-on d'en sortir ?
@@ -4988,6 +5004,7 @@ document.addEventListener("visibilitychange",()=>{ if(document.hidden) halt(); }
 const HEN_X=150;
 const hen={x:HEN_X,y:0,vy:0,ground:true,feathers:1,anim:0,flap:0,dead:false};
 let speed=0, dist=0, t=0, shake=0, hold=false, holdT=0, eaten=0;
+let speedBrut=0;                   // la meme, sans le freinage du ralenti
 /* ---------- le score ----------
    LE SCORE EST UNE SOMME, ET IL L'EST DEVENU POUR QU'ON PUISSE LE SUIVRE. C'etait un
    PRODUIT — la distance multipliee par les mouches — et le produit disait bien la regle
@@ -8858,10 +8875,17 @@ function jetteNoix(o){
     gliss=COCO_GLISSE[0]+Math.random()*(COCO_GLISSE[1]-COCO_GLISSE[0]);
     tps  =COCO_TEMPS[0] +Math.random()*(COCO_TEMPS[1] -COCO_TEMPS[0]);
     vy=chute*(1-tps*tps)/(tps*COCO_VOL);
-    if(Math.abs(Math.atan2(vy, gliss*speed))<=COCO_PENTE) break;
+    if(Math.abs(Math.atan2(vy, gliss*speedBrut))<=COCO_PENTE) break;
   }
   return {k:"coco", x:o.x+SINGE_MAIN.x, y:o.y+SINGE_MAIN.y,
-          vx:-gliss*speed, vy, g, w:COCO_W, h:COCO_H, rot:0};
+          /* SA VITESSE EST CELLE DU MONDE SANS FREINAGE, et le freinage lui est applique
+             ensuite comme a tout le reste. Prise sur `speed`, elle portait deja le ralenti,
+             et l'integration la freinait une seconde fois : la noix derivait deux fois
+             moins vers la gauche et arrivait 433 unites trop a droite — le singe visait
+             juste et manquait quand meme. La regle vaut aussi si le ralenti commence ou
+             s'arrete pendant son vol : la noix garde la vitesse du monde, pas celle de
+             l'instant ou elle a ete lachee. */
+          vx:-gliss*speedBrut, vy, g, w:COCO_W, h:COCO_H, rot:0};
 }
 /* Elle touche terre et elle se casse : il n'en reste qu'un peu de poussiere. Une fiente
    posee restait et palissait — une trace sur un trottoir a une raison d'etre la ; une noix
@@ -9177,7 +9201,11 @@ function update(dt){
 
   /* LE RALENTI SE POSE ICI, ET NULLE PART AILLEURS. Tout ce qui defile part de `speed` —
      voir ralenti() juste au-dessus pour la raison. */
-  speed=Math.min(500+dist*0.33,900)*ralenti();
+  /* LA VITESSE DU DECOR, ET CELLE QU'IL AURAIT SANS LE RALENTI. Les deux servent : la
+     premiere pour faire defiler, la seconde pour tout ce qui se CALCULE sur le defilement
+     et sera ensuite freine a son tour. Confondre les deux, c'est freiner deux fois. */
+  speedBrut=Math.min(500+dist*0.33,900);
+  speed=speedBrut*ralenti();
   dist+=speed*dt/9.2;
   avanceJalons(dt);
   /* LE RECORD SE FRANCHIT PENDANT LA COURSE, ET C'EST LA QU'IL FAUT LE DIRE. Annonce a
@@ -9329,8 +9357,8 @@ function update(dt){
 
   const FLY_MIN=-52-MOU_H/2;
   for(const f of flies){
-    f.x-=(speed+f.drift)*dt;
-    f.y+=Math.sin(t*f.sp+f.ph)*f.amp*dt*2.4;      // vol saccade, jamais tout a fait droit
+    f.x-=speed*dt + f.drift*dtMonde(dt);
+    f.y+=Math.sin(t*f.sp+f.ph)*f.amp*dtMonde(dt)*2.4;   // vol saccade, jamais tout a fait droit
     if(f.y>FLY_MIN) f.y=FLY_MIN;                  // le sol reste infranchissable
     for(const o of obs){                          // et elle ne se pose pas sur les obstacles
       if(enVol(o.k)) continue;
@@ -9411,11 +9439,11 @@ function update(dt){
     if(o.k==="kite"){ o.x-=Math.max(60, speed-KITE_VOL)*dt; vole(o); }
     /* Le journal ne recule pas a une vitesse : il est porte. La bourrasque le fait passer
        du quasi-surplace a plus vite que le decor, et sa hauteur suit ses deux souffles. */
-    else if(o.k==="journal"){ o.t+=dt;
+    else if(o.k==="journal"){ const dm=dtMonde(dt); o.t+=dm;
       const souffle = JOURNAL_VENT + JOURNAL_RAFALE*souffleJournal(o).rafale;
       o.x -= speed*souffle*dt;
       poseJournal(o);
-      semeTraitsJournal(o, souffle, dt); }
+      semeTraitsJournal(o, souffle, dm); }
     /* La borne crache : elle defile comme le sol, et son jet change de cran. */
     else if(o.k==="ville_borne"){
       o.x -= speed*dt;
@@ -9436,7 +9464,10 @@ function update(dt){
     /* Le scorpion marche : il defile avec le sol, plus son va-et-vient. */
     else if(MARCHEURS[o.k]){
       const m=MARCHEURS[o.k];
-      o.t+=dt;
+      /* SON PAS EST UN DEPLACEMENT, pas une simple animation : le va-et-vient du scorpion
+         et du crabe se lit sur leur abscisse. Leur horloge suit donc le monde, sans quoi
+         ils continuaient de trottiner a pleine vitesse pendant que tout rampe. */
+      o.t+=dtMonde(dt);
       const a=phaseScorp(o);
       const dx=Math.sin(a)*m.rayon;
       o.x -= speed*dt;
@@ -9450,7 +9481,8 @@ function update(dt){
     /* Le virevoltant est porte par le vent : il ne recule pas a la vitesse du sol mais a
        la sienne, et il roule de ce qui les separe. */
     else if(o.k==="desert_vireve"){
-      o.t+=dt;
+      /* son horloge decide de son vent, donc de sa vitesse : elle appartient au monde */
+      o.t+=dtMonde(dt);
       const u=speed*ventVireve(o);
       /* sa vitesse par rapport au SOL, a l'ecran ; le decor, lui, va a -speed */
       const rel=-u;
@@ -9473,8 +9505,9 @@ function update(dt){
     else if(o.k==="mont_stalac"){
       o.x-=speed*dt;
       if(o.pose){ o.age+=dt; }
-      else { o.vy+=STALAC_G*dt; o.y+=o.vy*dt;
-             if(Math.random()<dt*STALAC_TRAITS)
+      else { const dm=dtMonde(dt);
+             o.vy+=STALAC_G*dm; o.y+=o.vy*dm;
+             if(Math.random()<dm*STALAC_TRAITS)
                trait(o.x+(Math.random()-0.5)*o.w*0.8,
                      o.y-o.h*0.3-Math.random()*o.h*0.4, -Math.PI/2,
                      STALAC_TRAIT_LONG[0]+Math.random()*(STALAC_TRAIT_LONG[1]-STALAC_TRAIT_LONG[0]),
@@ -9498,12 +9531,13 @@ function update(dt){
     else if(o.k==="fiente"){
       o.x-=speed*dt;
       if(o.pose){ o.age+=dt; }
-      else { o.vy+=FIENTE_G*dt; o.y+=o.vy*dt;
+      else { const dm=dtMonde(dt);
+             o.vy+=FIENTE_G*dm; o.y+=o.vy*dm;
              /* Les traits de sa chute, semes comme ceux de la poule en panique : ils
                 naissent sur la goutte, descendent moins vite qu'elle et defilent avec le
                 decor. C'est le RETARD qu'ils prennent sur elle qui se lit comme de la
                 vitesse — s'ils la suivaient, ils ne diraient rien. */
-             if(Math.random()<dt*FIENTE_TRAITS)
+             if(Math.random()<dm*FIENTE_TRAITS)
                trait(o.x+(Math.random()-0.5)*o.w*0.9,
                      o.y-o.h*0.2-Math.random()*o.h*0.35, -Math.PI/2,
                      FIENTE_TRAIT_LONG[0]+Math.random()*(FIENTE_TRAIT_LONG[1]-FIENTE_TRAIT_LONG[0]),
@@ -9539,14 +9573,17 @@ function update(dt){
        lachant, et qui ne se rattache plus au defilement. Selon le tirage elle traine
        derriere le decor, l'accompagne, ou le double. */
     else if(o.k==="coco"){
-      o.x+=o.vx*dt;
-      o.vy+=o.g*dt; o.y+=o.vy*dt; o.rot+=COCO_TOURNE*dt;
+      const dm=dtMonde(dt);
+      o.x+=o.vx*dm;
+      o.vy+=o.g*dm; o.y+=o.vy*dm; o.rot+=COCO_TOURNE*dm;
       if(o.y>=-COCO_H/2){ o.eclate=true; casseNoix(o); }
     }
     /* Celui qui double la poule remonte l'ecran vers la droite ; les autres le
        descendent vers la gauche, decor compris. */
-    else if(estOiseau(o.k) && o.sens>0) o.x += OISEAU_DOUBLE*dt;
-    else o.x-=(estOiseau(o.k) ? speed+OISEAUX[o.k].vit : speed)*dt;
+    else if(estOiseau(o.k) && o.sens>0) o.x += OISEAU_DOUBLE*dtMonde(dt);
+    /* le decor par `speed`, qui porte deja le freinage ; la vitesse propre de l'oiseau
+       par le temps du monde, qui le porte aussi — les deux avancent alors du meme pas */
+    else o.x -= speed*dt + (estOiseau(o.k) ? OISEAUX[o.k].vit*dtMonde(dt) : 0);
   }
   for(const n of jets) obs.push(n);
   obs=obs.filter(o=>!o.eclate);
