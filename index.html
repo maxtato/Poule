@@ -4648,7 +4648,19 @@ function resize(){
   VIEW_H=worldH=H/scale;
   cv.style.width=W+"px"; cv.style.height=H+"px";
   cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
-  kPix=1/PX_JEU;
+  /* LA GRILLE SUIT LA DENSITE DE L'ECRAN, ET NON UN NOMBRE FIXE.
+     Elle valait toujours 1/PX_JEU, c'est-a-dire trois. Sur un ecran de densite 3 le report
+     final tombe alors un pour un et tout va bien — mais un ecran de densite 2 recevait un
+     tampon une fois et demie trop grand, reduit sans lissage : mesure, un pixel d'art y
+     valait 0,667 point d'ecran et les marches d'un bord franc sortaient a 1, 2 ou 4 points
+     au lieu d'une largeur constante. Une colonne sur trois etait jetee, et laquelle
+     dependait du defilement — c'est exactement le grouillement que ce plafond etait cense
+     ecarter. Et tout etait peint a 2,25 fois la resolution utile pour finir jete.
+     A la densite de l'ecran, le report redevient un pour un partout : le tampon disparait,
+     l'image ne subit plus qu'un seul echantillonnage au lieu de deux, et le travail tombe
+     de moitie sur ces appareils. Sur un ecran de densite 3 — la plupart — rien ne change,
+     `dpr` y vaut deja trois. */
+  kPix=dpr;
   tampon.width=Math.max(1,Math.round(W*kPix)); tampon.height=Math.max(1,Math.round(H*kPix));
   tctx.imageSmoothingEnabled=false;      // redimensionner un canvas remet ce reglage
   /* LE TAMPON NE SERT QUE S'IL N'A PAS DEJA LA TAILLE DE LA TOILE. Le plafond de
@@ -5091,6 +5103,8 @@ function reset(depuis){
   tFly=1.2+Math.random()*2.6;
   tOr=OR_PREM[0]+Math.random()*(OR_PREM[1]-OR_PREM[0]); orJusqu=-9;
   coolJusqu=-9; coolDepuis=-9; coolArme=true; coolEnCours=false;
+  /* la reserve de calques teintes repart a vide : voir CALQUE_BUDGET */
+  if(typeof videCalques==="function") videCalques();
   clouds=[]; for(let i=0;i<5;i++) clouds.push({x:Math.random()*VIEW_W*1.5, f:.15+Math.random()*.6,
                                                s:.55+Math.random()*.6, v:.5+Math.random()*.7,
                                                forme:nuageForme()});
@@ -5676,7 +5690,7 @@ function dessineTombe(){
   /* Deux fois la taille d'affichage pour rester net ; en pixel art, la grille du jeu,
      pour que la pierre y tombe comme le reste. Le facteur change avec le style : on
      refait le canvas si ce n'est plus le bon. */
-  const e=save.pixel ? 1/PX_JEU : 2;
+  const e=save.pixel ? kPix : 2;
   const im=SPR.tombe_cadre, rap=im.naturalHeight/im.naturalWidth || 1.024;
   const H=L*rap;
   if(!cko || cko.__e!==e || cko.__l!==L){
@@ -5700,7 +5714,7 @@ function dessinePausePoule(){
   const el=$("fpause"); if(!el) return;
   const im=SPR.pause_poule; if(!im || !im.naturalWidth) return;
   const L=Math.round(el.clientWidth || 168);
-  const e=save.pixel ? 1/PX_JEU : Math.min(3, devicePixelRatio||2);
+  const e=save.pixel ? kPix : Math.min(3, devicePixelRatio||2);
   const H=L*im.naturalHeight/im.naturalWidth;
   if(!cpause || cpause.__e!==e || cpause.__l!==L){
     el.width=Math.round(L*e); el.height=Math.round(H*e);
@@ -5727,7 +5741,7 @@ function dessineMarque(){
   const el=$("fmarque"); if(!el) return;
   const im=SPR.marque_henny; if(!im || !im.naturalWidth) return;
   const L=Math.round(el.clientWidth || 250); if(!L) return;
-  const e=save.pixel ? 1/PX_JEU : Math.min(3, devicePixelRatio||2);
+  const e=save.pixel ? kPix : Math.min(3, devicePixelRatio||2);
   const H=L*im.naturalHeight/im.naturalWidth;
   if(!cmarque || cmarque.__e!==e || cmarque.__l!==L){
     el.width=Math.round(L*e); el.height=Math.round(H*e);
@@ -5745,7 +5759,7 @@ function dessineReglageVignette(){
   const im=SPR.reglages_engrenage; if(!im || !im.naturalWidth) return;
   const L=Math.round(el.clientWidth || 128);
   if(!L) return;
-  const e=save.pixel ? 1/PX_JEU : Math.min(3, devicePixelRatio||2);
+  const e=save.pixel ? kPix : Math.min(3, devicePixelRatio||2);
   const H=L*im.naturalHeight/im.naturalWidth;
   if(!cregl || cregl.__e!==e || cregl.__l!==L){
     el.width=Math.round(L*e); el.height=Math.round(H*e);
@@ -6617,7 +6631,7 @@ function poseNiveaux(){
        facteur qui n'est pas rond, c'est le hacher — c'est la meme faute que celle deja
        corrigee sur la pierre tombale, au meme endroit du raisonnement. */
     const l=Math.max(96, Math.round(cvs.clientWidth||b.clientWidth||220)),
-          d=Math.min(3, devicePixelRatio||1);
+          d=dpr;                       // la meme grille que le jeu
     cvs.width=Math.round(l*d); cvs.height=Math.round(l*VIG_RAPPORT*d);
     dessineVignette(cvs, b.dataset.monde);
     if(b.__verrou) verrouVignette(cvs, b.__verrou);
@@ -9716,6 +9730,59 @@ function heurteVoute(hb0){
    coutent pas un octet de plus. */
 const CALQUE_FENTES=2;
 let calqueAge=0;
+/* ---- UN BUDGET POUR LES CALQUES TEINTES, ET IL LEUR EN FALLAIT UN ----
+   Chaque silhouette de fond garde jusqu'a deux copies teintees a la taille de sa planche,
+   et rien ne les reprenait jamais : la reserve gardait celles des six mondes, y compris de
+   ceux qu'on ne joue plus. Ce ne sont pas les parties qui la remplissent, c'est le MENU —
+   il peint les six cartes de terrain, donc il teinte les silhouettes des six mondes.
+   Mesure : 103 Mo des le chargement, 275 Mo apres avoir ouvert les six. Avec les 182 Mo de
+   planches decodees et les toiles de travail, le jeu tenait 485 Mo ouverts. Un moteur web
+   ferme ce qui depasse son budget, et il le ferme sans prevenir — ce n'est pas une saccade,
+   c'est un plantage, et il tombe sur les appareils les plus modestes.
+   ON PLAFONNE DONC LE TOTAL, et non le nombre de copies par planche. Plafonner par planche
+   ne dit rien du total, puisque le total depend du nombre de planches ; plafonner le total
+   tient quel que soit ce qui le remplit. Quand le plafond est franchi on jette les copies
+   les moins recemment servies jusqu'a revenir aux trois quarts — la marge evite de rejeter
+   a chaque image une fois le plafond atteint.
+   LE PLAFOND SE MESURE SUR LE BESOIN D'UN SEUL MONDE, et le premier chiffre pose ici etait
+   faux : soixante-quatre mega-octets, lus sur ce que la reserve GAGNAIT en passant d'un
+   monde au suivant. Ce n'est pas le besoin, c'est l'increment — le besoin nu d'un monde
+   joue seul va de 63 a 136 mega-octets, la jungle etant de loin la plus gourmande. Sous ce
+   plafond-la, la reserve se vidait et se refaisait sans arret : la jungle passait de 7 a
+   99 millisecondes par image sur un ecran de densite 2. Le pire des deux mondes, on payait
+   le rejet ET la refabrication.
+   Cent soixante laisse donc le plus lourd des six au complet, avec de la marge.
+   ET LA RESERVE SE VIDE AU DEPART D'UNE PARTIE. Le plafond seul ne suffisait pas : ce n'est
+   pas la course qui remplit la reserve, c'est le MENU, qui peint les six cartes de terrain
+   et teinte donc les silhouettes des six mondes. En la vidant au coup d'envoi, la course ne
+   tient que ce dont elle se sert ; le plafond ne sert plus qu'au menu, ou une refabrication
+   de temps en temps ne se voit pas. */
+const CALQUE_BUDGET = 160*1024*1024/4;     // en pixels, pas en octets
+let calquePixels = 0;
+function calqueOuvre(px){
+  calquePixels += px;
+  if(calquePixels > CALQUE_BUDGET) calquePurge();
+}
+function videCalques(){
+  for(const k in calques) delete calques[k];
+  for(const k in calquesNeige) delete calquesNeige[k];
+  calquePixels=0;
+}
+function calquePurge(){
+  const tout=[];
+  for(const k in calques)      for(const o of calques[k])      tout.push({l:calques[k], o});
+  for(const k in calquesNeige) for(const o of calquesNeige[k]) tout.push({l:calquesNeige[k], o});
+  tout.sort((a,b)=>a.o.vu-b.o.vu);          // la plus vieille servie d'abord
+  const cible=CALQUE_BUDGET*0.75;
+  for(const e of tout){
+    if(calquePixels<=cible) break;
+    const i=e.l.indexOf(e.o); if(i<0) continue;
+    e.l.splice(i,1);
+    calquePixels -= e.o.cv.width*e.o.cv.height;
+    /* remettre la toile a zero rend sa memoire tout de suite, sans attendre le ramasseur */
+    e.o.cv.width=e.o.cv.height=0;
+  }
+}
 const calques={};
 /* ---------- LES FENETRES NE LAISSENT PLUS PASSER LES NUAGES ----------
    Les silhouettes de la ville ont leurs fenetres PERCEES, et c'est voulu : le fond est
@@ -9792,9 +9859,13 @@ function teinter(k, coul, coulFen){
   if(c){ c.vu=++calqueAge; return c.cv; }
   /* sinon on en ouvre une, ou l'on reprend la moins recemment servie */
   if(l.length<CALQUE_FENTES){
-    c={cv:document.createElement("canvas"), coul:null, fen:null, vu:0};
+    /* ON L'ESTAMPILLE AVANT DE COMPTER SA PLACE. Ouverte a l'age zero, la case neuve
+       passait pour la plus vieille de toutes : le rejet declenche par son ouverture la
+       jetait ELLE, et l'appelant repartait avec une toile videe. */
+    c={cv:document.createElement("canvas"), coul:null, fen:null, vu:++calqueAge};
     c.cv.width=im.naturalWidth; c.cv.height=im.naturalHeight;
     l.push(c);
+    calqueOuvre(c.cv.width*c.cv.height);
   } else {
     c=l[0]; for(const o of l) if(o.vu<c.vu) c=o;
   }
@@ -9856,9 +9927,10 @@ function teinterNeige(k, coul, kn, coulNeige){
   for(const o of l) if(o.cle===cle){ o.vu=++calqueAge; return o.cv; }
   let c;
   if(l.length<CALQUE_FENTES){
-    c={cv:document.createElement("canvas"), cle:null, vu:0};
+    c={cv:document.createElement("canvas"), cle:null, vu:++calqueAge};
     c.cv.width=im.naturalWidth; c.cv.height=im.naturalHeight;
     l.push(c);
+    calqueOuvre(c.cv.width*c.cv.height);
   } else { c=l[0]; for(const o of l) if(o.vu<c.vu) c=o; }
   c.vu=++calqueAge; c.cle=cle;
   const W=c.cv.width, H=c.cv.height;
@@ -13242,7 +13314,7 @@ function couronneSrc(hautDev){
   return src;
 }
 function poseCouronnes(){
-  const D=Math.min(3, devicePixelRatio||1);
+  const D=dpr;                         // la meme grille que le jeu
   for(const e of document.querySelectorAll("img.couronne")){
     /* la feuille de style la dimensionne par sa HAUTEUR, largeur libre : c'est donc la
        hauteur qu'il faut faire tomber juste */
@@ -13275,7 +13347,7 @@ function styleJeu(px, init){
   for(const k in troues) delete troues[k];      // les planches changent, leurs trous aussi
   for(const k in combles) delete combles[k];
   teints.clear(); luis.clear();          // caches lies aux dessins du style precedent
-  for(const k in calquesNeige) delete calquesNeige[k];
+  videCalques();
   txtTampons.clear();                    // le texte se fabrique autrement d'un style a l'autre
   /* Les planches pixel sont dessinees a la grille du jeu puis agrandies : sans cette
      ligne le navigateur les lisserait et il ne resterait rien du travail. */
