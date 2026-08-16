@@ -10308,19 +10308,27 @@ function lunettes(jitter, cale, bob, clignote, tete){
    comme une profondeur. Le rouge part le plus loin en arriere, le bleu reste le plus pres
    du corps ; l'ecart s'ouvre avec la distance, sans quoi les trois couches resteraient
    collees et l'on ne verrait qu'une frange. */
-const ECHO_RVB=["#FF2A1A", "#1FC72E", "#2E7BFF"];
-/* Le bleu n'est plus tout a fait celui de la jauge, qui tire sur le cyan : a cote d'un vert,
-   un cyan ne se lit plus comme la troisieme couleur mais comme une nuance de la deuxieme. */
-const ECHO_ECART=16;                 // ce qui separe deux canaux, par copie
-/* TROIS COPIES, ET NON PLUS CINQ. Elles etaient cinq, d'un pas court, parce qu'une seule
-   couleur a besoin de nombre pour se lire comme une queue plutot que comme un empilement :
-   a trois, on comptait les copies. Trois canaux changent la regle — chaque copie porte
-   maintenant trois images ecartees, elle a donc sa propre largeur et son propre degrade.
-   Cinq copies de trois canaux ne faisaient plus une trainee mais un peigne : quinze
-   silhouettes se chevauchant sur la meme centaine de points, ou plus aucune couleur ne
-   ressortait. Trois copies bien ecartees rendent les trois couleurs franches. */
-const ECHO_N=3, ECHO_PAS=28, ECHO_CHUTE=1.0;
-const ECHO_A=0.46, ECHO_Q=0.80;
+const ECHO_RVB=["#FF3A2E", "#2ED957", "#3BC9FF"];
+const ECHO_ECART=4.5;                // ce qui separe deux canaux, par copie
+/* CINQ COPIES SERREES, ET C'EST UN CHOIX CONTRE L'AUTRE. Les canaux ont d'abord ete ecartes
+   largement, sur trois copies seulement, pour que le rouge, le vert et le bleu se detachent
+   en trois fantomes qu'on distingue un par un. C'est plus demonstratif, et c'est justement
+   ce qu'on ne voulait pas : on compte les copies au lieu de voir une trace.
+   Serrees — cinq copies au pas court, les canaux a quatre points et demi — les quinze
+   silhouettes s'entrelacent et les couleurs se MELENT au lieu de se compter : un peigne fin
+   colle au corps, turquoise pres d'elle et rose au bout. On ne lit plus trois couleurs, on
+   lit une trainee irisee, et c'est la trainee qui a ete retenue.
+   Le bleu redevient donc celui de la jauge, qui tire sur le cyan : ecarte, il se confondait
+   avec le vert et il fallait un bleu franc pour faire la troisieme couleur ; serre, c'est
+   lui qui donne le turquoise du debut de queue. */
+const ECHO_N=5, ECHO_PAS=16, ECHO_CHUTE=1.0;
+const ECHO_A=0.34, ECHO_Q=0.60;
+/* CE QU'ON RETIRE A CHAQUE CANAL POUR QUE LA COPIE PESE LE MEME POIDS QU'AVANT. Trois
+   couches posees l'une sur l'autre a l'encre d'une seule ne font pas une copie plus
+   coloree, elles font une copie trois fois plus opaque : la ou elles se recouvrent, il ne
+   reste plus une trainee mais un bloc. Serre, tout se recouvre — la retenue compte donc
+   beaucoup plus ici qu'elle ne comptait sur des copies ecartees. */
+const ECHO_CANAL=0.62;
 /* Les trois contours de la jauge, du plus lointain au plus proche : c'est dans cet ordre
    qu'ils se tracent, le plus large d'abord, pour que le plus fonce reste dessus. */
 const JAUGE_TEINTES=["#9EE7FF", "#3BC9FF", "#1F7FD8"];
@@ -10371,7 +10379,7 @@ function echos(w, h, jitter, bob, cle){
   const y = hen.y-footOff()+cale-bob;
   const sil = ECHO_RVB.map(c=>silhouette(im, c));
   for(let i=ECHO_N;i>=1;i--){
-    ctx.globalAlpha=ECHO_A*Math.pow(ECHO_Q,i-1)*a;
+    ctx.globalAlpha=ECHO_A*ECHO_CANAL*Math.pow(ECHO_Q,i-1)*a;
     const x=hen.x+jitter-ECHO_PAS*i, yy=y+ECHO_CHUTE*i;
     /* du plus lointain au plus proche : le rouge en dessous, le bleu par-dessus */
     for(let c=0;c<3;c++) ctx.drawImage(sil[c], x+(c-1)*ECHO_ECART*i, yy, w, h);
