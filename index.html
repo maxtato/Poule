@@ -4728,6 +4728,8 @@ const COOL_DUREE=10;      // ce que durent les lunettes : quatre secondes de plu
 const COOL_PLUME=0.45;    // ce qu'une seconde de vol coute en plumes, pendant le mode cool
 const COOL_CHUTE=0.75;    // ce que pese la pesanteur, pendant le mode cool
 let coolJusqu=-9, coolDepuis=-9, coolArme=true;
+/* Vrai tant que le mode cool dure, pour reconnaitre l'instant ou il s'arrete. */
+let coolEnCours=false;
 
 /* ---------- LE RALENTI DU MODE COOL ----------
    LE MONDE RALENTIT, LA POULE NON, et c'est tout le principe. On ne touche pas d'un
@@ -5088,7 +5090,7 @@ function reset(depuis){
      suivantes, et leur hauteur avec. */
   tFly=1.2+Math.random()*2.6;
   tOr=OR_PREM[0]+Math.random()*(OR_PREM[1]-OR_PREM[0]); orJusqu=-9;
-  coolJusqu=-9; coolDepuis=-9; coolArme=true;
+  coolJusqu=-9; coolDepuis=-9; coolArme=true; coolEnCours=false;
   clouds=[]; for(let i=0;i<5;i++) clouds.push({x:Math.random()*VIEW_W*1.5, f:.15+Math.random()*.6,
                                                s:.55+Math.random()*.6, v:.5+Math.random()*.7,
                                                forme:nuageForme()});
@@ -9327,18 +9329,36 @@ function update(dt){
   }
   flies=flies.filter(f=>f.x>-90);
 
-  if(combo && t-lastEat>COMBO_T){ combo=0; coolArme=true; }   // la chaine est retombee
+  /* ---- LE MODE COOL SUSPEND LA CHAINE, ET LA REMET A ZERO EN SORTANT ----
+     Elle continuait de monter pendant qu'il durait : on entrait en mode cool a vingt
+     mouches et l'on en ressortait a trente-cinq, avec une chaine deja faite dont on
+     n'avait rien vu — le bandeau montre la pastille du mode pendant tout ce temps, pas le
+     compte. Ce qui se gagnait la se gagnait donc en aveugle, et la chaine suivante partait
+     d'un chiffre qu'on n'avait pas construit.
+     Elle est desormais GELEE tant que les lunettes durent, et remise a zero a l'instant ou
+     elles tombent : on ressort du mode cool comme on y est entre, chaine vide, et le
+     prochain mode cool se regagne en entier. */
+  if(cool()) coolEnCours=true;
+  else if(coolEnCours){
+    coolEnCours=false;
+    combo=0; lastEat=-9; coolArme=true;
+  }
+  if(combo && !cool() && t-lastEat>COMBO_T){ combo=0; coolArme=true; }   // la chaine est retombee
   for(let i=flies.length-1;i>=0;i--){
     const f=flies[i];
     if(Math.abs(f.x-(hen.x+78))<52 && Math.abs(f.y-(hen.y-56))<54){
       flies.splice(i,1);
       eaten++;
       hen.feathers=Math.min(1,hen.feathers+(f.or?1:2/6));   // la doree rend tout
-      combo = (t-lastEat<COMBO_T) ? combo+1 : 1;
-      if(combo>comboMax) comboMax=combo;
-      lastEat=t;
-      if(combo===1) coolArme=true;              // une chaine neuve peut regagner le mode cool
-      if(combo>=COOL_N && coolArme){
+      /* La mouche compte toujours — plumes, total, doree — mais elle n'allonge plus la
+         chaine tant que le mode cool dure. */
+      if(!cool()){
+        combo = (t-lastEat<COMBO_T) ? combo+1 : 1;
+        if(combo>comboMax) comboMax=combo;
+        lastEat=t;
+        if(combo===1) coolArme=true;            // une chaine neuve peut regagner le mode cool
+      }
+      if(combo>=COOL_N && coolArme && !cool()){
         coolArme=false;
         /* le compte d'une vie de jeu, tenu a l'instant meme : c'est lui que les
            trophees du mode cool regardent */
