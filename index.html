@@ -4065,6 +4065,7 @@ let kPix = 3;                        // facteur pixels CSS -> tampon, en mode pi
 const tampon=document.createElement("canvas");
 const tctx=tampon.getContext("2d");
 let ctx=vue;                       // celui dans lequel draw() ecrit
+let tamponUtile=true;              // faux quand le tampon a deja la taille de la toile
 const $=id=>document.getElementById(id);
 let FONT='Fredoka,"Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif';
 
@@ -4638,6 +4639,16 @@ function resize(){
   kPix=1/PX_JEU;
   tampon.width=Math.max(1,Math.round(W*kPix)); tampon.height=Math.max(1,Math.round(H*kPix));
   tctx.imageSmoothingEnabled=false;      // redimensionner un canvas remet ce reglage
+  /* LE TAMPON NE SERT QUE S'IL N'A PAS DEJA LA TAILLE DE LA TOILE. Le plafond de
+     resolution du mode pixel vaut exactement 1/PX_JEU ; sur un ecran dont la densite
+     atteint ou depasse ce plafond — c'est le cas d'a peu pres tous les telephones — les
+     deux toiles sortent de la MEME taille, et le report final n'est plus un
+     agrandissement mais une recopie pure : trois millions de pixels lus et reecrits par
+     image pour rien. Dans ce cas on peint directement sur la toile visible.
+     Quand la densite de l'ecran est SOUS le plafond, le tampon est plus grand que la
+     toile et le report la reduit : il faut le garder, c'est lui qui fait la grille. */
+  tamponUtile = !(tampon.width===cv.width && tampon.height===cv.height);
+  vue.imageSmoothingEnabled = !save.pixel;
   document.documentElement.style.setProperty("--ground", (GROUND_GAP*scale)+"px");
   /* Largeur du cadre de jeu : le panneau de fin s'y borne au lieu de se caler sur
      l'ecran, qui est plus large que le jeu sur un bureau. */
@@ -11345,19 +11356,34 @@ function mixCss(a,b,u){
 function draw(){
   const jour=heure();
   const px=save.pixel;
-  ctx = px ? tctx : vue;
+  ctx = (px && tamponUtile) ? tctx : vue;
   /* Le reste de draw() raisonne en pixels CSS : il suffit de changer le facteur.
      En trait c'est la densite de l'ecran, en pixel c'est la grille du jeu. */
   ctx.setTransform(px?kPix:dpr, 0,0, px?kPix:dpr, 0,0);
   /* Hors du terrain : la teinte du plateau, pour que les bandes se lisent comme un
-     cadre et non comme du decor qui manque. */
-  ctx.fillStyle="#EFE6D9"; ctx.fillRect(0,0,W,H);
+     cadre et non comme du decor qui manque.
+     ON NE PEINT QUE CE QUI EST HORS DU TERRAIN. Toute la toile etait couverte, puis
+     recouverte aussitot par le terrain : sur un telephone en portrait le terrain occupe
+     TOUTE la largeur, les deux cotes sont vides, et ce premier aplat repeignait donc
+     l'ecran entier pour rien. Un point de recouvrement de chaque cote evite qu'un arrondi
+     ne laisse un cheveu clair au raccord. */
+  if(bandW < W-0.5){
+    ctx.fillStyle="#EFE6D9";
+    ctx.fillRect(0, 0, bandX+1, H);
+    ctx.fillRect(bandX+bandW-1, 0, W-bandX-bandW+1, H);
+  }
 
   ctx.save();
   /* Le terrain est decoupe net : sans cette coupe, nuages, aigles et obstacles
      apparaitraient dans les bandes avant d'entrer en jeu. */
   ctx.beginPath(); ctx.rect(bandX,0,bandW,H); ctx.clip();
-  ctx.fillStyle=jour.bas; ctx.fillRect(bandX,0,bandW,H);
+  /* LE FOND DE BANDE A ETE RETIRE. Il posait la teinte du bas du ciel sur toute la
+     hauteur du terrain avant que quoi que ce soit ne soit peint — trois millions de
+     pixels — et rien de ce qu'il posait ne survivait : le ciel couvre de vingt unites
+     au-dessus du cadre jusqu'a la ligne du sol, et la terre reprend a cette ligne et
+     descend jusqu'a quarante unites sous le cadre. Les deux se recouvrent meme pendant
+     une secousse, qui les emporte ensemble puisqu'elle est dans la transformation, et
+     dont l'amplitude reste tres en deca de la marge du ciel. */
   const sx=(Math.random()-.5)*shake*.5, sy=(Math.random()-.5)*shake*.5;
   ctx.translate(bandX,0);
   ctx.scale(scale,scale);
@@ -11728,7 +11754,7 @@ function draw(){
   ctx.restore();
   if(state!==S.MENU) panneauRecords();   // il reste plante quand la poule tombe
   drawHUD();
-  if(px){
+  if(px && tamponUtile){
     vue.setTransform(1,0,0,1,0,0);
     vue.imageSmoothingEnabled=false;
     vue.drawImage(tampon, 0,0, cv.width, cv.height);
