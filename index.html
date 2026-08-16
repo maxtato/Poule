@@ -10544,9 +10544,16 @@ const ECHO_A=0.34, ECHO_Q=0.60;
    reste plus une trainee mais un bloc. Serre, tout se recouvre — la retenue compte donc
    beaucoup plus ici qu'elle ne comptait sur des copies ecartees. */
 const ECHO_CANAL=0.62;
-/* Les trois contours de la jauge, du plus lointain au plus proche : c'est dans cet ordre
-   qu'ils se tracent, le plus large d'abord, pour que le plus fonce reste dessus. */
-const JAUGE_TEINTES=["#9EE7FF", "#3BC9FF", "#1F7FD8"];
+/* LES HALOS PRENNENT LES TROIS COULEURS DES ECHOS, ET LA MEME TABLE QU'EUX.
+   Ils etaient trois bleus — clair, moyen, fonce — du temps ou la trainee de la poule
+   l'etait aussi. Elle est passee au rouge, au vert et au bleu ; les laisser en bleu faisait
+   deux vocabulaires pour un seul pouvoir, sur le meme ecran et au meme instant.
+   ILS PARTAGENT LA TABLE DES ECHOS plutot que d'en avoir une copie : deux listes de trois
+   couleurs cote a cote finissent toujours par diverger, et le jour ou l'une changerait
+   l'autre resterait en arriere.
+   L'ORDRE EST CELUI DES ECHOS : le rouge au plus loin, le bleu au plus pres. Derriere la
+   poule cela se lit en distance, ici en rayon — l'anneau le plus large est le plus
+   lointain — et c'est bien le meme etagement. */
 /* LE BLEU DU MODE COOL, ET SES HALOS. */
 const PAST_BLEU="#1F7FD8";
 /* LES HALOS SONT CONCENTRIQUES, PAS TRAINANTS. Le poulet, lui, file vers la droite : sa
@@ -10559,7 +10566,14 @@ const PAST_BLEU="#1F7FD8";
    deborde du precedent, et l'on obtient des anneaux emboites sans avoir a calculer une
    epaisseur de trait par anneau. */
 const HALO_N=3, HALO_PAS=0.085;     // le pas d'un halo au suivant, en parts de la hauteur
-const HALO_A=0.58, HALO_Q=0.60;     // l'encre du plus proche, et ce qu'il en reste au suivant
+/* L'EXTINCTION A ETE RELACHEE EN MEME TEMPS QUE LES COULEURS ONT CHANGE. Elle valait six
+   dixiemes du temps ou les trois anneaux etaient trois bleus : le plus lointain tombait a
+   deux dixiemes d'encre, et un bleu pale sur du creme reste du bleu. Un rouge a deux
+   dixiemes, lui, ne se nomme plus — c'est du rose, et le rouge demande n'etait plus la.
+   A huit dixiemes les trois couleurs se nomment toutes les trois, et l'onde descend
+   encore : 0.58, 0.45, 0.35 du dedans vers le dehors. Plus haut, les anneaux s'egalisent
+   et le sens de propagation se perd. */
+const HALO_A=0.58, HALO_Q=0.78;     // l'encre du plus proche, et ce qu'il en reste au suivant
 /* LA JAUGE DEMANDE UN PAS PLUS LARGE QUE LA PASTILLE. Le pas se prend sur la hauteur de
    l'element : celle de la capsule vaut le sixieme de celle du nuage, et le meme pas lui
    faisait trois anneaux d'un pixel, c'est-a-dire un lisere. */
@@ -10576,7 +10590,7 @@ function halosCool(trace, h, vague, pas){
   for(let i=HALO_N;i>=1;i--){
     const d=h*(pas||HALO_PAS)*i*(1+0.12*Math.sin(t*3.4-i*0.8));
     ctx.globalAlpha=HALO_A*Math.pow(HALO_Q,i-1)*vague;
-    ctx.fillStyle=JAUGE_TEINTES[Math.min(JAUGE_TEINTES.length-1, HALO_N-i)];
+    ctx.fillStyle=ECHO_RVB[Math.min(ECHO_RVB.length-1, HALO_N-i)];
     trace(d); ctx.fill();
   }
   ctx.globalAlpha=1;
