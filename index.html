@@ -774,9 +774,23 @@
     color:#3A322C;line-height:1.2}
   #troph .tr i{font-style:normal;font-size:clamp(10px,2.9vw,12px);font-weight:700;
     letter-spacing:.04em;color:#8B7C69;line-height:1.2}
-  /* Les trois points d'interrogation. Espaces, pales, sans unite dessous : ils occupent la
-     place du nom sans rien en dire. */
-  #troph .tr.ferme b{color:#B5AA9A;letter-spacing:.28em}
+  /* Une coupe grisee dit ce qui reste a gagner ; son objectif reste lisible. */
+  #troph .tr.ferme b{color:#3A322C;letter-spacing:.02em}
+  #troph .tr .quoi{flex:1}
+  #troph .tr i{color:#756451;letter-spacing:.01em;line-height:1.35}
+  #troph .trophsection{margin:12px 8px 5px;flex:none;text-align:left;
+    font-size:clamp(11px,3vw,13px);font-weight:900;letter-spacing:.06em;
+    text-transform:uppercase;color:#A33D2C}
+  #troph .trophsection:first-child{margin-top:2px}
+  #troph .trophavance, #troph .trophfait{font-size:clamp(10px,2.8vw,12px);
+    line-height:1.35;font-weight:800;color:#756451;letter-spacing:0;margin-top:3px}
+  #troph .trophfait{color:#746A36}
+  #troph .tr progress{display:block;width:100%;height:5px;margin:3px 0 1px;
+    border:0;border-radius:3px;overflow:hidden;background:#E4DACA;
+    accent-color:#D6342B;appearance:none;-webkit-appearance:none}
+  #troph .tr progress::-webkit-progress-bar{background:#E4DACA;border-radius:3px}
+  #troph .tr progress::-webkit-progress-value{background:#D6342B;border-radius:3px}
+  #troph .tr progress::-moz-progress-bar{background:#D6342B;border-radius:3px}
   #troph .btn.ferme{width:100%;padding:clamp(12px,2.6vh,15px) 12px;margin-top:clamp(2px,1vh,8px);
     font-size:clamp(13px,3.7vw,16px);font-weight:900;letter-spacing:.1em;
     text-transform:uppercase;border:1.5px solid #D6342B;border-radius:18px;
@@ -870,6 +884,32 @@
     text-transform:uppercase;color:#B5AA9A;white-space:nowrap;z-index:8;
     pointer-events:none}
   #volmot.on{display:block}
+  #volmot{width:min(90vw,360px);bottom:calc(136px + env(safe-area-inset-bottom,0px));
+    font-size:12px;line-height:1.25;letter-spacing:.025em;white-space:normal;
+    text-align:center;color:#665749;min-height:26px}
+  #aide{z-index:15;background:rgba(26,22,20,.38);padding:16px}
+  #aide[hidden]{display:none}
+  #aide #aideretour[hidden]{display:none}
+  #aide .card{width:min(100%,380px);max-height:calc(100dvh - 32px);overflow-y:auto;
+    touch-action:pan-y;background:#FAF3EC;border:1.5px solid #1A1614;border-radius:26px;
+    padding:clamp(18px,4vh,26px);box-shadow:0 14px 34px rgba(26,22,20,.26)}
+  #aide h2{font-size:26px;line-height:1.1;margin:0 0 8px;color:#D82E26}
+  #aide .intro{font-size:15px;line-height:1.4;margin:0 0 18px;color:#665749}
+  #aide ol{list-style:none;padding:0;margin:0;display:grid;gap:10px;text-align:left}
+  #aide li{display:flex;align-items:flex-start;gap:12px;padding:12px;border-radius:15px;background:#F0E6D5}
+  #aide .numero{flex:none;width:28px;height:28px;border-radius:50%;background:#D82E26;
+    color:white;font-size:16px;font-weight:700;display:grid;place-items:center}
+  #aide li b{display:block;font-size:17px;line-height:1.25}
+  #aide li p{font-size:14px;line-height:1.4;margin:4px 0 0;color:#665749}
+  #aide .bonus{font-size:13px;line-height:1.4;margin:15px 0;color:#665749}
+  #aide .btn{width:100%;padding:14px 10px;font-size:16px;letter-spacing:.04em}
+  #aide #aideok{background:#D82E26;color:#fff;border-color:#D82E26}
+  #aide .retour{display:block;margin:10px auto 0;min-height:36px;border:0;background:transparent;
+    color:#665749;font:inherit;font-size:14px;cursor:pointer}
+  #aide button:focus-visible,#aideouvrir:focus-visible{outline:3px solid #1A1614;outline-offset:3px}
+  #aideouvrir{width:100%;padding:12px;font-size:14px;letter-spacing:.03em;flex:none}
+  @media(max-height:600px){#aide .card{padding:16px}#aide li{padding:9px}
+    #aide .intro{margin-bottom:10px}#aide .bonus{margin:10px 0}}
   @media (prefers-reduced-motion:reduce){ #fly{transition:none} }
   #load{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
     background:#FAF3EC;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:#9A8F80;z-index:9}
@@ -1077,14 +1117,8 @@
   </div>
 </div>
 
-<!-- ---------- LA LISTE DES TROPHEES ----------
-     Elle dit DEUX choses, et la seconde compte autant que la premiere : ce qu'on a gagne,
-     et COMBIEN IL EN RESTE. D'ou la liste entiere, dans l'ordre, sans en cacher un seul —
-     un trophee qu'on ignore ne donne envie de rien.
-     Ce qu'on cache, c'est le BUT. Une ligne verrouillee montre une coupe eteinte et trois
-     points d'interrogation : on sait qu'il existe, on ne sait pas ce qu'il demande, et la
-     surprise reste entiere le jour ou il tombe. Le nombre grave sur la coupe part avec le
-     reste — c'est lui qui trahirait le plus. -->
+<!-- Les prochains defis, leurs objectifs et les coupes deja gagnees.
+     Les progres n'utilisent que les compteurs connus de la sauvegarde ou de la partie. -->
 <div class="layer" id="troph" role="dialog" data-ta="trophees" aria-label="Trophées" aria-modal="true">
   <div class="card">
     <h2 data-t="trophees">Trophées</h2>
@@ -1214,7 +1248,7 @@
           stroke-linecap="round"/>
   </svg>
 </button>
-<div id="volmot" data-t="volmot">Maintenir pour voler</div>
+<div id="volmot" data-t="volmot" role="status" aria-live="polite" aria-atomic="true">Appuie pour sauter · Maintiens pour voler</div>
 
 <div class="layer" id="pref" role="dialog" data-ta="reglages" aria-label="Réglages" aria-modal="true">
   <div class="card">
@@ -1230,6 +1264,7 @@
          place ; sans quoi ces derniers partiraient en bas de la course, la ou l'on ne pense
          pas a les chercher. -->
     <div class="dedans defile">
+    <button class="btn creux" id="aideouvrir" data-t="commentjouer">Comment jouer</button>
     <h3>
       <svg viewBox="0 0 24 24" aria-hidden="true" fill="none">
         <path d="M4.4 9.6h3.3l4.4-3.9v12.6l-4.4-3.9H4.4z" fill="currentColor"
@@ -1323,6 +1358,24 @@
               stroke-width="2.4" stroke-linejoin="round"/>
       </svg><span data-t="reprendre">Reprendre</span>
     </button>
+  </div>
+</div>
+
+<div class="layer" id="aide" role="dialog" aria-modal="true" aria-labelledby="aidetitre" hidden>
+  <div class="card defile">
+    <h2 id="aidetitre" data-t="commentjouer">Comment jouer</h2>
+    <p class="intro" data-t="aideintro">Un seul bouton. À toi de doser !</p>
+    <ol>
+      <li><span class="numero" aria-hidden="true">1</span><div><b data-t="aidesaut">Appuie pour sauter</b>
+        <p data-t="aidesauttexte">Un appui bref fait un petit saut. Garde le bouton enfoncé pour monter plus haut.</p></div></li>
+      <li><span class="numero" aria-hidden="true">2</span><div><b data-t="aidevol">Maintiens pour voler</b>
+        <p data-t="aidevoltexte">Le vol consomme tes plumes. Repose-toi au sol pour les récupérer.</p></div></li>
+      <li><span class="numero" aria-hidden="true">3</span><div><b data-t="aidemouches">Vise les mouches</b>
+        <p data-t="aidemouchestexte">Chaque mouche donne 50 points et recharge tes plumes.</p></div></li>
+    </ol>
+    <p class="bonus" data-t="aidebonus">20 mouches à la suite : 10 secondes de mode cool ! Au clavier : Espace, ↑ ou W.</p>
+    <button class="btn" id="aideok" data-t="aidego">C'est parti !</button>
+    <button class="retour" id="aideretour" data-t="retour">Retour</button>
   </div>
 </div>
 
@@ -4129,7 +4182,7 @@ const save={mondes:{}, flies:0, runs:0,
             /* L'INTERRUPTEUR D'ESSAI. Il ouvre tous les terrains d'un coup, et il vit dans
                le carnet comme le son ou la langue : c'est un reglage, pas une progression,
                donc l'effacement du carnet ne le touche pas. */
-            debloque:false};
+            debloque:false, guideVu:false};
 function carnetMonde(nom){
   let c=save.mondes[nom];
   if(!c) c=save.mondes[nom]={best:0, bestMou:0, bestDist:0, runs:0};
@@ -4189,6 +4242,7 @@ try{
     if(typeof o.monde==="string") save.monde=o.monde;   // verifie a l'ouverture
     if(Array.isArray(o.trophees)) save.trophees=o.trophees.filter(x=>typeof x==="string");
     save.debloque = o.debloque===true;
+    save.guideVu = o.guideVu===true;
     if(o.panneau==="gauche"||o.panneau==="droite"||o.panneau==="cache") save.panneau=o.panneau;
   }
 }catch(e){}
@@ -4227,14 +4281,14 @@ const TEXTES={
   coolbas:    ["COOL", "MODE"],
   gobees:     ["Gobées", "Eaten"],
   parties:    ["Parties", "Games"],
-  start:      ["Start", "Start"],
+  start:      ["Jouer", "Play"],
   gameover:   ["Game Over", "Game Over"],
   tonscore:   ["Ton score", "Your score"],
   /* La formule, écrite en toutes lettres sous le score. Elle disait le produit ; elle dit
      maintenant la somme et ses deux poids, parce que c'est le rapport entre les deux qui
      se retient — une mouche vaut cent mètres. */
   findetail:  ["%1 mouches × 50 + %2 m × 7", "%1 flies × 50 + %2 m × 7"],
-  rien:       ["Tu n'as rien attrapé", "You caught nothing"],
+  rien:       ["Chaque mètre compte !", "Every metre counts!"],
   recperso:   ["Ton record personnel", "Your personal best"],
   nouveaurec: ["Nouveau record !", "New best!"],
   totaux:     ["%1 mouches en tout · %2 parties", "%1 flies in all · %2 games"],
@@ -4261,13 +4315,51 @@ const TEXTES={
   /* « ou appuie n'importe ou » est parti avec l'ancienne carte de pause : le geste
      existe toujours — appuyer a cote de la carte reprend — mais il n'a plus a etre
      ecrit, la carte porte quatre boutons qui disent quoi faire. */
-  volmot:     ["Maintenir pour voler", "Hold to fly"],
+  volmot:     ["Appuie pour sauter · Maintiens pour voler", "Tap to jump · Hold to fly"],
+  commentjouer:["Comment jouer", "How to play"],
+  aideintro:  ["Un seul bouton. À toi de doser !", "One button. You set the height!"],
+  aidesaut:   ["Appuie pour sauter", "Tap to jump"],
+  aidesauttexte:["Un appui bref fait un petit saut. Garde le bouton enfoncé pour monter plus haut.",
+                 "A quick tap makes a small jump. Hold the button to go higher."],
+  aidevol:    ["Maintiens pour voler", "Hold to fly"],
+  aidevoltexte:["Le vol consomme tes plumes. Repose-toi au sol pour les récupérer.",
+                "Flying uses feathers. Land on the ground to recharge them."],
+  aidemouches:["Vise les mouches", "Catch the flies"],
+  aidemouchestexte:["Chaque mouche donne 50 points et recharge tes plumes.",
+                    "Each fly gives you 50 points and recharges your feathers."],
+  aidebonus:  ["20 mouches à la suite : 10 secondes de mode cool ! Au clavier : Espace, ↑ ou W.",
+                "20 flies in a row: 10 seconds of cool mode! Keyboard: Space, ↑ or W."],
+  aidego:     ["C'est parti !", "Let's go!"],
+  retour:     ["Retour", "Back"],
+  conseilplumes:["Plumes presque vides ? Repose-toi au sol.", "Low on feathers? Land to recharge."],
+  conseilmouche:["Bien joué ! Une mouche = plumes + 50 points.", "Nice! One fly = feathers + 50 points."],
+  conseilcombo:["20 mouches à la suite débloquent le mode cool.", "20 flies in a row unlock cool mode."],
+  conseilcool:["Mode cool ! Le temps ralentit pendant 10 secondes.", "Cool mode! Time slows for 10 seconds."],
   saut:       ["Sauter, ou maintenir pour voler", "Jump, or hold to fly"],
   reglages:   ["Réglages", "Settings"],
   trophees:   ["Trophées", "Trophies"],
   /* Le compte de la liste. On dit ce qu'on A, pas ce qui manque : « 12 sur 40 » se lit
      comme une progression, « 28 restants » comme une dette. */
   trophcompte:["%1 sur %2", "%1 of %2"],
+  trophprochains:["Prochains défis", "Next challenges"],
+  trophautres:  ["Les défis suivants", "More challenges"],
+  trophgagnes:  ["Trophées gagnés", "Earned trophies"],
+  trophacquis:  ["Gagné", "Earned"],
+  trophrecord:  ["Ton record : %1 / %2", "Your best: %1 / %2"],
+  trophpartie:  ["Cette partie : %1 / %2", "This run: %1 / %2"],
+  trophtotal:   ["Total : %1 / %2", "Total: %1 / %2"],
+  butumouches:  ["Gober %1 mouches dans une partie.", "Eat %1 flies in one run."],
+  butumetres:   ["Courir %1 m dans une partie.", "Run %1 m in one run."],
+  butuvol:     ["Voler %1 s sans se poser.", "Stay airborne for %1 s without landing."],
+  bututrav:    ["Traverser %1 obstacles avec le pouvoir doré dans une partie.", "Pass through %1 obstacles with the golden power in one run."],
+  butucool:    ["Activer le mode cool %1 fois au total. Chaîne de 20 mouches !", "Activate cool mode %1 times in total. Chain 20 flies!"],
+  butucoolun:  ["Activer le mode cool avec une chaîne de 20 mouches.", "Activate cool mode by chaining 20 flies."],
+  butuor:      ["Gober %1 mouches dorées au total.", "Eat %1 golden flies in total."],
+  butuorun:    ["Gober une mouche dorée.", "Eat a golden fly."],
+  bututout:    ["Gober %1 mouches au fil des parties.", "Eat %1 flies across all your runs."],
+  butukm:      ["Courir %1 km au fil des parties.", "Run %1 km across all your runs."],
+  butuparties: ["Jouer %1 parties.", "Play %1 games."],
+  butumondes:  ["Marquer des points sur chacun des %1 terrains.", "Score points in each of the %1 worlds."],
   panneau:    ["Panneau des records", "Records sign"],
   /* UN MOT PAR BOUTON, PAS DEUX. « A gauche » et « A droite » passaient a la ligne quand
      « Masque » tenait sur la sienne : trois boutons cote a cote n'ont pas la place d'une
@@ -4385,7 +4477,7 @@ const TEXTES={
   tparties25: ["Fidèle au poste", "Always back"],
   tparties:   ["Increvable", "Unstoppable"],
   tparties100:["Centenaire", "Centenarian"],
-  tmondes:    ["Roi des cinq", "King of five"],
+  tmondes:    ["Grand explorateur", "World explorer"],
   /* Les unites, en petit sous le nom. Une par famille, partagee par tous ses crans. */
   umouches:   ["mouches gobées", "flies eaten"],
   umetres:    ["mètres d'une traite", "metres in one run"],
@@ -4896,7 +4988,7 @@ function relevePose(){
    etroite reste une fenetre jouable. */
 const mqCouche = matchMedia("(orientation:landscape) and (pointer:coarse)");
 let couche=false, halted=false;
-const frozen=()=>couche||halted||!!decompte;
+const frozen=()=>couche||halted||!!decompte||$("aide").classList.contains("on");
 function checkOrient(){
   const was=couche; couche=mqCouche.matches;
   $("rotate").classList.toggle("on",couche);
@@ -5542,10 +5634,61 @@ function montreVol(v){
      et sur la carte de pause elle-meme il ferait doublon avec la croix. */
   $("pausebtn").classList.toggle("on",v);
   $("volmot").classList.toggle("on",v);
+  if(v) poseConseil();
   if(!v) $("fly").classList.remove("presse");
 }
 
+/* L'aide bloque les commandes du terrain et garde le clavier dans la carte. */
+let aideDepart=false, aideRetourFocus=null;
+const aideInertes=new Map();
+function ouvreAide(depart=false){
+  aideDepart=depart; aideRetourFocus=document.activeElement;
+  release(); fingers.clear();
+  const el=$("aide"); el.hidden=false; el.classList.add("on");
+  $("aideok").dataset.t=depart?"aidego":"fermer";
+  $("aideok").textContent=T($("aideok").dataset.t);
+  $("aideretour").hidden=!depart;
+  for(const child of $("stage").children){
+    if(child===el) continue;
+    aideInertes.set(child,child.inert); child.inert=true;
+  }
+  fontePixel(); $("aideok").focus();
+}
+function fermeAide(jouer=false){
+  const depart=aideDepart;
+  $("aide").classList.remove("on"); $("aide").hidden=true;
+  for(const [el,inert] of aideInertes) el.inert=inert;
+  aideInertes.clear(); aideDepart=false;
+  if(jouer && depart){ save.guideVu=true; storeSave(); start(); }
+  else if(aideRetourFocus && aideRetourFocus.isConnected) aideRetourFocus.focus();
+}
+$("aideouvrir").addEventListener("click",()=>ouvreAide());
+$("aideok").addEventListener("click",()=>fermeAide(true));
+$("aideretour").addEventListener("click",()=>fermeAide());
+$("aide").addEventListener("pointerdown",e=>e.stopPropagation());
+$("aide").addEventListener("keydown",e=>{
+  if(e.key!=="Tab") return;
+  const first=$("aideok"), last=aideDepart?$("aideretour"):first;
+  if(e.shiftKey && document.activeElement===first){e.preventDefault();last.focus();}
+  else if(!e.shiftKey && document.activeElement===last){e.preventDefault();first.focus();}
+});
+/* Les rappels des trois premières parties utilisent le temps du jeu : une pause
+   n'épuise pas leur durée, et aucune carte ne masque les obstacles. */
+function cleConseil(){
+  if(save.runs>=3 || state!==S.PLAY) return "volmot";
+  if(cool()) return "conseilcool";
+  if(hen.feathers<.22) return "conseilplumes";
+  if(combo>=5) return "conseilcombo";
+  if(eaten>0 && eaten<=3 && t-lastEat<4) return "conseilmouche";
+  return "volmot";
+}
+function poseConseil(){
+  const el=$("volmot"), texte=T(cleConseil());
+  if(el.textContent!==texte) el.textContent=texte;
+}
+
 addEventListener("keydown",e=>{
+  if($("aide").classList.contains("on")) return;
   if(e.code==="Space"||e.code==="ArrowUp"||e.code==="KeyW"){ e.preventDefault(); if(!e.repeat) press(); }
 });
 addEventListener("keyup",e=>{ if(e.code==="Space"||e.code==="ArrowUp"||e.code==="KeyW") release(); });
@@ -5815,6 +5958,8 @@ function accueil(){
 }
 
 function start(){
+  if($("aide").classList.contains("on")) return;
+  if(state===S.MENU && save.runs===0 && !save.guideVu){ ouvreAide(true); return; }
   /* UN TERRAIN FERME NE SE JOUE PAS, quelle que soit la porte. Le bouton est deja eteint,
      mais l'appui sur le terrain et les raccourcis du clavier passent aussi par ici.
      ET S'IL EST FERME, ON RETOMBE SUR CELUI DU CARNET AVANT DE REFUSER. Le carnet ne
@@ -6029,6 +6174,7 @@ function defaitCompte(){
   if(c.runs>0) c.runs--;
   save.runs=Math.max(0, save.runs-1);
   save.flies=Math.max(0, save.flies-eaten);
+  save.km=Math.max(0, save.km-metres());
   storeSave();
 }
 function repartDuPoint(){
@@ -6717,6 +6863,7 @@ function poseLangue(){
     o.classList.toggle("actif", o.dataset.lang===save.lang);
   if(overShown||$("over").classList.contains("on")) textesFin();
   if(typeof fontePixel==="function") fontePixel();
+  poseConseil();
 }
 function choisitLangue(l){
   if(l!=="fr"&&l!=="en") return;
@@ -6804,37 +6951,96 @@ function fermePref(){ $("pref").classList.remove("on"); }
    Le canevas fait la meme taille pour tous, ouverts comme fermes : une liste dont les
    lignes changent de hauteur selon ce qu'on possede se lit comme une liste cassee. */
 const TROPH_COUPE = 34;             // la coupe de la liste, en points CSS
+/* Les objectifs restent visibles avant de gagner une coupe. Les compteurs
+   de vol et de traversee ne sont pas conserves par les anciennes sauvegardes :
+   hors partie, on montre leur condition sans inventer un record historique. */
+function detailTrophee(tr){
+  const partie = state !== S.MENU;
+  const enCours = courseNonComptee();
+  const records = Object.values(save.mondes || {});
+  const maximum = cle => records.reduce((n,c)=>Math.max(n, Number(c && c[cle]) || 0), 0);
+  const d={famille:tr.u, cible:tr.n, valeur:null, contexte:"trophrecord", unite:""};
+  switch(tr.u){
+    case "umouches": d.valeur=Math.max(maximum("bestMou"), partie?eaten:0); break;
+    case "umetres": d.valeur=Math.max(maximum("bestDist"), partie?metres():0); d.unite=" m"; break;
+    case "uvol": d.valeur=partie?Math.floor(airMax):null; d.contexte="trophpartie"; d.unite=" s"; break;
+    case "utrav": d.valeur=partie?travObs:null; d.contexte="trophpartie"; break;
+    case "ucool": d.valeur=save.cool; d.contexte="trophtotal"; break;
+    case "uor": d.valeur=save.or; d.contexte="trophtotal"; break;
+    case "utout": d.valeur=save.flies+(enCours?eaten:0); d.contexte="trophtotal"; break;
+    case "ukm": d.valeur=(save.km+(enCours?metres():0))/1000; d.contexte="trophtotal"; d.unite=" km"; break;
+    case "uparties": d.valeur=save.runs+(enCours?1:0); d.contexte="trophtotal"; break;
+    case "umondes": {
+      const terrains=Object.keys(MONDES).filter(n=>!MONDES[n].brouillon);
+      d.cible=terrains.length;
+      d.valeur=terrains.filter(n=>(save.mondes[n] && save.mondes[n].best>0) ||
+        (enCours && monde && monde.nom===n && score()>0)).length;
+      d.contexte="trophtotal";
+      break;
+    }
+  }
+  if(d.valeur!==null) d.valeur=Math.max(0, Number(d.valeur)||0);
+  d.ratio=d.valeur===null?0:Math.min(1,d.valeur/d.cible);
+  const singulier=d.cible===1 && (tr.u==="uor" || tr.u==="ucool");
+  d.objectif=T("but"+tr.u+(singulier?"un":""), chiffre(d.cible));
+  return d;
+}
+function groupesTrophees(){
+  const eus=new Set(save.trophees||[]);
+  const tous=TROPHEES.map((tr,ordre)=>({tr,ordre,ouvert:eus.has(tr.k),d:detailTrophee(tr)}));
+  const familles=new Set(), prochains=[], autres=[], gagnes=[];
+  for(const item of tous){
+    if(item.ouvert){ gagnes.push(item); continue; }
+    if(!familles.has(item.d.famille)){
+      familles.add(item.d.famille); prochains.push(item);
+    }else autres.push(item);
+  }
+  // Le prochain palier de chaque famille, les plus proches d'abord.
+  prochains.sort((a,b)=>b.d.ratio-a.d.ratio || a.ordre-b.ordre);
+  return {prochains,autres,gagnes};
+}
 function poseTrophees(){
   const boite=$("trophliste"); if(!boite) return;
-  const eus=new Set(save.trophees||[]);
+  const groupes=groupesTrophees();
   const c=$("trophcompte");
-  if(c) c.textContent=T("trophcompte", eus.size, TROPHEES.length);
+  if(c) c.textContent=T("trophcompte", groupes.gagnes.length, TROPHEES.length);
   boite.innerHTML="";
   const k=Math.min(3, Math.max(1, Math.round(window.devicePixelRatio||1)));
-  for(const tr of TROPHEES){
-    const ouvert=eus.has(tr.k);
-    const l=document.createElement("div");
-    l.className="tr"+(ouvert?"":" ferme");
-    const h=TROPH_COUPE, w=Math.ceil(h*CUP_W/CUP_H);
-    const cv=document.createElement("canvas");
-    cv.width=Math.round(w*k); cv.height=Math.round(h*k);
-    cv.style.width=w+"px"; cv.style.height=h+"px";
-    const g=cv.getContext("2d");
-    g.setTransform(k,0,0,k,0,0);
-    g.imageSmoothingEnabled=false;
-    /* Le nombre ne se grave que sur les coupes gagnees : c'est lui qui trahirait le but. */
-    peintCoupe(g, 0, 0, h, ouvert ? tr.n : 0);
-    const q=document.createElement("span"); q.className="quoi";
-    const b=document.createElement("b");
-    b.textContent = ouvert ? T("t"+tr.k) : "???";
-    q.appendChild(b);
-    if(ouvert){
-      const i=document.createElement("i");
-      i.textContent=T(tr.u||"umouches");
-      q.appendChild(i);
+  for(const [cle,liste] of Object.entries(groupes)){
+    if(!liste.length) continue;
+    const titre=document.createElement("h3"); titre.className="trophsection";
+    titre.textContent=T("troph"+cle); boite.appendChild(titre);
+    for(const {tr,ouvert,d} of liste){
+      const l=document.createElement("div");
+      l.className="tr"+(ouvert?" gagne":" ferme");
+      const h=TROPH_COUPE, w=Math.ceil(h*CUP_W/CUP_H);
+      const cv=document.createElement("canvas");
+      cv.width=Math.round(w*k); cv.height=Math.round(h*k);
+      cv.style.width=w+"px"; cv.style.height=h+"px";
+      cv.setAttribute("aria-hidden","true");
+      const g=cv.getContext("2d");
+      g.setTransform(k,0,0,k,0,0); g.imageSmoothingEnabled=false;
+      peintCoupe(g, 0, 0, h, d.cible);
+      const q=document.createElement("span"); q.className="quoi";
+      const b=document.createElement("b"); b.textContent=T("t"+tr.k); q.appendChild(b);
+      const but=document.createElement("i"); but.textContent=d.objectif; q.appendChild(but);
+      if(ouvert){
+        const fait=document.createElement("small"); fait.className="trophfait";
+        fait.textContent="\u2713 "+T("trophacquis"); q.appendChild(fait);
+      }else if(d.valeur!==null){
+        const v=Math.min(d.valeur,d.cible);
+        const compte=d.unite===" km" ? (v<1?Math.round(v*1000)/1000:Math.floor(v*10)/10) : Math.floor(v);
+        const nombre=d.unite===" km" ? String(compte).replace(".",save.lang==="en"?".":",") : chiffre(compte);
+        const lecture=T(d.contexte, nombre, chiffre(d.cible))+d.unite;
+        const info=document.createElement("small"); info.className="trophavance";
+        info.textContent=lecture; q.appendChild(info);
+        const jauge=document.createElement("progress");
+        jauge.max=d.cible; jauge.value=v;
+        jauge.setAttribute("aria-label",T("t"+tr.k)+" — "+d.objectif+" "+lecture);
+        q.appendChild(jauge);
+      }
+      l.appendChild(cv); l.appendChild(q); boite.appendChild(l);
     }
-    l.appendChild(cv); l.appendChild(q);
-    boite.appendChild(l);
   }
 }
 function ouvreTrophees(){ poseTrophees(); $("troph").classList.add("on"); }
@@ -6885,6 +7091,7 @@ $("pref").addEventListener("click",e=>{
    laisserait la question seule au milieu de l'ecran. */
 addEventListener("keydown",e=>{
   if(e.key!=="Escape") return;
+  if($("aide").classList.contains("on")){ fermeAide(); return; }
   if($("sur").classList.contains("on")) fermeSur(); else fermePref();
 });
 addEventListener("keydown",e=>{ if(e.code==="KeyM"){ audio(); setMute(!muted); } });
@@ -7019,6 +7226,11 @@ function eclat(x,y,n){
    de mouches, quatre cents metres. Le premier soir donne donc les deux premiers crans de
    chaque axe — un trophee par partie environ, ce qui est le bon rythme pour apprendre ce
    qui se recompense — et le reste s'etale sur la centaine de parties suivantes. */
+/* Une course terminee est deja dans le carnet. Pendant la culbute d'une vie
+   de rattrapage, elle reste en cours et n'a encore rien ajoute aux totaux. */
+function courseNonComptee(){
+  return state===S.PLAY || (state===S.DEAD && vaSeRelever);
+}
 const TROPHEES=[
   /* ---- ce qu'on fait en une partie : les mouches ---- */
   {k:"m10",     n:10,   u:"umouches", ok:()=>eaten>=10},
@@ -7056,27 +7268,27 @@ const TROPHEES=[
          sinon le trophee tomberait sur l'ecran de fin, quand plus personne ne regarde
          le jeu. Les derniers crans sont hors de portee d'une bonne soiree, et c'est
          exactement leur emploi : tenir la duree. ---- */
-  {k:"cent",    n:100,  u:"utout",    ok:()=>save.flies+eaten>=100},
-  {k:"total",   n:250,  u:"utout",    ok:()=>save.flies+eaten>=250},
-  {k:"mou600",  n:500,  u:"utout",    ok:()=>save.flies+eaten>=500},
-  {k:"mille",   n:1000, u:"utout",    ok:()=>save.flies+eaten>=1000},
-  {k:"mou3500", n:2500, u:"utout",    ok:()=>save.flies+eaten>=2500},
-  {k:"mou8000", n:5000, u:"utout",    ok:()=>save.flies+eaten>=5000},
-  {k:"mou15000",n:10000,u:"utout",    ok:()=>save.flies+eaten>=10000},
+  {k:"cent",    n:100,  u:"utout",    ok:()=>save.flies+(courseNonComptee()?eaten:0)>=100},
+  {k:"total",   n:250,  u:"utout",    ok:()=>save.flies+(courseNonComptee()?eaten:0)>=250},
+  {k:"mou600",  n:500,  u:"utout",    ok:()=>save.flies+(courseNonComptee()?eaten:0)>=500},
+  {k:"mille",   n:1000, u:"utout",    ok:()=>save.flies+(courseNonComptee()?eaten:0)>=1000},
+  {k:"mou3500", n:2500, u:"utout",    ok:()=>save.flies+(courseNonComptee()?eaten:0)>=2500},
+  {k:"mou8000", n:5000, u:"utout",    ok:()=>save.flies+(courseNonComptee()?eaten:0)>=5000},
+  {k:"mou15000",n:10000,u:"utout",    ok:()=>save.flies+(courseNonComptee()?eaten:0)>=10000},
   /* Les kilometres d'une vie de jeu. Ils montent au meme rythme que les mouches mais
      pas au meme moment : c'est ce decalage qui remplit le milieu de l'echelle. */
-  {k:"km5",     n:5,    u:"ukm",      ok:()=>save.km+metres()>=5000},
-  {k:"km25",    n:25,   u:"ukm",      ok:()=>save.km+metres()>=25000},
-  {k:"km75",    n:100,  u:"ukm",      ok:()=>save.km+metres()>=100000},
-  {k:"km200",   n:250,  u:"ukm",      ok:()=>save.km+metres()>=250000},
-  {k:"parties10",n:10,  u:"uparties", ok:()=>save.runs+1>=10},
-  {k:"parties25",n:25,  u:"uparties", ok:()=>save.runs+1>=25},
-  {k:"parties", n:50,   u:"uparties", ok:()=>save.runs+1>=50},
-  {k:"parties100",n:100,u:"uparties", ok:()=>save.runs+1>=100},
-  /* Un record dans les cinq terrains. La course en cours compte pour le sien : sans
+  {k:"km5",     n:5,    u:"ukm",      ok:()=>save.km+(courseNonComptee()?metres():0)>=5000},
+  {k:"km25",    n:25,   u:"ukm",      ok:()=>save.km+(courseNonComptee()?metres():0)>=25000},
+  {k:"km75",    n:100,  u:"ukm",      ok:()=>save.km+(courseNonComptee()?metres():0)>=100000},
+  {k:"km200",   n:250,  u:"ukm",      ok:()=>save.km+(courseNonComptee()?metres():0)>=250000},
+  {k:"parties10",n:10,  u:"uparties", ok:()=>save.runs+(courseNonComptee()?1:0)>=10},
+  {k:"parties25",n:25,  u:"uparties", ok:()=>save.runs+(courseNonComptee()?1:0)>=25},
+  {k:"parties", n:50,   u:"uparties", ok:()=>save.runs+(courseNonComptee()?1:0)>=50},
+  {k:"parties100",n:100,u:"uparties", ok:()=>save.runs+(courseNonComptee()?1:0)>=100},
+  /* Un record dans tous les terrains disponibles. La course en cours compte pour le sien : sans
      cela le trophee attendrait la mort du joueur pour se declarer, et tomberait au
      premier instant de la partie suivante. */
-  {k:"mondes",  n:5,    u:"umondes",  ok:()=>Object.keys(MONDES).every(n=>
+  {k:"mondes",  get n(){ return ordreMondes().length; }, u:"umondes", ok:()=>ordreMondes().every(n=>
                           carnetMonde(n).best>0 || (monde && n===monde.nom && score()>0))}
 ];
 /* Ce que la partie en cours doit retenir pour les tests ci-dessus. Tout est remis a
@@ -13290,7 +13502,7 @@ let last=0;
 function frame(ts){
   const dt=Math.min((ts-last)/1000||0, 1/30); last=ts;
   if(decompte) avanceDecompte(dt);
-  else if(!frozen()){ update(dt); draw(); }
+  else if(!frozen()){ update(dt); draw(); if(state===S.PLAY) poseConseil(); }
   requestAnimationFrame(frame);
 }
 /* Le canvas ne connait que le nom de la police : si elle n'est pas encore chargee
@@ -13502,7 +13714,9 @@ function demarre(){
      le premier ouvert, qui est toujours la ferme. */
   monde = MONDES[save.monde] || MONDES.ferme;
   if(!mondeOuvert(monde.nom)) monde = MONDES[premierOuvert()];
-  save.monde = monde.nom; sortieFond=null; posePastillesMonde();
+  save.monde = monde.nom;
+  best=carnet().best;                    // le record sauvegarde survit au rechargement
+  sortieFond=null; posePastillesMonde();
   montreVol(false);            // pose l'etat de depart des boutons de course
   setMute(muted,true); poseCarnet(); checkOrient();
   /* LA GRILLE APRES resize(), ET PAS AVANT. Sa taille se deduit de la place qui reste
